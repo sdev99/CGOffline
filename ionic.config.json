@@ -1,0 +1,7 @@
+{
+  "name": "ComplianceGenie",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
