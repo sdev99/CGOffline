@@ -5,6 +5,10 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },
+  {
+    path: 'image-annotation',
+    loadChildren: () => import('./pages/image-annotation/image-annotation.module').then( m => m.ImageAnnotationPageModule)
   }
 ];
 @NgModule({
