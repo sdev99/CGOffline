@@ -1,0 +1,12 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>annotation-preview</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-img *ngIf="previewImage" [src]="previewImage" style="width: 100%;height: 100%"></ion-img>
+</ion-content>

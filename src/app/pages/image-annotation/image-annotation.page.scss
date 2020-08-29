@@ -1,3 +1,6 @@
+ion-content {
+  --overflow: hidden;
+}
 
 .canvas-container-c {
   background-color: #EEE !important;
@@ -20,11 +23,11 @@ ion-toolbar {
       --padding-start: 0px;
       --padding-end: 0px;
     }
-
   }
 }
 
 .color-thickness-picker-container {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,22 +49,28 @@ ion-toolbar {
 
 
 .text-edit-button {
-  font-size: 8px;
+  font-size: 8px !important;
 }
 
-
-.continue-button {
+.continue-button-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   bottom: 26px;
-  width: 318px;
-  height: 50px;
-  left: 28px;
-  background: #2A6FDB;
-  color: #ffffff;
-  border-radius: 3px;
 
-  button {
-    background-color: transparent;
+  .continue-button {
+    width: 84.8%;
+    height: 50px;
+    background: #2A6FDB;
+    color: #ffffff;
+    border-radius: 3px;
+    text-transform: none;
+
+    button {
+      background-color: transparent;
+    }
   }
 }
 
@@ -70,5 +79,28 @@ ion-toolbar {
   height: 100%;
   position: absolute;
   object-fit: cover;
+}
+
+ion-range {
+  --bar-height: 8px;
+  --knob-size: 24px;
+  --height: 30px;
+}
+
+ion-range::part(bar) {
+  background-color: transparent;
+  background-image: url(./../../../assets/images/thickness-slider.svg);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+}
+
+ion-range::part(bar-active) {
+  background-color: transparent;
+}
+
+ion-range::part(knob) {
+  border: 2px solid #fff;
+  top: calc(50% - 2px - var(--knob-size) / 2);
 }
 

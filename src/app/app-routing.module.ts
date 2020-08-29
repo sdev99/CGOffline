@@ -9,6 +9,10 @@ const routes: Routes = [
   {
     path: 'image-annotation',
     loadChildren: () => import('./pages/image-annotation/image-annotation.module').then( m => m.ImageAnnotationPageModule)
+  },
+  {
+    path: 'annotation-preview',
+    loadChildren: () => import('./pages/annotation-preview/annotation-preview.module').then( m => m.AnnotationPreviewPageModule)
   }
 ];
 @NgModule({
