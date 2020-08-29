@@ -48,6 +48,7 @@ export class ColorPickerComponent implements OnInit {
 
     chooserX: number;
 
+    chooserHeight = 16;
 
     ngOnInit() {
         if (this.hexColor) {
@@ -55,6 +56,7 @@ export class ColorPickerComponent implements OnInit {
         } else {
             this.colorFromChooser = '#0000FF';
         }
+        this.chooserX = 150;
         setTimeout(() => {
             this.init();
         }, 200);
@@ -94,8 +96,6 @@ export class ColorPickerComponent implements OnInit {
         const currentWidth = window.innerWidth;
 
         const pixelRatio = this.getPixelRatio(this.ctxPalette);
-
-        console.log(pixelRatio);
 
         const width = currentWidth * 90 / 100;
         const height = width * 0.5;
@@ -164,7 +164,7 @@ export class ColorPickerComponent implements OnInit {
         const pixelRatio = this.getPixelRatio(ctx);
 
         const width = currentWidth * 90 / 100;
-        const height = 8;
+        const height = this.chooserHeight;
 
         ctx.canvas.width = width * pixelRatio;
         ctx.canvas.height = height * pixelRatio;
@@ -173,6 +173,10 @@ export class ColorPickerComponent implements OnInit {
         ctx.canvas.style.height = height + 'px';
 
         this.drawChooser(ctx);
+
+        setTimeout(() => {
+            this.drawChooserSelector(ctx, this.chooserX);
+        }, 100);
 
         const eventChangeColorChooser = (event) => {
             this.updateColorChooser(event, canvasChooser, ctx);
@@ -214,7 +218,20 @@ export class ColorPickerComponent implements OnInit {
 
         // Apply gradient to canvas
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        const x = 0;
+        const y = ctx.canvas.height / 4;
+        const w = ctx.canvas.width;
+        const h = ctx.canvas.height / 2;
+        const r = ctx.canvas.height / 4;
+
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+        ctx.fill();
     };
 
     getPixelRatio = (ctx) => {

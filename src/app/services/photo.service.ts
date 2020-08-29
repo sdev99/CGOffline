@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActionSheetController} from '@ionic/angular';
 import {
-    Plugins, CameraResultType, Capacitor, FilesystemDirectory,
-    CameraPhoto, CameraSource
+    Plugins, CameraResultType, CameraSource
 } from '@capacitor/core';
 
-const {Camera, Filesystem, Storage} = Plugins;
+const {Camera} = Plugins;
 
 
 @Injectable({

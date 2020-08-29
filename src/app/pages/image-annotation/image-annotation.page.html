@@ -30,8 +30,9 @@
 
 <ion-content id="content" mode="md">
     <div class="color-thickness-picker-container" *ngIf="isColorThicknessViewOpen">
-        <app-color-picker (colorChanged)="onColorChanged($event)"></app-color-picker>
-        <ion-range [ngModel]="rangeValue" class="range" mode="md" color="dark" min="1" max="100" (ionChange)="rangeChange($event)"></ion-range>
+        <app-color-picker (colorChanged)="onColorChanged($event)" [hexColor]="defaultColor"></app-color-picker>
+        <ion-range [ngModel]="rangeValue" class="range" mode="md" color="dark" min="1" max="100"
+                   (ionChange)="rangeChange($event)"></ion-range>
     </div>
 
     <!--  <ion-img src="./assets/images/etienne-girardet-sgYamIzhAhg-unsplash 1.png" class="bg-img" id="bgImg"></ion-img>-->
