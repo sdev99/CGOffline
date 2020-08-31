@@ -5,6 +5,58 @@ import {NavController} from '@ionic/angular';
 import {AnimationOptions} from '@ionic/angular/providers/nav-controller';
 import {SharedDataService} from '../../services/shared-data.service';
 
+fabric.LineArrow = fabric.util.createClass(fabric.Line, {
+
+    type: 'LineArrow',
+
+    initialize: function(element, options) {
+        options || (options = {});
+        this.callSuper('initialize', element, options);
+    },
+
+    toObject: function() {
+        return fabric.util.object.extend(this.callSuper('toObject'));
+    },
+
+    _render: function(ctx) {
+        this.callSuper('_render', ctx);
+
+        // do not render if width/height are zeros or object is not visible
+        if (this.width === 0 && this.height === 0 || !this.visible) {
+            return;
+        }
+
+        ctx.save();
+
+        var xDiff = this.x2 - this.x1;
+        var yDiff = this.y2 - this.y1;
+        var angle = Math.atan2(yDiff, xDiff);
+        ctx.translate((this.x2 - this.x1) / 2, (this.y2 - this.y1) / 2);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        //move 10px in front of line to start the arrow so it does not have the square line end showing in front (0,0)
+        ctx.moveTo(5, 0);
+
+        // ctx.lineTo(-0, 70);
+        // ctx.lineTo(-0, -70);
+
+
+        ctx.lineTo(-20, 15);
+        ctx.lineTo(-20, -15);
+
+        ctx.closePath();
+        ctx.fillStyle = this.stroke;
+        ctx.fill();
+        ctx.restore();
+    },
+
+    clipTo: function() {
+        var ctx = arguments[0];
+        this._render(ctx);
+    }
+});
+
+fabric.LineArrow.async = true;
 
 @Component({
     selector: 'app-image-annotation',
@@ -24,11 +76,6 @@ export class ImageAnnotationPage implements OnInit {
     defaultThickness = 3;
     defaultFontSize = 26;
     defaultColor = '#98C16B';
-    lineArrowHeight = 10;
-    lineArrowWidth = 15;
-    lineArrowTopPos = 140;
-    lineArrowLeftPos = 75;
-    lineArrowLineWidth = 150;
 
 
     constructor(
@@ -68,6 +115,7 @@ export class ImageAnnotationPage implements OnInit {
 
     ionViewDidEnter() {
         this.customiseControl();
+        this.addLine();
     }
 
     private customiseControl() {
@@ -164,15 +212,11 @@ export class ImageAnnotationPage implements OnInit {
                 activeObject.set('stroke', color);
             } else if (activeObject.type === 'textbox') {
                 activeObject.set('fill', color);
-            } else if (activeObject.type === 'group') {
-                activeObject.getObjects().map((item) => {
-                    if (item.type === 'line') {
-                        item.set('stroke', color);
-                    }
-                    if (item.type === 'triangle') {
-                        item.set('fill', color);
-                    }
-                });
+            } else if (activeObject.type === 'LineArrow') {
+                activeObject.set('stroke', color);
+            } else if (activeObject.type === 'polyline') {
+                activeObject.set('stroke', color);
+                activeObject.set('fill', color);
             }
         } else if (this.canvasRef.isDrawingMode) {
             this.canvasRef.freeDrawingBrush.color = color;
@@ -183,6 +227,7 @@ export class ImageAnnotationPage implements OnInit {
 
     rangeChange(event) {
         const thickNess = event.target.value;
+        console.log('Thickness ' + this.defaultThickness);
 
         const activeObject = this.canvasRef.getActiveObject();
         if (activeObject) {
@@ -191,23 +236,16 @@ export class ImageAnnotationPage implements OnInit {
             if (activeObject.type === 'rect' || activeObject.type === 'circle' || activeObject.type === 'path') {
                 activeObject.set('strokeWidth', thickNess);
                 this.defaultThickness = thickNess;
+            } else if (activeObject.type === 'LineArrow') {
+                activeObject.strokeWidth = thickNess;
+                this.defaultThickness = thickNess;
+            } else if (activeObject.type === 'polyline') {
+                // activeObject.strokeWidth = thickNess;
+                activeObject.scale(thickNess);
+                this.defaultThickness = thickNess;
             } else if (activeObject.type === 'textbox') {
                 activeObject.set('fontSize', thickNess);
                 this.defaultFontSize = thickNess;
-            } else if (activeObject.type === 'group') {
-                this.defaultThickness = thickNess;
-                activeObject.scaleX = thickNess;
-                activeObject.scaleY = thickNess;
-
-                // const lineObject = activeObject.getObjects('line')[0];
-                // const triangleObject = activeObject.getObjects('triangle')[0];
-
-                // lineObject.set('strokeWidth', thickNess);
-
-                // triangleObject.set('width', this.lineArrowHeight + thickNess * 2);
-                // triangleObject.set('height', this.lineArrowWidth + thickNess * 2);
-                // triangleObject.set('top', lineObject.top + thickNess / 2 - (this.lineArrowHeight + thickNess * 2) / 2);
-                // triangleObject.set('left', lineObject.x2 - lineObject.x);
             }
         } else if (this.canvasRef.isDrawingMode) {
             this.canvasRef.freeDrawingBrush.width = thickNess;
@@ -244,31 +282,97 @@ export class ImageAnnotationPage implements OnInit {
         this.addObjectAndActiveIt(circle);
     }
 
+    addPolyline(fromx, fromy, tox, toy) {
+        const angle = Math.atan2(toy - fromy, tox - fromx);
+
+        const headlen = 3;  // arrow head size
+
+        // bring the line end back some to account for arrow head.
+        tox = tox - (headlen) * Math.cos(angle);
+        toy = toy - (headlen) * Math.sin(angle);
+
+        // calculate the points.
+        const points = [
+            {
+                x: fromx,  // start point
+                y: fromy
+            }, {
+                x: fromx - (headlen / 4) * Math.cos(angle - Math.PI / 2),
+                y: fromy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
+            }, {
+                x: tox - (headlen / 4) * Math.cos(angle - Math.PI / 2),
+                y: toy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
+            }, {
+                x: tox - (headlen) * Math.cos(angle - Math.PI / 2),
+                y: toy - (headlen) * Math.sin(angle - Math.PI / 2)
+            }, {
+                x: tox + (headlen) * Math.cos(angle),  // tip
+                y: toy + (headlen) * Math.sin(angle)
+            }, {
+                x: tox - (headlen) * Math.cos(angle + Math.PI / 2),
+                y: toy - (headlen) * Math.sin(angle + Math.PI / 2)
+            }, {
+                x: tox - (headlen / 4) * Math.cos(angle + Math.PI / 2),
+                y: toy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
+            }, {
+                x: fromx - (headlen / 4) * Math.cos(angle + Math.PI / 2),
+                y: fromy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
+            }, {
+                x: fromx,
+                y: fromy
+            }
+        ];
+
+        const pline = new fabric.Polyline(points, {
+            fill: this.defaultColor,
+            stroke: this.defaultColor,
+            opacity: 1,
+            strokeWidth: 3,
+            originX: 'left',
+            originY: 'top',
+            selectable: true,
+            strokeUniform: true,
+        });
+
+        this.addObjectAndActiveIt(pline);
+
+    }
+
     addLine() {
         this.rangeValue = this.defaultThickness;
         this.isColorThicknessViewOpen = true;
         this.canvasRef.isDrawingMode = false;
-        const triangle = new fabric.Triangle({
-            left: this.lineArrowLeftPos + this.lineArrowLineWidth + this.lineArrowWidth,
-            top: this.lineArrowTopPos,
-            width: this.lineArrowHeight,
-            height: this.lineArrowWidth,
-            fill: this.defaultColor,
-            angle: 90,
+
+
+        // click and drag to draw more arrow!
+        // var startX, startY, endX, endY;
+        this.addPolyline(100, 150, 125, 150);
+        this.canvasRef.on('mouse:down', (event) => {
+            // var pointer = this.canvasRef.getPointer(event.e);
+            // startX = pointer.x;
+            // startY = pointer.y;
+        });
+        this.canvasRef.on('mouse:up', (event) => {
+            // var pointer = this.canvasRef.getPointer(event.e);
+            // endX = pointer.x;
+            // endY = pointer.y;
+            // drawArrow(startX, startY, endX, endY);
         });
 
-        const line = new fabric.Line([this.lineArrowLeftPos, this.lineArrowTopPos, this.lineArrowLeftPos + this.lineArrowLineWidth, this.lineArrowTopPos], {
-            left: this.lineArrowLeftPos,
-            top: this.lineArrowTopPos + this.lineArrowHeight / 2,
-            stroke: this.defaultColor,
-            strokeWidth: this.defaultThickness
-        });
-
-        const objs = [line, triangle];
-
-        const alltogetherObj = new fabric.Group(objs);
-        alltogetherObj.strokeUniform = true;
-        this.addObjectAndActiveIt(alltogetherObj);
+        // const arrowLine = new fabric.LineArrow([100, 0, 200, 0], {
+        //     left: 50,
+        //     top: 200,
+        //     stroke: this.defaultColor,
+        //     strokeWidth: this.defaultThickness,
+        //     strokeUniform: false,
+        //     padding: 10,
+        //     cacheHeight: 500,
+        //     width: 500,
+        //     height: 500,
+        //     cacheTranslationY: 500,
+        // });
+        //
+        // this.addObjectAndActiveIt(arrowLine);
     }
 
     addFreeLine() {
@@ -314,7 +418,6 @@ export class ImageAnnotationPage implements OnInit {
     }
 
     onContinue() {
-
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
 

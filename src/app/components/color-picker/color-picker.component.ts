@@ -263,8 +263,16 @@ export class ColorPickerComponent implements OnInit {
         const touchX = event.pageX || event.changedTouches[0].pageX || event.changedTouches[0].screenX;
         const touchY = event.pageY || event.changedTouches[0].pageY || event.changedTouches[0].screenX;
 
+
         const x = (touchX - bounding.left) * this.getPixelRatio(context);
         const y = (touchY - bounding.top) * this.getPixelRatio(context);
+
+        // console.log('x ' + x);
+        // console.log('y ' + y);
+        // console.log('touchX ' + touchX);
+        // console.log('touchY ' + touchY);
+        // console.log('bounding.top ' + bounding.top);
+
 
         if (fromChooser) {
             this.chooserX = x;
@@ -273,7 +281,8 @@ export class ColorPickerComponent implements OnInit {
             this.paletteY = y;
         }
 
-        const imageData = context.getImageData(x, y, 1, 1);
+        // const imageData = context.getImageData(x, y, 1, 1);
+        const imageData = context.getImageData(x, 15, 1, 1);
         const red = imageData.data[0];
         const green = imageData.data[1];
         const blue = imageData.data[2];
