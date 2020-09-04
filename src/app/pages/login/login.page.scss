@@ -1,0 +1,49 @@
+ion-content {
+  --background: var(--ion-color-app-primary);
+  --padding-start: 9.07%;
+  --padding-end: 9.07%;
+
+  .page-title {
+    font-family: Inter;
+    font-style: normal;
+    margin-top: 16.19%;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 29px;
+    color: #FFFFFF;
+  }
+
+  .page-description {
+    margin-top: 16px;
+    width: 163px;
+    height: 44px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 22px;
+    color: #FFFFFF;
+  }
+
+  ion-select {
+    --placeholder-color: #fff;
+    --placeholder-opacity: 1;
+  }
+
+  .bottom-view {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .device-uid {
+      font-weight: 500;
+      font-size: 10px;
+      line-height: 12px;
+      color: #FFFFFF;
+      opacity: 0.5;
+    }
+  }
+
+}

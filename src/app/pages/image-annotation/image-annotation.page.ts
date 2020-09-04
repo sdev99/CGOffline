@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fabric} from 'fabric';
 import {Location} from '@angular/common';
-import {NavController} from '@ionic/angular';
+import {NavController, AlertController} from '@ionic/angular';
 import {AnimationOptions} from '@ionic/angular/providers/nav-controller';
 import {SharedDataService} from '../../services/shared-data.service';
 
@@ -55,8 +55,27 @@ fabric.LineArrow = fabric.util.createClass(fabric.Line, {
         this._render(ctx);
     }
 });
+fabric.ArrowLine = fabric.util.createClass(fabric.Polyline, {
+
+    type: 'ArrowLine',
+
+    initialize: function(element, options) {
+        options || (options = {});
+        this.callSuper('initialize', element, options);
+    },
+
+    toObject: function() {
+        return fabric.util.object.extend(this.callSuper('toObject'));
+    },
+
+    _render: function(ctx) {
+        this.callSuper('_render', ctx);
+    },
+
+});
 
 fabric.LineArrow.async = true;
+fabric.ArrowLine.async = true;
 
 @Component({
     selector: 'app-image-annotation',
@@ -69,20 +88,21 @@ export class ImageAnnotationPage implements OnInit {
     canvasRef;
 
     // UI variables
-    isColorThicknessViewOpen = true;
+    isColorThicknessViewOpen = false;
     rangeValue = 1;
 
     // Default values
     defaultThickness = 3;
     defaultFontSize = 26;
-    defaultColor = '#98C16B';
+    defaultColor;
 
 
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
+        public alertController: AlertController
     ) {
-
+        this.defaultColor = sharedDataService.annotationColor;
     }
 
     ngOnInit() {
@@ -111,11 +131,18 @@ export class ImageAnnotationPage implements OnInit {
             img.scaleToHeight(content.offsetHeight);
             this.canvasRef.add(img);
         });
+
+        this.canvasRef.on('selection:created', () => {
+            this.isColorThicknessViewOpen = true;
+        });
+
+        this.canvasRef.on('selection:cleared', () => {
+            this.isColorThicknessViewOpen = false;
+        });
     }
 
     ionViewDidEnter() {
         this.customiseControl();
-        this.addLine();
     }
 
     private customiseControl() {
@@ -126,11 +153,9 @@ export class ImageAnnotationPage implements OnInit {
         fabric.Object.prototype.transparentCorners = false;
         fabric.Object.prototype.hasBorders = false;
         fabric.Object.prototype.cornerStrokeColor = '#fff';
-        fabric.Object.prototype.setControlsVisibility({ml: false, mr: false, mb: false, mt: false});
-
+        fabric.Object.prototype.setControlsVisibility({ml: true, mr: true, mb: true, mt: true});
 
         fabric.Object.prototype.controls.deleteControl = this.trashControl();
-
 
         const rotateIcon = (ctx, left, top, styleOverride, fabricObject) => {
             const img = document.createElement('img');
@@ -160,8 +185,15 @@ export class ImageAnnotationPage implements OnInit {
         };
     };
 
-
     private addObjectAndActiveIt = (object) => {
+        object.on('selected', () => {
+            this.isColorThicknessViewOpen = true;
+        });
+
+        object.on('deselected', () => {
+            this.isColorThicknessViewOpen = false;
+        });
+
         this.canvasRef.add(object);
         this.canvasRef.setActiveObject(object);
         setTimeout(() => {
@@ -172,8 +204,14 @@ export class ImageAnnotationPage implements OnInit {
     private trashControl = () => {
         const deleteObject = (eventData, target) => {
             const canvas = target.canvas;
+            if (target.getObjects) {
+                target.getObjects().map((item) => {
+                    canvas.remove(item);
+                });
+            }
             canvas.remove(target);
             canvas.requestRenderAll();
+            this.isColorThicknessViewOpen = false;
         };
 
         const renderIcon = (ctx, left, top, styleOverride, fabricObject) => {
@@ -212,9 +250,7 @@ export class ImageAnnotationPage implements OnInit {
                 activeObject.set('stroke', color);
             } else if (activeObject.type === 'textbox') {
                 activeObject.set('fill', color);
-            } else if (activeObject.type === 'LineArrow') {
-                activeObject.set('stroke', color);
-            } else if (activeObject.type === 'polyline') {
+            } else if (activeObject.type === 'ArrowLine') {
                 activeObject.set('stroke', color);
                 activeObject.set('fill', color);
             }
@@ -223,6 +259,7 @@ export class ImageAnnotationPage implements OnInit {
         }
         this.canvasRef.requestRenderAll();
         this.defaultColor = color;
+        this.sharedDataService.annotationColor = color;
     }
 
     rangeChange(event) {
@@ -231,19 +268,13 @@ export class ImageAnnotationPage implements OnInit {
 
         const activeObject = this.canvasRef.getActiveObject();
         if (activeObject) {
-            console.log('activeObject.type' + activeObject.type);
-
             if (activeObject.type === 'rect' || activeObject.type === 'circle' || activeObject.type === 'path') {
                 activeObject.set('strokeWidth', thickNess);
                 this.defaultThickness = thickNess;
-            } else if (activeObject.type === 'LineArrow') {
-                activeObject.strokeWidth = thickNess;
+            } else if (activeObject.type === 'ArrowLine') {
+                this.addPolylinePoint(activeObject, 100, 150, 150 + this.defaultThickness * 2, 150, this.defaultThickness);
                 this.defaultThickness = thickNess;
-            } else if (activeObject.type === 'polyline') {
-                // activeObject.strokeWidth = thickNess;
-                activeObject.scale(thickNess);
-                this.defaultThickness = thickNess;
-            } else if (activeObject.type === 'textbox') {
+            }  else if (activeObject.type === 'textbox') {
                 activeObject.set('fontSize', thickNess);
                 this.defaultFontSize = thickNess;
             }
@@ -265,9 +296,7 @@ export class ImageAnnotationPage implements OnInit {
             width: 160,
             height: 160,
         });
-
         this.addObjectAndActiveIt(rectangle);
-
     }
 
     addCircle() {
@@ -282,10 +311,25 @@ export class ImageAnnotationPage implements OnInit {
         this.addObjectAndActiveIt(circle);
     }
 
-    addPolyline(fromx, fromy, tox, toy) {
-        const angle = Math.atan2(toy - fromy, tox - fromx);
+    addPolyline(fromx, fromy, tox, toy, headlen) {
+        const points = this.getArrowLinePoints(fromx, fromy, tox, toy, headlen);
+        const pline = new fabric.ArrowLine(points, {
+            fill: this.defaultColor,
+            stroke: this.defaultColor,
+            opacity: 1,
+            strokeWidth: 1,
+            selectable: true,
+            strokeUniform: false,
+            padding: 10
+        });
 
-        const headlen = 3;  // arrow head size
+        this.addObjectAndActiveIt(pline);
+
+    }
+
+    getArrowLinePoints = (fromx, fromy, tox, toy, headlen) => {
+        headlen = 10 + headlen + headlen / 4;
+        const angle = Math.atan2(toy - fromy, tox - fromx);
 
         // bring the line end back some to account for arrow head.
         tox = tox - (headlen) * Math.cos(angle);
@@ -323,56 +367,25 @@ export class ImageAnnotationPage implements OnInit {
             }
         ];
 
-        const pline = new fabric.Polyline(points, {
-            fill: this.defaultColor,
-            stroke: this.defaultColor,
-            opacity: 1,
-            strokeWidth: 3,
-            originX: 'left',
-            originY: 'top',
-            selectable: true,
-            strokeUniform: true,
-        });
+        return points;
+    };
 
-        this.addObjectAndActiveIt(pline);
-
+    addPolylinePoint(shape, fromx, fromy, tox, toy, headlen) {
+        shape.points = this.getArrowLinePoints(fromx, fromy, tox, toy, headlen);
+        this.canvasRef.remove(shape);
+        const obj = shape.toObject();
+        shape = new fabric.ArrowLine(shape.points, obj);
+        this.addObjectAndActiveIt(shape);
     }
+
 
     addLine() {
         this.rangeValue = this.defaultThickness;
         this.isColorThicknessViewOpen = true;
         this.canvasRef.isDrawingMode = false;
 
-
-        // click and drag to draw more arrow!
-        // var startX, startY, endX, endY;
-        this.addPolyline(100, 150, 125, 150);
-        this.canvasRef.on('mouse:down', (event) => {
-            // var pointer = this.canvasRef.getPointer(event.e);
-            // startX = pointer.x;
-            // startY = pointer.y;
-        });
-        this.canvasRef.on('mouse:up', (event) => {
-            // var pointer = this.canvasRef.getPointer(event.e);
-            // endX = pointer.x;
-            // endY = pointer.y;
-            // drawArrow(startX, startY, endX, endY);
-        });
-
-        // const arrowLine = new fabric.LineArrow([100, 0, 200, 0], {
-        //     left: 50,
-        //     top: 200,
-        //     stroke: this.defaultColor,
-        //     strokeWidth: this.defaultThickness,
-        //     strokeUniform: false,
-        //     padding: 10,
-        //     cacheHeight: 500,
-        //     width: 500,
-        //     height: 500,
-        //     cacheTranslationY: 500,
-        // });
-        //
-        // this.addObjectAndActiveIt(arrowLine);
+        const strokeWidth = this.defaultThickness;
+        this.addPolyline(100, 150, 150 + strokeWidth * 2, 150, strokeWidth);
     }
 
     addFreeLine() {
@@ -394,7 +407,7 @@ export class ImageAnnotationPage implements OnInit {
             top: window.innerHeight / 3,
             left: 10,
             width: 200,
-            fill: '#98C16B',
+            fill: this.defaultColor,
             fontSize: this.defaultFontSize,
             textAlign: 'center',
         });
@@ -413,8 +426,29 @@ export class ImageAnnotationPage implements OnInit {
         text.hiddenTextarea.focus();
     }
 
-    onClose() {
-        this.navCtrl.navigateBack(['/tabs/tab1']);
+    async onClose() {
+        const alert = await this.alertController.create({
+            cssClass: 'my-custom-class',
+            header: 'Confirm!',
+            message: '<strong>Do you want to exit without saving?</strong>',
+            buttons: [
+                {
+                    text: 'No',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: (blah) => {
+                        console.log('Confirm Cancel: blah');
+                    }
+                }, {
+                    text: 'Yes',
+                    handler: () => {
+                        this.navCtrl.navigateBack(['/tabs/tab1']);
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
 
     onContinue() {

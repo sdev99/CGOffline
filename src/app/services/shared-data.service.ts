@@ -7,6 +7,7 @@ export class SharedDataService {
 
     previewImage;
     annotationImage;
+    annotationColor = '#98C16B';
 
     constructor() {
 

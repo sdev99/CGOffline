@@ -1,0 +1,23 @@
+<ion-content fullscreen="true">
+    <h2 class="page-title">Sign In</h2>
+    <p class="page-description">
+        Please enter your
+        credentials to sign in.
+    </p>
+
+    <app-auth-input placeholder="Enter email address" label="Email Address" autocapitalize="off" autocomplete="email"
+                    inputmode="email"></app-auth-input>
+    <app-auth-input placeholder="Enter password" label="Password" type="password"></app-auth-input>
+    <ion-button expand="full">Sign In</ion-button>
+    <ion-button fill="clear" color="light">Forgot password?</ion-button>
+
+
+    <div class="bottom-view">
+        <ion-select placeholder="English" interface="action-sheet" cancelText="cancel">
+            <ion-select-option value="f">English</ion-select-option>
+            <ion-select-option value="m">Dutch</ion-select-option>
+        </ion-select>
+
+        <ion-text color="light" class="device-uid">Device UID 2193891273</ion-text>
+    </div>
+</ion-content>
