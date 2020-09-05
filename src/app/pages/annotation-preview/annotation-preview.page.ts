@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {Filesystem, FilesystemDirectory} from '@capacitor/core';
 
 @Component({
     selector: 'app-annotation-preview',
@@ -20,6 +21,25 @@ export class AnnotationPreviewPage implements OnInit {
         this.route.params.subscribe((params: any) => {
             this.previewImage = this.sharedDataService.getPreviewImage();
         });
+    }
+
+    async savePicture() {
+        // Convert photo to base64 format, required by Filesystem API to save
+        // Write the file to the data directory
+        const fileName = new Date().getTime() + '.jpeg';
+        debugger;
+        const savedFile = await Filesystem.writeFile({
+            path: fileName,
+            data: this.previewImage,
+            directory: FilesystemDirectory.Data
+        });
+        debugger;
+
+        // Use webPath to display the new image instead of base64 since it's
+        // already loaded into memory
+        return {
+            filepath: fileName,
+        };
     }
 
 }

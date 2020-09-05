@@ -6,8 +6,8 @@ ion-content {
   .page-title {
     font-family: Inter;
     font-style: normal;
-    margin-top: 16.19%;
     font-weight: bold;
+    margin-top: 16.19%;
     font-size: 24px;
     line-height: 29px;
     color: #FFFFFF;
@@ -30,6 +30,26 @@ ion-content {
     --placeholder-opacity: 1;
   }
 
+  .signin-btn {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  .forgot-password {
+    width: 100%;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: center;
+    color: #FFFFFF;
+  }
+
   .bottom-view {
     width: 100%;
     display: flex;
@@ -37,7 +57,27 @@ ion-content {
     justify-content: center;
     flex-direction: column;
 
+    ion-select {
+      font-family: SF Pro Display;
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 17px;
+      border: 1px solid #fff;
+      padding: 6px 12px 6px 0px;
+      border-radius: 4px;
+      color: #ffffff;
+      flex-direction: row-reverse;
+
+      &::part(icon) {
+        margin-right: 12px;
+        opacity: 1;
+      }
+    }
+
     .device-uid {
+      font-family: SF Pro Display;
+      font-style: normal;
       font-weight: 500;
       font-size: 10px;
       line-height: 12px;

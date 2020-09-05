@@ -1,0 +1,37 @@
+ion-item {
+  --background: transparent;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-label {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 17px;
+  color: #FFFFFF !important;
+}
+
+ion-input {
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 22px;
+
+  border: 1px solid #F7F8F9;
+  box-sizing: border-box;
+  border-radius: 3px;
+
+  --placeholder-font-style: normal;
+  --placeholder-font-weight: normal;
+
+  --background: #ffffff;
+  --color: #171538;
+  --placeholder-color: #171538;
+
+  --padding-start: 16px !important;
+  --padding-end: 16px !important;
+}
