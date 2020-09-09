@@ -324,7 +324,6 @@ export class ImageAnnotationPage implements OnInit {
         });
 
         this.addObjectAndActiveIt(pline);
-
     }
 
     getArrowLinePoints = (fromx, fromy, tox, toy, headlen) => {

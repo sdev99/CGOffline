@@ -7,7 +7,7 @@ ion-content {
     font-family: Inter;
     font-style: normal;
     font-weight: bold;
-    margin-top: 16.19%;
+    margin-top: 16vh;
     font-size: 24px;
     line-height: 29px;
     color: #FFFFFF;
@@ -16,7 +16,6 @@ ion-content {
   .page-description {
     margin-top: 16px;
     width: 163px;
-    height: 44px;
     font-family: IBM Plex Sans;
     font-style: normal;
     font-weight: normal;
@@ -25,10 +24,18 @@ ion-content {
     color: #FFFFFF;
   }
 
-  ion-select {
-    --placeholder-color: #fff;
-    --placeholder-opacity: 1;
+  .input-form {
+    margin-top: 48px;
+
+    .email-input {
+
+    }
+
+    .password-input {
+      margin-top: 24px;
+    }
   }
+
 
   .signin-btn {
     font-family: IBM Plex Sans;
@@ -37,9 +44,13 @@ ion-content {
     font-size: 14px;
     line-height: 18px;
     text-align: center;
+    margin-top: 24px;
+    height: 52px;
+    --background: #2A6FDB;
   }
 
   .forgot-password {
+    margin-top: 22px;
     width: 100%;
     font-family: Inter;
     font-style: normal;
@@ -48,6 +59,7 @@ ion-content {
     line-height: 15px;
     text-align: center;
     color: #FFFFFF;
+    height: auto;
   }
 
   .bottom-view {
@@ -56,8 +68,11 @@ ion-content {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    margin-top: 50px;
 
     ion-select {
+      --placeholder-color: #fff;
+      --placeholder-opacity: 1;
       font-family: SF Pro Display;
       font-style: normal;
       font-weight: 300;
@@ -76,6 +91,8 @@ ion-content {
     }
 
     .device-uid {
+      margin-top: 20px;
+      margin-bottom: 17px;
       font-family: SF Pro Display;
       font-style: normal;
       font-weight: 500;
@@ -86,4 +103,9 @@ ion-content {
     }
   }
 
+  .app-warning-component {
+    margin-bottom: 20px;
+  }
+
 }
+

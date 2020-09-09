@@ -12,6 +12,8 @@ ion-label {
   font-size: 14px;
   line-height: 17px;
   color: #FFFFFF !important;
+  margin-bottom: 8px !important;
+  margin-top: 0px !important;
 }
 
 ion-input {
@@ -20,6 +22,7 @@ ion-input {
   font-weight: normal;
   font-size: 17px;
   line-height: 22px;
+  min-height: 48px;
 
   border: 1px solid #F7F8F9;
   box-sizing: border-box;
@@ -34,4 +37,10 @@ ion-input {
 
   --padding-start: 16px !important;
   --padding-end: 16px !important;
+
+  &.error {
+    --background: #FFF6DE;
+    border: 1px solid #E4D3A3;
+    border-radius: 3px;
+  }
 }

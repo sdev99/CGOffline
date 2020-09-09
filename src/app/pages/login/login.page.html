@@ -5,11 +5,36 @@
         credentials to sign in.
     </p>
 
-    <app-auth-input placeholder="Enter email address" label="Email Address" autocapitalize="off" autocomplete="email"
-                    inputmode="email"></app-auth-input>
-    <app-auth-input placeholder="Enter password" label="Password" type="password"></app-auth-input>
-    <ion-button expand="full" class="signin-btn">Sign In</ion-button>
-    <ion-button fill="clear" color="light" class="forgot-password">Forgot password?</ion-button>
+    <div class="input-form">
+        <div class="app-warning-component">
+            <app-warning-component *ngIf="isError" message="All fileds are required to be filled."></app-warning-component>
+        </div>
+
+        <div class="email-input">
+            <app-auth-input
+                    [isError]="isError"
+                    placeholder="Enter email address"
+                    label="Email Address"
+                    autocapitalize="off"
+                    autocomplete="email"
+                    inputmode="email">
+            </app-auth-input>
+        </div>
+
+        <div class="password-input">
+            <app-auth-input
+                    [isError]="isError"
+                    placeholder="Enter password"
+                    label="Password"
+                    type="password"
+            ></app-auth-input>
+        </div>
+    </div>
+
+    <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
+    <ion-button fill="clear" color="light" class="forgot-password" routerLink="/forgot-password">
+        Forgot password?
+    </ion-button>
 
 
     <div class="bottom-view">

@@ -1,0 +1,41 @@
+<ion-header>
+    <app-modal-header modalTitle="Induction" (closeModal)="onClose()"></app-modal-header>
+    <ion-toolbar mode="ios">
+        <ion-buttons slot="start">
+            <ion-button class="arrow-button left" size="small" fill="clear" (click)="closeModal.emit()">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>
+            Item 4 <span class="light">of 42</span>
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button class="arrow-button right" size="small" fill="clear" (click)="closeModal.emit()">
+                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+    <ion-list lines="none">
+        <ng-container *ngFor="let section of list">
+            <ion-radio-group [(ngModel)]="section.answer">
+                <ion-list-header lines="full">
+                    <h6>{{section.question}}</h6>
+                    <p *ngIf="section.note">Note: {{section.note}}</p>
+                </ion-list-header>
+                <div class="hr-line"></div>
+                <ion-item *ngFor="let item of section.options">
+                    <ion-label>{{item.title}}</ion-label>
+                    <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
+                </ion-item>
+            </ion-radio-group>
+        </ng-container>
+    </ion-list>
+</ion-content>
+
+<ion-footer>
+    <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+</ion-footer>

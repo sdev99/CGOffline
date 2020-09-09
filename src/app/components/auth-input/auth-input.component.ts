@@ -6,6 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
     styleUrls: ['./auth-input.component.scss'],
 })
 export class AuthInputComponent implements OnInit {
+    @Input() className: string;
     @Input() type = 'text';
     @Input() value: string;
     @Input() label: string;
@@ -13,6 +14,7 @@ export class AuthInputComponent implements OnInit {
     @Input() autocapitalize: string;
     @Input() autocomplete: string;
     @Input() inputmode: string;
+    @Input() isError: boolean;
 
     constructor() {
     }

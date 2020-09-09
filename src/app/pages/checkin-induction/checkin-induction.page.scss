@@ -1,0 +1,58 @@
+ion-header {
+
+}
+
+ion-content {
+  .content {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+
+    .text-title-1 {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 21px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .text-1 {
+      width: 63.3%;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .text-2 {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .text-3 {
+      margin-top: 32px;
+      width: 68%;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      color: #171538;
+    }
+  }
+}
+

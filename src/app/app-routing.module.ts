@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
+    {path: '', redirectTo: 'signoff-digitalink', pathMatch: 'full'},
     {
         path: 'login',
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
@@ -22,6 +22,42 @@ const routes: Routes = [
     {
         path: 'dashboard',
         loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
+    },
+    {
+        path: 'forgot-password',
+        loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
+    },
+    {
+        path: 'linksend-success',
+        loadChildren: () => import('./pages/linksend-success/linksend-success.module').then(m => m.LinksendSuccessPageModule)
+    },
+    {
+        path: 'checkin-fail',
+        loadChildren: () => import('./pages/checkin-fail/checkin-fail.module').then(m => m.CheckinFailPageModule)
+    },
+    {
+        path: 'checkin-success',
+        loadChildren: () => import('./pages/checkin-success/checkin-success.module').then(m => m.CheckinSuccessPageModule)
+    },
+    {
+        path: 'checkin-list',
+        loadChildren: () => import('./pages/checkin-list/checkin-list.module').then(m => m.CheckinListPageModule)
+    },
+    {
+        path: 'checkin-induction',
+        loadChildren: () => import('./pages/checkin-induction/checkin-induction.module').then(m => m.CheckinInductionPageModule)
+    },
+    {
+        path: 'checkin-induction-form',
+        loadChildren: () => import('./pages/checkin-induction-form/checkin-induction-form.module').then(m => m.CheckinInductionFormPageModule)
+    },
+    {
+        path: 'checkin-induction-va',
+        loadChildren: () => import('./pages/checkin-induction-va/checkin-induction-va.module').then(m => m.CheckinInductionVaPageModule)
+    },
+    {
+        path: 'signoff-digitalink',
+        loadChildren: () => import('./pages/signoff-digitalink/signoff-digitalink.module').then(m => m.SignoffDigitalinkPageModule)
     }
 ];
 

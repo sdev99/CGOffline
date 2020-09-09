@@ -1,0 +1,26 @@
+.container {
+  width: 100%;
+  min-height: 45px;
+  background-color: #FFEDBD;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+
+  ion-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 16px;
+  }
+
+  ion-label {
+    flex: 1;
+    margin-left: 14.33px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #836A27;
+  }
+}

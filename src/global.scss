@@ -200,105 +200,163 @@
   font-weight: 800;
   src: url('./assets/fonts/SF-Pro-Display-Black.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 800;
   src: url('./assets/fonts/SF-Pro-Display-BlackItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: bold;
   src: url('./assets/fonts/SF-Pro-Display-Bold.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: bold;
   src: url('./assets/fonts/SF-Pro-Display-BoldItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 900;
   src: url('./assets/fonts/SF-Pro-Display-Heavy.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 900;
   src: url('./assets/fonts/SF-Pro-Display-HeavyItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 300;
   src: url('./assets/fonts/SF-Pro-Display-Light.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 300;
   src: url('./assets/fonts/SF-Pro-Display-LightItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 500;
   src: url('./assets/fonts/SF-Pro-Display-Medium.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 500;
   src: url('./assets/fonts/SF-Pro-Display-MediumItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: normal;
   src: url('./assets/fonts/SF-Pro-Display-Regular.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: normal;
   src: url('./assets/fonts/SF-Pro-Display-RegularItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 600;
   src: url('./assets/fonts/SF-Pro-Display-Semibold.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 600;
   src: url('./assets/fonts/SF-Pro-Display-SemiboldItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 100;
   src: url('./assets/fonts/SF-Pro-Display-Thin.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 100;
   src: url('./assets/fonts/SF-Pro-Display-ThinItalic.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: normal;
   font-weight: 200;
   src: url('./assets/fonts/SF-Pro-Display-Ultralight.otf');
 }
+
 @font-face {
   font-family: 'SF Pro Display';
   font-style: italic;
   font-weight: 200;
   src: url('./assets/fonts/SF-Pro-Display-UltralightItalic.otf');
+}
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.my-loading-class {
+  --background: #fff;
+  --width: 100%;
+  --height: 100%;
+  --max-width: 100%;
+  --max-height: 100%;
+
+  ion-icon {
+    width: 32px;
+    height: 32px;
+
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration: 1.5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+  }
+}
+
+
+.action-btn {
+  margin: 4vh;
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 24px;
+  height: 50px;
+  --background: #2A6FDB;
+  text-transform: none;
 }

@@ -1,0 +1,48 @@
+ion-header {
+  ::ng-deep app-modal-header {
+    ion-toolbar {
+      --background: transparent !important;
+      --border-color: transparent;
+      --border-width: 0;
+    }
+  }
+
+  ion-searchbar {
+    margin: 0 16px;
+    margin-top: 20px;
+    --icon-color: #A1A8CA;
+    --placeholder-color: #A1A8CA;
+    --color: #A1A8CA;
+    --box-shadow: none;
+    border: 1px solid #CACEE1;
+    padding: 0;
+    width: auto;
+    border-radius: 3px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #A1A8CA;
+  }
+}
+
+
+ion-list {
+  margin-top: 16px;
+
+  ion-item {
+    --border-color: #E8EAF2;
+    --border-width: 1px;
+
+    ion-label {
+      padding: 16px 22px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #171538;
+    }
+  }
+}
