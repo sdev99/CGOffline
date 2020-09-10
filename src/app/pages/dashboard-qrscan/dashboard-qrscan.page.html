@@ -1,0 +1,19 @@
+<ion-header mode="ios">
+    <ion-toolbar mode="ios">
+        <ion-title size="large">QR Scand</ion-title>
+        <ion-buttons slot="end">
+            <ion-button size="small" fill="clear" (click)="onClose()">
+                <ion-icon class="close-icon" slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen class="ion-justify-content-center ion-align-items-center">
+    <img src="./assets/images/qr-bg.svg" class="content" />
+
+    <div class="title-text">
+        Scan QR Code
+    </div>
+    <!--        <div class="qr-scan-area"></div>-->
+</ion-content>

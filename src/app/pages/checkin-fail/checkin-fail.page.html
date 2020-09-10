@@ -1,9 +1,15 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>checkin-fail</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content fullscreen="true">
+    <div class="content">
+        <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
 
-<ion-content>
+        <div class="title-1">You cannot check-in</div>
+        <div class="text-1">No Qualification</div>
+        <div class="text-2">You do not have the required qualifications.</div>
+    </div>
 
 </ion-content>
+
+<ion-footer mode="ios">
+    <ion-button expand="full" class="action-btn" (click)="onContinue()">Back to Dashboard</ion-button>
+</ion-footer>
+

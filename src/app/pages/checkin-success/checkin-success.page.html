@@ -1,9 +1,13 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>checkin-success</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content fullscreen="true">
+    <div class="content">
+        <ion-icon src="./assets/icon/CheckSuccess.svg"></ion-icon>
 
-<ion-content>
+        <div class="title-1">You have now checked-in</div>
+    </div>
 
 </ion-content>
+
+<ion-footer mode="ios">
+    <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
+</ion-footer>
+

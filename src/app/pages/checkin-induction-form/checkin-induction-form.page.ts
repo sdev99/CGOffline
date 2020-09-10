@@ -46,4 +46,13 @@ export class CheckinInductionFormPage implements OnInit {
         this.navCtrl.navigateForward(['/checkin-induction-va']);
     }
 
+
+    previous() {
+
+    }
+
+    next() {
+
+    }
+
 }

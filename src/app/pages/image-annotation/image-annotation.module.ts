@@ -8,16 +8,17 @@ import {ImageAnnotationPageRoutingModule} from './image-annotation-routing.modul
 
 import {ImageAnnotationPage} from './image-annotation.page';
 import {ColorPickerComponent} from '../../components/color-picker/color-picker.component';
+import {ComponentsModule} from '../../components/components.module';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        ImageAnnotationPageRoutingModule
+        ImageAnnotationPageRoutingModule,
+        ComponentsModule
     ],
-    declarations: [ImageAnnotationPage, ColorPickerComponent],
-    entryComponents: [ColorPickerComponent],
+    declarations: [ImageAnnotationPage],
 })
 export class ImageAnnotationPageModule {
 }

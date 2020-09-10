@@ -1,9 +1,36 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>dashboard</ion-title>
-  </ion-toolbar>
+    <app-dashboard-header></app-dashboard-header>
 </ion-header>
 
 <ion-content>
+    <ion-list class="activity-list" lines="full">
+        <ion-list-header lines="full">
+            <ion-label>Activity List</ion-label>
+            <div class="status-badge ion-margin-end">
+                <span>4</span>
+                <ion-badge color="light" class="rejected">Rejected</ion-badge>
+            </div>
+            <div class="status-badge">
+                <span>4</span>
+                <ion-badge color="warning" class="overdue">Overdue</ion-badge>
+            </div>
+        </ion-list-header>
 
+        <ion-item *ngFor="let activity of activityList">
+            <div class="alert-icon-container">
+                <ion-icon *ngIf="activity.status === 'overdue'" name="alert-circle" color="danger"></ion-icon>
+            </div>
+            <ion-label>
+                <h6>{{activity.name}}</h6>
+                <div class="detail">
+                    <ion-badge *ngIf="activity.status === 'overdue'" color="warning" class="overdue">Overdue</ion-badge>
+                    <ng-container *ngIf="activity.status === 'rejected'">
+                        <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                        <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                    </ng-container>
+                    <span class="time">Last week</span>
+                </div>
+            </ion-label>
+        </ion-item>
+    </ion-list>
 </ion-content>

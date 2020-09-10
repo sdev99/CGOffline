@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'signoff-digitalink', pathMatch: 'full'},
+    {path: '', redirectTo: 'dashboard-qrscan', pathMatch: 'full'},
     {
         path: 'login',
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
@@ -58,6 +58,10 @@ const routes: Routes = [
     {
         path: 'signoff-digitalink',
         loadChildren: () => import('./pages/signoff-digitalink/signoff-digitalink.module').then(m => m.SignoffDigitalinkPageModule)
+    },
+    {
+        path: 'dashboard-qrscan',
+        loadChildren: () => import('./pages/dashboard-qrscan/dashboard-qrscan.module').then(m => m.DashboardQrscanPageModule)
     }
 ];
 

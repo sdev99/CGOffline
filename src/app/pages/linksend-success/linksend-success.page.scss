@@ -1,6 +1,7 @@
 ion-content {
   --padding-start: 9.07%;
   --padding-end: 9.07%;
+  --background: #F8F9FB;
 
   .content {
     display: flex;
@@ -15,6 +16,40 @@ ion-content {
       width: 100px;
       height: 100px;
     }
+
+    .title-1 {
+      margin-top: 48px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      color: #171538;
+    }
+
+    .text-1 {
+      margin-top: 16px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 17px;
+      line-height: 22px;
+      color: #171538;
+    }
+
+    .text-2 {
+      margin-top: 16px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #171538;
+    }
+  }
+
+  ion-footer {
+
   }
 }
 

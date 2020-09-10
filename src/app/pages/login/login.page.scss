@@ -27,12 +27,14 @@ ion-content {
   .input-form {
     margin-top: 48px;
 
-    .email-input {
+    ::ng-deep app-auth-input {
+      &.email-input ion-item {
 
-    }
+      }
 
-    .password-input {
-      margin-top: 24px;
+      &.password-input ion-item {
+        margin-top: 24px;
+      }
     }
   }
 

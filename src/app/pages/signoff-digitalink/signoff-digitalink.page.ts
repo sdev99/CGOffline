@@ -24,7 +24,7 @@ export class SignoffDigitalinkPage implements OnInit {
     }
 
     initialise() {
-        this.canvasRef.setDimensions({width: (window.innerWidth * 85 / 100), height: (window.innerHeight * 28 / 100)});
+        this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
         this.canvasRef.on('selection:created', () => {
         });
         this.canvasRef.on('selection:cleared', () => {

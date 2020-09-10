@@ -7,28 +7,28 @@
 
     <div class="input-form">
         <div class="app-warning-component">
-            <app-warning-component *ngIf="isError" message="All fileds are required to be filled."></app-warning-component>
+            <app-warning-component *ngIf="isError"
+                                   message="All fileds are required to be filled."></app-warning-component>
         </div>
 
-        <div class="email-input">
-            <app-auth-input
-                    [isError]="isError"
-                    placeholder="Enter email address"
-                    label="Email Address"
-                    autocapitalize="off"
-                    autocomplete="email"
-                    inputmode="email">
-            </app-auth-input>
-        </div>
+        <app-auth-input
+                class="email-input"
+                [isError]="isError"
+                placeholder="Enter email address"
+                label="Email Address"
+                autocapitalize="off"
+                autocomplete="email"
+                inputmode="email">
+        </app-auth-input>
 
-        <div class="password-input">
-            <app-auth-input
-                    [isError]="isError"
-                    placeholder="Enter password"
-                    label="Password"
-                    type="password"
-            ></app-auth-input>
-        </div>
+        <app-auth-input
+                class="password-input"
+                [isError]="isError"
+                placeholder="Enter password"
+                label="Password"
+                type="password"
+        ></app-auth-input>
+
     </div>
 
     <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>

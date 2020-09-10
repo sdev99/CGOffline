@@ -1,0 +1,125 @@
+ion-content {
+  ion-list.activity-list {
+
+    ion-list-header {
+      padding: 12px 20px;
+      align-items: center;
+      --border-color: #DCE7EF;
+      --border-width: 1px;
+      --border-style: solid;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 21px;
+        color: #444444;
+        margin: 0;
+      }
+
+      .status-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        span {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 17px;
+          line-height: 22px;
+          color: #171538;
+        }
+
+        ion-badge {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 10px;
+          text-align: center;
+
+          &.rejected {
+            color: #E74731;
+          }
+
+          &.overdue {
+            color: #FFFFFF;
+          }
+        }
+      }
+    }
+
+    ion-item {
+      --border-color: #DCE7EF;
+      --border-width: 1px;
+      --border-style: solid;
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+
+      .alert-icon-container {
+        width: 26px;
+        height: 26px;
+
+        ion-icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      ion-label {
+        h6 {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 12px;
+          line-height: 16px;
+          color: #2A6FDB;
+        }
+
+        .detail {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-top: 4px;
+
+          ion-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 3px;
+          }
+
+          ion-badge {
+            margin: 4px 0;
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 10px;
+            margin-right: 9px;
+
+            &.overdue {
+              color: #FFFFFF;
+            }
+
+            &.rejected {
+              color: #E74731;
+            }
+          }
+
+          .time {
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 10px;
+            line-height: 13px;
+            color: #171538;
+          }
+        }
+
+      }
+
+    }
+  }
+
+}
