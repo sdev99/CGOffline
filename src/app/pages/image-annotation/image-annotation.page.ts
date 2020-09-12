@@ -274,7 +274,7 @@ export class ImageAnnotationPage implements OnInit {
             } else if (activeObject.type === 'ArrowLine') {
                 this.addPolylinePoint(activeObject, 100, 150, 150 + this.defaultThickness * 2, 150, this.defaultThickness);
                 this.defaultThickness = thickNess;
-            }  else if (activeObject.type === 'textbox') {
+            } else if (activeObject.type === 'textbox') {
                 activeObject.set('fontSize', thickNess);
                 this.defaultFontSize = thickNess;
             }
@@ -453,9 +453,11 @@ export class ImageAnnotationPage implements OnInit {
     onContinue() {
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
-
         const downlaodImg = this.canvasRef.toDataURL('jpeg');
         this.sharedDataService.setPreviewImage(downlaodImg);
-        this.navCtrl.navigateForward(['/annotation-preview']);
+        if (this.sharedDataService.onAnnotationImageDone) {
+            this.sharedDataService.onAnnotationImageDone(downlaodImg);
+        }
+        this.navCtrl.back();
     }
 }

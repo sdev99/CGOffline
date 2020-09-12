@@ -1,0 +1,130 @@
+ion-header {
+  ::ng-deep app-modal-header {
+    ion-toolbar {
+      height: 55px;
+      align-items: flex-end;
+      --border-color: transparent;
+      --border-width: 0;
+    }
+  }
+
+  ion-item {
+    --border-color: #DCE7EF;
+    --border-width: 0 0 1px 0;
+    --border-style: solid;
+    --padding-bottom: 12px;
+    --background: #F8F9FB;
+
+    ion-label {
+      margin: 0;
+
+      h6 {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        color: #2A6FDB;
+      }
+
+      .detail {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-top: 4px;
+
+        ion-icon {
+          width: 16px;
+          height: 16px;
+          margin-right: 3px;
+        }
+
+        ion-badge {
+          margin: 4px 0;
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 10px;
+          margin-right: 9px;
+
+          &.overdue {
+            color: #FFFFFF;
+          }
+
+          &.rejected {
+            color: #E74731;
+          }
+        }
+
+        .time {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 10px;
+          line-height: 13px;
+          color: #171538;
+        }
+      }
+    }
+  }
+}
+
+
+ion-content {
+  ion-item {
+    --padding-start: 0;
+
+    ion-label {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    &.title-item {
+      --border-color: rgba(74, 144, 226, 0.2);
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+
+      ion-label {
+        color: #171538;
+
+        h6 {
+          font-family: Inter;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 17px;
+          color: #171538;
+
+          margin-top: 44px;
+        }
+
+        p {
+          margin-top: 8px;
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 12px;
+          line-height: 16px;
+          color: #171538;
+        }
+      }
+    }
+
+    &.form-item {
+      --padding-top: 0;
+      --padding-bottom: 0;
+
+      ion-icon {
+        width: 17.31px;
+        height: 20px;
+        margin-right: 12px;
+      }
+
+      ion-label {
+        color: #4A90E2;
+      }
+    }
+  }
+}

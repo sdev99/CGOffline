@@ -1,0 +1,82 @@
+<ion-header mode="ios">
+    <app-modal-header modalTitle="Site Audit Form" (closeModal)="onClose()"></app-modal-header>
+    <ion-toolbar mode="ios">
+        <ion-buttons slot="start">
+            <ion-button class="arrow-button left" size="small" fill="clear" (click)="previous()">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>
+            Item 4 <span class="light">of 42</span>
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button class="arrow-button right" size="small" fill="clear" (click)="next()">
+                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+    <ion-list lines="none" mode="ios">
+        <ng-container *ngFor="let section of list; let idx=index">
+            <ion-list-header lines="full">
+                <h6>
+                    <ion-note color="danger" *ngIf="section.required">*</ion-note>
+                    {{(idx + 1) + '. ' + section.question}}</h6>
+
+                <p *ngIf="section.note">Note: {{section.note}}</p>
+
+                <ion-item lines="none" class="form-item" *ngIf="section.document">
+                    <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+                    <ion-label>
+                        {{section.document.title}}
+                    </ion-label>
+                </ion-item>
+
+            </ion-list-header>
+
+            <ng-container *ngIf="section.question_type === 'image'">
+                <div class="add-image ion-margin-horizontal">
+                    <ion-img *ngIf="answer[idx] && answer[idx].image; else addImageBtn"
+                             [src]="answer[idx].image"></ion-img>
+                    <ng-template #addImageBtn>
+                        <ion-button fill="clear" (click)="addImage(idx)">
+                            <ion-icon slot="icon-only" src="./assets/images/AddPhoto.svg"></ion-icon>
+                        </ion-button>
+                    </ng-template>
+                </div>
+                <div class="hr-line"></div>
+                <ion-textarea class="picture-additional-text ion-margin-horizontal ion-margin-bottom" autoGrow="true"
+                              cols="3"></ion-textarea>
+            </ng-container>
+
+
+            <ng-container *ngIf="section.question_type === 'options'">
+                <div class="hr-line"></div>
+                <ng-container *ngIf="section.canMultipleAsnwer; else singleAnswer;">
+                    <ion-item *ngFor="let item of section.options">
+                        <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
+                        <ion-checkbox mode="md" slot="start" [value]="item.value"></ion-checkbox>
+                    </ion-item>
+                </ng-container>
+                <ng-template #singleAnswer>
+                    <ion-radio-group [(ngModel)]="section.answer">
+                        <ion-item *ngFor="let item of section.options">
+                            <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
+                            <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
+                        </ion-item>
+                    </ion-radio-group>
+                </ng-template>
+            </ng-container>
+
+            <ng-container *ngIf="section.question_type === 'date'">
+            </ng-container>
+        </ng-container>
+    </ion-list>
+</ion-content>
+
+<ion-footer mode="ios">
+    <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+</ion-footer>

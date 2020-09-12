@@ -25,7 +25,6 @@ export class DashboardQrscanPage implements OnInit {
                 if (status.authorized) {
                     // camera permission was granted
 
-
                     // start scanning
                     let scanSub = this.qrScanner.scan().subscribe((text: string) => {
                         console.log('Scanned something', text);

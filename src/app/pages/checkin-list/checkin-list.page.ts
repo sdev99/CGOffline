@@ -22,7 +22,7 @@ export class CheckinListPage implements OnInit {
         this.navCtrl.navigateBack(['/tabs/tab1']);
     }
 
-    openLocation() {
+    openLocation(location) {
         this.navCtrl.navigateForward(['/checkin-induction']);
     }
 

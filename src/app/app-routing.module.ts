@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'dashboard-qrscan', pathMatch: 'full'},
+    {path: '', redirectTo: 'form-custom', pathMatch: 'full'},
     {
         path: 'login',
         loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
@@ -62,6 +62,22 @@ const routes: Routes = [
     {
         path: 'dashboard-qrscan',
         loadChildren: () => import('./pages/dashboard-qrscan/dashboard-qrscan.module').then(m => m.DashboardQrscanPageModule)
+    },
+    {
+        path: 'activity-detail',
+        loadChildren: () => import('./pages/activity-detail/activity-detail.module').then(m => m.ActivityDetailPageModule)
+    },
+    {
+        path: 'form-cover',
+        loadChildren: () => import('./pages/form-cover/form-cover.module').then(m => m.FormCoverPageModule)
+    },
+    {
+        path: 'form-custom',
+        loadChildren: () => import('./pages/form-custom/form-custom.module').then(m => m.FormCustomPageModule)
+    },
+    {
+        path: 'form-riskassessment',
+        loadChildren: () => import('./pages/form-riskassessment/form-riskassessment.module').then(m => m.FormRiskassessmentPageModule)
     }
 ];
 
