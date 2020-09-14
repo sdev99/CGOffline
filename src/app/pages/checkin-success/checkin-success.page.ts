@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-checkin-success',
@@ -8,9 +9,17 @@ import {NavController} from '@ionic/angular';
 })
 export class CheckinSuccessPage implements OnInit {
 
+    message = 'You have now checked-in';
+
     constructor(
         public navCtrl: NavController,
+        public activatedRoute: ActivatedRoute
     ) {
+        this.activatedRoute.queryParams.subscribe((res) => {
+            if (res && res.message) {
+                this.message = res.message;
+            }
+        });
     }
 
     ngOnInit() {

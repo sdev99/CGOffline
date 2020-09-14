@@ -10,7 +10,15 @@
 
 </ion-toolbar>
 
-<ion-item class="checked-in-status-view" lines="none" (click)="showCheckedInPlace()">
+<ion-item class="checked-in-status-view" [ngClass]="{'remove-padding':showPlaceNavigationBtns}" lines="none"
+          (click)="showCheckedInPlace()">
+
+    <ion-button *ngIf="showPlaceNavigationBtns" slot="start" class="arrow-button left" size="small" fill="clear"
+                (click)="previousPlace.emit()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+
     <div slot="start" class="status-circle" [ngClass]="{'checked-in':checkedIn}"></div>
 
     <ion-label>
@@ -27,6 +35,12 @@
             <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
         </ion-button>
     </ng-container>
+
+
+    <ion-button *ngIf="showPlaceNavigationBtns" slot="end" class="arrow-button right" size="small" fill="clear"
+                (click)="nextPlace.emit()">
+        <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
 </ion-item>
 
 
@@ -43,7 +57,7 @@
 </div>
 
 
-<div class="checkin-btns">
+<div class="checkin-btns" *ngIf="!hideCheckinButton">
     <ion-button class="left" size="small" fill="clear" (click)="scanQrCode.emit()">
         Check In by QR Code
     </ion-button>

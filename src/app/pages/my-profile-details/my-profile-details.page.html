@@ -1,0 +1,70 @@
+<ion-header mode="ios">
+    <app-modal-header modalTitle="My Profile" (closeModal)="onClose()"></app-modal-header>
+</ion-header>
+
+<ion-content mode="ios">
+    <ion-list lines="none">
+        <ion-item class="user-name">
+            <ion-label>
+                Markus Letterman
+            </ion-label>
+            <ion-button slot="end" fill="clear" routerLink="/my-profile-edit">
+                <ion-icon slot="start" src="./assets/icon/pencil.svg"></ion-icon>
+                Edit
+            </ion-button>
+        </ion-item>
+
+        <ion-item class="profile-value">
+            <ion-label>
+                <p>EMAIL</p>
+                <h3>m.letterman@thunderbolt.com</h3>
+            </ion-label>
+        </ion-item>
+
+        <ion-item class="profile-value">
+            <ion-label>
+                <p>PHONE</p>
+                <h3>+01234567890</h3>
+            </ion-label>
+        </ion-item>
+
+        <div class="hr-line-full"></div>
+
+        <ion-item class="profile-value">
+            <ion-label>
+                <p>TIMEZONE</p>
+                <h3>(GMT +0) London, United Kingdom</h3>
+            </ion-label>
+        </ion-item>
+
+        <ion-item class="profile-value">
+            <ion-label>
+                <p>MOBILE APP LANGUAGE</p>
+                <h3>English</h3>
+            </ion-label>
+        </ion-item>
+
+        <div class="hr-line-full"></div>
+
+        <ion-item class="profile-value">
+            <ion-label>
+                <p>DEVICE UID</p>
+                <h3>a081f82a-65cd-4ab8-86ec-bdbaef257bc7</h3>
+            </ion-label>
+        </ion-item>
+
+        <ion-button fill="clear" class="change-password-btn">
+            <ion-icon src="./assets/icon/lock.svg"></ion-icon>
+            Change Password
+        </ion-button>
+    </ion-list>
+
+    <div class="ion-text-center">
+        <ion-button fill="clear" class="logout-btn">
+            <ion-icon src="./assets/icon/logout.svg"></ion-icon>
+            Log Out
+        </ion-button>
+    </div>
+</ion-content>
+
+

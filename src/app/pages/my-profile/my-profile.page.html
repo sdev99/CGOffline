@@ -1,0 +1,32 @@
+<ion-header mode="ios">
+    <ion-toolbar mode="ios" class="part-1">
+
+        <ion-title size="large">My Signed Documents</ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button size="small" fill="clear" (click)="scanQrCode()">
+                <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/qrscan-dark.svg"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <div class="content">
+        <ion-img src="./assets/images/demo-profile.svg" class="profile-img"></ion-img>
+        <h3>Oliver Egginton</h3>
+        <ngx-qrcode
+                [elementType]="elementType"
+                [value]="qrCodeValue"
+                cssClass="qr-code"
+                errorCorrectionLevel="L">
+        </ngx-qrcode>
+
+        <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">View / Update Settings</ion-button>
+        <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">View My Signed Documents
+        </ion-button>
+    </div>
+
+</ion-content>

@@ -27,13 +27,11 @@ export class AnnotationPreviewPage implements OnInit {
         // Convert photo to base64 format, required by Filesystem API to save
         // Write the file to the data directory
         const fileName = new Date().getTime() + '.jpeg';
-        debugger;
         const savedFile = await Filesystem.writeFile({
             path: fileName,
             data: this.previewImage,
             directory: FilesystemDirectory.Data
         });
-        debugger;
 
         // Use webPath to display the new image instead of base64 since it's
         // already loaded into memory

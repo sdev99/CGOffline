@@ -1,0 +1,24 @@
+<div class="photo-buttons" *ngIf="!image; else addPhotoTemplate;">
+    <ion-button fill="clear" class="left" (click)="addPhotoFromCamera()">
+        <ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
+        Take a Photo
+    </ion-button>
+
+    <span>Or</span>
+
+    <ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
+        <ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
+        Choose Photo
+    </ion-button>
+</div>
+
+<ng-template #addPhotoTemplate>
+    <div class="image-view">
+        <div class="close-btn">
+            <ion-button fill="clear" (click)="removeDatePhoto()">
+                <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+        </div>
+        <ion-img *ngIf="image" [src]="image.webPath"></ion-img>
+    </div>
+</ng-template>

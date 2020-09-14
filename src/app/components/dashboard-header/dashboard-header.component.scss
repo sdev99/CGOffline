@@ -33,6 +33,13 @@ ion-item.checked-in-status-view {
   --min-height: 39px;
   --background: #AA39D6;
 
+  &.remove-padding {
+    --padding-start: 0;
+    --padding-end: 0;
+    --inner-padding-start: 0;
+    --inner-padding-end: 0;
+  }
+
   .status-circle {
     width: 10px;
     height: 10px;
@@ -60,6 +67,19 @@ ion-item.checked-in-status-view {
       width: 18px;
       height: 18px;
       color: #ffffff;
+    }
+  }
+
+
+  .arrow-button {
+    --color: #FFFFFF;
+    width: 58px;
+    height: 44px;
+    margin: 0;
+
+    ion-icon {
+      width: 16px;
+      height: 16px;
     }
   }
 }
@@ -97,6 +117,7 @@ ion-item.checked-in-status-view {
   background-color: rgba(0, 0, 0, 0.35);
   height: 100vh;
   z-index: 10;
+  width: 100%;
 
   .check-in-places-list {
     ion-item {

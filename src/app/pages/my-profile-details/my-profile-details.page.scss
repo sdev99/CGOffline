@@ -1,0 +1,83 @@
+ion-content {
+  .hr-line-full {
+    height: 1px;
+    margin: 12px 16px;
+    background-color: rgba(74, 144, 226, 0.2);
+  }
+
+  .user-name {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 26px;
+    color: #444444;
+
+    ion-button {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 24px;
+      color: #2A6FDB;
+
+      ion-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .profile-value {
+    p {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      text-transform: uppercase;
+      color: #A1A8CA;
+      margin-bottom: 5px;
+    }
+
+    h3 {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #171538;
+    }
+  }
+
+
+  .change-password-btn {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #2A6FDB;
+
+    ion-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .logout-btn {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #A1A8CA;
+
+    ion-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

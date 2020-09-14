@@ -1,0 +1,20 @@
+<ion-header>
+    <app-dashboard-header [showPlaceNavigationBtns]="false" [isCurrentCheckin]="true" [hideCheckinButton]="isCheckedIn"
+                          [checkedIn]="isCheckedIn"></app-dashboard-header>
+
+    <ion-toolbar>
+        <ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
+        <ion-title class="ion-text-left">Work Permit Forms</ion-title>
+    </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content>
+    <ion-list *ngIf="list && list.length>0" class="activity-list" lines="full">
+        <ion-item *ngFor="let item of list">
+            <ion-icon slot="start" src="./assets/icon/workpermit.svg"></ion-icon>
+            <ion-label>{{item.title}}</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>

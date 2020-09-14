@@ -2,14 +2,14 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'form-custom', pathMatch: 'full'},
-    {
-        path: 'login',
-        loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
-    },
+    {path: '', redirectTo: 'login', pathMatch: 'full'},
     {
         path: 'tabs',
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+    },
+    {
+        path: 'login',
+        loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
     },
     {
         path: 'image-annotation',
@@ -18,10 +18,6 @@ const routes: Routes = [
     {
         path: 'annotation-preview',
         loadChildren: () => import('./pages/annotation-preview/annotation-preview.module').then(m => m.AnnotationPreviewPageModule)
-    },
-    {
-        path: 'dashboard',
-        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
     },
     {
         path: 'forgot-password',
@@ -78,7 +74,16 @@ const routes: Routes = [
     {
         path: 'form-riskassessment',
         loadChildren: () => import('./pages/form-riskassessment/form-riskassessment.module').then(m => m.FormRiskassessmentPageModule)
+    },
+    {
+        path: 'my-profile-edit',
+        loadChildren: () => import('./pages/my-profile-edit/my-profile-edit.module').then(m => m.MyProfileEditPageModule)
+    },
+    {
+        path: 'checkout-confirm',
+        loadChildren: () => import('./pages/checkout-confirm/checkout-confirm.module').then(m => m.CheckoutConfirmPageModule)
     }
+
 ];
 
 @NgModule({

@@ -46,6 +46,34 @@ export class FormCustomPage implements OnInit {
         });
     }
 
+    addDateNote(index) {
+        this.answer[index] = {
+            ...this.answer[index],
+            addNote: true,
+        };
+    }
+
+    photoAdded(index, photo) {
+        this.answer[index] = {
+            ...this.answer[index],
+            image: photo,
+        };
+    }
+
+    photoRemoved(index) {
+        this.answer[index] = {
+            ...this.answer[index],
+            image: null,
+        };
+    }
+
+    timeSelect(index, time) {
+        this.answer[index] = {
+            ...this.answer[index],
+            timePeriod: time,
+        };
+    }
+
 
     previous() {
 

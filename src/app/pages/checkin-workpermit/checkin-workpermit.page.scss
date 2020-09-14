@@ -1,0 +1,50 @@
+ion-toolbar {
+  ion-title {
+    padding-left: 55px;
+  }
+}
+
+ion-content {
+  ion-list.activity-list {
+
+    ion-list-header {
+      padding: 20px 10px;
+      align-items: center;
+      --border-color: #DCE7EF;
+      --border-width: 1px;
+      --border-style: solid;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 21px;
+        color: #444444;
+        margin: 0;
+      }
+    }
+
+    ion-item {
+      --border-color: #DCE7EF;
+      --border-width: 1px;
+      --border-style: solid;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #21092A;
+      }
+
+      ion-icon {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}

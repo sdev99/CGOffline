@@ -7,11 +7,30 @@ import {AuthInputComponent} from './auth-input/auth-input.component';
 import {DashboardHeaderComponent} from './dashboard-header/dashboard-header.component';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.component';
 
 @NgModule({
-    declarations: [WarningComponentComponent, ModalHeaderComponent, ColorPickerComponent, AuthInputComponent, DashboardHeaderComponent],
-    imports: [IonicModule, CommonModule, FormsModule],
-    exports: [WarningComponentComponent, ModalHeaderComponent, ColorPickerComponent, AuthInputComponent, DashboardHeaderComponent],
+    declarations: [
+        WarningComponentComponent,
+        ModalHeaderComponent,
+        ColorPickerComponent,
+        AuthInputComponent,
+        DashboardHeaderComponent,
+        AddChoosePhotoComponent
+    ],
+    imports: [
+        IonicModule,
+        CommonModule,
+        FormsModule
+    ],
+    exports: [
+        WarningComponentComponent,
+        ModalHeaderComponent,
+        ColorPickerComponent,
+        AuthInputComponent,
+        DashboardHeaderComponent,
+        AddChoosePhotoComponent
+    ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ComponentsModule {

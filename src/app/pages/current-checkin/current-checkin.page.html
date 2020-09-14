@@ -1,0 +1,37 @@
+<ion-header>
+    <app-dashboard-header [showPlaceNavigationBtns]="true" [isCurrentCheckin]="true" [hideCheckinButton]="isCheckedIn"
+                          [checkedIn]="isCheckedIn"></app-dashboard-header>
+</ion-header>
+
+
+<ion-content>
+    <ion-list *ngIf="list && list.length>0" class="activity-list" lines="full">
+        <ion-list-header lines="full">
+            <ion-label>Available Files</ion-label>
+            <div class="status-badge ion-margin-end">
+                <span>1</span>
+                <ion-badge color="light" class="rejected">Rejected</ion-badge>
+            </div>
+            <div class="status-badge">
+                <span>4</span>
+                <ion-badge color="warning" class="overdue">Overdue</ion-badge>
+            </div>
+        </ion-list-header>
+
+        <ion-item *ngFor="let item of list" (click)="openWorkPermit(item)">
+            <ion-icon slot="start" [src]="fileIcon(item.type)"></ion-icon>
+            <ion-label>{{item.title}}</ion-label>
+        </ion-item>
+    </ion-list>
+
+    <div class="empty-list-view" *ngIf="isCheckedIn && (!list || list.length===0)">
+        <ion-icon src="./assets/icon/empty-files.svg"></ion-icon>
+        <ion-label>There are no files here.</ion-label>
+    </div>
+
+    <div class="empty-list-view" *ngIf="!isCheckedIn">
+        <ion-icon src="./assets/icon/not-checkedin.svg"></ion-icon>
+        <ion-label>You need to check in to an entity first if you want to see the files assigned in personal mode
+        </ion-label>
+    </div>
+</ion-content>

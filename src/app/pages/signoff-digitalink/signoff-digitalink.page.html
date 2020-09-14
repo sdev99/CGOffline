@@ -9,25 +9,28 @@
     </div>
 
     <div class="ion-text-center">
-        <ion-button fill="clear" class="button-1">Induction</ion-button>
+        <ion-button fill="clear" class="button-1">{{signoffFor}}</ion-button>
     </div>
 
     <ion-item lines="none" class="agree-checkbox">
-        <ion-label>I confirm that I've read the induction.</ion-label>
+        <ion-label>{{aggrementTitle}}</ion-label>
         <ion-checkbox mode="md" slot="start" [(ngModel)]="isConfirm"></ion-checkbox>
     </ion-item>
 
-    <div class="hr-line"></div>
+    <ng-container *ngIf="isSignOffWithDigitalInk">
+        <div class="hr-line"></div>
 
-    <div class="title-2">Digital Ink Signature</div>
+        <div class="title-2">Digital Ink Signature</div>
 
-    <div class="text-1">Use a stylus or finger to draw your signature</div>
+        <div class="text-1">Use a stylus or finger to draw your signature</div>
 
-    <div class="canvas-container-d-s">
-        <canvas id="digital-signature" class="digital-signature"></canvas>
-    </div>
+        <div class="canvas-container-d-s">
+            <canvas id="digital-signature" class="digital-signature"></canvas>
+        </div>
+
+    </ng-container>
 </ion-content>
 
 <ion-footer mode="ios">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()" disabled>Continue</ion-button>
+    <ion-button expand="full" class="action-btn" (click)="onContinue()" [disabled]="!isConfirm">Continue</ion-button>
 </ion-footer>

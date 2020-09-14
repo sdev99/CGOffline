@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
+import {DemoDataService} from '../../services/demo-data.service';
 
 @Component({
     selector: 'app-login',
@@ -9,6 +10,7 @@ import {UtilService} from '../../services/util.service';
 })
 export class LoginPage implements OnInit {
     isError = false;
+    languages = DemoDataService.languages;
 
     constructor(
         public utilService: UtilService,

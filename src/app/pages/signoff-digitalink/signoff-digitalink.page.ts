@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {fabric} from 'fabric';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-signoff-digitalink',
@@ -10,17 +11,33 @@ import {fabric} from 'fabric';
 export class SignoffDigitalinkPage implements OnInit {
     isConfirm = false;
     canvasRef;
+    isSignOffWithDigitalInk = false;
+    aggrementTitle = 'I confirm that I\'ve read the induction.';
+    signoffFor = 'Induction';
 
     constructor(
         public navCtrl: NavController,
+        public route: ActivatedRoute,
     ) {
+        route.params.subscribe((params: any) => {
+            if (params) {
+                if (params.aggrementTitle) {
+                    this.aggrementTitle = params.aggrementTitle;
+                }
+                if (params.signoffFor) {
+                    this.signoffFor = params.signoffFor;
+                }
+            }
+        });
     }
 
     ngOnInit() {
-        this.canvasRef = new fabric.Canvas('digital-signature');
-        setTimeout(() => {
-            this.initialise();
-        }, 200);
+        if (this.isSignOffWithDigitalInk) {
+            setTimeout(() => {
+                this.canvasRef = new fabric.Canvas('digital-signature');
+                this.initialise();
+            }, 200);
+        }
     }
 
     initialise() {
@@ -39,8 +56,11 @@ export class SignoffDigitalinkPage implements OnInit {
     }
 
     onContinue() {
-        this.canvasRef.discardActiveObject();
-        const downlaodImg = this.canvasRef.toDataURL('jpeg');
+        if (this.isSignOffWithDigitalInk) {
+            this.canvasRef.discardActiveObject();
+            const downlaodImg = this.canvasRef.toDataURL('jpeg');
+        }
+
         this.navCtrl.navigateForward(['/checkin-success']);
     }
 

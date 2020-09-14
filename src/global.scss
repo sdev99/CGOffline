@@ -358,5 +358,13 @@
   margin-top: 24px;
   height: 50px;
   --background: #2A6FDB;
+  --border-radius: 3px;
+  border-radius: 3px;
+  overflow: hidden;
   text-transform: none;
+}
+
+
+ion-back-button {
+  --icon-font-size: 20px;
 }

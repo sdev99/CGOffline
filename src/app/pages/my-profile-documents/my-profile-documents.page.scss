@@ -1,0 +1,27 @@
+ion-content {
+  ion-list {
+    ion-item {
+      --border-color: #DCE7EF;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+
+      h4 {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #21092A;
+      }
+
+      p {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        color: #777595;
+      }
+    }
+  }
+}
