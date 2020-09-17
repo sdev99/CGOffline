@@ -21,6 +21,6 @@ export class CheckinFailPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateBack(['/tabs/tab1']);
+        this.navCtrl.navigateBack(['/tabs/dashboard']);
     }
 }

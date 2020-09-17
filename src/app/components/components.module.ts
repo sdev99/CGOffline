@@ -6,7 +6,7 @@ import {ColorPickerComponent} from './color-picker/color-picker.component';
 import {AuthInputComponent} from './auth-input/auth-input.component';
 import {DashboardHeaderComponent} from './dashboard-header/dashboard-header.component';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.component';
 
 @NgModule({
@@ -21,7 +21,8 @@ import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.compo
     imports: [
         IonicModule,
         CommonModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     exports: [
         WarningComponentComponent,

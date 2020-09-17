@@ -1,0 +1,25 @@
+ion-content {
+  --background: #fff;
+
+  .text-title-1 {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 31px;
+    text-align: center;
+    color: #444444;
+  }
+
+  .text-view {
+    margin: 5%;
+    height: auto;
+
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #171538;
+  }
+}

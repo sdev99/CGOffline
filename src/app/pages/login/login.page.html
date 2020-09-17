@@ -5,31 +5,39 @@
         credentials to sign in.
     </p>
 
-    <div class="input-form">
+    <Form class="input-form" [formGroup]="loginForm">
         <div class="app-warning-component">
-            <app-warning-component *ngIf="isError"
-                                   message="All fileds are required to be filled."></app-warning-component>
+            <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
+                                   [message]="errorMsg"></app-warning-component>
         </div>
 
-        <app-auth-input
-                class="email-input"
-                [isError]="isError"
-                placeholder="Enter email address"
-                label="Email Address"
-                autocapitalize="off"
-                autocomplete="email"
-                inputmode="email">
-        </app-auth-input>
+        <ion-item class="email-item">
+            <ion-label position="stacked">Email Address</ion-label>
+            <ion-input
+                    formControlName="email"
+                    autocapitalize="off"
+                    autocomplete="email"
+                    inputmode="email"
+                    [ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
+                    placeholder="Enter email address"
+                    type="email"
+            ></ion-input>
+        </ion-item>
 
-        <app-auth-input
-                class="password-input"
-                [isError]="isError"
-                placeholder="Enter password"
-                label="Password"
-                type="password"
-        ></app-auth-input>
 
-    </div>
+        <ion-item class="password-item">
+            <ion-label position="stacked">Password</ion-label>
+            <ion-input
+                    formControlName="password"
+                    autocapitalize="off"
+                    [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
+                    placeholder="Enter email address"
+                    type="password"
+            ></ion-input>
+        </ion-item>
+
+
+    </Form>
 
     <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
     <ion-button fill="clear" color="light" class="forgot-password" routerLink="/forgot-password">

@@ -308,56 +308,6 @@ ion-content {
       }
     }
 
-
-    .photo-buttons {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      margin: 12px 0;
-
-      ion-button {
-        --border-radius: 3px;
-        border-radius: 3px;
-        overflow: hidden;
-        --color: #fff;
-        flex: 1;
-        height: 40px;
-        font-family: Inter;
-        font-style: normal;
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 15px;
-
-        color: #FFFFFF;
-
-
-        ion-icon {
-          width: 16px;
-          height: 16px;
-          margin-right: 12px;
-        }
-
-        &.left {
-          --background: #2A6FDB;
-        }
-
-        &.right {
-          --background: #575568;
-        }
-      }
-
-      span {
-        font-family: IBM Plex Sans;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 18px;
-        color: #171538;
-        margin: 0 10px;
-      }
-    }
-
     .image-view {
       width: 100%;
       height: 220px;

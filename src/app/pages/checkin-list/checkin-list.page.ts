@@ -19,7 +19,7 @@ export class CheckinListPage implements OnInit {
     }
 
     onClose() {
-        this.navCtrl.navigateBack(['/tabs/tab1']);
+        this.navCtrl.back();
     }
 
     openLocation(location) {

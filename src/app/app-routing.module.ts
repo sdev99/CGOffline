@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
+    {path: '', redirectTo: 'form-riskassessment', pathMatch: 'full'},
     {
         path: 'tabs',
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
@@ -36,12 +36,20 @@ const routes: Routes = [
         loadChildren: () => import('./pages/checkin-success/checkin-success.module').then(m => m.CheckinSuccessPageModule)
     },
     {
-        path: 'checkin-list',
-        loadChildren: () => import('./pages/checkin-list/checkin-list.module').then(m => m.CheckinListPageModule)
-    },
-    {
         path: 'checkin-induction',
         loadChildren: () => import('./pages/checkin-induction/checkin-induction.module').then(m => m.CheckinInductionPageModule)
+    },
+    {
+        path: 'checkin-induction-video-file',
+        loadChildren: () => import('./pages/checkin-induction-video-file/checkin-induction-video-file.module').then(m => m.CheckinInductionVideoFilePageModule)
+    },
+    {
+        path: 'checkin-induction-image-file',
+        loadChildren: () => import('./pages/checkin-induction-image-file/checkin-induction-image-file.module').then(m => m.CheckinInductionImageFilePageModule)
+    },
+    {
+        path: 'checkin-induction-rich-text',
+        loadChildren: () => import('./pages/checkin-induction-rich-text/checkin-induction-rich-text.module').then(m => m.CheckinInductionRichTextPageModule)
     },
     {
         path: 'checkin-induction-form',
@@ -82,7 +90,15 @@ const routes: Routes = [
     {
         path: 'checkout-confirm',
         loadChildren: () => import('./pages/checkout-confirm/checkout-confirm.module').then(m => m.CheckoutConfirmPageModule)
-    }
+    },
+    {
+        path: 'form-hav',
+        loadChildren: () => import('./pages/form-hav/form-hav.module').then(m => m.FormHavPageModule)
+    },
+    {
+        path: 'form-accident-report',
+        loadChildren: () => import('./pages/form-accident-report/form-accident-report.module').then(m => m.FormAccidentReportPageModule)
+    },
 
 ];
 

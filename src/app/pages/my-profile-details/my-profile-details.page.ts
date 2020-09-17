@@ -17,10 +17,13 @@ export class MyProfileDetailsPage implements OnInit {
     }
 
 
-
     onClose() {
         this.navCtrl.back();
     }
 
 
+    logout() {
+        localStorage.removeItem('isLoggedIn');
+        this.navCtrl.navigateRoot('login');
+    }
 }

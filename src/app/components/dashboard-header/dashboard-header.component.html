@@ -3,7 +3,7 @@
     <ion-title size="large">Dashboard</ion-title>
 
     <ion-buttons slot="end">
-        <ion-button size="small" fill="clear" (click)="scanQrCode.emit()">
+        <ion-button size="small" fill="clear" (click)="checkByQrCode()">
             <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/qrscan.svg"></ion-icon>
         </ion-button>
     </ion-buttons>
@@ -58,11 +58,11 @@
 
 
 <div class="checkin-btns" *ngIf="!hideCheckinButton">
-    <ion-button class="left" size="small" fill="clear" (click)="scanQrCode.emit()">
+    <ion-button class="left" size="small" fill="clear" (click)="checkByQrCode()">
         Check In by QR Code
     </ion-button>
 
-    <ion-button class="right" size="small" fill="clear" (click)="scanQrCode.emit()">
+    <ion-button class="right" size="small" fill="clear" (click)="checkInByList()">
         Check In by List
     </ion-button>
 </div>

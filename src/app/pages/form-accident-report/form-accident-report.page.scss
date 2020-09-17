@@ -1,0 +1,342 @@
+$paddingHorizontal: 23px;
+ion-content {
+  ion-list {
+    ion-item {
+      --min-height: 18px;
+      --padding-start: 0;
+      --padding-top: 0;
+      --padding-bottom: 0;
+      --inner-padding-end: 0;
+      margin: 0 $paddingHorizontal;
+      margin-top: 24px;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #575568;
+      }
+
+      &.date-item {
+        .date-field {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          border: 1px solid #E8EAF2;
+          border-radius: 3px;
+          padding: 2px 16px;
+          width: 100%;
+        }
+
+        ion-datetime {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 18px;
+          color: #171538;
+        }
+      }
+
+      &.drop-down-item {
+        ion-select {
+          height: 42px;
+          --padding-start: 44px;
+          --padding-end: 8px;
+          --color: #171538;
+          --placeholder-color: #171538;
+          margin-top: 9px;
+          border: 1px solid #CACEE1;
+          border-radius: 3px;
+          --background: #FFFFFF;
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 18px;
+          background-image: url(./../../../assets/icon/arrow-down.svg);
+          background-position: 16px;
+          background-repeat: no-repeat;
+
+          &::part(icon) {
+            display: none !important;
+          }
+        }
+      }
+
+      &.input-item {
+        ion-input {
+          min-height: 42px;
+          --color: #171538;
+          --placeholder-color: #171538;
+          --padding-start: 8px;
+          --padding-end: 8px;
+          margin-top: 9px;
+          border: 1px solid #CACEE1;
+          border-radius: 3px;
+          --background: #FFFFFF;
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 18px;
+        }
+      }
+
+
+      .error {
+        --background: #FFF6DE !important;
+        background-color: #FFF6DE !important;
+        border: 1px solid #E4D3A3 !important;
+        border-radius: 3px !important;
+      }
+    }
+
+    .radio-input-view {
+      margin-top: 28px;
+
+      h2 {
+        margin: 0 $paddingHorizontal;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+        margin-bottom: 8px;
+      }
+
+      ion-radio {
+        --border-radius: 12px;
+        --color: #A1A8CA;
+        --color-checked: #A1A8CA;
+        --inner-border-radius: 11px;
+        margin-right: 13px;
+      }
+
+      ion-checkbox {
+        --border-color: #A1A8CA;
+        --border-color-checked: #A1A8CA;
+        --checkmark-color: #A1A8CA;
+        --border-width: 1px;
+        --border-style: solid;
+        --border-radius: 2px;
+        --background-checked: transparent;
+        --background: transparent;
+        margin-right: 13px;
+      }
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+      }
+
+      ion-item {
+        margin-top: 0;
+      }
+    }
+
+    .affected-body-part-view {
+      padding: $paddingHorizontal;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+      }
+
+      .visual-body-part {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+
+        svg {
+          margin-top: 30px;
+          width: 100%;
+          height: auto;
+        }
+
+        .parts-view {
+          position: absolute;
+          width: 90%;
+          background-color: #ffffff;
+          border: 1px solid #E8EAF2;
+
+          ion-toolbar {
+            height: 44px;
+            --background: #F8F9FB;
+            --border-color: #E8EAF2;
+            --border-width: 0 0 1px;
+            --border-style: solid;
+            --padding-bottom: 0;
+            --padding-top: 0;
+
+            ion-title {
+              font-family: IBM Plex Sans;
+              font-style: normal;
+              font-weight: normal;
+              font-size: 14px;
+              line-height: 18px;
+              display: flex;
+              text-align: center;
+              color: #171538;
+            }
+
+            .arrow-button {
+              --color: #323232;
+              width: 44px;
+              height: 44px;
+
+              ion-icon {
+                width: 16px;
+                height: 16px;
+              }
+
+            }
+          }
+
+          .parts-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 16px 0;
+
+            ion-item {
+              width: 50%;
+              margin-top: 0;
+              margin: 0;
+              padding-left: 25px;
+
+              ion-checkbox {
+                --border-color: #A1A8CA;
+                --border-color-checked: #CACEE1;
+                --checkmark-color: #ffffff;
+                --border-width: 1px;
+                --border-style: solid;
+                --border-radius: 2px;
+                --background-checked: #2A6FDB;
+                --background: transparent;
+                margin-right: 8px;
+                --size: 16px;
+              }
+            }
+          }
+        }
+      }
+
+      .selected-parts-view {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+
+        .body-part {
+          display: flex;
+          flex-direction: row;
+          padding: 0px 5px;
+          align-items: center;
+          justify-content: center;
+          margin: 8px;
+          background-color: #2A6FDB;
+          border-radius: 2px;
+
+          .name {
+            margin-left: 4px;
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+            color: #FFFFFF;
+          }
+
+          ion-button {
+            margin-left: 6px;
+            padding: 0;
+            --background: #558CE2;
+            --padding-bottom: 0;
+            --padding-start: 0;
+            --padding-end: 0;
+            --padding-top: 0;
+            height: 16px;
+            width: 16px;
+            --border-radius: 50%;
+            color: #fff;
+          }
+
+          ion-icon {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .hr-line-full {
+      width: 100%;
+      height: 1px;
+      background-color: rgba(74, 144, 226, 0.2);
+    }
+
+    .description {
+      margin: 0 $paddingHorizontal;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #171538;
+    }
+
+    .notes-view {
+      margin: 16px $paddingHorizontal;
+      background: #F7FAFE;
+      padding: 5px 10px;
+
+
+      ion-textarea {
+        margin-top: 8px;
+        --border-radius: 3px;
+        --placeholder-color: #A1A8CA;
+        --color: #A1A8CA;
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+        background: #FFFFFF;
+        border: 1px solid #E8EAF2;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+      }
+    }
+
+
+    .text-bottom-msg {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      color: #171538;
+      padding: 16px 32px;
+    }
+
+    .action-btn {
+      width: 100%;
+      margin: 0;
+      --border-radius: 3px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+  }
+}

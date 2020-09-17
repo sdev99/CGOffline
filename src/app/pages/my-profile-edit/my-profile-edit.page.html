@@ -3,41 +3,62 @@
 </ion-header>
 
 <ion-content mode="md">
-    <app-warning-component *ngIf="isError"
-                           message="All fileds are required to be filled."></app-warning-component>
+    <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
+                           [message]="errorMsg"></app-warning-component>
 
-    <ion-list lines="none">
-        <ion-item lines="none">
-            <ion-label position="stacked">EMAIL</ion-label>
-            <ion-input value="m.letterman@thunderbolt.com"></ion-input>
-        </ion-item>
+    <Form [formGroup]="profileForm">
+        <ion-list lines="none">
+            <ion-item lines="none">
+                <ion-label position="stacked">EMAIL</ion-label>
+                <ion-input
+                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.email.valid)}"
+                        formControlName="email"
+                        autocomplete="email"
+                        inputmode="email"
+                        type="email"
+                ></ion-input>
+            </ion-item>
 
-        <ion-item lines="none">
-            <ion-label position="stacked">PHONE</ion-label>
-            <ion-input value="+01234567890"></ion-input>
-        </ion-item>
+            <ion-item lines="none">
+                <ion-label position="stacked">PHONE</ion-label>
+                <ion-input
+                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.phone.valid)}"
+                        formControlName="phone"
+                        autocomplete="tel"
+                        inputmode="tel"
+                        tel="tel"
+                ></ion-input>
+            </ion-item>
 
-        <ion-item lines="none">
-            <ion-label position="stacked">TIMEZONE</ion-label>
-            <ion-select [(ngModel)]="timeZone">
-                <ion-select-option *ngFor="let item of timeZones" [value]="item.offset">({{item.offset}}
-                    ) {{item.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+            <ion-item lines="none">
+                <ion-label position="stacked">TIMEZONE</ion-label>
+                <ion-select
+                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.timezone.valid)}"
+                        formControlName="timezone"
+                >
+                    <ion-select-option *ngFor="let item of timeZones" [value]="item.offset">({{item.offset}}
+                        ) {{item.name}}</ion-select-option>
+                </ion-select>
+            </ion-item>
 
-        <ion-item lines="none">
-            <ion-label position="stacked">MOBILE APP LANGUAGE</ion-label>
-            <ion-select [(ngModel)]="language">
-                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+            <ion-item lines="none">
+                <ion-label position="stacked">MOBILE APP LANGUAGE</ion-label>
+                <ion-select
+                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.language.valid)}"
+                        formControlName="language"
+                >
+                    <ion-select-option *ngFor="let item of languages"
+                                       [value]="item.code">{{item.name}}</ion-select-option>
+                </ion-select>
+            </ion-item>
 
-        <div class="update-btn">
-            <ion-button expand="full">Update</ion-button>
-        </div>
+            <div class="update-btn">
+                <ion-button expand="full" fill="clear" (click)="onSubmit()">Update</ion-button>
+            </div>
 
-        <div class="cancel-btn">
-            <ion-button expand="full" fill="clear">Cancel</ion-button>
-        </div>
-    </ion-list>
+            <div class="cancel-btn">
+                <ion-button expand="full" fill="clear" (click)="onClose()">Cancel</ion-button>
+            </div>
+        </ion-list>
+    </Form>
 </ion-content>

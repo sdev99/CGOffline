@@ -154,6 +154,53 @@ export class DemoDataService {
         },
     ];
 
+    static inductionFiles = [
+        {
+            type: 'video',
+            content: ['https://www.youtube.com/embed/tgbNymZ7vqY', 'https://www.youtube.com/embed/tgbNymZ7vqY'],
+        },
+        {
+            type: 'image',
+            content: ['https://www.fujifilm.in/globalassets/digital_cameras/x/fujifilm_x_t3/sample_images/img/index/ff_x_t3_002.jpg', 'https://fujifilm-x.com/wp-content/uploads/2019/08/x-t30_sample-images02.jpg']
+        },
+        {
+            type: 'richtext',
+            content: ['Trix\n' +
+            'Trix is an open-source project from Basecamp, the creators of Ruby on Rails. Millions of people trust their text to Basecamp, and we built Trix to give them the best possible editing experience.\n' +
+            '﻿\n' +
+            '﻿\n' +
+            '﻿\n' +
+            '﻿\n' +
+            '\n' +
+            'Different By Design\n' +
+            'Most WYSIWYG editors are wrappers around HTML’s contenteditable and execCommand APIs, designed by Microsoft to support live editing of web pages in Internet Explorer 5.5, and eventually reverse-engineered and copied by other browsers.\n' +
+            '\n' +
+            'Because these APIs were never fully specified or documented, and because WYSIWYG HTML editors are enormous in scope, each browser’s implementation has its own set of bugs and quirks, and JavaScript developers are left to resolve the inconsistencies.\n' +
+            '﻿\n' +
+            '﻿\n' +
+            'Trix sidesteps these inconsistencies by treating contenteditable as an I/O device: when input makes its way to the editor, Trix converts that input into an editing operation on its internal document model, then re-renders that document back into the editor. This gives Trix complete control over what happens after every keystroke, and avoids the need to use execCommand at all.\n' +
+            '\n' +
+            'Trix was created by\n' +
+            'Sam Stephenson (@sstephenson)\n' +
+            'Javan Makhmali (@javan)\n' +
+            '\n' +
+            'Thanks for checking it out!']
+        },
+        {
+            type: 'form',
+            content: [''],
+        },
+        {
+            type: 'va',
+            content: ['Whereas, Visitor desires to visit Bluestar Silicones USA Corp.’s (“Bluestar”) facility for legitimate business purposes directly and only related to Visitor’s business and/or proposed business with Bluestar;\n' +
+            'Whereas, Visitor recognizes, agrees, and understands that Bluestar would not provide Visitor with any access in or to its facility unless Visitor first agreed to be bound by, and to fully comply with, the terms and provisions of this Agreement;\n' +
+            'Whereas, the Bluestar premises are not open to the public, and the equipment, materials, and documents contained within the Bluestar premises are not generally known; each and every person intending to enter the Bluestar premises, on that person’s own behalf and/or on behalf of that person’s employer, any affiliate, or subsidiary thereof (referred to collectively as “Visitor”), agrees to this Confidentiality Agreement by signing in.\n' +
+            'As a condition for entry into the Bluestar premises and other good and valuable consideration, Visitor agrees that:\n' +
+            '1. Visitor understands that having access to Bluestar’s facility may result in being exposed to Bluestar’s highly confidential, proprietary, and/or trade secret information (“Confidential Information”).\n' +
+            '2. Visitor understands, acknowledges and agrees that Bluestar’s Confidential Information is extremely valuable to it and is sufficiently secret to derive economic value, actual or potential, from not being generally known by others, including Bluestar’s competitors, and is the subject of efforts that are reasonable to maintain its secrecy or confidentiality. Bluestar’s Confidential Information includes, but shall not be limited to: '],
+        }
+    ];
+
     static inductionForm = [
         {
             question: 'I confrim i have been issued with all of the following PPE',
@@ -555,6 +602,22 @@ export class DemoDataService {
         {name: 'English', code: 'en'},
         {name: 'Dutch', code: 'nl'},
     ];
+
+
+    static locations = [
+        {name: 'Demo Location 1', id: 1},
+        {name: 'Demo Location 2', id: 2},
+        {name: 'Demo Location 3', id: 3},
+        {name: 'Demo Location 4', id: 4},
+        {name: 'Demo Location 5', id: 5},
+        {name: 'Demo Location 6', id: 6},
+        {name: 'Demo Location 7', id: 7},
+        {name: 'Demo Location 8', id: 8},
+        {name: 'Demo Location 9', id: 9},
+        {name: 'Demo Location 10', id: 10},
+    ];
+
+
 
     constructor() {
     }

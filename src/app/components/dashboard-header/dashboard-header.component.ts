@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {NavController} from '@ionic/angular';
 
 @Component({
     selector: 'app-dashboard-header',
@@ -19,7 +20,9 @@ export class DashboardHeaderComponent implements OnInit {
     showCheckedInPlacesList = false;
     selectedPlace;
 
-    constructor() {
+    constructor(
+        public navCtrl: NavController,
+    ) {
         if (this.checkedIn && this.checkedPlaces) {
             this.selectedPlace = this.checkedPlaces[0];
         }
@@ -44,7 +47,16 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     viewCheckinPlace(place) {
+        this.navCtrl.navigateBack(['/tabs/current-checkin']);
+    }
 
+    checkByQrCode() {
+        this.navCtrl.navigateForward('/dashboard-qrscan');
+        this.scanQrCode.emit();
+    }
+
+    checkInByList() {
+        this.navCtrl.navigateForward('/tabs/checkin-list');
     }
 
 }

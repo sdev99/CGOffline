@@ -12,21 +12,10 @@
             The induction consists of
         </h6>
 
-        <div class="text-2">
-            1 x Video File
+        <div class="text-2" *ngFor="let item of inductionFiles">
+            {{item.content.length + ' x ' + fileType(item.type) + (item.content.length > 1 ? 's' : '')}}
         </div>
-        <div class="text-2">
-            1 x Image Files
-        </div>
-        <div class="text-2">
-            1 x Rich Texts
-        </div>
-        <div class="text-2">
-            1 x Form
-        </div>
-        <div class="text-2">
-            1 x Visitor Agreement
-        </div>
+
         <div class="text-3">
             Please continue to view each one by one.
             <br/>

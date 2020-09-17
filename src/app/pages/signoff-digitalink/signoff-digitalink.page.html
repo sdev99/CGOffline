@@ -32,5 +32,8 @@
 </ion-content>
 
 <ion-footer mode="ios">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()" [disabled]="!isConfirm">Continue</ion-button>
+    <ion-button expand="full" class="action-btn" (click)="onContinue()"
+                [disabled]="(!isSignOffWithDigitalInk && !isConfirm) || (isSignOffWithDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
+        Continue
+    </ion-button>
 </ion-footer>

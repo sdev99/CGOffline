@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, Pipe} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {RouteReuseStrategy} from '@angular/router';
 
@@ -11,11 +11,13 @@ import {AppComponent} from './app.component';
 import {ComponentsModule} from './components/components.module';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {NgxQRCodeModule} from '@techiediaries/ngx-qrcode';
+import {SafeurlPipe} from './pipes/safeurl.pipe';
+import {PipesModule} from './pipes/pipes.module';
 
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
     ],
     entryComponents: [],
     imports: [
@@ -23,7 +25,8 @@ import {NgxQRCodeModule} from '@techiediaries/ngx-qrcode';
         IonicModule.forRoot(),
         AppRoutingModule,
         ComponentsModule,
-        NgxQRCodeModule
+        NgxQRCodeModule,
+        PipesModule
     ],
     providers: [
         QRScanner,

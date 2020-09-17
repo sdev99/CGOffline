@@ -29,6 +29,7 @@
     "@ionic/angular": "^5.0.0",
     "@techiediaries/ngx-qrcode": "^9.1.0",
     "cordova-plugin-qrscanner": "^3.0.1",
+    "cordova-plugin-video-player": "git+https://github.com/moust/cordova-plugin-videoplayer.git",
     "fabric": "^4.1.0",
     "jetifier": "^1.6.6",
     "rxjs": "~6.5.5",

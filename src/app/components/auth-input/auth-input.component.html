@@ -1,4 +1,7 @@
 <ion-item>
     <ion-label position="stacked">{{label}}</ion-label>
-    <ion-input [ngClass]="{'error':isError}" [placeholder]="placeholder" [(ngModel)]="value" [type]="type"></ion-input>
+    <ion-input [formControlName]="controlName"
+               [ngClass]="{'error':isError}"
+               [placeholder]="placeholder"
+               [type]="type"></ion-input>
 </ion-item>

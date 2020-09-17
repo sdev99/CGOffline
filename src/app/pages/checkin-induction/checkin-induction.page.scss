@@ -3,6 +3,8 @@ ion-header {
 }
 
 ion-content {
+  --background: #fff;
+
   .content {
     width: 100%;
     align-items: center;
@@ -54,5 +56,9 @@ ion-content {
       color: #171538;
     }
   }
+}
+
+ion-footer {
+  background-color: #ffffff;
 }
 

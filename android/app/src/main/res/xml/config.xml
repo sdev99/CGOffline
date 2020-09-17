@@ -6,5 +6,9 @@
     <param name="android-package" value="com.bitpay.cordova.qrscanner.QRScanner"/>
   </feature>
 
+  <feature name="VideoPlayer">
+    <param name="android-package" value="com.moust.cordova.videoplayer.VideoPlayer"/>
+  </feature>
+
   
 </widget>

@@ -11,7 +11,7 @@ import {ActivatedRoute} from '@angular/router';
 export class SignoffDigitalinkPage implements OnInit {
     isConfirm = false;
     canvasRef;
-    isSignOffWithDigitalInk = false;
+    isSignOffWithDigitalInk = 0;
     aggrementTitle = 'I confirm that I\'ve read the induction.';
     signoffFor = 'Induction';
 
@@ -19,13 +19,17 @@ export class SignoffDigitalinkPage implements OnInit {
         public navCtrl: NavController,
         public route: ActivatedRoute,
     ) {
-        route.params.subscribe((params: any) => {
+        route.queryParams.subscribe((params: any) => {
             if (params) {
                 if (params.aggrementTitle) {
                     this.aggrementTitle = params.aggrementTitle;
                 }
                 if (params.signoffFor) {
                     this.signoffFor = params.signoffFor;
+                }
+
+                if (params.isSignOffWithDigitalInk) {
+                    this.isSignOffWithDigitalInk = parseInt(params.isSignOffWithDigitalInk, 0);
                 }
             }
         });
@@ -50,6 +54,17 @@ export class SignoffDigitalinkPage implements OnInit {
         this.canvasRef.freeDrawingBrush.width = 4;
         this.canvasRef.isDrawingMode = true;
     }
+
+    isDigitalSignEmpty = () => {
+        if (this.canvasRef) {
+            const context = this.canvasRef.getContext('2d');
+            const pixelBuffer = new Uint32Array(
+                context.getImageData(0, 0, this.canvasRef.width, this.canvasRef.height).data.buffer
+            );
+            return !pixelBuffer.some(color => color !== 0);
+        }
+        return true;
+    };
 
     onClose() {
         this.navCtrl.back();

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
     selector: 'app-my-profile-edit',
@@ -8,7 +9,10 @@ import {DemoDataService} from '../../services/demo-data.service';
     styleUrls: ['./my-profile-edit.page.scss'],
 })
 export class MyProfileEditPage implements OnInit {
-    isError = false;
+    errorMsg = '';
+    isSubmitted = false;
+    profileForm: FormGroup;
+
     timeZones = DemoDataService.timeZones;
     timeZone = DemoDataService.timeZones[0].offset;
     languages = DemoDataService.languages;
@@ -17,6 +21,24 @@ export class MyProfileEditPage implements OnInit {
     constructor(
         public navCtrl: NavController,
     ) {
+        this.profileForm = new FormGroup({
+            email: new FormControl('', Validators.compose([
+                Validators.required,
+                Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+            ])),
+            phone: new FormControl('', Validators.compose([
+                Validators.required,
+                Validators.minLength(10)
+            ])),
+            timezone: new FormControl('', Validators.compose([
+                Validators.required,
+                Validators.minLength(2)
+            ])),
+            language: new FormControl('', Validators.compose([
+                Validators.required,
+                Validators.minLength(2)
+            ]))
+        });
     }
 
     ngOnInit() {
@@ -24,6 +46,11 @@ export class MyProfileEditPage implements OnInit {
 
     onClose() {
         this.navCtrl.back();
+    }
+
+    onSubmit() {
+        this.isSubmitted = true;
+        this.errorMsg = 'All fileds are required to be filled.';
     }
 
 }
