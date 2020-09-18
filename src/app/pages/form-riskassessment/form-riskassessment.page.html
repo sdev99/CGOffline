@@ -9,7 +9,7 @@
             </ion-button>
         </ion-buttons>
         <ion-title>
-            Item 4 <span class="light">of 42</span>
+            Item {{currentItem}} <span class="light">of {{totalItem}}</span>
         </ion-title>
         <ion-buttons slot="end">
             <ion-button class="arrow-button right" size="small" fill="clear" (click)="next()">
@@ -20,7 +20,7 @@
 
 </ion-header>
 
-<ion-content>
+<ion-content mode="ios">
 
     <ion-list lines="none">
         <ng-container *ngFor="let section of list; let idx=index">
@@ -52,7 +52,7 @@
                     <ion-label position="fixed">
                         Risk Rating
                     </ion-label>
-                    <ion-select placeholder="Choose">
+                    <ion-select placeholder="Choose" [interface]="ionSelectInterface">
                         <ion-select-option *ngFor="let item of locations"
                                            [value]="item.id">{{item.name}}</ion-select-option>
                     </ion-select>
@@ -75,10 +75,9 @@
 
                 <ion-item class="drop-down-item">
                     <ion-label position="fixed">
-                        Residual Risk
-                        <Rating></Rating>
+                        Residual Risk Rating
                     </ion-label>
-                    <ion-select placeholder="Choose">
+                    <ion-select placeholder="Choose" [interface]="ionSelectInterface">
                         <ion-select-option *ngFor="let item of locations"
                                            [value]="item.id">{{item.name}}</ion-select-option>
                     </ion-select>
@@ -92,52 +91,51 @@
 
                     <ion-item>
                         <ion-label>Members of the Workforce</ion-label>
-                        <ion-checkbox mode="md" slot="start"></ion-checkbox>
+                        <ion-checkbox mode="md" slot="start"
+                                      (ionChange)="residualRiskRatingChange($event, section, 'memberOfTheWorkForce')"></ion-checkbox>
                     </ion-item>
                 </div>
 
-                <ion-segment class="segment" mode="ios">
-                    <ion-segment-button>Users</ion-segment-button>
-                    <ion-segment-button>Groups</ion-segment-button>
-                </ion-segment>
+                <ng-container *ngIf="section.memberOfTheWorkForce">
+                    <div class="custom-segment-view">
+                        <ion-button *ngFor="let item of userGroupTypes" mode="ios" fill="clear"
+                                    [ngClass]="{'active':item.id===selectedUserGroupType.id}"
+                                    (click)="selectedUserGroupType=item">
+                            {{item.name}}
+                        </ion-button>
+                    </div>
 
-                <ion-item class="drop-down-item">
-                    <ion-select placeholder="Choose">
-                        <ion-select-option *ngFor="let item of locations"
-                                           [value]="item.id">{{item.name}}</ion-select-option>
-                    </ion-select>
-                    <ion-button slot="end" size="md" expand="block">Add</ion-button>
-                </ion-item>
+                    <ion-item class="drop-down-item user-group-add-dropdown">
+                        <ion-select [interface]="ionSelectInterface" placeholder="Choose" [(ngModel)]="selectedUser">
+                            <ion-select-option *ngFor="let item of users"
+                                               [value]="item.id">{{item.name}}</ion-select-option>
+                        </ion-select>
+                        <ion-button slot="end" size="md" expand="block" (click)="addUser()">Add</ion-button>
+                    </ion-item>
 
-                <ion-item>
-                    <ion-label>
-                        Nick Evans
-                    </ion-label>
-                    <ion-button slot="end" color="dark" size="sm">
-                        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
-                    </ion-button>
-                </ion-item>
-
-                <ion-item>
-                    <ion-label>
-                        Tsutsui Ichiha
-                    </ion-label>
-                    <ion-button slot="end" color="dark" size="sm">
-                        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
-                    </ion-button>
-                </ion-item>
-
+                    <ion-item class="user-group-item" lines="inset" *ngFor="let item of addedUsers | keyvalue">
+                        <ion-label>
+                            {{item.value.name}}
+                        </ion-label>
+                        <ion-button slot="end" shape="round" (click)="removeUser(item.key)">
+                            <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                        </ion-button>
+                    </ion-item>
+                </ng-container>
 
                 <ion-item>
                     <ion-label>Members of the Public</ion-label>
-                    <ion-checkbox mode="md" slot="start"></ion-checkbox>
+                    <ion-checkbox mode="md" slot="start"
+                                  (ionChange)="residualRiskRatingChange($event, section, 'memberOfThePublic')"></ion-checkbox>
                 </ion-item>
 
-                <ion-textarea rows="5"></ion-textarea>
+                <ng-container *ngIf="section.memberOfThePublic">
+                    <ion-textarea rows="5"></ion-textarea>
+                </ng-container>
             </div>
 
 
-            <ion-item lines="full">
+            <ion-item class="section-item">
                 <ion-label>Section name goes here</ion-label>
             </ion-item>
         </ng-container>

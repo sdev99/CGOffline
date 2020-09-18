@@ -31,7 +31,7 @@
                     formControlName="password"
                     autocapitalize="off"
                     [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
-                    placeholder="Enter email address"
+                    placeholder="Enter password"
                     type="password"
             ></ion-input>
         </ion-item>
@@ -40,7 +40,7 @@
     </Form>
 
     <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
-    <ion-button fill="clear" color="light" class="forgot-password" routerLink="/forgot-password">
+    <ion-button fill="clear" color="light" class="forgot-password-btn" routerLink="/forgot-password">
         Forgot password?
     </ion-button>
 

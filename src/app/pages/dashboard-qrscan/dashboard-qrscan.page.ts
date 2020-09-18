@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
+import {DemoDataService} from '../../services/demo-data.service';
 
 @Component({
     selector: 'app-dashboard-qrscan',
@@ -8,6 +9,8 @@ import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
     styleUrls: ['./dashboard-qrscan.page.scss'],
 })
 export class DashboardQrscanPage implements OnInit {
+    scanSub;
+
     constructor(
         public navCtrl: NavController,
         private qrScanner: QRScanner
@@ -15,6 +18,17 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    ionViewWillLeave() {
+        if (this.scanSub) {
+            this.scanSub.unsubscribe(); // stop scanning
+            this.qrScanner.hide(); // hide camera preview
+        }
+        this.qrScanner.destroy();
+    }
+
+    ionViewDidEnter() {
         this.scan();
     }
 
@@ -26,9 +40,21 @@ export class DashboardQrscanPage implements OnInit {
                     // camera permission was granted
 
                     // start scanning
-                    let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+                    this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
                         console.log('Scanned something', text);
-                        alert(text);
+                        // alert(text);
+
+                        if (text) {
+                            this.qrScanner.hide(); // hide camera preview
+                            this.scanSub.unsubscribe(); // stop scanning
+                            this.qrScanner.destroy();
+
+                            this.navCtrl.navigateForward(['/checkin-induction'], {
+                                queryParams: {
+                                    locationDetail: JSON.stringify(DemoDataService.locations[0])
+                                }
+                            });
+                        }
                         // this.qrScanner.hide(); // hide camera preview
                         // scanSub.unsubscribe(); // stop scanning
                     });
@@ -48,9 +74,4 @@ export class DashboardQrscanPage implements OnInit {
     onClose() {
         this.navCtrl.back();
     }
-
-    onContinue() {
-        this.navCtrl.navigateBack(['/tabs/tab1']);
-    }
-
 }

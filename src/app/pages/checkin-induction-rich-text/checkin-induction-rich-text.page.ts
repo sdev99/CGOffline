@@ -1,41 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
-  selector: 'app-checkin-induction-rich-text',
-  templateUrl: './checkin-induction-rich-text.page.html',
-  styleUrls: ['./checkin-induction-rich-text.page.scss'],
+    selector: 'app-checkin-induction-rich-text',
+    templateUrl: './checkin-induction-rich-text.page.html',
+    styleUrls: ['./checkin-induction-rich-text.page.scss'],
 })
 export class CheckinInductionRichTextPage implements OnInit {
 
-  inductionFiles = DemoDataService.inductionFiles;
-  files = [];
-  currentIndex = 0;
+    inductionFiles = DemoDataService.inductionFiles;
+    files = [];
+    currentIndex = 0;
+    locationDetail;
 
-  constructor(
-      public navCtrl: NavController,
-  ) {
-    this.inductionFiles.map((item) => {
-      if (item.type === 'richtext') {
-        this.files = item.content;
-        return;
-      }
-    });
-  }
+    constructor(
+        public navCtrl: NavController,
+        public route: ActivatedRoute,
+    ) {
+        this.inductionFiles.map((item) => {
+            if (item.type === 'richtext') {
+                this.files = item.content;
+                return;
+            }
+        });
 
-  ngOnInit() {
-  }
-
-  onClose() {
-    this.navCtrl.back();
-  }
-
-  onContinue() {
-    if (this.files.length > (this.currentIndex + 1)) {
-      this.currentIndex++;
-    } else {
-      this.navCtrl.navigateForward('/checkin-induction-form');
+        route.queryParams.subscribe((params: any) => {
+            if (params) {
+                if (params.locationDetail) {
+                    this.locationDetail = JSON.parse(params.locationDetail);
+                }
+            }
+        });
     }
-  }
+
+    ngOnInit() {
+    }
+
+    onClose() {
+        this.navCtrl.back();
+    }
+
+    onContinue() {
+        if (this.files.length > (this.currentIndex + 1)) {
+            this.currentIndex++;
+        } else {
+            this.navCtrl.navigateForward(['/checkin-induction-form'], {
+                queryParams: {
+                    locationDetail: JSON.stringify(this.locationDetail)
+                }
+            });
+        }
+    }
 }

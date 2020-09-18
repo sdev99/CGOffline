@@ -9,9 +9,13 @@ export class SharedDataService {
     annotationImage;
     annotationColor = '#98C16B';
     onAnnotationImageDone;
+    checkedInPlaces = [];
 
     constructor() {
-
+        const checkedInPlaces = localStorage.getItem('CHECKED_IN_PLACES');
+        if (checkedInPlaces) {
+            this.checkedInPlaces = JSON.parse(checkedInPlaces);
+        }
     }
 
     setAnnotationImage(image) {

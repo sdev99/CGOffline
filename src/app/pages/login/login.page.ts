@@ -23,7 +23,7 @@ export class LoginPage implements OnInit {
         public navCtrl: NavController,
     ) {
         this.loginForm = new FormGroup({
-            email: new FormControl('', Validators.compose([
+            email: new FormControl('test@domain.com', Validators.compose([
                 Validators.required,
                 Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
             ])),
@@ -48,17 +48,16 @@ export class LoginPage implements OnInit {
             const email = this.loginForm.controls.email.value;
             const password = this.loginForm.controls.password.value;
 
-            console.log('Email ' + email);
-            console.log('password ' + password);
-
             this.utilService.presentLoadingWithOptions();
             setTimeout(() => {
-                localStorage.setItem('isLoggedIn', '1');
                 this.utilService.hideLoading();
-                if (email === 'test@gmail.com') {
-                    this.navCtrl.navigateRoot('/tabs/dashboard');
-                } else {
+                if (password === 'newaccount') {
+                    this.navCtrl.navigateRoot('/new-account-setup');
+                } else if (password === 'wronglogin') {
                     this.errorMsg = 'Wrong username or password';
+                } else {
+                    localStorage.setItem('isLoggedIn', '1');
+                    this.navCtrl.navigateRoot('/tabs/dashboard');
                 }
             }, 2000);
         }

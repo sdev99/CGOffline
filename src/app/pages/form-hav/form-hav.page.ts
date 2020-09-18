@@ -23,7 +23,7 @@ export class FormHavPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateForward(['/tabs/dashboard']);
+        this.navCtrl.navigateForward(['/signoff-digitalink']);
     }
 
 }

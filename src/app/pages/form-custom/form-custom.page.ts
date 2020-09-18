@@ -30,7 +30,7 @@ export class FormCustomPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateForward(['/checkin-induction-va']);
+        this.navCtrl.navigateForward(['/signoff-digitalink']);
     }
 
     addImage(index) {

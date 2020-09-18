@@ -24,7 +24,7 @@
     <ion-label>
         <ng-container *ngIf="checkedIn;else notCheckedIn">
             Checked-in:
-            &nbsp; {{checkedPlaces.length == 1 ? checkedPlaces[0] : 'to ' + checkedPlaces.length + ' places'}}
+            &nbsp; {{checkedPlaces.length == 1 ? checkedPlaces[0].name : 'to ' + checkedPlaces.length + ' places'}}
         </ng-container>
         <ng-template #notCheckedIn>You aren’t checked in</ng-template>
     </ion-label>
@@ -46,9 +46,10 @@
 
 <div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList">
     <ion-list class="check-in-places-list" lines="none">
-        <ion-item *ngFor="let place of checkedPlaces" [ngClass]="{'selected':selectedPlace === place}"
+        <ion-item *ngFor="let place of checkedPlaces"
+                  [ngClass]="{'selected':(selectedPlace&&selectedPlace.id === place.id)}"
                   (click)="placedChange(place)">
-            <ion-label>{{place}}</ion-label>
+            <ion-label>{{place.name}}</ion-label>
             <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="viewCheckinPlace(place)">
                 <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
             </ion-button>

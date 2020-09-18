@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'form-riskassessment', pathMatch: 'full'},
+    {path: '', redirectTo: 'login', pathMatch: 'full'},
     {
         path: 'tabs',
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
@@ -99,6 +99,18 @@ const routes: Routes = [
         path: 'form-accident-report',
         loadChildren: () => import('./pages/form-accident-report/form-accident-report.module').then(m => m.FormAccidentReportPageModule)
     },
+    {
+        path: 'new-account-setup',
+        loadChildren: () => import('./pages/new-account-setup/new-account-setup.module').then(m => m.NewAccountSetupPageModule)
+    },
+    {
+        path: 'terms-conditions',
+        loadChildren: () => import('./pages/terms-conditions/terms-conditions.module').then(m => m.TermsConditionsPageModule)
+    },
+  {
+    path: 'my-profile-changepass',
+    loadChildren: () => import('./pages/my-profile-changepass/my-profile-changepass.module').then( m => m.MyProfileChangepassPageModule)
+  },
 
 ];
 

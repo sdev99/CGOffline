@@ -125,6 +125,6 @@ export class FormAccidentReportPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateForward(['/tabs/dashboard']);
+        this.navCtrl.navigateForward(['/signoff-digitalink']);
     }
 }

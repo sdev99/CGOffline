@@ -1,0 +1,11 @@
+<ion-header mode="ios">
+    <app-modal-header modalTitle="Terms & Conditions" (closeModal)="onClose()"></app-modal-header>
+</ion-header>
+
+<ion-content>
+    <div class="aggrement-content" [innerHTML]="termsConditionsText"></div>
+</ion-content>
+
+<ion-footer mode="ios">
+    <ion-button expand="full" class="action-btn" (click)="onClose()">Continue</ion-button>
+</ion-footer>

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-activity-detail',
@@ -13,7 +14,15 @@ export class ActivityDetailPage implements OnInit {
 
     constructor(
         public navCtrl: NavController,
+        public route: ActivatedRoute,
     ) {
+        route.queryParams.subscribe((params: any) => {
+            if (params) {
+                if (params.activity) {
+                    this.activityDetail = JSON.parse(params.activity);
+                }
+            }
+        });
     }
 
     ngOnInit() {
@@ -24,7 +33,11 @@ export class ActivityDetailPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateBack(['/tabs/tab1']);
+        this.navCtrl.navigateForward(['/form-cover'], {
+            queryParams: {
+                activity: JSON.stringify(this.activityDetail),
+            }
+        });
     }
 
 }

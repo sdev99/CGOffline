@@ -1,7 +1,7 @@
 ion-content {
   --padding-start: 9.07%;
   --padding-end: 9.07%;
-  --background: #F8F9FB;
+  --background: var(--ion-color-app-primary);
 
   .content {
     display: flex;
@@ -24,7 +24,7 @@ ion-content {
       font-weight: 600;
       font-size: 20px;
       line-height: 24px;
-      color: #171538;
+      color: #FFFFFF;
     }
 
     .text-1 {
@@ -34,22 +34,19 @@ ion-content {
       font-weight: normal;
       font-size: 17px;
       line-height: 22px;
-      color: #171538;
+      color: #FFFFFF;
     }
 
-    .text-2 {
-      margin-top: 16px;
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 18px;
-      color: #171538;
-    }
   }
+}
 
-  ion-footer {
-
-  }
+.text-2 {
+  margin-top: 16px;
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  color: #FFFFFF;
 }
 

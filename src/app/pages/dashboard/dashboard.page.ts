@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DemoDataService} from '../../services/demo-data.service';
+import {NavController} from '@ionic/angular';
 
 @Component({
     selector: 'app-dashboard',
@@ -10,11 +11,21 @@ export class DashboardPage implements OnInit {
 
     activityList = DemoDataService.activityList;
 
-    constructor() {
+    constructor(
+        public navCtrl: NavController,
+    ) {
 
     }
 
     ngOnInit() {
+    }
+
+    openActivityDetail(activity) {
+        this.navCtrl.navigateForward(['/activity-detail'], {
+            queryParams: {
+                activity: JSON.stringify(activity),
+            }
+        });
     }
 
 }

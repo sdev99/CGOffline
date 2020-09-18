@@ -1,90 +1,91 @@
 <ion-header mode="ios">
-  <app-modal-header modalTitle="Activity" (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header modalTitle="Activity" (closeModal)="onClose()"></app-modal-header>
 
-  <ion-item lines="none">
-    <ion-label>
-      <h6>{{activityDetail.name}}</h6>
-      <div class="detail">
-        <ion-badge *ngIf="activityDetail.status === 'overdue'" color="warning" class="overdue">Overdue
-        </ion-badge>
-        <ng-container *ngIf="activityDetail.status === 'rejected'">
-          <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-          <ion-badge color="light" class="rejected">Rejected</ion-badge>
-        </ng-container>
-        <span class="time">Last week</span>
-      </div>
+    <ion-item lines="none">
+        <ion-label>
+            <h6>{{activityDetail.name}}</h6>
+            <div class="detail">
+                <ion-badge *ngIf="activityDetail.status === 'overdue'" color="warning" class="overdue">Overdue
+                </ion-badge>
+                <ng-container *ngIf="activityDetail.status === 'rejected'">
+                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                    <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                </ng-container>
+                <span class="time">Last week</span>
+            </div>
 
-      <div class="form-text-row">
-        <div class="title">Entity</div>
-        <div class="value">My New Location Name 4480</div>
-      </div>
+            <div class="form-text-row">
+                <div class="title">Entity</div>
+                <div class="value">{{activityDetail.name}}</div>
+            </div>
 
-      <div class="form-text-row">
-        <div class="title">Form Type</div>
-        <div class="value">Hand-Arm Vibration Exposure Calculator</div>
-      </div>
-    </ion-label>
-  </ion-item>
+            <div class="form-text-row">
+                <div class="title">Form Type</div>
+                <div class="value"
+                     *ngIf="activityDetail && activityDetail.formType">{{activityDetail.formType.title}}</div>
+            </div>
+        </ion-label>
+    </ion-item>
 
 
 </ion-header>
 
 <ion-content class="ion-padding-horizontal" fullscreen="true">
 
-  <!--    <ion-item lines="full" class="title-item">-->
-  <!--        <ion-label>-->
-  <!--            Please complete attached site audit form-->
-  <!--        </ion-label>-->
-  <!--    </ion-item>-->
+    <!--    <ion-item lines="full" class="title-item">-->
+    <!--        <ion-label>-->
+    <!--            Please complete attached site audit form-->
+    <!--        </ion-label>-->
+    <!--    </ion-item>-->
 
-  <ion-item lines="full" class="title-item">
-    <ion-label class="ion-text-wrap">
-      Quis sint veniam Lorem dolor cupidatat exercitation esse aliqua sit sunt aliquip. Irure labore cillum
-      officia pariatur ut laborum non sunt officia ullamco minim qui sint veniam.
+    <ion-item lines="full" class="title-item">
+        <ion-label class="ion-text-wrap">
+            Quis sint veniam Lorem dolor cupidatat exercitation esse aliqua sit sunt aliquip. Irure labore cillum
+            officia pariatur ut laborum non sunt officia ullamco minim qui sint veniam.
 
-      <h6>
-        Explanation
-      </h6>
+            <h6>
+                Explanation
+            </h6>
 
-      <p>
-        Anim adipisicing exercitation labore in. Cillum eiusmod nulla sit nisi quis occaecat pariatur laborum
-        consequat quis. Esse eiusmod deserunt ut veniam tempor veniam cupidatat fugiat.
-      </p>
-    </ion-label>
-  </ion-item>
-
-  <div class="ion-margin-top">
-    <ion-item lines="none" class="form-item">
-      <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
-      <ion-label>
-        Site Audit Form
-      </ion-label>
+            <p>
+                Anim adipisicing exercitation labore in. Cillum eiusmod nulla sit nisi quis occaecat pariatur laborum
+                consequat quis. Esse eiusmod deserunt ut veniam tempor veniam cupidatat fugiat.
+            </p>
+        </ion-label>
     </ion-item>
 
-    <ion-item lines="none" class="form-item">
-      <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
-      <ion-label>
-        Related attachment for this particular activity
-      </ion-label>
-    </ion-item>
+    <div class="ion-margin-top">
+        <ion-item lines="none" class="form-item" (click)="openFile()">
+            <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+            <ion-label>
+                Site Audit Form
+            </ion-label>
+        </ion-item>
 
-    <ion-item lines="none" class="form-item">
-      <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
-      <ion-label>
-        Another attachment for this activity
-      </ion-label>
-    </ion-item>
+        <ion-item lines="none" class="form-item" (click)="openFile()">
+            <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+            <ion-label>
+                Related attachment for this particular activity
+            </ion-label>
+        </ion-item>
 
-    <ion-item lines="none" class="form-item">
-      <ion-icon slot="start" src="./assets/icon/attachment3.svg"></ion-icon>
-      <ion-label>
-        One more attachment right here
-      </ion-label>
-    </ion-item>
-  </div>
+        <ion-item lines="none" class="form-item" (click)="openFile()">
+            <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
+            <ion-label>
+                Another attachment for this activity
+            </ion-label>
+        </ion-item>
+
+        <ion-item lines="none" class="form-item" (click)="openFile()">
+            <ion-icon slot="start" src="./assets/icon/attachment3.svg"></ion-icon>
+            <ion-label>
+                One more attachment right here
+            </ion-label>
+        </ion-item>
+    </div>
 
 </ion-content>
 
 <ion-footer mode="ios">
-  <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
+    <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
 </ion-footer>

@@ -16,7 +16,7 @@ ion-header {
     height: 44px;
     --background: #F8F9FB;
     --border-color: #E8EAF2;
-    --border-width: 0 0 1px;
+    --border-width: 0px 0px 1px;
     --border-style: solid;
     --padding-bottom: 0;
     --padding-top: 0;
@@ -59,7 +59,7 @@ ion-header {
 ion-content {
 
   .hr-line {
-    margin: 0 $paddingHorizontal;
+    margin: 0px $paddingHorizontal;
     width: auto;
     height: 1px;
     background-color: rgba(74, 144, 226, 0.2);
@@ -72,6 +72,7 @@ ion-content {
   }
 
   ion-list {
+
     ion-list-header {
       display: flex;
       flex-direction: column;
@@ -79,7 +80,7 @@ ion-content {
       padding-top: 24px;
       padding-left: $paddingHorizontal;
       padding-right: $paddingHorizontal;
-      --border-width: 1px 0 0;
+      --border-width: 1px 0px 0px;
       --border-style: solid;
       --border-color: rgba(74, 144, 226, 0.2);
 
@@ -124,7 +125,7 @@ ion-content {
       --padding-bottom: 0;
       --inner-padding-end: 0;
       --border-color: #E8EAF2;
-      margin: 0 $paddingHorizontal;
+      margin: 0px $paddingHorizontal;
 
       ion-label {
         font-family: IBM Plex Sans;
@@ -145,12 +146,12 @@ ion-content {
 
       ion-checkbox {
         --border-color: #A1A8CA;
-        --border-color-checked: #A1A8CA;
-        --checkmark-color: #A1A8CA;
+        //--border-color-checked: #A1A8CA;
+        //--checkmark-color: #A1A8CA;
         --border-width: 1px;
         --border-style: solid;
         --border-radius: 2px;
-        --background-checked: transparent;
+        --background-checked: #2A6FDB;
         --background: transparent;
       }
 
@@ -202,55 +203,62 @@ ion-content {
           }
         }
       }
-    }
 
+      &.user-group-add-dropdown {
+        ion-select {
+          min-width: 100%;
+          margin-top: 0;
+        }
 
-    .radio-input-view {
-      margin-top: 18px;
+        ion-button {
+          --background: #2A6FDB;
+          --color: #fff;
+          --border-radius: 3px;
+          height: 42px;
+        }
 
-      h2 {
-        margin: 0 18px;
-        font-family: IBM Plex Sans;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 18px;
-        color: #171538;
       }
-    }
 
-    ion-segment.segment {
-      width: 180px;
-      border-radius: 3px;
-      height: 44px;
-      margin: 0 18px;
-      border: 1px solid #DCE7EF;
+      &.user-group-item {
+        --padding-top: 0px !important;
+        --padding-bottom: 0px !important;
+        --inner-padding-bottom: 8px;
+        --inner-padding-top: 8px;
 
-      ion-segment-button {
-        --background-checked: #fff;
-        --background: #F6F8FA;
-        --border-radius: 0;
-        --margin-bottom: 0;
-        --margin-end: 0;
-        --margin-start: 0;
-        --margin-top: 0;
-        --border-color: #DCE7EF;
-        --color-checked: #2A6FDB;
-        --color: #777595;
-        --indicator-color: #ffffff;
+        ion-label {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 18px;
+          color: #171538;
+        }
 
-        &.segment-button-checked {
-          border: 1px solid #2A6FDB;
+        ion-button {
+          --padding-top: 0;
+          --padding-bottom: 0;
+          --padding-start: 0;
+          --padding-end: 0;
+          --background: #CACEE1;
+          width: 18px;
+          height: 18px;
+
+          ion-icon {
+            font-size: 15px;
+          }
         }
       }
+
     }
+
 
     .risk-assesment-component {
       background-color: #F7FAFE;
-      margin: 0 $paddingHorizontal;
+      margin: 0px $paddingHorizontal;
+      padding-bottom: 16px;
 
       .hr-line {
-        margin: 0 18px;
+        margin: 0px 18px;
       }
 
       ion-item {
@@ -260,6 +268,57 @@ ion-content {
         --padding-bottom: 8px;
         margin: 0;
         --background: transparent;
+      }
+
+      ion-textarea {
+        background-color: #ffffff;
+        padding: 8px;
+        border: 1px solid #CACEE1;
+        border-radius: 3px;
+        margin: 0px 18px;
+        width: auto;
+      }
+
+
+      .radio-input-view {
+        margin-top: 18px;
+
+        h2 {
+          margin: 0px 18px;
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 18px;
+          color: #171538;
+        }
+      }
+
+
+      ion-segment.segment {
+        width: 180px;
+        border-radius: 3px;
+        height: 44px;
+        margin: 0px 18px;
+        border: 1px solid #DCE7EF;
+
+        ion-segment-button {
+          --background-checked: #fff;
+          --background: #F6F8FA;
+          --border-radius: 0;
+          --margin-bottom: 0;
+          --margin-end: 0;
+          --margin-start: 0;
+          --margin-top: 0;
+          --border-color: #DCE7EF;
+          --color-checked: #2A6FDB;
+          --color: #777595;
+          --indicator-color: #ffffff;
+
+          &.segment-button-checked {
+            border: 1px solid #2A6FDB;
+          }
+        }
       }
     }
 
@@ -289,6 +348,51 @@ ion-content {
       --border-radius: 3px;
       border-radius: 3px;
       overflow: hidden;
+    }
+  }
+
+  .section-item {
+    border-top: 1px solid #E8EAF2 !important;
+    border-bottom: 1px solid #E8EAF2 !important;
+    padding: 16px 23px;
+    margin: 20px 0 0 !important;
+
+    ion-label {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 17px;
+      line-height: 22px;
+      color: #171538;
+    }
+  }
+
+  .custom-segment-view {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #DCE7EF;
+    --border-radius: 0;
+    margin: 0 18px 5px;
+    width: 160px;
+
+    ion-button {
+      flex: 1;
+      --border-radius: 0;
+      margin: 0;
+
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      color: #777595;
+
+      &.active {
+        border: 1px solid #2A6FDB;
+        --background: #ffffff;
+        color: #2A6FDB;
+      }
     }
   }
 }

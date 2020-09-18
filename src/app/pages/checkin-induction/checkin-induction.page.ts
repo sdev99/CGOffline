@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-checkin-induction',
@@ -9,10 +10,19 @@ import {DemoDataService} from '../../services/demo-data.service';
 })
 export class CheckinInductionPage implements OnInit {
     inductionFiles = DemoDataService.inductionFiles;
+    locationDetail;
 
     constructor(
         public navCtrl: NavController,
+        public route: ActivatedRoute,
     ) {
+        route.queryParams.subscribe((params: any) => {
+            if (params) {
+                if (params.locationDetail) {
+                    this.locationDetail = JSON.parse(params.locationDetail);
+                }
+            }
+        });
     }
 
     ngOnInit() {
@@ -48,6 +58,10 @@ export class CheckinInductionPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateForward(['/checkin-induction-video-file']);
+        this.navCtrl.navigateForward(['/checkin-induction-video-file'], {
+            queryParams: {
+                locationDetail: JSON.stringify(this.locationDetail)
+            }
+        });
     }
 }

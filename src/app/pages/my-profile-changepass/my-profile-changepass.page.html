@@ -1,0 +1,54 @@
+<ion-header mode="ios">
+    <app-modal-header modalTitle="Edit Profile" (closeModal)="onClose()"></app-modal-header>
+</ion-header>
+
+<ion-content mode="md">
+    <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
+                           [message]="errorMsg"></app-warning-component>
+
+    <Form [formGroup]="profileForm">
+        <ion-list lines="none">
+            <ion-item lines="none">
+                <ion-label position="stacked">Old Password</ion-label>
+                <ion-input
+                        formControlName="oldpassword"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !profileForm.controls.oldpassword.valid)}"
+                        placeholder="Enter old password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none">
+                <ion-label position="stacked">New Password</ion-label>
+                <ion-input
+                        formControlName="newpassword"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !profileForm.controls.newpassword.valid)}"
+                        placeholder="Enter new password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none">
+                <ion-label position="stacked">Confirm New Password</ion-label>
+                <ion-input
+                        formControlName="confirmnewpassword"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !profileForm.controls.confirmnewpassword.valid)}"
+                        placeholder="Confirm new password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+
+            <div class="update-btn">
+                <ion-button expand="full" fill="clear" (click)="onSubmit()">Change Password</ion-button>
+            </div>
+
+            <div class="cancel-btn">
+                <ion-button expand="full" fill="clear" (click)="onClose()">Cancel</ion-button>
+            </div>
+        </ion-list>
+    </Form>
+</ion-content>

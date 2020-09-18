@@ -10,14 +10,20 @@ import {ActivatedRoute} from '@angular/router';
 export class CheckinSuccessPage implements OnInit {
 
     message = 'You have now checked-in';
+    nextPage = '/tabs/dashboard';
 
     constructor(
         public navCtrl: NavController,
         public activatedRoute: ActivatedRoute
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
-            if (res && res.message) {
-                this.message = res.message;
+            if (res) {
+                if (res.message) {
+                    this.message = res.message;
+                }
+                if (res.nextPage) {
+                    this.nextPage = res.nextPage;
+                }
             }
         });
     }
@@ -30,7 +36,7 @@ export class CheckinSuccessPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateBack(['/tabs/dashboard']);
+        this.navCtrl.navigateBack([this.nextPage]);
     }
 
 }

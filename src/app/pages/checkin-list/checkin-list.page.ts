@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {DemoDataService} from '../../services/demo-data.service';
 
 @Component({
     selector: 'app-checkin-list',
@@ -8,7 +9,7 @@ import {NavController} from '@ionic/angular';
 })
 export class CheckinListPage implements OnInit {
 
-    locations = [{name: 'Demo Location 1'}, {name: 'Demo Location 2'}, {name: 'Demo Location 2'}];
+    locations = DemoDataService.locations;
 
     constructor(
         public navCtrl: NavController,
@@ -23,7 +24,11 @@ export class CheckinListPage implements OnInit {
     }
 
     openLocation(location) {
-        this.navCtrl.navigateForward(['/checkin-induction']);
+        this.navCtrl.navigateForward(['/checkin-induction'], {
+            queryParams: {
+                locationDetail: JSON.stringify(location)
+            }
+        });
     }
 
 }

@@ -1,0 +1,110 @@
+ion-content {
+  ion-list {
+    padding: 12px;
+    margin-top: 16px;
+
+    ion-item {
+      margin-top: 36px;
+
+      &:first-child {
+        margin-top: 0px;
+      }
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        text-transform: uppercase;
+        color: #A1A8CA;
+      }
+
+      ion-input {
+        min-height: 42px;
+        --color: #171538;
+        --placeholder-color: #171538;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        margin-top: 9px;
+        border: 1px solid #CACEE1;
+        border-radius: 3px;
+        --background: #FFFFFF;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+      }
+
+      ion-select {
+        height: 42px;
+        --padding-start: 44px;
+        --padding-end: 8px;
+        --color: #171538;
+        --placeholder-color: #171538;
+        margin-top: 9px;
+        border: 1px solid #CACEE1;
+        border-radius: 3px;
+        --background: #FFFFFF;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        background-image: url(./../../../assets/icon/arrow-down.svg);
+        background-position: 16px;
+        background-repeat: no-repeat;
+
+        &::part(icon) {
+          display: none !important;
+        }
+      }
+
+      .error {
+        --background: #FFF6DE !important;
+        background-color: #FFF6DE !important;
+        border: 1px solid #E4D3A3 !important;
+        border-radius: 3px !important;
+      }
+    }
+
+    .update-btn {
+      width: 100%;
+      padding: 0 16px;
+      margin-top: 60px;
+
+      ion-button {
+        height: 50px;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        --color: #FFFFFF;
+        text-transform: none;
+        --background: #2A6FDB;
+        --border-radius: 3px;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+    }
+
+    .cancel-btn {
+      width: 100%;
+      margin-top: 30px;
+
+      ion-button {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        text-transform: none;
+        --color: #2A6FDB;
+      }
+    }
+  }
+}

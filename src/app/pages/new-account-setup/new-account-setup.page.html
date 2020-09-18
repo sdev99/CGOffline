@@ -1,0 +1,53 @@
+<ion-content fullscreen="true">
+    <h2 class="page-title">New Account Setup</h2>
+    <p class="page-description">
+        Hello, Markus Letterman.
+        <br/>
+        You're one step away from using the platform.
+        <br/>
+        Please set up your password to start
+    </p>
+
+    <div class="input-form">
+        <Form [formGroup]="myForm">
+            <div class="app-warning-component">
+                <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
+                                       [message]="errorMsg"></app-warning-component>
+            </div>
+
+
+            <ion-item class="password-item">
+                <ion-label position="stacked">New Password</ion-label>
+                <ion-input
+                        formControlName="password"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !myForm.controls.password.valid)}"
+                        placeholder="Enter new password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item class="password-item">
+                <ion-label position="stacked">Confirm New Password</ion-label>
+                <ion-input
+                        formControlName="passwordConfirm"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !myForm.controls.passwordConfirm.valid)}"
+                        placeholder="Confirm new password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+        </Form>
+
+        <ion-item lines="none" class="agree-checkbox">
+            <ion-label class="ion-text-wrap">I have read and agree with <a routerLink="/terms-conditions">Terms &
+                Conditions</a></ion-label>
+            <ion-checkbox mode="md" slot="start" [(ngModel)]="isConfirm"></ion-checkbox>
+        </ion-item>
+
+    </div>
+
+    <ion-button [disabled]="!isConfirm" expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
+
+</ion-content>

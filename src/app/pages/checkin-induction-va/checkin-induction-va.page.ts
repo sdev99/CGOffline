@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-checkin-induction-va',
@@ -12,14 +13,23 @@ export class CheckinInductionVaPage implements OnInit {
     inductionFiles = DemoDataService.inductionFiles;
     files = [];
     currentIndex = 0;
+    locationDetail;
 
     constructor(
         public navCtrl: NavController,
+        public route: ActivatedRoute,
     ) {
         this.inductionFiles.map((item) => {
             if (item.type === 'va') {
                 this.files = item.content;
                 return;
+            }
+        });
+        route.queryParams.subscribe((params: any) => {
+            if (params) {
+                if (params.locationDetail) {
+                    this.locationDetail = JSON.parse(params.locationDetail);
+                }
             }
         });
     }
@@ -39,7 +49,8 @@ export class CheckinInductionVaPage implements OnInit {
                 queryParams: {
                     aggrementTitle: 'I confirm that I\'ve read the induction.',
                     signoffFor: 'Induction',
-                    isSignOffWithDigitalInk: 1
+                    isSignOffWithDigitalInk: 1,
+                    locationDetail: JSON.stringify(this.locationDetail)
                 }
             });
         }

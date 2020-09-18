@@ -13,6 +13,9 @@ import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {NgxQRCodeModule} from '@techiediaries/ngx-qrcode';
 import {SafeurlPipe} from './pipes/safeurl.pipe';
 import {PipesModule} from './pipes/pipes.module';
+import {FileOpener} from '@ionic-native/file-opener/ngx';
+import {File} from '@ionic-native/file/ngx';
+import {FileTransfer, FileUploadOptions, FileTransferObject} from '@ionic-native/file-transfer/ngx';
 
 
 @NgModule({
@@ -32,6 +35,9 @@ import {PipesModule} from './pipes/pipes.module';
         QRScanner,
         StatusBar,
         SplashScreen,
+        FileOpener,
+        File,
+        FileTransfer,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {fabric} from 'fabric';
 import {ActivatedRoute} from '@angular/router';
+import {ObservablesService} from '../../services/observables.service';
 
 @Component({
     selector: 'app-signoff-digitalink',
@@ -14,10 +15,12 @@ export class SignoffDigitalinkPage implements OnInit {
     isSignOffWithDigitalInk = 0;
     aggrementTitle = 'I confirm that I\'ve read the induction.';
     signoffFor = 'Induction';
+    locationDetail;
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
+        public observablesService: ObservablesService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -30,6 +33,10 @@ export class SignoffDigitalinkPage implements OnInit {
 
                 if (params.isSignOffWithDigitalInk) {
                     this.isSignOffWithDigitalInk = parseInt(params.isSignOffWithDigitalInk, 0);
+                }
+
+                if (params.locationDetail) {
+                    this.locationDetail = JSON.parse(params.locationDetail);
                 }
             }
         });
@@ -76,7 +83,14 @@ export class SignoffDigitalinkPage implements OnInit {
             const downlaodImg = this.canvasRef.toDataURL('jpeg');
         }
 
-        this.navCtrl.navigateForward(['/checkin-success']);
+        if (this.locationDetail) {
+            if (this.locationDetail.id === 2) {
+                this.navCtrl.navigateForward(['/checkin-fail'], {});
+            } else {
+                this.navCtrl.navigateForward(['/checkin-success'], {});
+                this.observablesService.publishSomeData('NEW_CHECKED_IN', this.locationDetail);
+            }
+        }
     }
 
 }

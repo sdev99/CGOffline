@@ -16,7 +16,7 @@
             </div>
         </ion-list-header>
 
-        <ion-item *ngFor="let activity of activityList">
+        <ion-item *ngFor="let activity of activityList" (click)="openActivityDetail(activity)">
             <div class="alert-icon-container">
                 <ion-icon *ngIf="activity.status === 'overdue'" name="alert-circle" color="danger"></ion-icon>
             </div>
