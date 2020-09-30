@@ -50,7 +50,6 @@ export class FormHavPage {
 
     ionViewDidEnter() {
         document.addEventListener('backbutton', (e) => {
-            this.onClose();
         }, false);
     }
 

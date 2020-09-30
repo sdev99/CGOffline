@@ -118,7 +118,6 @@ export class ImageAnnotationPage implements OnInit {
 
     ionViewDidEnter(): void {
         document.addEventListener('backbutton', (e) => {
-            this.onClose();
         }, false);
 
         this.customiseControl();

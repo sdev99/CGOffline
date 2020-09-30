@@ -71,7 +71,6 @@ export class FormAccidentReportPage {
 
     ionViewDidEnter() {
         document.addEventListener('backbutton', (e) => {
-            this.onClose();
         }, false);
     }
 

@@ -56,7 +56,6 @@ export class FormRiskassessmentPage {
 
     ionViewDidEnter() {
         document.addEventListener('backbutton', (e) => {
-            this.onClose();
         }, false);
     }
 

@@ -54,7 +54,6 @@ export class FormCustomPage {
 
     ionViewDidEnter() {
         document.addEventListener('backbutton', (e) => {
-            this.onClose();
         }, false);
     }
 
