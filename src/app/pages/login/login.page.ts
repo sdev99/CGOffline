@@ -4,6 +4,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
+import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 
 @Component({
     selector: 'app-login',
@@ -11,16 +12,18 @@ import {NavController} from '@ionic/angular';
     styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-    errorMsg = '';
+    errorMessage = '';
     isSubmitted = false;
     loginForm: FormGroup;
 
     languages = DemoDataService.languages;
-
+    selectedLanguage = this.languages[0].code;
+    deviceUID = '';
 
     constructor(
         public utilService: UtilService,
         public navCtrl: NavController,
+        private uniqueDeviceID: UniqueDeviceID
     ) {
         this.loginForm = new FormGroup({
             email: new FormControl('test@domain.com', Validators.compose([
@@ -35,6 +38,12 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit() {
+        this.uniqueDeviceID.get()
+            .then((uuid: any) => {
+                this.deviceUID = uuid;
+            })
+            .catch((error: any) => console.log(error));
+
         if (localStorage.getItem('isLoggedIn') === '1') {
             this.navCtrl.navigateRoot('/tabs/dashboard');
         }
@@ -42,7 +51,7 @@ export class LoginPage implements OnInit {
 
     onSubmit() {
         this.isSubmitted = true;
-        this.errorMsg = '';
+        this.errorMessage = '';
 
         if (this.loginForm.valid) {
             const email = this.loginForm.controls.email.value;
@@ -54,9 +63,15 @@ export class LoginPage implements OnInit {
                 if (password === 'newaccount') {
                     this.navCtrl.navigateRoot('/new-account-setup');
                 } else if (password === 'wronglogin') {
-                    this.errorMsg = 'Wrong username or password';
+                    this.errorMessage = 'Wrong username or password';
                 } else {
                     localStorage.setItem('isLoggedIn', '1');
+                    localStorage.setItem('USER_DATA', JSON.stringify({
+                        email,
+                        phone: '+01234567890',
+                        timeZone: 'GMT+02:00',
+                        language: this.selectedLanguage
+                    }));
                     this.navCtrl.navigateRoot('/tabs/dashboard');
                 }
             }, 2000);

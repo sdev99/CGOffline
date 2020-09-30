@@ -21,13 +21,6 @@ const routes: Routes = [
                 loadChildren: () => import('../pages/my-profile/my-profile.module').then(m => m.MyProfilePageModule)
             },
 
-
-            {
-                path: 'checkin-list',
-                loadChildren: () => import('../pages/checkin-list/checkin-list.module').then(m => m.CheckinListPageModule)
-            },
-
-
             {
                 path: '',
                 redirectTo: '/tabs/my-profile/my-profile-documents',

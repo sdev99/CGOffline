@@ -7,8 +7,8 @@
 
     <Form class="input-form" [formGroup]="loginForm">
         <div class="app-warning-component">
-            <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
-                                   [message]="errorMsg"></app-warning-component>
+            <app-warning-component *ngIf="errorMessage && errorMessage.length>0"
+                                   [message]="errorMessage"></app-warning-component>
         </div>
 
         <ion-item class="email-item">
@@ -46,10 +46,10 @@
 
 
     <div class="bottom-view">
-        <ion-select placeholder="ENGLISH" interface="action-sheet" cancelText="cancel">
+        <ion-select placeholder="ENGLISH" interface="action-sheet" cancelText="cancel" [(ngModel)]="selectedLanguage">
             <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
         </ion-select>
 
-        <ion-text color="light" class="device-uid">DEVICE UID 2193891273</ion-text>
+        <ion-text color="light" class="device-uid">DEVICE UID&nbsp;{{deviceUID}}</ion-text>
     </div>
 </ion-content>

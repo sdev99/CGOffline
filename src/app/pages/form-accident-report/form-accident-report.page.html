@@ -1,5 +1,6 @@
 <ion-header mode="ios">
     <app-modal-header modalTitle="Accident Report" (closeModal)="onClose()"></app-modal-header>
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 
 <ion-content mode="ios">
@@ -14,6 +15,7 @@
                             display-timezone="utc"
                             displayFormat="DD MMM YYYY HH:mm"
                             pickerFormat="DD MMM YYYY HH:mm"
+                            [ngClass]="{'error':(isSubmitted && !formGroup.controls.dateTime.valid)}"
                             formControlName="dateTime"
                     ></ion-datetime>
                 </div>
@@ -29,7 +31,6 @@
                 </ion-label>
                 <ion-select
                         [interfaceOptions]="accidentAlertOptions"
-                        [ngClass]="{'error':(isSubmitted && !formGroup.controls.location.valid)}"
                         formControlName="locationId"
                         placeholder="Choose"
                 >
@@ -38,7 +39,7 @@
                 </ion-select>
             </ion-item>
 
-            <ion-item class="input-item">
+            <ion-item class="input-item" *ngIf="!formGroup.controls.locationId.value">
                 <ion-label position="stacked">
                     Location Name
                     <ion-note style="font-size: 90%">(if not available in above dropdown)</ion-note>
@@ -46,7 +47,8 @@
                 <ion-input formControlName="locationName"></ion-input>
             </ion-item>
 
-            <div class="radio-input-view">
+            <div class="radio-input-view" style="padding-top: 8px;"
+                 [ngClass]="{'error':(isSubmitted && !formGroup.controls.reddorReportNeeded.valid)}">
                 <h2>Is RIDDOR Report Needed? </h2>
                 <ion-radio-group formControlName="reddorReportNeeded">
                     <ion-item>
@@ -111,7 +113,7 @@
                 </ion-select>
             </ion-item>
 
-            <div class="affected-body-part-view">
+            <div class="affected-body-part-view" [ngClass]="{'error':(isSubmitted && !isBodyPartSelected())}">
                 <ion-label>
                     <h4>
                         Body Part Effected

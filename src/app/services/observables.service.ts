@@ -15,7 +15,7 @@ export class ObservablesService {
         return this.mySubjects[key];
     }
 
-    publishSomeData(key, data: any) {
+    publishSomeData(key, data = {}) {
         this.intialiseFirstTime(key).next(data);
     }
 

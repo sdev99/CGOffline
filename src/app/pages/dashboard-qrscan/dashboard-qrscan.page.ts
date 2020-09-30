@@ -49,9 +49,17 @@ export class DashboardQrscanPage implements OnInit {
                             this.scanSub.unsubscribe(); // stop scanning
                             this.qrScanner.destroy();
 
-                            this.navCtrl.navigateForward(['/checkin-induction'], {
+                            const location = DemoDataService.locations[0];
+                            this.navCtrl.navigateForward(['/checkinout-confirm'], {
                                 queryParams: {
-                                    locationDetail: JSON.stringify(DemoDataService.locations[0])
+                                    headerTitle: 'Check In',
+                                    title: 'You are checking in',
+                                    subtitle: location.name,
+                                    buttonTitle: 'Check In Now',
+                                    nextPageData: JSON.stringify({
+                                        locationDetail: JSON.stringify(location)
+                                    }),
+                                    nextPagePath: '/checkin-induction'
                                 }
                             });
                         }

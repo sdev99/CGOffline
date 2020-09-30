@@ -1,6 +1,6 @@
 <ion-header>
     <app-dashboard-header [showPlaceNavigationBtns]="true" [isCurrentCheckin]="true" [hideCheckinButton]="isCheckedIn"
-                         ></app-dashboard-header>
+    ></app-dashboard-header>
 </ion-header>
 
 
@@ -24,14 +24,9 @@
         </ion-item>
     </ion-list>
 
-    <div class="empty-list-view" *ngIf="isCheckedIn && (!list || list.length===0)">
-        <ion-icon src="./assets/icon/empty-files.svg"></ion-icon>
-        <ion-label>There are no files here.</ion-label>
-    </div>
+    <app-empty-message *ngIf="isCheckedIn && (!list || list.length===0)" icon="./assets/icon/empty-files.svg"
+                       message="There are no files here."></app-empty-message>
+    <app-empty-message *ngIf="!isCheckedIn" icon="./assets/icon/not-checkedin.svg"
+                       message="You need to check in to an entity first if you want to see the files assigned in personal mode"></app-empty-message>
 
-    <div class="empty-list-view" *ngIf="!isCheckedIn">
-        <ion-icon src="./assets/icon/not-checkedin.svg"></ion-icon>
-        <ion-label>You need to check in to an entity first if you want to see the files assigned in personal mode
-        </ion-label>
-    </div>
 </ion-content>

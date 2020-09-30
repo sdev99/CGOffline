@@ -94,6 +94,9 @@ export class DemoDataService {
         },
         {
             status: 'rejected',
+            rejectReason: 'Please send another photo, this one doesn\'t cover your entire face. The photo must be in line with our internal regulations. Thank you',
+            rejectedBy: 'Markus Letterman',
+            rejectedDate: '24Mar 2019 16:30',
             highprority: false,
             time: 'Yesterday',
             name: 'High priority activity goes here',
@@ -248,6 +251,60 @@ export class DemoDataService {
     ];
 
     static riskAssesmentQuestions = [
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
+        {
+            question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
+            note: 'is a text for the above question',
+            required: true,
+            document: {
+                title: 'Example of clean site cabin',
+            },
+            assestment: [],
+        },
         {
             question: 'Task requires you to lorem ipsum dolor sit amet, consectetur adis um ing elit.',
             note: 'is a text for the above question',
@@ -648,6 +705,22 @@ export class DemoDataService {
         {name: 'Spanish', code: 'es'},
     ];
 
+    static riskRatings = [
+        {name: 'Rating 1', id: 1},
+        {name: 'Rating 2', id: 2},
+        {name: 'Rating 3', id: 3},
+        {name: 'Rating 4', id: 4},
+        {name: 'Rating 5', id: 5},
+    ];
+
+    static residualRiskRatings = [
+        {name: 'Residual Rating 1', id: 1},
+        {name: 'Residual Rating 2', id: 2},
+        {name: 'Residual Rating 3', id: 3},
+        {name: 'Residual Rating 4', id: 4},
+        {name: 'Residual Rating 5', id: 5},
+    ];
+
 
     static locations = [
         {name: 'Demo Location 1', id: 1},
@@ -662,6 +735,27 @@ export class DemoDataService {
         {name: 'Demo Location 10', id: 10},
     ];
 
+    static toolManufacturers = [
+        {name: 'Volkswagen Group', id: 1},
+        {name: 'Toyota Group', id: 2},
+        {name: 'Apple', id: 3},
+        {name: 'Samsung Electronics', id: 4},
+    ];
+
+    static toolTypes = [
+        {name: 'Type 1', id: 1},
+        {name: 'Type 2', id: 2},
+        {name: 'Type 3', id: 3},
+        {name: 'Type 4', id: 4},
+    ];
+
+    static toolModels = [
+        {name: '732012', id: 1},
+        {name: '122014', id: 2},
+        {name: '232015', id: 3},
+        {name: '201326', id: 4},
+    ];
+
 
     static users = [
         {name: 'User One', id: 1},
@@ -669,6 +763,14 @@ export class DemoDataService {
         {name: 'User Three', id: 3},
         {name: 'User Four', id: 4},
         {name: 'User Five', id: 5},
+    ];
+
+    static usersGroups = [
+        {name: 'Group One', id: 1},
+        {name: 'Group Two', id: 2},
+        {name: 'Group Three', id: 3},
+        {name: 'Group Four', id: 4},
+        {name: 'Group Five', id: 5},
     ];
 
 

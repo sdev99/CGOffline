@@ -24,6 +24,27 @@
                 <div class="value"
                      *ngIf="activityDetail && activityDetail.formType">{{activityDetail.formType.title}}</div>
             </div>
+
+            <ng-container *ngIf="activityDetail && activityDetail.status==='rejected'">
+                <div class="hr-line"></div>
+
+                <div class="rejected-view">
+                    <ion-item lines="none" class="reject-type ion-no-padding">
+                        <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                        <ion-label>
+                            <h3>Signature Rejected</h3>
+                            <p class="ion-text-wrap">{{'by ' + activityDetail.rejectedBy + ' on ' + activityDetail.rejectedDate}}</p>
+                        </ion-label>
+                    </ion-item>
+
+                    <h4>Rejection Reason</h4>
+                    <ion-text color="medium">
+                        <p class="ion-text-wrap">
+                            {{activityDetail.rejectReason}}
+                        </p>
+                    </ion-text>
+                </div>
+            </ng-container>
         </ion-label>
     </ion-item>
 

@@ -15,7 +15,9 @@ import {SafeurlPipe} from './pipes/safeurl.pipe';
 import {PipesModule} from './pipes/pipes.module';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {File} from '@ionic-native/file/ngx';
-import {FileTransfer, FileUploadOptions, FileTransferObject} from '@ionic-native/file-transfer/ngx';
+import {FileTransfer} from '@ionic-native/file-transfer/ngx';
+import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
+import {Camera} from '@ionic-native/camera/ngx';
 
 
 @NgModule({
@@ -29,7 +31,7 @@ import {FileTransfer, FileUploadOptions, FileTransferObject} from '@ionic-native
         AppRoutingModule,
         ComponentsModule,
         NgxQRCodeModule,
-        PipesModule
+        PipesModule,
     ],
     providers: [
         QRScanner,
@@ -38,6 +40,8 @@ import {FileTransfer, FileUploadOptions, FileTransferObject} from '@ionic-native
         FileOpener,
         File,
         FileTransfer,
+        UniqueDeviceID,
+        Camera,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

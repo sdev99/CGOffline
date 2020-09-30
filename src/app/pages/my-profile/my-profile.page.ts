@@ -28,7 +28,7 @@ export class MyProfilePage implements OnInit {
 
     addProfilePhoto() {
         this.photoService.choosePhotoOption((photo) => {
-            this.profilePhoto = photo.webPath;
+            this.profilePhoto = photo.dataUrl;
         });
     }
 

@@ -2,28 +2,16 @@
     <app-modal-header modalTitle="Form title goes here on a single line of..."
                       (closeModal)="onClose()"></app-modal-header>
 
-    <ion-toolbar mode="ios">
-        <ion-buttons slot="start">
-            <ion-button class="arrow-button left" size="small" fill="clear" (click)="previous()">
-                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>
-            Item {{currentItem}} <span class="light">of {{totalItem}}</span>
-        </ion-title>
-        <ion-buttons slot="end">
-            <ion-button class="arrow-button right" size="small" fill="clear" (click)="next()">
-                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
+    <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)" [currentCount]="currentItem" [totalCount]="totalItem" (next)="next()"
+                           (previous)="previous()"></app-next-prev-toolbar>
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
 </ion-header>
 
 <ion-content mode="ios">
 
     <ion-list lines="none">
-        <ng-container *ngFor="let section of list; let idx=index">
+        <div class="list-item-container" *ngFor="let section of list; let idx=index" [ngClass]="{error:section.error}">
 
             <ion-list-header lines="full">
                 <h6>
@@ -34,7 +22,7 @@
                     <ion-label>Note: {{section.note}}</ion-label>
                 </ion-item>
 
-                <ion-item lines="none" class="form-item" *ngIf="section.document">
+                <ion-item lines="none" class="form-item" *ngIf="section.document" (click)="openFile()">
                     <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
                     <ion-label>
                         {{section.document.title}}
@@ -52,8 +40,8 @@
                     <ion-label position="fixed">
                         Risk Rating
                     </ion-label>
-                    <ion-select placeholder="Choose" [interface]="ionSelectInterface">
-                        <ion-select-option *ngFor="let item of locations"
+                    <ion-select [(ngModel)]="section.riskRating" placeholder="Choose" [interface]="ionSelectInterface">
+                        <ion-select-option *ngFor="let item of riskRatings"
                                            [value]="item.id">{{item.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
@@ -77,8 +65,9 @@
                     <ion-label position="fixed">
                         Residual Risk Rating
                     </ion-label>
-                    <ion-select placeholder="Choose" [interface]="ionSelectInterface">
-                        <ion-select-option *ngFor="let item of locations"
+                    <ion-select [(ngModel)]="section.residualRiskRating" placeholder="Choose"
+                                [interface]="ionSelectInterface">
+                        <ion-select-option *ngFor="let item of residualRiskRatings"
                                            [value]="item.id">{{item.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
@@ -94,51 +83,87 @@
                         <ion-checkbox mode="md" slot="start"
                                       (ionChange)="residualRiskRatingChange($event, section, 'memberOfTheWorkForce')"></ion-checkbox>
                     </ion-item>
+
+                    <ng-container *ngIf="section.memberOfTheWorkForce">
+                        <div class="custom-segment-view">
+                            <ion-button *ngFor="let item of userGroupTypes" mode="ios" fill="clear"
+                                        [ngClass]="{'active':(section.selectedUserGroupType && item.id===section.selectedUserGroupType.id)}"
+                                        (click)="section.selectedUserGroupType=item">
+                                {{item.name}}
+                            </ion-button>
+                        </div>
+
+                        <ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
+                            <ng-container
+                                    *ngIf="section.selectedUserGroupType && section.selectedUserGroupType.id==='users'">
+                                <ion-select [interface]="ionSelectInterface"
+                                            placeholder="Choose"
+                                            [(ngModel)]="section.selectedUser">
+                                    <ion-select-option *ngFor="let item of users"
+                                                       [value]="item.id">{{item.name}}</ion-select-option>
+                                </ion-select>
+                                <ion-button slot="end" size="md" expand="block" (click)="addUser(section)">Add
+                                </ion-button>
+                            </ng-container>
+
+
+                            <ng-container
+                                    *ngIf="section.selectedUserGroupType && section.selectedUserGroupType.id==='groups'">
+                                <ion-select [interface]="ionSelectInterface"
+                                            placeholder="Choose"
+                                            [(ngModel)]="section.selectedGroup">
+                                    <ion-select-option *ngFor="let item of groups"
+                                                       [value]="item.id">{{item.name}}</ion-select-option>
+                                </ion-select>
+                                <ion-button slot="end" size="md" expand="block" (click)="addGroup(section)">Add
+                                </ion-button>
+                            </ng-container>
+                        </ion-item>
+
+                        <ng-container *ngIf="section.addedUsers">
+                            <ion-item class="user-group-item" lines="inset"
+                                      *ngFor="let item of section.addedUsers | keyvalue">
+                                <ion-label>
+                                    {{item.value.name}}
+                                </ion-label>
+                                <ion-button slot="end" shape="round" (click)="removeUser(section, item.key)">
+                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                </ion-button>
+                            </ion-item>
+                        </ng-container>
+
+                        <ng-container *ngIf="section.addedGroups">
+                            <ion-item class="user-group-item" lines="inset"
+                                      *ngFor="let item of section.addedGroups | keyvalue">
+                                <ion-label>
+                                    {{item.value.name}}
+                                </ion-label>
+                                <ion-button slot="end" shape="round" (click)="removeGroup(section, item.key)">
+                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                </ion-button>
+                            </ion-item>
+                        </ng-container>
+
+                    </ng-container>
+
+                    <ion-item>
+                        <ion-label>Members of the Public</ion-label>
+                        <ion-checkbox mode="md" slot="start"
+                                      (ionChange)="residualRiskRatingChange($event, section, 'memberOfThePublic')"></ion-checkbox>
+                    </ion-item>
+
+                    <ng-container *ngIf="section.memberOfThePublic">
+                        <ion-textarea rows="5"></ion-textarea>
+                    </ng-container>
                 </div>
 
-                <ng-container *ngIf="section.memberOfTheWorkForce">
-                    <div class="custom-segment-view">
-                        <ion-button *ngFor="let item of userGroupTypes" mode="ios" fill="clear"
-                                    [ngClass]="{'active':item.id===selectedUserGroupType.id}"
-                                    (click)="selectedUserGroupType=item">
-                            {{item.name}}
-                        </ion-button>
-                    </div>
-
-                    <ion-item class="drop-down-item user-group-add-dropdown">
-                        <ion-select [interface]="ionSelectInterface" placeholder="Choose" [(ngModel)]="selectedUser">
-                            <ion-select-option *ngFor="let item of users"
-                                               [value]="item.id">{{item.name}}</ion-select-option>
-                        </ion-select>
-                        <ion-button slot="end" size="md" expand="block" (click)="addUser()">Add</ion-button>
-                    </ion-item>
-
-                    <ion-item class="user-group-item" lines="inset" *ngFor="let item of addedUsers | keyvalue">
-                        <ion-label>
-                            {{item.value.name}}
-                        </ion-label>
-                        <ion-button slot="end" shape="round" (click)="removeUser(item.key)">
-                            <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
-                        </ion-button>
-                    </ion-item>
-                </ng-container>
-
-                <ion-item>
-                    <ion-label>Members of the Public</ion-label>
-                    <ion-checkbox mode="md" slot="start"
-                                  (ionChange)="residualRiskRatingChange($event, section, 'memberOfThePublic')"></ion-checkbox>
-                </ion-item>
-
-                <ng-container *ngIf="section.memberOfThePublic">
-                    <ion-textarea rows="5"></ion-textarea>
-                </ng-container>
             </div>
 
 
             <ion-item class="section-item">
                 <ion-label>Section name goes here</ion-label>
             </ion-item>
-        </ng-container>
+        </div>
 
 
         <!--        End of form -->

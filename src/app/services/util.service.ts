@@ -7,6 +7,17 @@ import {LoadingController} from '@ionic/angular';
 export class UtilService {
     loading: HTMLIonLoadingElement = null;
 
+    static findObj(list, key, value, defaultIndex = 0) {
+        let resultData = list[defaultIndex];
+        list.map((data) => {
+            if (data[key] === value) {
+                resultData = data;
+                return;
+            }
+        });
+        return resultData;
+    }
+
     constructor(
         private loadingController: LoadingController
     ) {
@@ -34,4 +45,6 @@ export class UtilService {
             this.loading = null;
         }
     }
+
+
 }

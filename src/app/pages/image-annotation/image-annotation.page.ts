@@ -1,9 +1,12 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {fabric} from 'fabric';
 import {Location} from '@angular/common';
 import {NavController, AlertController} from '@ionic/angular';
 import {AnimationOptions} from '@ionic/angular/providers/nav-controller';
 import {SharedDataService} from '../../services/shared-data.service';
+import {ObservablesService} from '../../services/observables.service';
+import {EnumService} from '../../services/enum.service';
+import {Subscription} from 'rxjs';
 
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
 
@@ -96,20 +99,35 @@ export class ImageAnnotationPage implements OnInit {
     defaultFontSize = 26;
     defaultColor;
 
-
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
-        public alertController: AlertController
+        public alertController: AlertController,
+        public observablesService: ObservablesService,
     ) {
         this.defaultColor = sharedDataService.annotationColor;
     }
 
     ngOnInit() {
         this.canvasRef = new fabric.Canvas('c');
+
         setTimeout(() => {
             this.initialise();
         }, 200);
+    }
+
+    ionViewDidEnter(): void {
+        document.addEventListener('backbutton', (e) => {
+            this.onClose();
+        }, false);
+
+        this.customiseControl();
+    }
+
+    ionViewWillLeave(): void {
+        document.removeEventListener('backbutton', () => {
+            console.log('Back Button Listner removed');
+        });
     }
 
     initialise() {
@@ -118,18 +136,54 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.setDimensions({width: window.innerWidth, height: content.offsetHeight});
 
         // const imgURL = './assets/images/demo1.png';
-        const imgURL = this.sharedDataService.getAnnotationImage().webPath;
+        const imgURL = this.sharedDataService.getAnnotationImage();
         fabric.Image.fromURL(imgURL, (img) => {
+
+
+            this.canvasRef.add(img);
+            const aspectRatio = img.width / img.height;
+
+            let imgWidth = img.width;
+            let imgHeight = img.height;
+
+            // If image size is less then available screen size
+            if (imgWidth < window.innerWidth && imgHeight < content.offsetHeight) {
+                if (imgWidth < window.innerWidth) {
+                    imgWidth = window.innerWidth;
+                    imgHeight = window.innerWidth / aspectRatio;
+                }
+
+                if (imgHeight < content.offsetHeight) {
+                    imgWidth = content.offsetHeight * aspectRatio;
+                    imgHeight = content.offsetHeight;
+                }
+            }
+
+            // If image size is greater then available screen size
+            if (imgWidth > window.innerWidth || imgHeight > content.offsetHeight) {
+                if (imgWidth > window.innerWidth) {
+                    imgWidth = window.innerWidth;
+                    imgHeight = window.innerWidth / aspectRatio;
+                }
+
+                if (imgHeight > content.offsetHeight) {
+                    imgWidth = content.offsetHeight * aspectRatio;
+                    imgHeight = content.offsetHeight;
+                }
+            }
+
+            const left = (window.innerWidth - imgWidth) / 2;
+            const top = (content.offsetHeight - imgHeight) / 2;
+
             img.set({
-                left: 0,
-                top: 0,
-                // width: window.innerWidth,
-                // height: content.offsetHeight,
+                left,
+                top,
                 selectable: false
             });
-            img.scaleToWidth(window.innerWidth);
-            img.scaleToHeight(content.offsetHeight);
-            this.canvasRef.add(img);
+            img.scaleToWidth(imgWidth);
+            img.scaleToHeight(imgHeight);
+
+            this.canvasRef.renderAll();
         });
 
         this.canvasRef.on('selection:created', () => {
@@ -139,10 +193,6 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.on('selection:cleared', () => {
             this.isColorThicknessViewOpen = false;
         });
-    }
-
-    ionViewDidEnter() {
-        this.customiseControl();
     }
 
     private customiseControl() {
@@ -441,7 +491,7 @@ export class ImageAnnotationPage implements OnInit {
                 }, {
                     text: 'Yes',
                     handler: () => {
-                        this.navCtrl.navigateBack(['/tabs/tab1']);
+                        this.navCtrl.back();
                     }
                 }
             ]

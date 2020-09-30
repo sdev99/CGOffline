@@ -1,94 +1,104 @@
 <ion-header mode="ios">
-    <app-modal-header modalTitle="HAVs Form Title Will Go Here..." (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header modalTitle="{{activityDetail?activityDetail.name:''}}"
+                      (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
-<ion-content>
+<ion-content mode="md">
+    <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
+                           [message]="errorMsg"></app-warning-component>
+
     <div class="explosure">
         <ion-label>
             Your Current Exposure
         </ion-label>
-        <ion-button fill="clear">
+        <div class="points">
             70 points
-        </ion-button>
+        </div>
     </div>
 
-  <ion-list lines="none" mode="ios">
-        <ion-item class="date-item">
-            <ion-label position="stacked">Date of Usage</ion-label>
-            <div class="date-field">
-                <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
-                <ion-datetime placeholder="Choose" display-timezone="utc"></ion-datetime>
+    <Form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <ion-list lines="none" mode="ios">
+            <ion-item class="date-item">
+                <ion-label position="stacked">Date of Usage</ion-label>
+                <div class="date-field" [ngClass]="{'error': isError('dateOfUsage')}">
+                    <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
+                    <ion-datetime placeholder="Choose" display-timezone="utc"
+                                  formControlName="dateOfUsage"></ion-datetime>
+                </div>
+            </ion-item>
+
+            <ion-item class="drop-down-item">
+                <ion-label position="stacked">
+                    Type
+                </ion-label>
+                <ion-select placeholder="Choose" formControlName="toolType" [ngClass]="{'error': isError('toolType')}">
+                    <ion-select-option *ngFor="let item of toolTypes"
+                                       [value]="item.id">{{item.name}}</ion-select-option>
+                </ion-select>
+            </ion-item>
+
+            <ion-item class="drop-down-item">
+                <ion-label position="stacked">
+                    Manufacturer
+                </ion-label>
+                <ion-select placeholder="Choose" formControlName="toolManufacturer"
+                            [ngClass]="{'error': isError('toolManufacturer')}">
+                    <ion-select-option *ngFor="let item of toolManufacturers"
+                                       [value]="item.id">{{item.name}}</ion-select-option>
+                </ion-select>
+            </ion-item>
+
+            <ion-item class="drop-down-item">
+                <ion-label position="stacked">
+                    Model
+                </ion-label>
+                <ion-select placeholder="Choose" formControlName="toolModel"
+                            [ngClass]="{'error': isError('toolModel')}">
+                    <ion-select-option *ngFor="let item of toolModels"
+                                       [value]="item.id">{{item.name}}</ion-select-option>
+                </ion-select>
+            </ion-item>
+
+            <ion-item class="input-item planned-time">
+                <ion-label position="stacked">
+                    Planned Time of Use (in Minutes)
+                </ion-label>
+                <ion-input type="number" pattern="\d+"
+                           formControlName="plannedTime" [ngClass]="{'error': isError('plannedTime')}"></ion-input>
+            </ion-item>
+
+            <div class="explosure">
+                <ion-label>
+                    Calculated Exposure
+                </ion-label>
+                <div class="points">
+                    40 points
+                </div>
             </div>
-        </ion-item>
 
-        <ion-item class="drop-down-item">
-            <ion-label position="stacked">
-                Type
-            </ion-label>
-            <ion-select placeholder="Choose">
-                <ion-select-option *ngFor="let item of locations"
-                                   [value]="item.id">{{item.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+            <div class="explosure">
+                <ion-label>
+                    Total Exposure Will Be
+                </ion-label>
+                <div class="points total-btn">
+                    180 points
+                </div>
+            </div>
 
-        <ion-item class="drop-down-item">
-            <ion-label position="stacked">
-                Manufacturer
-            </ion-label>
-            <ion-select placeholder="Choose">
-                <ion-select-option *ngFor="let item of locations"
-                                   [value]="item.id">{{item.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+            <!--        End of form -->
 
-        <ion-item class="drop-down-item">
-            <ion-label position="stacked">
-                Model
-            </ion-label>
-            <ion-select placeholder="Choose">
-                <ion-select-option *ngFor="let item of locations"
-                                   [value]="item.id">{{item.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
+            <div class="hr-line-full ion-margin-top"></div>
 
-        <ion-item class="input-item">
-            <ion-label position="stacked">
-                Planned Time of Use (in Minutes)
-            </ion-label>
-            <ion-input></ion-input>
-        </ion-item>
+            <ion-item class="ion-margin-vertical text-bottom-msg">
+                <ion-label class="ion-text-wrap ion-text-center">
+                    You've reached the end of the form.
+                    Please check your answers and sign-off.
+                </ion-label>
+            </ion-item>
+            <ion-item class="ion-margin-vertical ion-padding-bottom">
+                <ion-button type="submit" expand="full" class="action-btn">Sign-Off</ion-button>
+            </ion-item>
 
-        <div class="explosure">
-            <ion-label>
-                Calculated Exposure
-            </ion-label>
-            <ion-button fill="clear">
-                40 points
-            </ion-button>
-        </div>
-
-        <div class="explosure">
-            <ion-label>
-                Total Exposure Will Be
-            </ion-label>
-            <ion-button fill="clear" class="total-btn">
-                180 points
-            </ion-button>
-        </div>
-
-        <!--        End of form -->
-
-        <div class="hr-line-full ion-margin-top"></div>
-
-        <ion-item class="ion-margin-vertical text-bottom-msg">
-            <ion-label class="ion-text-wrap ion-text-center">
-                You've reached the end of the form.
-                Please check your answers and sign-off.
-            </ion-label>
-        </ion-item>
-        <ion-item class="ion-margin-vertical ion-padding-bottom">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
-        </ion-item>
-
-    </ion-list>
+        </ion-list>
+    </Form>
 </ion-content>

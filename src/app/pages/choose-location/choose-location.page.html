@@ -1,0 +1,20 @@
+<ion-content mode="md">
+    <div class="content">
+        <h3>Please choose where you want to use this device</h3>
+
+        <ion-radio-group *ngFor="let item of locations" [(ngModel)]="selectedLocation">
+            <ion-item lines="none">
+                <ion-radio slot="start"></ion-radio>
+                <ion-label>{{item.title}}</ion-label>
+            </ion-item>
+        </ion-radio-group>
+
+        <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
+    </div>
+
+</ion-content>
+
+
+<ion-footer class="ion-text-center">
+    <div class="device-uid">DEVICE UID 60320800</div>
+</ion-footer>

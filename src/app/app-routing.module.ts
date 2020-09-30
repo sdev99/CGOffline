@@ -88,8 +88,8 @@ const routes: Routes = [
         loadChildren: () => import('./pages/my-profile-edit/my-profile-edit.module').then(m => m.MyProfileEditPageModule)
     },
     {
-        path: 'checkout-confirm',
-        loadChildren: () => import('./pages/checkout-confirm/checkout-confirm.module').then(m => m.CheckoutConfirmPageModule)
+        path: 'checkinout-confirm',
+        loadChildren: () => import('./pages/checkinout-confirm/checkinout-confirm.module').then(m => m.CheckoutConfirmPageModule)
     },
     {
         path: 'form-hav',
@@ -107,10 +107,26 @@ const routes: Routes = [
         path: 'terms-conditions',
         loadChildren: () => import('./pages/terms-conditions/terms-conditions.module').then(m => m.TermsConditionsPageModule)
     },
+    {
+        path: 'my-profile-changepass',
+        loadChildren: () => import('./pages/my-profile-changepass/my-profile-changepass.module').then(m => m.MyProfileChangepassPageModule)
+    },
+    {
+        path: 'choose-location',
+        loadChildren: () => import('./pages/choose-location/choose-location.module').then(m => m.ChooseLocationPageModule)
+    },
+    {
+        path: 'dashboard-dm',
+        loadChildren: () => import('./pages/dashboard-dm/dashboard-dm.module').then(m => m.DashboardDmPageModule)
+    },
+    {
+        path: 'search-location',
+        loadChildren: () => import('./modals/search-location/search-location.module').then(m => m.SearchLocationPageModule)
+    },
   {
-    path: 'my-profile-changepass',
-    loadChildren: () => import('./pages/my-profile-changepass/my-profile-changepass.module').then( m => m.MyProfileChangepassPageModule)
-  },
+    path: 'signoff-photo',
+    loadChildren: () => import('./pages/signoff-photo/signoff-photo.module').then( m => m.SignoffPhotoPageModule)
+  }
 
 ];
 

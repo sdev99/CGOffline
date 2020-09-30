@@ -1,0 +1,23 @@
+ion-searchbar {
+  --background: #DBE8F9;
+  --box-shadow: none;
+  padding: 0;
+}
+
+
+ion-content {
+  ion-list {
+    ion-item {
+      ion-label {
+        margin: 0;
+        padding: 5px 10px;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+      }
+    }
+  }
+}

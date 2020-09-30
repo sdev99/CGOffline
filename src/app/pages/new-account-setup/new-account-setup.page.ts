@@ -11,7 +11,7 @@ import {NavController} from '@ionic/angular';
 })
 export class NewAccountSetupPage {
 
-    errorMsg = '';
+    errorMessage = '';
     isSubmitted = false;
     myForm: FormGroup;
     isConfirm = false;
@@ -36,7 +36,7 @@ export class NewAccountSetupPage {
 
     onSubmit() {
         this.isSubmitted = true;
-        this.errorMsg = '';
+        this.errorMessage = '';
 
         if (this.myForm.valid) {
             const password = this.myForm.controls.password.value;
@@ -49,7 +49,7 @@ export class NewAccountSetupPage {
                     localStorage.setItem('isLoggedIn', '1');
                     this.navCtrl.navigateRoot('/tabs/dashboard');
                 } else {
-                    this.errorMsg = 'Password not matching';
+                    this.errorMessage = 'Password not matching';
                 }
             }, 1000);
         }

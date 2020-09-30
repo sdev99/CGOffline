@@ -3,7 +3,10 @@
 </ion-header>
 
 <ion-content>
-    <ion-list class="activity-list" lines="full">
+
+    <ion-list *ngIf="activityList && activityList.length > 0; else emptyMessageComponent" class="activity-list"
+              lines="full">
+
         <ion-list-header lines="full">
             <ion-label>Activity List</ion-label>
             <div class="status-badge ion-margin-end">
@@ -33,4 +36,9 @@
             </ion-label>
         </ion-item>
     </ion-list>
+
+    <ng-template #emptyMessageComponent>
+        <app-empty-message message="You don't have any activities assigned."></app-empty-message>
+    </ng-template>
+
 </ion-content>

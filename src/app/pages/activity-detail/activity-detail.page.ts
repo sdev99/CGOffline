@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
+import {FilehandlerService} from '../../services/filehandler.service';
 
 @Component({
     selector: 'app-activity-detail',
@@ -15,6 +16,7 @@ export class ActivityDetailPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
+        private filehandlerService: FilehandlerService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -30,6 +32,10 @@ export class ActivityDetailPage implements OnInit {
 
     onClose() {
         this.navCtrl.back();
+    }
+
+    openFile() {
+        this.filehandlerService.openFile();
     }
 
     onContinue() {

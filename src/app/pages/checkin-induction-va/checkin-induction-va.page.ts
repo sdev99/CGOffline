@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-checkin-induction-va',
@@ -47,10 +48,8 @@ export class CheckinInductionVaPage implements OnInit {
         } else {
             this.navCtrl.navigateForward(['/signoff-digitalink'], {
                 queryParams: {
-                    aggrementTitle: 'I confirm that I\'ve read the induction.',
-                    signoffFor: 'Induction',
-                    isSignOffWithDigitalInk: 1,
-                    locationDetail: JSON.stringify(this.locationDetail)
+                    type: EnumService.SignOffType.INDUCTION,
+                    data: JSON.stringify(this.locationDetail),
                 }
             });
         }

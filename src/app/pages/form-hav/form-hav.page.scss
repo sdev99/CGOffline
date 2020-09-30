@@ -26,16 +26,29 @@ ion-content {
       color: #171538;
     }
 
-    ion-button {
+    .points {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-top: 8px;
-      --background: #FFBA00;
-      --border-radius: 3px;
+      background: #FFBA00;
+      border-radius: 3px;
       width: 125px;
       height: 38px;
-      --color: #fff;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      color: #FFFFFF;
 
       &.total-btn {
-        --background: #E74731;
+        background: #E74731;
+        font-family: SF Pro Display;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 19px;
       }
     }
   }
@@ -65,6 +78,7 @@ ion-content {
 
       &.form-item {
         margin-top: 8px;
+
         ion-icon {
           width: 17.31px;
           height: 20px;
@@ -134,6 +148,7 @@ ion-content {
       }
 
       &.input-item {
+        margin-top: 8px;
         ion-input {
           min-height: 42px;
           --color: #171538;
@@ -149,6 +164,19 @@ ion-content {
           font-size: 14px;
           line-height: 18px;
         }
+      }
+    }
+
+    .error {
+      --background: #FFF6DE !important;
+      background-color: #FFF6DE !important;
+      border: 1px solid #E4D3A3 !important;
+      border-radius: 3px !important;
+    }
+
+    .planned-time {
+      ion-input {
+        width: 160px;
       }
     }
 

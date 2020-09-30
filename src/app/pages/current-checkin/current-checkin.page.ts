@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-current-checkin',
@@ -8,16 +9,24 @@ import {NavController} from '@ionic/angular';
     styleUrls: ['./current-checkin.page.scss'],
 })
 export class CurrentCheckinPage implements OnInit {
-    list = DemoDataService.currentCheckinFiles;
+    // list = DemoDataService.currentCheckinFiles;
+    list = [];
 
-    isCheckedIn = true;
+    isCheckedIn = false;
 
     constructor(
         public navCtrl: NavController,
+        public sharedDataService: SharedDataService,
     ) {
+        if (sharedDataService.checkedInPlaces && sharedDataService.checkedInPlaces.length > 0) {
+            this.isCheckedIn = true;
+        }
     }
 
     ngOnInit() {
+        setTimeout(() => {
+            this.list = DemoDataService.currentCheckinFiles;
+        }, 2000);
     }
 
     fileIcon(type) {

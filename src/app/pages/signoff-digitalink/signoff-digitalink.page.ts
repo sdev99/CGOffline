@@ -3,6 +3,7 @@ import {NavController} from '@ionic/angular';
 import {fabric} from 'fabric';
 import {ActivatedRoute} from '@angular/router';
 import {ObservablesService} from '../../services/observables.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-signoff-digitalink',
@@ -12,10 +13,15 @@ import {ObservablesService} from '../../services/observables.service';
 export class SignoffDigitalinkPage implements OnInit {
     isConfirm = false;
     canvasRef;
-    isSignOffWithDigitalInk = 0;
-    aggrementTitle = 'I confirm that I\'ve read the induction.';
-    signoffFor = 'Induction';
-    locationDetail;
+
+    pageTitle = 'Sign-Off';
+    title = 'You are signing-off';
+    subTitle = '';
+    aggrementTitle = '';
+    showDigitalInk = false;
+
+    type;
+    data;
 
     constructor(
         public navCtrl: NavController,
@@ -24,42 +30,51 @@ export class SignoffDigitalinkPage implements OnInit {
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
-                if (params.aggrementTitle) {
-                    this.aggrementTitle = params.aggrementTitle;
+                if (params.type) {
+                    this.type = params.type;
                 }
-                if (params.signoffFor) {
-                    this.signoffFor = params.signoffFor;
-                }
-
-                if (params.isSignOffWithDigitalInk) {
-                    this.isSignOffWithDigitalInk = parseInt(params.isSignOffWithDigitalInk, 0);
-                }
-
-                if (params.locationDetail) {
-                    this.locationDetail = JSON.parse(params.locationDetail);
+                if (params.data) {
+                    this.data = JSON.parse(params.data);
                 }
             }
         });
     }
 
     ngOnInit() {
-        if (this.isSignOffWithDigitalInk) {
-            setTimeout(() => {
-                this.canvasRef = new fabric.Canvas('digital-signature');
-                this.initialise();
-            }, 200);
+        switch (this.type) {
+            case EnumService.SignOffType.HAV:
+            case EnumService.SignOffType.ACCIDENT_REPORT:
+            case EnumService.SignOffType.CUSTOM_FORM:
+            case EnumService.SignOffType.RISK_ASSESSMENT:
+                this.aggrementTitle = 'I confirm that I\'ve filled the above form.';
+                this.subTitle = this.data.name;
+                this.showDigitalInk = true;
+                this.initialiseDrawing();
+                break;
+
+            case EnumService.SignOffType.INDUCTION:
+                this.aggrementTitle = 'I confirm that I\'ve read the induction.';
+                this.subTitle = 'Induction';
+                this.showDigitalInk = true;
+                this.initialiseDrawing();
+                break;
+
+            default:
         }
     }
 
-    initialise() {
-        this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
-        this.canvasRef.on('selection:created', () => {
-        });
-        this.canvasRef.on('selection:cleared', () => {
-        });
-        this.canvasRef.freeDrawingBrush.color = '#171538';
-        this.canvasRef.freeDrawingBrush.width = 4;
-        this.canvasRef.isDrawingMode = true;
+    initialiseDrawing() {
+        setTimeout(() => {
+            this.canvasRef = new fabric.Canvas('digital-signature');
+            this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
+            this.canvasRef.on('selection:created', () => {
+            });
+            this.canvasRef.on('selection:cleared', () => {
+            });
+            this.canvasRef.freeDrawingBrush.color = '#171538';
+            this.canvasRef.freeDrawingBrush.width = 4;
+            this.canvasRef.isDrawingMode = true;
+        }, 200);
     }
 
     isDigitalSignEmpty = () => {
@@ -78,17 +93,38 @@ export class SignoffDigitalinkPage implements OnInit {
     }
 
     onContinue() {
-        if (this.isSignOffWithDigitalInk) {
-            this.canvasRef.discardActiveObject();
-            const downlaodImg = this.canvasRef.toDataURL('jpeg');
-        }
+        if (this.isConfirm) {
+            let downlaodImg;
+            if (this.showDigitalInk) {
+                this.canvasRef.discardActiveObject();
+                downlaodImg = this.canvasRef.toDataURL('jpeg');
+            }
 
-        if (this.locationDetail) {
-            if (this.locationDetail.id === 2) {
-                this.navCtrl.navigateForward(['/checkin-fail'], {});
-            } else {
-                this.navCtrl.navigateForward(['/checkin-success'], {});
-                this.observablesService.publishSomeData('NEW_CHECKED_IN', this.locationDetail);
+            switch (this.type) {
+                case EnumService.SignOffType.HAV:
+                case EnumService.SignOffType.ACCIDENT_REPORT:
+                case EnumService.SignOffType.CUSTOM_FORM:
+                case EnumService.SignOffType.RISK_ASSESSMENT:
+                    this.navCtrl.navigateForward(['/signoff-photo'], {
+                        queryParams: {
+                            type: this.type,
+                            data: JSON.stringify(this.data)
+                        }
+                    });
+
+                    break;
+
+                case EnumService.SignOffType.INDUCTION:
+                    this.navCtrl.navigateForward(['/signoff-photo'], {
+                        queryParams: {
+                            type: this.type,
+                            data: JSON.stringify(this.data)
+                        }
+                    });
+                    break;
+
+                default:
+                    this.navCtrl.navigateForward(['/checkin-fail'], {});
             }
         }
     }

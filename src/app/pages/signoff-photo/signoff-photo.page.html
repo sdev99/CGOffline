@@ -1,0 +1,29 @@
+<ion-content fullscreen="true">
+    <div class="content">
+        <ng-container *ngIf="photo; else needPhtoView">
+            <ion-img [src]="photo"></ion-img>
+            <ion-button fill="clear" class="retake-btn" (click)="takePhoto()">Take a new photo?</ion-button>
+        </ng-container>
+
+        <ng-template #needPhtoView>
+            <div class="title-1">We need your photo</div>
+            <div class="text-1">
+                To finish the sign-off, you need to take a selfie of your self, using your device camera.
+            </div>
+        </ng-template>
+    </div>
+
+</ion-content>
+
+<ion-footer mode="ios">
+    <ion-button *ngIf="!photo" expand="full" class="action-btn" (click)="takePhoto()">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        Take a Photo
+    </ion-button>
+
+    <ion-button *ngIf="photo" expand="full" class="action-btn" (click)="continue()">
+        Continue
+    </ion-button>
+
+</ion-footer>
+

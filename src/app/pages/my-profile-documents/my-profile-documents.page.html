@@ -4,7 +4,7 @@
 
 <ion-content>
     <ion-list lines="none">
-        <ion-item mode="md" lines="full" *ngFor="let item of list">
+        <ion-item mode="md" lines="full" *ngFor="let item of list" (click)="openFile()">
             <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
             <ion-label>
                 <h4>{{item.title}}</h4>

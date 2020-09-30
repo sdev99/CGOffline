@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {ObservablesService} from '../../services/observables.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-dashboard-header',
@@ -39,7 +40,7 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.observablesService.getObservable('NEW_CHECKED_IN').subscribe((data) => {
+        this.observablesService.getObservable(EnumService.ObserverKeys.NEW_CHECKED_IN).subscribe((data) => {
             if (data) {
                 let alreadyCheckedIn = false;
                 this.sharedDataService.checkedInPlaces.map((item) => {
@@ -89,7 +90,7 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     checkInByList() {
-        this.navCtrl.navigateForward('/tabs/checkin-list');
+        this.navCtrl.navigateForward('/tabs/dashboard/checkin-list');
     }
 
 }

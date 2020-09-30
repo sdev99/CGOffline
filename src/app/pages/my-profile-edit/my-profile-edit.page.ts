@@ -50,7 +50,14 @@ export class MyProfileEditPage implements OnInit {
 
     onSubmit() {
         this.isSubmitted = true;
-        this.errorMsg = 'All fileds are required to be filled.';
+        this.errorMsg = '';
+        const {email, phone, timezone, language} = this.profileForm.controls;
+        if (this.profileForm.valid) {
+            this.navCtrl.navigateBack(['/tabs/my-profile']);
+        } else if (!email.value && !phone.value && !timezone.value && !language.value) {
+            this.errorMsg = 'All fileds are required to be filled.';
+        }
+
     }
 
 }

@@ -1,0 +1,15 @@
+<ion-content fullscreen="true">
+    <div class="content">
+        <ion-icon src="./assets/icon/alert.svg"></ion-icon>
+
+        <div class="title-1">You are about to exit a form</div>
+        <div class="text-1">Any progress made will be lost</div>
+    </div>
+
+</ion-content>
+
+<ion-footer mode="ios">
+    <ion-button expand="full" class="action-btn" (click)="onDismiss(false)">Back to Form</ion-button>
+    <ion-button expand="full" class="cancel-btn" fill="clear" (click)="onDismiss(true)">Exit Now</ion-button>
+</ion-footer>
+

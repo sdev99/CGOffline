@@ -1,0 +1,15 @@
+<ion-toolbar mode="ios" [ngClass]="{error:isError}">
+    <ion-buttons slot="start">
+        <ion-button class="arrow-button left" size="small" fill="clear" (click)="previous.emit()">
+            <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+    <ion-title>
+        Item {{currentCount}} <span class="light">of {{totalCount}}</span>
+    </ion-title>
+    <ion-buttons slot="end">
+        <ion-button class="arrow-button right" size="small" fill="clear" (click)="next.emit()">
+            <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+</ion-toolbar>

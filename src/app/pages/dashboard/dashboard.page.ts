@@ -9,7 +9,7 @@ import {NavController} from '@ionic/angular';
 })
 export class DashboardPage implements OnInit {
 
-    activityList = DemoDataService.activityList;
+    activityList = [];
 
     constructor(
         public navCtrl: NavController,
@@ -18,6 +18,13 @@ export class DashboardPage implements OnInit {
     }
 
     ngOnInit() {
+        this.demoDataSetup();
+    }
+
+    demoDataSetup() {
+        setTimeout(() => {
+            this.activityList = DemoDataService.activityList;
+        }, 6000);
     }
 
     openActivityDetail(activity) {

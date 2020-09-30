@@ -11,48 +11,6 @@ ion-header {
       color: #2A6FDB !important;
     }
   }
-
-  ion-toolbar {
-    height: 44px;
-    --background: #F8F9FB;
-    --border-color: #E8EAF2;
-    --border-width: 0px 0px 1px;
-    --border-style: solid;
-    --padding-bottom: 0;
-    --padding-top: 0;
-
-    ion-title {
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 18px;
-      color: #181639;
-
-      &.light {
-        color: #777595;
-      }
-    }
-
-    .arrow-button {
-      --color: #2A6FDB;
-      width: 58px;
-      height: 44px;
-
-      ion-icon {
-        width: 16px;
-        height: 16px;
-      }
-
-      &.left {
-        border-right: 1px solid #E8EAF2;
-      }
-
-      &.right {
-        border-left: 1px solid #E8EAF2;
-      }
-    }
-  }
 }
 
 
@@ -72,6 +30,9 @@ ion-content {
   }
 
   ion-list {
+    .list-item-container {
+      padding: 1px 0;
+    }
 
     ion-list-header {
       display: flex;
@@ -395,4 +356,9 @@ ion-content {
       }
     }
   }
+}
+
+
+ion-item {
+  --background: transparent;
 }

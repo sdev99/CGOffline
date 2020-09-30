@@ -1,16 +1,24 @@
-import {Component, OnInit} from '@angular/core';
-import {NavController} from '@ionic/angular';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ModalController, NavController} from '@ionic/angular';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {DemoDataService} from '../../services/demo-data.service';
 import {StaticDataService} from '../../services/static-data.service';
+import {ExitConfirmationPage} from '../../modals/exit-confirmation/exit-confirmation.page';
+import {ActivatedRoute} from '@angular/router';
+import {EnumService} from '../../services/enum.service';
+import {SharedDataService} from '../../services/shared-data.service';
+import {ObservablesService} from '../../services/observables.service';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-form-accident-report',
     templateUrl: './form-accident-report.page.html',
     styleUrls: ['./form-accident-report.page.scss'],
 })
-export class FormAccidentReportPage implements OnInit {
+export class FormAccidentReportPage {
     isSubmitted = false;
+    errorMessage = '';
+
     formGroup: FormGroup;
     locations = DemoDataService.locations;
     types = StaticDataService.types;
@@ -20,6 +28,8 @@ export class FormAccidentReportPage implements OnInit {
     selectedBodyParts = {};
     accidentImage;
 
+    activityDetail;
+
     accidentAlertOptions: any = {
         header: 'Where the accident happened ?',
     };
@@ -28,9 +38,12 @@ export class FormAccidentReportPage implements OnInit {
         header: 'Select Type',
     };
 
-
     constructor(
         public navCtrl: NavController,
+        public sharedDataService: SharedDataService,
+        public modalController: ModalController,
+        public route: ActivatedRoute,
+        public observablesService: ObservablesService,
     ) {
         this.formGroup = new FormGroup({
             dateTime: new FormControl(new Date().toISOString(), Validators.compose([
@@ -38,17 +51,34 @@ export class FormAccidentReportPage implements OnInit {
             ])),
             locationId: new FormControl('', Validators.compose([])),
             locationName: new FormControl('', Validators.compose([])),
-            reddorReportNeeded: new FormControl('', Validators.compose([])),
+            reddorReportNeeded: new FormControl('', Validators.compose([Validators.required])),
             aboutEnvironment: new FormControl(false, Validators.compose([])),
             aboutEquipment: new FormControl(false, Validators.compose([])),
             aboutPeople: new FormControl(false, Validators.compose([])),
             about: new FormControl('', Validators.compose([])),
-            type: new FormControl('', Validators.compose([])),
-            classification: new FormControl('', Validators.compose([]))
+            type: new FormControl('', Validators.compose([Validators.required])),
+            classification: new FormControl('', Validators.compose([Validators.required]))
+        });
+
+        route.queryParams.subscribe((params: any) => {
+            if (params) {
+                if (params.activityDetail) {
+                    this.activityDetail = JSON.parse(params.activityDetail);
+                }
+            }
         });
     }
 
-    ngOnInit() {
+    ionViewDidEnter() {
+        document.addEventListener('backbutton', (e) => {
+            this.onClose();
+        }, false);
+    }
+
+    ionViewWillLeave(): void {
+        document.removeEventListener('backbutton', () => {
+            console.log('Back Button Listner removed');
+        });
     }
 
     previousPart() {
@@ -103,8 +133,17 @@ export class FormAccidentReportPage implements OnInit {
         }
     }
 
+    openImageAnnotation = (photo) => {
+        this.sharedDataService.setAnnotationImage(photo);
+        this.sharedDataService.onAnnotationImageDone = (image) => {
+            this.accidentImage = image;
+        };
+
+        this.navCtrl.navigateForward(['/image-annotation']);
+    };
+
     photoAdded(photo) {
-        this.accidentImage = photo;
+        this.openImageAnnotation(photo);
     }
 
     photoRemoved() {
@@ -120,11 +159,47 @@ export class FormAccidentReportPage implements OnInit {
         element.style.fill = item.path.fill;
     }
 
-    onClose() {
-        this.navCtrl.back();
+    async onClose() {
+        const modal = await this.modalController.create({
+            component: ExitConfirmationPage,
+            swipeToClose: false,
+            showBackdrop: false,
+            backdropDismiss: false,
+            animated: true,
+            componentProps: {}
+        });
+        await modal.present();
+
+        modal.onWillDismiss().then(({data}) => {
+            if (data) {
+                this.navCtrl.back();
+            }
+        });
     }
 
+    isBodyPartSelected = () => {
+        return Object.keys(this.selectedBodyParts).length > 0;
+    };
+
     onContinue() {
-        this.navCtrl.navigateForward(['/signoff-digitalink']);
+        this.isSubmitted = true;
+        this.errorMessage = '';
+
+        if (this.formGroup.valid) {
+            if (!this.formGroup.controls.locationId.value && !this.formGroup.controls.locationName.value) {
+                this.errorMessage = 'Select location or enter manual location';
+            } else if (!this.isBodyPartSelected()) {
+                this.errorMessage = 'Fill required fields';
+            } else {
+                this.navCtrl.navigateForward(['/signoff-digitalink'], {
+                    queryParams: {
+                        type: EnumService.SignOffType.ACCIDENT_REPORT,
+                        data: JSON.stringify(this.activityDetail),
+                    }
+                });
+            }
+        } else {
+            this.errorMessage = 'Fill required fields';
+        }
     }
 }

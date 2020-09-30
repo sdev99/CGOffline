@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
+import {FilehandlerService} from '../../services/filehandler.service';
 
 @Component({
     selector: 'app-my-profile-documents',
@@ -12,6 +13,7 @@ export class MyProfileDocumentsPage implements OnInit {
 
     constructor(
         public navCtrl: NavController,
+        private filehandlerService: FilehandlerService,
     ) {
     }
 
@@ -20,6 +22,10 @@ export class MyProfileDocumentsPage implements OnInit {
 
     onClose() {
         this.navCtrl.back();
+    }
+
+    openFile() {
+        this.filehandlerService.openFile();
     }
 
 }

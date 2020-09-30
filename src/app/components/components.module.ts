@@ -8,6 +8,8 @@ import {DashboardHeaderComponent} from './dashboard-header/dashboard-header.comp
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.component';
+import {EmptyMessageComponent} from './empty-message/empty-message.component';
+import {NextPrevToolbarComponent} from './next-prev-toolbar/next-prev-toolbar.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +18,9 @@ import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.compo
         ColorPickerComponent,
         AuthInputComponent,
         DashboardHeaderComponent,
-        AddChoosePhotoComponent
+        AddChoosePhotoComponent,
+        EmptyMessageComponent,
+        NextPrevToolbarComponent
     ],
     imports: [
         IonicModule,
@@ -30,7 +34,9 @@ import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.compo
         ColorPickerComponent,
         AuthInputComponent,
         DashboardHeaderComponent,
-        AddChoosePhotoComponent
+        AddChoosePhotoComponent,
+        EmptyMessageComponent,
+        NextPrevToolbarComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

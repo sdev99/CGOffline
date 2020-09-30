@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CheckoutConfirmPageRoutingModule } from './checkout-confirm-routing.module';
+import { CheckoutConfirmPageRoutingModule } from './checkinout-confirm-routing.module';
 
-import { CheckoutConfirmPage } from './checkout-confirm.page';
+import { CheckinoutConfirmPage } from './checkinout-confirm.page';
 import {ComponentsModule} from '../../components/components.module';
 
 @NgModule({
@@ -17,6 +17,6 @@ import {ComponentsModule} from '../../components/components.module';
         CheckoutConfirmPageRoutingModule,
         ComponentsModule
     ],
-  declarations: [CheckoutConfirmPage]
+  declarations: [CheckinoutConfirmPage]
 })
 export class CheckoutConfirmPageModule {}
