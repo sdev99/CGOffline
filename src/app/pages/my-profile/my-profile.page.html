@@ -15,7 +15,8 @@
 <ion-content>
 
     <div class="content">
-        <ion-img (click)="addProfilePhoto()" [src]="profilePhoto?profilePhoto:'./assets/images/demo-profile.svg'"
+        <ion-img (click)="addProfilePhoto()"
+                 [src]="capturedPhoto?capturedPhoto.dataUrl:'./assets/images/demo-profile.svg'"
                  class="profile-img"></ion-img>
         <h3>Oliver Egginton</h3>
         <ngx-qrcode

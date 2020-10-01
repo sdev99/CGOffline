@@ -9,7 +9,7 @@ import {ActivatedRoute} from '@angular/router';
     styleUrls: ['./checkin-induction.page.scss'],
 })
 export class CheckinInductionPage implements OnInit {
-    inductionFiles = DemoDataService.inductionFiles;
+    inductionFiles = DemoDataService.inductionFiles.clone();
     locationDetail;
 
     constructor(

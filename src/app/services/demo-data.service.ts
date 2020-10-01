@@ -86,7 +86,7 @@ export class DemoDataService {
             status: 'overdue',
             highprority: false,
             time: 'Last week',
-            name: 'High priority and overdue activity goes here',
+            name: 'Audit Demo Location 3',
             formType: {
                 title: 'Custom Form',
                 id: 'custom'
@@ -99,7 +99,7 @@ export class DemoDataService {
             rejectedDate: '24Mar 2019 16:30',
             highprority: false,
             time: 'Yesterday',
-            name: 'High priority activity goes here',
+            name: 'Audit Demo Location 5',
             formType: {
                 title: 'Accident Report',
                 id: 'accident_report'
@@ -119,7 +119,7 @@ export class DemoDataService {
             status: 'active',
             highprority: false,
             time: 'Today',
-            name: 'Just a simple overdue activity title goes here',
+            name: 'Simple Activity',
             formType: {
                 title: 'Custom Form',
                 id: 'custom'

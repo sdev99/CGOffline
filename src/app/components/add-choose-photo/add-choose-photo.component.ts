@@ -10,6 +10,7 @@ export class AddChoosePhotoComponent implements OnInit {
     @Input() image;
     @Output() photoAdded = new EventEmitter<any>();
     @Output() photoRemoved = new EventEmitter<void>();
+    @Output() editPhoto = new EventEmitter<void>();
 
     constructor(
         public photoService: PhotoService,
@@ -29,10 +30,6 @@ export class AddChoosePhotoComponent implements OnInit {
         this.photoService.takePhotoFromGallery((photo) => {
             this.photoAdded.emit(photo);
         });
-    }
-
-    removeDatePhoto() {
-        this.photoRemoved.emit();
     }
 
 }

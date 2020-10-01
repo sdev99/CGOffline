@@ -23,7 +23,7 @@ export class FormCustomPage {
     isSubmitted = false;
     activityDetail;
 
-    list = DemoDataService.activityCustomForm;
+    list = DemoDataService.activityCustomForm.clone();
     answer = {};
 
     currentPageIndex = 1;
@@ -53,14 +53,11 @@ export class FormCustomPage {
     }
 
     ionViewDidEnter() {
-        document.addEventListener('backbutton', (e) => {
-        }, false);
+
     }
 
     ionViewWillLeave(): void {
-        document.removeEventListener('backbutton', () => {
-            console.log('Back Button Listner removed');
-        });
+
     }
 
     openFile() {
@@ -110,7 +107,7 @@ export class FormCustomPage {
 
     addImage(index) {
         this.photoService.choosePhotoOption((photo) => {
-            this.openImageAnnotation(index, photo.dataUrl);
+            this.openImageAnnotation(index, photo);
         });
     }
 
@@ -136,6 +133,7 @@ export class FormCustomPage {
     isValid(index, section) {
         let isValid = true;
         if (this.isSubmitted && section.required) {
+            isValid = false;
             const answer = this.answer[index];
             if (answer) {
                 switch (section.question_type) {
@@ -148,8 +146,10 @@ export class FormCustomPage {
                     case 'options':
                         if (section.canMultipleAsnwer) {
                             section.options.map((item) => {
-                                isValid = item.checked;
-                                return;
+                                if (item.checked) {
+                                    isValid = item.checked;
+                                    return;
+                                }
                             });
                         } else {
                             isValid = section.selectedValue;

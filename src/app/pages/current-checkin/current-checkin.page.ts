@@ -25,7 +25,7 @@ export class CurrentCheckinPage implements OnInit {
 
     ngOnInit() {
         setTimeout(() => {
-            this.list = DemoDataService.currentCheckinFiles;
+            this.list = DemoDataService.currentCheckinFiles.clone();
         }, 2000);
     }
 

@@ -13,9 +13,9 @@ export class MyProfileEditPage implements OnInit {
     isSubmitted = false;
     profileForm: FormGroup;
 
-    timeZones = DemoDataService.timeZones;
+    timeZones = DemoDataService.timeZones.clone();
     timeZone = DemoDataService.timeZones[0].offset;
-    languages = DemoDataService.languages;
+    languages = DemoDataService.languages.clone();
     language = DemoDataService.languages[0].code;
 
     constructor(

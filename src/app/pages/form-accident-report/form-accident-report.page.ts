@@ -20,15 +20,16 @@ export class FormAccidentReportPage {
     errorMessage = '';
 
     formGroup: FormGroup;
-    locations = DemoDataService.locations;
-    types = StaticDataService.types;
-    classifications = StaticDataService.classifications;
-    bodyParts = StaticDataService.bodyParts;
+    locations = DemoDataService.locations.clone();
+    types = StaticDataService.types.clone();
+    classifications = StaticDataService.classifications.clone();
+    bodyParts = StaticDataService.bodyParts.clone();
     currentBodyPartIndex = 0;
     selectedBodyParts = {};
     accidentImage;
 
     activityDetail;
+    placeNotintheList = false;
 
     accidentAlertOptions: any = {
         header: 'Where the accident happened ?',
@@ -50,6 +51,7 @@ export class FormAccidentReportPage {
                 Validators.required
             ])),
             locationId: new FormControl('', Validators.compose([])),
+            placeNotintheList: new FormControl(false, Validators.compose([])),
             locationName: new FormControl('', Validators.compose([])),
             reddorReportNeeded: new FormControl('', Validators.compose([Validators.required])),
             aboutEnvironment: new FormControl(false, Validators.compose([])),
@@ -70,14 +72,24 @@ export class FormAccidentReportPage {
     }
 
     ionViewDidEnter() {
-        document.addEventListener('backbutton', (e) => {
-        }, false);
+
     }
 
     ionViewWillLeave(): void {
-        document.removeEventListener('backbutton', () => {
-            console.log('Back Button Listner removed');
-        });
+
+    }
+
+    placeInTheListChange(event) {
+        if (event.detail.value) {
+            this.formGroup.controls.placeNotintheList.setValue(false);
+            this.formGroup.controls.locationName.setValue('');
+        }
+    }
+
+    placeNotintheListChange(event) {
+        if (event.detail.checked) {
+            this.formGroup.controls.locationId.setValue('');
+        }
     }
 
     previousPart() {

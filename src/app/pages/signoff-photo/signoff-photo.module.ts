@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { SignoffPhotoPageRoutingModule } from './signoff-photo-routing.module';
 
 import { SignoffPhotoPage } from './signoff-photo.page';
+import {ComponentsModule} from '../../components/components.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SignoffPhotoPageRoutingModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        SignoffPhotoPageRoutingModule,
+        ComponentsModule
+    ],
   declarations: [SignoffPhotoPage]
 })
 export class SignoffPhotoPageModule {}

@@ -14,7 +14,7 @@ export class ForgotPasswordPage {
     isSubmitted = false;
     myForm: FormGroup;
 
-    languages = DemoDataService.languages;
+    languages = DemoDataService.languages.clone();
 
 
     constructor(

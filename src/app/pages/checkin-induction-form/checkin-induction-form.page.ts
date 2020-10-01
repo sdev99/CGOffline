@@ -10,7 +10,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class CheckinInductionFormPage implements OnInit {
 
-    list = DemoDataService.inductionForm;
+    list = DemoDataService.inductionForm.clone();
     locationDetail;
 
     constructor(

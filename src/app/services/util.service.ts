@@ -1,6 +1,16 @@
 import {Injectable} from '@angular/core';
 import {LoadingController} from '@ionic/angular';
 
+declare global {
+    interface Array<T> {
+        clone(): Array<T>;
+    }
+}
+
+Array.prototype.clone = function() {
+    return JSON.parse(JSON.stringify(this));
+};
+
 @Injectable({
     providedIn: 'root'
 })

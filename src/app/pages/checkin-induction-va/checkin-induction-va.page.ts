@@ -11,7 +11,7 @@ import {EnumService} from '../../services/enum.service';
 })
 export class CheckinInductionVaPage implements OnInit {
 
-    inductionFiles = DemoDataService.inductionFiles;
+    inductionFiles = DemoDataService.inductionFiles.clone();
     files = [];
     currentIndex = 0;
     locationDetail;

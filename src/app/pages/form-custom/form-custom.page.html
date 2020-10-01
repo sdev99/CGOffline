@@ -38,30 +38,30 @@
 
 
             <ng-container *ngIf="section.question_type === 'image_annotation'">
-                <div class="add-image ion-margin-horizontal">
-                    <!--                    <ion-img *ngIf="answer[idx] && answer[idx].image; else addImageBtn"-->
-                    <!--                             [src]="answer[idx].image"></ion-img>-->
+                <div class="image-view  ion-margin-horizontal" *ngIf="answer[idx] && answer[idx].image; else addImageBtn">
 
-                    <div class="image-view" *ngIf="answer[idx] && answer[idx].image; else addImageBtn">
-
-                        <div class="close-btn">
-                            <ion-button class="edit-btn" fill="clear"
-                                        (click)="openImageAnnotation(idx,answer[idx].image)">
-                                <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-                            </ion-button>
-                            <ion-button fill="clear" (click)="answer[idx].image=null">
-                                <ion-icon name="close" slot="icon-only"></ion-icon>
-                            </ion-button>
-                        </div>
-                        <ion-img [src]="answer[idx].image"></ion-img>
+                    <div class="close-btn">
+                        <ion-button class="edit-btn" fill="clear"
+                                    (click)="openImageAnnotation(idx,answer[idx].image)">
+                            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                        </ion-button>
+                        <ion-button fill="clear" (click)="answer[idx].image=null">
+                            <ion-icon name="close" slot="icon-only"></ion-icon>
+                        </ion-button>
                     </div>
+                    <ion-img [src]="answer[idx].image"></ion-img>
+                </div>
 
-                    <ng-template #addImageBtn>
+                <ng-template #addImageBtn>
+                    <div class="add-image ion-margin-horizontal">
+                        <!--                    <ion-img *ngIf="answer[idx] && answer[idx].image; else addImageBtn"-->
+                        <!--                             [src]="answer[idx].image"></ion-img>-->
+
                         <ion-button class="add-img-btn" fill="clear" (click)="addImage(idx)">
                             <ion-icon slot="icon-only" src="./assets/images/AddPhoto.svg"></ion-icon>
                         </ion-button>
-                    </ng-template>
-                </div>
+                    </div>
+                </ng-template>
                 <div class="hr-line"></div>
                 <ion-textarea class="picture-additional-text ion-margin-horizontal ion-margin-bottom" autoGrow="true"
                               cols="3"></ion-textarea>
@@ -120,7 +120,7 @@
                     <ion-label position="stacked">Pick Date</ion-label>
                     <div class="date-field">
                         <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
-                        <ion-datetime  [(ngModel)]="answer[idx].date" placeholder="Choose"
+                        <ion-datetime [(ngModel)]="answer[idx].date" placeholder="Choose"
                                       display-timezone="utc"></ion-datetime>
                     </div>
                 </ion-item>
@@ -131,7 +131,9 @@
                 <app-add-choose-photo
                         [image]="answer[idx]?answer[idx].image:null"
                         (photoAdded)="photoAdded(idx, $event)"
-                        (photoRemoved)="photoRemoved(idx)"></app-add-choose-photo>
+                        (photoRemoved)="photoRemoved(idx)"
+                        (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
+                ></app-add-choose-photo>
             </div>
 
             <ng-container *ngIf="section.isAdditionalComment">
@@ -163,7 +165,9 @@
                         <app-add-choose-photo
                                 [image]="answer[idx]?answer[idx].image:null"
                                 (photoAdded)="photoAdded(idx, $event)"
-                                (photoRemoved)="photoRemoved(idx)"></app-add-choose-photo>
+                                (photoRemoved)="photoRemoved(idx)"
+                                (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
+                        ></app-add-choose-photo>
                     </ng-template>
                 </div>
             </ng-container>

@@ -15,10 +15,14 @@
 <ng-template #addPhotoTemplate>
     <div class="image-view">
         <div class="close-btn">
-            <ion-button fill="clear" (click)="removeDatePhoto()">
+            <ion-button class="edit-btn" fill="clear"
+                        (click)="editPhoto.emit()">
+                <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" (click)="photoRemoved.emit()">
                 <ion-icon name="close" slot="icon-only"></ion-icon>
             </ion-button>
         </div>
-        <ion-img *ngIf="image" [src]="image.dataUrl"></ion-img>
+        <ion-img *ngIf="image" [src]="image"></ion-img>
     </div>
 </ng-template>

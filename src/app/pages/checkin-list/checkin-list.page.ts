@@ -11,7 +11,7 @@ import {SearchLocationPage} from '../../modals/search-location/search-location.p
 })
 export class CheckinListPage implements OnInit {
 
-    locations = DemoDataService.locations;
+    locations = DemoDataService.locations.clone();
 
     constructor(
         public navCtrl: NavController,

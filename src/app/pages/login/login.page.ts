@@ -4,7 +4,6 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
-import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 
 @Component({
     selector: 'app-login',
@@ -16,14 +15,13 @@ export class LoginPage implements OnInit {
     isSubmitted = false;
     loginForm: FormGroup;
 
-    languages = DemoDataService.languages;
+    languages = DemoDataService.languages.clone();
     selectedLanguage = this.languages[0].code;
-    deviceUID = '';
 
     constructor(
         public utilService: UtilService,
         public navCtrl: NavController,
-        private uniqueDeviceID: UniqueDeviceID
+        public sharedDataService: SharedDataService,
     ) {
         this.loginForm = new FormGroup({
             email: new FormControl('test@domain.com', Validators.compose([
@@ -38,12 +36,6 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit() {
-        this.uniqueDeviceID.get()
-            .then((uuid: any) => {
-                this.deviceUID = uuid;
-            })
-            .catch((error: any) => console.log(error));
-
         if (localStorage.getItem('isLoggedIn') === '1') {
             this.navCtrl.navigateRoot('/tabs/dashboard');
         }

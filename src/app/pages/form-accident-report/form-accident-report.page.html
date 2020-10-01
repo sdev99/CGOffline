@@ -33,13 +33,20 @@
                         [interfaceOptions]="accidentAlertOptions"
                         formControlName="locationId"
                         placeholder="Choose"
+                        (ionChange)="placeInTheListChange($event)"
                 >
                     <ion-select-option *ngFor="let item of locations"
                                        [value]="item.id">{{item.name}}</ion-select-option>
                 </ion-select>
             </ion-item>
 
-            <ion-item class="input-item" *ngIf="!formGroup.controls.locationId.value">
+            <ion-item>
+                <ion-checkbox slot="start" formControlName="placeNotintheList"
+                              (ionChange)="placeNotintheListChange($event)"></ion-checkbox>
+                <ion-label>Place not in the list</ion-label>
+            </ion-item>
+
+            <ion-item class="input-item" *ngIf="formGroup.controls.placeNotintheList.value">
                 <ion-label position="stacked">
                     Location Name
                     <ion-note style="font-size: 90%">(if not available in above dropdown)</ion-note>
@@ -304,7 +311,9 @@
                 <app-add-choose-photo
                         [image]="accidentImage"
                         (photoAdded)="photoAdded( $event)"
-                        (photoRemoved)="photoRemoved()"></app-add-choose-photo>
+                        (photoRemoved)="photoRemoved()"
+                        (editPhoto)="openImageAnnotation(accidentImage)"
+                ></app-add-choose-photo>
             </div>
 
 

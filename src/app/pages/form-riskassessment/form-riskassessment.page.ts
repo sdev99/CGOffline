@@ -9,6 +9,7 @@ import {FilehandlerService} from '../../services/filehandler.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
 
+
 @Component({
     selector: 'app-form-riskassessment',
     templateUrl: './form-riskassessment.page.html',
@@ -23,11 +24,11 @@ export class FormRiskassessmentPage {
     totalItem = 42;
     currentItem = 1;
 
-    list = DemoDataService.riskAssesmentQuestions;
-    riskRatings = DemoDataService.riskRatings;
-    residualRiskRatings = DemoDataService.residualRiskRatings;
-    users = DemoDataService.users;
-    groups = DemoDataService.usersGroups;
+    list = DemoDataService.riskAssesmentQuestions.clone();
+    riskRatings = DemoDataService.riskRatings.clone();
+    residualRiskRatings = DemoDataService.residualRiskRatings.clone();
+    users = DemoDataService.users.clone();
+    groups = DemoDataService.usersGroups.clone();
 
     ionSelectInterface = 'popover';
 
@@ -55,14 +56,11 @@ export class FormRiskassessmentPage {
     }
 
     ionViewDidEnter() {
-        document.addEventListener('backbutton', (e) => {
-        }, false);
+
     }
 
     ionViewWillLeave(): void {
-        document.removeEventListener('backbutton', () => {
-            console.log('Back Button Listner removed');
-        });
+
     }
 
     openFile() {

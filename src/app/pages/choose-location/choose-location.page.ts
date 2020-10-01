@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-choose-location',
@@ -16,6 +17,7 @@ export class ChooseLocationPage implements OnInit {
 
     constructor(
         public navCtrl: NavController,
+        public sharedDataService: SharedDataService,
     ) {
     }
 

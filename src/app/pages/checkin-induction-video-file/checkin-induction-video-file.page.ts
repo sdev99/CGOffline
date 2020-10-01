@@ -10,7 +10,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class CheckinInductionVideoFilePage implements OnInit {
 
-    inductionFiles = DemoDataService.inductionFiles;
+    inductionFiles = DemoDataService.inductionFiles.clone();
     files = [];
     currentIndex = 0;
     locationDetail;

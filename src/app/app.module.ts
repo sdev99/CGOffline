@@ -17,8 +17,6 @@ import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {File} from '@ionic-native/file/ngx';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
-import {Camera} from '@ionic-native/camera/ngx';
-
 
 @NgModule({
     declarations: [
@@ -27,7 +25,9 @@ import {Camera} from '@ionic-native/camera/ngx';
     entryComponents: [],
     imports: [
         BrowserModule,
-        IonicModule.forRoot(),
+        IonicModule.forRoot({
+            hardwareBackButton: false
+        }),
         AppRoutingModule,
         ComponentsModule,
         NgxQRCodeModule,
@@ -41,7 +41,6 @@ import {Camera} from '@ionic-native/camera/ngx';
         File,
         FileTransfer,
         UniqueDeviceID,
-        Camera,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

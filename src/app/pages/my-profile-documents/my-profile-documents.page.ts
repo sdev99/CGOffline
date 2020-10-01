@@ -9,7 +9,7 @@ import {FilehandlerService} from '../../services/filehandler.service';
     styleUrls: ['./my-profile-documents.page.scss'],
 })
 export class MyProfileDocumentsPage implements OnInit {
-    list = DemoDataService.myProfileDocuments;
+    list = DemoDataService.myProfileDocuments.clone();
 
     constructor(
         public navCtrl: NavController,

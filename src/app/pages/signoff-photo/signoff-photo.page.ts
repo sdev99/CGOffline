@@ -11,7 +11,7 @@ import {EnumService} from '../../services/enum.service';
     styleUrls: ['./signoff-photo.page.scss'],
 })
 export class SignoffPhotoPage implements OnInit {
-    photo;
+    capturedPhoto;
 
     type;
     data;
@@ -39,8 +39,12 @@ export class SignoffPhotoPage implements OnInit {
 
     takePhoto() {
         this.photoService.takePhotoFromCamera((photo) => {
-            this.photo = photo.dataUrl;
+            this.capturedPhoto = photo;
         });
+    }
+
+    onClose() {
+        this.navCtrl.back();
     }
 
     continue() {

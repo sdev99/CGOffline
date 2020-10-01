@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
-import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-my-profile-details',
@@ -13,11 +13,10 @@ export class MyProfileDetailsPage implements OnInit {
     user;
     offsetData;
     languageData;
-    deviceUID = '';
 
     constructor(
         public navCtrl: NavController,
-        private uniqueDeviceID: UniqueDeviceID
+        private sharedDataService: SharedDataService
     ) {
         const userData = localStorage.getItem('USER_DATA');
         if (userData) {
@@ -28,13 +27,7 @@ export class MyProfileDetailsPage implements OnInit {
     }
 
     ngOnInit() {
-        this.uniqueDeviceID.get()
-            .then((uuid: any) => {
-                this.deviceUID = uuid;
-            })
-            .catch((error: any) => console.log(error));
     }
-
 
     onClose() {
         this.navCtrl.back();

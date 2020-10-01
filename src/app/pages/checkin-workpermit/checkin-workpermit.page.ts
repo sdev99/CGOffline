@@ -9,7 +9,7 @@ import {NavController} from '@ionic/angular';
 })
 export class CheckinWorkpermitPage implements OnInit {
 
-    list = DemoDataService.currentCheckinWorkPermits;
+    list = DemoDataService.currentCheckinWorkPermits.clone();
 
     isCheckedIn = true;
 

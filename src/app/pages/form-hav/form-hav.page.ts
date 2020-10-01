@@ -16,12 +16,12 @@ import {Subscription} from 'rxjs';
 export class FormHavPage {
     isSubmitted = false;
     formGroup: FormGroup;
-    errorMsg = '';
+    errorMessage = '';
     activityDetail;
 
-    toolManufacturers = DemoDataService.toolManufacturers;
-    toolTypes = DemoDataService.toolTypes;
-    toolModels = DemoDataService.toolModels;
+    toolManufacturers = DemoDataService.toolManufacturers.clone();
+    toolTypes = DemoDataService.toolTypes.clone();
+    toolModels = DemoDataService.toolModels.clone();
 
     constructor(
         public navCtrl: NavController,
@@ -49,14 +49,11 @@ export class FormHavPage {
     }
 
     ionViewDidEnter() {
-        document.addEventListener('backbutton', (e) => {
-        }, false);
+
     }
 
     ionViewWillLeave(): void {
-        document.removeEventListener('backbutton', () => {
-            console.log('Back Button Listner removed');
-        });
+
     }
 
     isError(field) {
@@ -83,7 +80,7 @@ export class FormHavPage {
 
     onSubmit() {
         this.isSubmitted = true;
-        this.errorMsg = '';
+        this.errorMessage = '';
         const {dateOfUsage, type, manufacturer, model, plannedTime} = this.formGroup.controls;
         if (this.formGroup.valid) {
             this.navCtrl.navigateForward(['/signoff-digitalink'], {
@@ -93,7 +90,16 @@ export class FormHavPage {
                 }
             });
         } else if (!dateOfUsage.value && !type.value && !model.value && !manufacturer.value && !plannedTime.value) {
-            this.errorMsg = 'All fileds are required to be filled.';
+            this.errorMessage = 'All Required fields missings.';
+        } else {
+            let missingFieldCount = 0;
+            Object.keys(this.formGroup.controls).map((controlName) => {
+                const control = this.formGroup.controls[controlName];
+                if (!control.valid) {
+                    missingFieldCount++;
+                }
+            });
+            this.errorMessage = missingFieldCount + ' required field' + (missingFieldCount > 1 ? 's' : '') + ' missing';
         }
     }
 

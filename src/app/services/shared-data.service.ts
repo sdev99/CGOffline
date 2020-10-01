@@ -10,6 +10,7 @@ export class SharedDataService {
     annotationColor = '#98C16B';
     onAnnotationImageDone;
     checkedInPlaces = [];
+    deviceUID = 'TEST ID';
 
     constructor() {
         const checkedInPlaces = localStorage.getItem('CHECKED_IN_PLACES');

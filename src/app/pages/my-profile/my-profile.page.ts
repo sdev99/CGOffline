@@ -10,7 +10,7 @@ import {PhotoService} from '../../services/photo.service';
 export class MyProfilePage implements OnInit {
     qrCodeValue = 'Oliver Egginton';
     elementType = 'url';
-    profilePhoto;
+    capturedPhoto;
 
 
     constructor(
@@ -28,7 +28,7 @@ export class MyProfilePage implements OnInit {
 
     addProfilePhoto() {
         this.photoService.choosePhotoOption((photo) => {
-            this.profilePhoto = photo.dataUrl;
+            this.capturedPhoto = photo;
         });
     }
 

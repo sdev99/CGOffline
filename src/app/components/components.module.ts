@@ -10,6 +10,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.component';
 import {EmptyMessageComponent} from './empty-message/empty-message.component';
 import {NextPrevToolbarComponent} from './next-prev-toolbar/next-prev-toolbar.component';
+import {DashboardHeaderDmComponent} from './dashboard-header-dm/dashboard-header-dm.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import {NextPrevToolbarComponent} from './next-prev-toolbar/next-prev-toolbar.co
         DashboardHeaderComponent,
         AddChoosePhotoComponent,
         EmptyMessageComponent,
-        NextPrevToolbarComponent
+        NextPrevToolbarComponent,
+        DashboardHeaderDmComponent
     ],
     imports: [
         IonicModule,
@@ -36,7 +38,8 @@ import {NextPrevToolbarComponent} from './next-prev-toolbar/next-prev-toolbar.co
         DashboardHeaderComponent,
         AddChoosePhotoComponent,
         EmptyMessageComponent,
-        NextPrevToolbarComponent
+        NextPrevToolbarComponent,
+        DashboardHeaderDmComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

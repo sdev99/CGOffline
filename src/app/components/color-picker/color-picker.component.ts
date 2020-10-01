@@ -207,14 +207,12 @@ export class ColorPickerComponent implements OnInit {
 
         const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
 
-        // Create color gradient
-        gradient.addColorStop(0, '#FF0000');
-        gradient.addColorStop(0.16, '#FDD220');
-        gradient.addColorStop(0.33, '#8ABF77');
-        gradient.addColorStop(0.50, '#78F6DA');
-        gradient.addColorStop(0.66, '#413BFB');
-        gradient.addColorStop(0.84, ' #FF00EC');
-        gradient.addColorStop(1, '#FF0000');
+
+        const colors = ['#FFFFFF', '#000000', '#FF0000', '#FDD220', '#8ABF77', '#78F6DA', '#413BFB', '#FF00EC', '#FF0000'];
+        const interval = 1 / (colors.length - 1);
+        colors.map((color, key) => {
+            gradient.addColorStop(key * interval, color);
+        });
 
         // Apply gradient to canvas
         ctx.fillStyle = gradient;

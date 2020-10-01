@@ -23,7 +23,7 @@ export class DashboardPage implements OnInit {
 
     demoDataSetup() {
         setTimeout(() => {
-            this.activityList = DemoDataService.activityList;
+            this.activityList = DemoDataService.activityList.clone();
         }, 6000);
     }
 

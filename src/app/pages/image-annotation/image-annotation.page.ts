@@ -117,16 +117,12 @@ export class ImageAnnotationPage implements OnInit {
     }
 
     ionViewDidEnter(): void {
-        document.addEventListener('backbutton', (e) => {
-        }, false);
 
         this.customiseControl();
     }
 
     ionViewWillLeave(): void {
-        document.removeEventListener('backbutton', () => {
-            console.log('Back Button Listner removed');
-        });
+
     }
 
     initialise() {
@@ -135,9 +131,15 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.setDimensions({width: window.innerWidth, height: content.offsetHeight});
 
         // const imgURL = './assets/images/demo1.png';
-        const imgURL = this.sharedDataService.getAnnotationImage();
-        fabric.Image.fromURL(imgURL, (img) => {
+        const annotationImage = this.sharedDataService.getAnnotationImage();
+        let imgURL = '';
+        if (typeof annotationImage === 'object' && annotationImage.dataUrl) {
+            imgURL = annotationImage.dataUrl;
+        } else {
+            imgURL = annotationImage;
+        }
 
+        fabric.Image.fromURL(imgURL, (img) => {
 
             this.canvasRef.add(img);
             const aspectRatio = img.width / img.height;
