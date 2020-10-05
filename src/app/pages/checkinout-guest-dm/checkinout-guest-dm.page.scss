@@ -1,0 +1,39 @@
+ion-content {
+  --background: #F6F9FB;
+
+  Form {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    ion-item {
+      width: 260px;
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+      }
+
+      ion-input {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        min-height: 50px;
+        margin-top: 10px;
+        --background: #fff;
+        border: 1px solid #DCE7EF;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #171538;
+      }
+    }
+  }
+
+}

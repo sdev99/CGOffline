@@ -1,0 +1,72 @@
+ion-menu {
+  --width: 400px;
+
+  ::ng-deep app-modal-header {
+    ion-toolbar {
+      padding-left: 12px;
+      --background: transparent !important;
+      --border-color: transparent;
+      --border-width: 0;
+    }
+  }
+
+  .content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    ion-item {
+      --border-color: #E8EAF2;
+      --inner-padding-start: 12px;
+      --inner-padding-end: 12px;
+      --inner-padding-top: 16px;
+      --inner-padding-bottom: 16px;
+    }
+
+    .warning-view {
+      background: #FFEDBD;
+      padding: 12px 20px;
+      margin: 41px 25px 25px;
+
+
+      ion-chip {
+        padding: 0;
+        margin: 0;
+
+        ion-icon {
+          margin-left: 0;
+          width: 16px;
+          height: 16px;
+        }
+
+        ion-label {
+          font-family: IBM Plex Sans;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 18px;
+          color: #836A27;
+        }
+      }
+
+
+      p {
+        margin-top: 8px;
+        margin-bottom: 0;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #836A27;
+      }
+    }
+
+    .action-btn {
+      width: 152px;
+      margin: 50px auto;
+      height: 44px;
+    }
+  }
+
+}

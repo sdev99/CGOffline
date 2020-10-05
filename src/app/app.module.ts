@@ -17,6 +17,7 @@ import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {File} from '@ionic-native/file/ngx';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
+import {CameraPreview} from '@ionic-native/camera-preview/ngx';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
         File,
         FileTransfer,
         UniqueDeviceID,
+        CameraPreview,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

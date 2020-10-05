@@ -1,0 +1,17 @@
+<ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+        <ion-button class="arrow-button left" fill="outline" (click)="back.emit()">
+            <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+            Back
+        </ion-button>
+    </ion-buttons>
+    <ion-title>{{title}}</ion-title>
+
+    <ion-buttons slot="end">
+        <ion-button [disabled]="disableRightBtn" class="arrow-button right"
+                    (click)="continue.emit()">
+            <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+            Continue
+        </ion-button>
+    </ion-buttons>
+</ion-toolbar>

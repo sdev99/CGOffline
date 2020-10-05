@@ -56,13 +56,25 @@ export class ColorPickerComponent implements OnInit {
         } else {
             this.colorFromChooser = '#0000FF';
         }
-        this.chooserX = 150;
+
         setTimeout(() => {
             this.init();
         }, 200);
     }
 
     init = () => {
+        // Set default position of coloe chooser
+        const canvasChooser = this.chooser.nativeElement;
+        const context = canvasChooser.getContext('2d');
+        const bounding = canvasChooser.getBoundingClientRect();
+        const currentWidth = window.innerWidth;
+        const width = currentWidth * 90 / 100;
+
+        const touchX = width / 2;
+        const x = (touchX - bounding.left) * this.getPixelRatio(context);
+        this.chooserX = x;
+        this.colorFromChooser = '#000';
+
         this.initChooser();
         this.initPalette();
     };
@@ -257,20 +269,19 @@ export class ColorPickerComponent implements OnInit {
 
     getColor = (event, canvas, context, fromChooser: boolean): string => {
 
+        console.log('Color_Event ' + JSON.stringify(event));
         const bounding = canvas.getBoundingClientRect();
         const touchX = event.pageX || event.changedTouches[0].pageX || event.changedTouches[0].screenX;
-        const touchY = event.pageY || event.changedTouches[0].pageY || event.changedTouches[0].screenX;
-
+        const touchY = event.pageY || event.changedTouches[0].pageY || event.changedTouches[0].screenY;
 
         const x = (touchX - bounding.left) * this.getPixelRatio(context);
         const y = (touchY - bounding.top) * this.getPixelRatio(context);
 
-        // console.log('x ' + x);
-        // console.log('y ' + y);
-        // console.log('touchX ' + touchX);
-        // console.log('touchY ' + touchY);
+        console.log('x ' + x);
+        console.log('y ' + y);
+        console.log('touchX ' + touchX);
+        console.log('touchY ' + touchY);
         // console.log('bounding.top ' + bounding.top);
-
 
         if (fromChooser) {
             this.chooserX = x;

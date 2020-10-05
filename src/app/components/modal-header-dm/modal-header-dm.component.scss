@@ -1,0 +1,44 @@
+ion-toolbar {
+  height: 65px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0px;
+  --border-width: 0;
+  --border-color: transparent;
+
+  ion-title {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-size: 17px;
+    line-height: 22px;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+  }
+
+  &.toolbar-1 {
+    --background: #8A25B1;
+
+    ion-title {
+      font-weight: bold;
+      color: #FFFFFF;
+    }
+  }
+
+  &.toolbar-2 {
+    ion-title {
+      font-weight: normal;
+      color: #171538;
+    }
+  }
+
+  .close-icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 16px;
+  }
+}

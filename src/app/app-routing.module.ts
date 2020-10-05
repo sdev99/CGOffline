@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
+    {path: '', redirectTo: 'choose-location', pathMatch: 'full'},
     {
         path: 'tabs',
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
@@ -123,9 +123,37 @@ const routes: Routes = [
         path: 'search-location',
         loadChildren: () => import('./modals/search-location/search-location.module').then(m => m.SearchLocationPageModule)
     },
+    {
+        path: 'signoff-photo',
+        loadChildren: () => import('./pages/signoff-photo/signoff-photo.module').then(m => m.SignoffPhotoPageModule)
+    },
+    {
+        path: 'home-exit-dm',
+        loadChildren: () => import('./modals/home-exit-dm/home-exit-dm.module').then(m => m.HomeExitDmPageModule)
+    },
+    {
+        path: 'checkinout-option-dm',
+        loadChildren: () => import('./pages/checkinout-option-dm/checkinout-option-dm.module').then(m => m.CheckinoutOptionDmPageModule)
+    },
+    {
+        path: 'checkinout-name-dm',
+        loadChildren: () => import('./pages/checkinout-name-dm/checkinout-name-dm.module').then(m => m.CheckinoutNameDmPageModule)
+    },
+    {
+        path: 'checkinout-guest-dm',
+        loadChildren: () => import('./pages/checkinout-guest-dm/checkinout-guest-dm.module').then(m => m.CheckinoutGuestDmPageModule)
+    },
   {
-    path: 'signoff-photo',
-    loadChildren: () => import('./pages/signoff-photo/signoff-photo.module').then( m => m.SignoffPhotoPageModule)
+    path: 'checkinout-alreadycheckin-dm',
+    loadChildren: () => import('./pages/checkinout-alreadycheckin-dm/checkinout-alreadycheckin-dm.module').then( m => m.CheckinoutAlreadycheckinDmPageModule)
+  },
+  {
+    path: 'checkinout-photoidentity-dm',
+    loadChildren: () => import('./pages/checkinout-photoidentity-dm/checkinout-photoidentity-dm.module').then( m => m.CheckinoutPhotoidentityDmPageModule)
+  },
+  {
+    path: 'documents-dm',
+    loadChildren: () => import('./pages/documents-dm/documents-dm.module').then( m => m.DocumentsDmPageModule)
   }
 
 ];

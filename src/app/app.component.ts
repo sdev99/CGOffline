@@ -8,6 +8,7 @@ import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 import {ObservablesService} from './services/observables.service';
 import {EnumService} from './services/enum.service';
 import {SharedDataService} from './services/shared-data.service';
+import {UtilService} from './services/util.service';
 
 const {Geolocation, PushNotifications, Permissions} = Plugins;
 
@@ -23,6 +24,7 @@ export class AppComponent {
         private statusBar: StatusBar,
         private uniqueDeviceID: UniqueDeviceID,
         private sharedDataService: SharedDataService,
+        private utilService: UtilService,
         private observablesService: ObservablesService,
     ) {
         this.initializeApp();

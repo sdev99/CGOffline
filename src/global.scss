@@ -468,6 +468,12 @@ ion-item {
   --border-radius: 5px;
 }
 
+.home-exit-dm-modal {
+  --width: 402px;
+  --height: 383px;
+  --border-radius: 0px;
+}
+
 .item-no-vertical-padding {
   --padding-top: 0 !important;
   --padding-bottom: 0 !important;
@@ -479,4 +485,8 @@ ion-item {
   border-color: #E4D3A3;
   --background: #FFEDBD;
   --border-color: #E4D3A3;
+}
+
+ion-button {
+  text-transform: none;
 }

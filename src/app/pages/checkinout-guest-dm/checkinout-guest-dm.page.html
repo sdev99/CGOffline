@@ -1,0 +1,32 @@
+<ion-header>
+    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out as Guest"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content>
+
+    <app-back-continue-toolbar [disableRightBtn]="!formGroup.valid" (back)="onBack()"
+                               (continue)="onContinue()"></app-back-continue-toolbar>
+
+    <Form [formGroup]="formGroup" >
+
+        <ion-item lines="none">
+            <ion-label position="stacked">First Name</ion-label>
+            <ion-input formControlName="fname"></ion-input>
+        </ion-item>
+
+
+        <ion-item lines="none">
+            <ion-label position="stacked">Middle Name</ion-label>
+            <ion-input formControlName="mname"></ion-input>
+        </ion-item>
+
+
+        <ion-item lines="none">
+            <ion-label position="stacked">Last Name</ion-label>
+            <ion-input formControlName="lname"></ion-input>
+        </ion-item>
+
+
+    </Form>
+</ion-content>

@@ -1,7 +1,38 @@
 <ion-header>
-    <app-dashboard-header-dm title="Demo Location 1"></app-dashboard-header-dm>
+    <app-dashboard-header-dm (infoClick)="openInfoMenu()" (logoutClick)="logOutClick()"
+                             title="Demo Location 1"></app-dashboard-header-dm>
 </ion-header>
 
-<ion-content>
+<ion-content mode="md" id="infomenuContent">
+    <div class="content">
+        <app-dashboard-button
+                icon="./assets/icon/checkinout.svg"
+                title="Check In/Out"
+                (click)="checkInOutClick()"></app-dashboard-button>
 
+        <app-dashboard-button
+                icon="./assets/icon/document.svg"
+                title="Documents"
+                (click)="documentsClick()"></app-dashboard-button>
+
+        <app-dashboard-button
+                icon="./assets/icon/form.svg"
+                title="Forms"
+                (click)="formsClick()"></app-dashboard-button>
+
+        <app-dashboard-button
+                icon="./assets/icon/permits.svg"
+                title="Permits"
+                (click)="permitsClick()"></app-dashboard-button>
+
+        <app-dashboard-button
+                icon="./assets/icon/evacuation.svg"
+                title="Evacuation"
+                (click)="evacuationClick()"></app-dashboard-button>
+    </div>
 </ion-content>
+
+
+<app-device-info></app-device-info>
+
+

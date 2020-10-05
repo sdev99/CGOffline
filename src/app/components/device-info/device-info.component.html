@@ -1,0 +1,36 @@
+<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent">
+    <ion-header>
+        <app-modal-header modalTitle="Device Info" (closeModal)="closeInfoMenu()"></app-modal-header>
+    </ion-header>
+    <ion-content mode="ios">
+        <div class="content">
+            <ion-list lines="full">
+                <ion-item>
+                    <ion-label>UID</ion-label>
+                    <ion-note color="medium" slot="end">{{sharedDataService.deviceUID}}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Device Status</ion-label>
+                    <ion-chip color="clear">
+                        <ion-icon color="success" name="ellipse"></ion-icon>
+                        <ion-label color="success">Online</ion-label>
+                    </ion-chip>
+                </ion-item>
+            </ion-list>
+
+            <div class="warning-view">
+                <ion-chip color="clear">
+                    <ion-icon src="./assets/icon/warning-alert.svg"></ion-icon>
+                    <ion-label color="warning">Synchronisation Needed</ion-label>
+                </ion-chip>
+                <p>
+                    Device has been used while offline and has data which needs to be synched with the main server.
+                </p>
+            </div>
+
+            <ion-button class="action-btn">
+                Synch Now
+            </ion-button>
+        </div>
+    </ion-content>
+</ion-menu>

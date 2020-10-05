@@ -1,0 +1,48 @@
+ion-header {
+  height: 70px;
+
+  ion-toolbar {
+    height: 100%;
+    display: flex;
+
+    ion-title {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 23px;
+      color: #171538;
+    }
+  }
+}
+
+
+ion-content {
+  padding-bottom: 32px;
+
+  .description {
+    margin: 0;
+    padding: 38px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 22px;
+    text-align: center;
+    color: #171538;
+  }
+
+  ion-button {
+    display: block;
+    margin: auto;
+    width: 193px;
+    height: 42px;
+  }
+
+  .cancel-btn {
+    margin: 12px auto;
+    --border-color: #2A6FDB;
+    --border-width: 2px;
+    --border-radius: 3px;
+  }
+}

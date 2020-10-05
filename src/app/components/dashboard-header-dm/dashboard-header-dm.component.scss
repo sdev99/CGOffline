@@ -1,151 +1,45 @@
 ion-toolbar {
-  &.part-1 {
-    height: 65px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0px;
-    --background: #8A25B1;
-
-    ion-title {
-      text-align: left;
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: bold;
-      font-size: 20px;
-      color: #FFFFFF;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0 20px;
-    }
-
-    .scan-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 16px;
-    }
-  }
-}
-
-ion-item.checked-in-status-view {
-  --min-height: 39px;
-  --background: #AA39D6;
-
-  &.remove-padding {
-    --padding-start: 0;
-    --padding-end: 0;
-    --inner-padding-start: 0;
-    --inner-padding-end: 0;
-  }
-
-  .status-circle {
-    width: 10px;
-    height: 10px;
-    background: #E8EAF2;
-    border-radius: 8px;
-    margin-right: 9px;
-
-    &.checked-in {
-      background: #19DC76;
-    }
-  }
-
-  ion-label {
-    font-family: IBM Plex Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    color: #FFFFFF;
-  }
-
-  .checkin-view-btn {
-    margin-right: 10px;
-
-    ion-icon {
-      width: 18px;
-      height: 18px;
-      color: #ffffff;
-    }
-  }
-
-
-  .arrow-button {
-    --color: #FFFFFF;
-    width: 58px;
-    height: 44px;
-    margin: 0;
-
-    ion-icon {
-      width: 16px;
-      height: 16px;
-    }
-  }
-}
-
-.checkin-btns {
-  height: 37px;
+  height: 65px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background: #8A25B1;
-  border-top: 0.5px solid #E8EAF2;;
+  border-radius: 0px;
+  --background: #8A25B1;
 
-  ion-button {
-    margin: 0;
-    height: 100%;
+  ion-title {
+    text-align: left;
     font-family: IBM Plex Sans;
     font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    --color: #FFFFFF;
-    flex: 1;
+    font-weight: bold;
+    font-size: 17px;
+    color: #FFFFFF;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+  }
 
-    &.left {
-      border-right: 0.5px solid #E8EAF2;
+  ion-buttons ion-button {
+    margin-right: 32px;
+
+    ion-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .badge {
+      position: absolute;
+      top: 0;
+      right: -0.2rem;
+      opacity: 0.9;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #FFBA00;
     }
   }
+
 }
 
-.check-in-places-list-container {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.35);
-  height: 100vh;
-  z-index: 10;
-  width: 100%;
-
-  .check-in-places-list {
-    ion-item {
-      --padding-start: 20px;
-
-      &.selected {
-        --background: #F6F8FA;
-      }
-    }
-
-    ion-label {
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 18px;
-      color: #171538;
-    }
-
-    .checkin-view-btn {
-      margin-right: 10px;
-
-      ion-icon {
-        width: 18px;
-        height: 18px;
-        color: #575568;
-      }
-    }
-  }
-}
 

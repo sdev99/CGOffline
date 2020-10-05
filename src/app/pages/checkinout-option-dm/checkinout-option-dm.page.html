@@ -1,0 +1,43 @@
+<ion-header>
+    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content fullscreen="true">
+    <div class="content">
+        <ion-row>
+            <ion-col class="title-1">
+                How do you want to check in/out ?
+            </ion-col>
+        </ion-row>
+        <ion-row style="margin-top: 40px">
+            <ion-col>
+                <app-dashboard-button
+                        icon="./assets/icon/qrscan-blue.svg"
+                        title="with QR code"
+                        (click)="checkInOutQR()"></app-dashboard-button>
+            </ion-col>
+
+            <ion-col>
+                <app-dashboard-button
+                        icon="./assets/icon/user-name.svg"
+                        title="with my Name"
+                        (click)="checkInOutName()"></app-dashboard-button>
+            </ion-col>
+
+            <ion-col>
+                <app-dashboard-button
+                        icon="./assets/icon/add-user.svg"
+                        title="as a Guest"
+                        (click)="checkInOutGuest()"></app-dashboard-button>
+            </ion-col>
+
+
+        </ion-row>
+    </div>
+</ion-content>
+
+
+<app-device-info></app-device-info>
+
+

@@ -1,0 +1,19 @@
+<ion-header>
+    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out by Name"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content>
+    <app-back-continue-toolbar [disableRightBtn]="!name" (back)="onBack()"
+                               (continue)="onContinue()"></app-back-continue-toolbar>
+
+    <ion-item lines="none" class="search-item">
+        <ion-label position="stacked">Enter your name</ion-label>
+        <ion-searchbar [(ngModel)]="name" (ionFocus)="showList=true"></ion-searchbar>
+        <ion-list *ngIf="showList && (items | listFilter:name:'').length>0" lines="none">
+            <ion-item *ngFor="let item of items | listFilter:name:''" (click)="onSelect(item)">{{ item }}</ion-item>
+        </ion-list>
+    </ion-item>
+
+
+</ion-content>

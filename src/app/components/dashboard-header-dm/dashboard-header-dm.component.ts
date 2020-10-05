@@ -12,7 +12,9 @@ import {EnumService} from '../../services/enum.service';
 export class DashboardHeaderDmComponent implements OnInit {
 
     @Input() title = '';
+    @Output() syncClick = new EventEmitter<void>();
     @Output() infoClick = new EventEmitter<void>();
+    @Output() logoutClick = new EventEmitter<void>();
 
     constructor(
         public navCtrl: NavController,

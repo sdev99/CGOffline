@@ -1,0 +1,26 @@
+ion-content {
+  --background: #F6F9FB;
+
+  .content {
+    ::ng-deep app-dashboard-button {
+      margin: 12px;
+    }
+
+    .title-1 {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 24px;
+      line-height: 31px;
+      text-align: center;
+      color: #171538;
+    }
+
+    display: flex;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,32 @@
+<ion-header>
+    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content>
+
+    <div class="content">
+        <div class="text-1">You are already checked in to</div>
+        <div class="text-2">
+            Location name goes here.
+        </div>
+
+        <div class="text-3">
+            We need to check you out there first so you can be eligible to continue checking in here.
+
+            <br/>
+            <br/>
+            Do you want to check out ?
+
+        </div>
+
+
+        <ion-button class="action-btn" (click)="onContinue()">
+            Yes, Check out Now
+        </ion-button>
+
+        <ion-button class="cancel-btn" fill="outline" (click)="onBack()">
+            Cancel
+        </ion-button>
+    </div>
+</ion-content>

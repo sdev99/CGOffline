@@ -11,6 +11,10 @@ import {AddChoosePhotoComponent} from './add-choose-photo/add-choose-photo.compo
 import {EmptyMessageComponent} from './empty-message/empty-message.component';
 import {NextPrevToolbarComponent} from './next-prev-toolbar/next-prev-toolbar.component';
 import {DashboardHeaderDmComponent} from './dashboard-header-dm/dashboard-header-dm.component';
+import {DashboardButtonComponent} from './dashboard-button/dashboard-button.component';
+import {DeviceInfoComponent} from './device-info/device-info.component';
+import {ModalHeaderDmComponent} from './modal-header-dm/modal-header-dm.component';
+import {BackContinueToolbarComponent} from './back-continue-toolbar/back-continue-toolbar.component';
 
 @NgModule({
     declarations: [
@@ -22,7 +26,11 @@ import {DashboardHeaderDmComponent} from './dashboard-header-dm/dashboard-header
         AddChoosePhotoComponent,
         EmptyMessageComponent,
         NextPrevToolbarComponent,
-        DashboardHeaderDmComponent
+        DashboardHeaderDmComponent,
+        DashboardButtonComponent,
+        DeviceInfoComponent,
+        ModalHeaderDmComponent,
+        BackContinueToolbarComponent
     ],
     imports: [
         IonicModule,
@@ -39,7 +47,11 @@ import {DashboardHeaderDmComponent} from './dashboard-header-dm/dashboard-header
         AddChoosePhotoComponent,
         EmptyMessageComponent,
         NextPrevToolbarComponent,
-        DashboardHeaderDmComponent
+        DashboardHeaderDmComponent,
+        DashboardButtonComponent,
+        DeviceInfoComponent,
+        ModalHeaderDmComponent,
+        BackContinueToolbarComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
