@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {LoadingController} from '@ionic/angular';
+import {AlertController, LoadingController} from '@ionic/angular';
 
 declare global {
     interface Array<T> {
@@ -17,6 +17,35 @@ Array.prototype.clone = function() {
 export class UtilService {
     loading: HTMLIonLoadingElement = null;
 
+    static FileIcon(type) {
+        let iconName = '';
+        switch (type) {
+            case 'document':
+                iconName = 'attachment1';
+                break;
+            case 'pdf':
+                iconName = 'attachment2';
+                break;
+            case 'form':
+                iconName = 'attachment3';
+                break;
+            case 'folder':
+                iconName = 'attachment4';
+                break;
+            case 'image':
+                iconName = 'attachment5';
+                break;
+            case 'video':
+                iconName = 'attachment6';
+                break;
+            default:
+                iconName = 'attachment1';
+
+        }
+        return './assets/icon/' + iconName + '.svg';
+    }
+
+
     static findObj(list, key, value, defaultIndex = 0) {
         let resultData = list[defaultIndex];
         list.map((data) => {
@@ -28,8 +57,13 @@ export class UtilService {
         return resultData;
     }
 
+    static randomBoolean() {
+        return Math.round(Math.random());
+    }
+
     constructor(
-        private loadingController: LoadingController
+        private loadingController: LoadingController,
+        public alertController: AlertController,
     ) {
     }
 
@@ -56,5 +90,21 @@ export class UtilService {
         }
     }
 
+    async showAlert(message = '', title = '', callBack = null) {
+        const alert = await this.alertController.create({
+            cssClass: 'my-custom-class',
+            header: title,
+            message,
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: callBack
+                }
+            ]
+        });
 
+        await alert.present();
+    }
 }

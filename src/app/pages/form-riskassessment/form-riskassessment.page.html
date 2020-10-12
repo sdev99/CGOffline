@@ -8,7 +8,7 @@
 
 </ion-header>
 
-<ion-content mode="ios">
+<ion-content mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 
     <ion-list lines="none">
         <div class="list-item-container" *ngFor="let section of list; let idx=index" [ngClass]="{error:section.error}">

@@ -25,7 +25,7 @@ export class CheckinoutOptionDmPage implements OnInit {
     }
 
     checkInOutQR() {
-        this.navController.navigateForward('checkinout-option-dm');
+        this.navController.navigateForward('dashboard-qrscan');
     }
 
     checkInOutGuest() {

@@ -1,0 +1,38 @@
+.warning-view {
+  background: #FFEDBD;
+  padding: 12px 20px;
+  margin: 41px 25px 25px;
+
+
+  ion-chip {
+    padding: 0;
+    margin: 0;
+
+    ion-icon {
+      margin-left: 0;
+      width: 16px;
+      height: 16px;
+    }
+
+    ion-label {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      color: #836A27;
+    }
+  }
+
+
+  p {
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    color: #836A27;
+  }
+}

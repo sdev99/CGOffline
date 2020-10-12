@@ -1,0 +1,22 @@
+<ion-toolbar mode="md">
+
+    <ion-buttons slot="start" *ngIf="!searchBarShow; else searchBarView">
+        <ion-segment mode="md" (ionChange)="onChanged($event)" [value]="active">
+            <ion-segment-button *ngFor="let item of options" [value]="item">
+                <ion-label>{{item}}</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </ion-buttons>
+    <ng-template #searchBarView>
+        <ion-searchbar placeholder="Search by name" mode="md" [(ngModel)]="search"
+                       (ionChange)="searching.emit(search)"></ion-searchbar>
+    </ng-template>
+
+
+    <ion-buttons slot="end">
+        <ion-button size="large" class="search-btn" (click)="showSearchBar()">
+            <ion-icon *ngIf="!searchBarShow" name="search-outline" slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="searchBarShow" name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+</ion-toolbar>

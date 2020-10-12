@@ -1,6 +1,18 @@
 ion-content {
   --background: #fff;
 
+  &.dedicated-mode {
+    --background: #F6F9FB;
+
+    .image-view {
+      height: 50vh;
+
+      ion-img {
+        height: 100%;
+      }
+    }
+  }
+
   .text-title-1 {
     font-family: IBM Plex Sans;
     font-style: normal;

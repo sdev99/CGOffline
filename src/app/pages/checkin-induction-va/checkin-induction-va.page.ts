@@ -3,6 +3,7 @@ import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {EnumService} from '../../services/enum.service';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkin-induction-va',
@@ -19,6 +20,7 @@ export class CheckinInductionVaPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
+        public sharedDataService: SharedDataService,
     ) {
         this.inductionFiles.map((item) => {
             if (item.type === 'va') {
@@ -38,8 +40,16 @@ export class CheckinInductionVaPage implements OnInit {
     ngOnInit() {
     }
 
-    onClose() {
+    onBack() {
         this.navCtrl.back();
+    }
+
+    onClose() {
+        if (this.sharedDataService.dedicatedMode) {
+            this.navCtrl.navigateRoot('dashboard-dm');
+        } else {
+            this.navCtrl.navigateRoot('tabs/dashboard');
+        }
     }
 
     onContinue() {

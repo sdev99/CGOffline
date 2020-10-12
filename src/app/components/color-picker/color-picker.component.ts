@@ -63,17 +63,19 @@ export class ColorPickerComponent implements OnInit {
     }
 
     init = () => {
-        // Set default position of coloe chooser
-        const canvasChooser = this.chooser.nativeElement;
-        const context = canvasChooser.getContext('2d');
-        const bounding = canvasChooser.getBoundingClientRect();
-        const currentWidth = window.innerWidth;
-        const width = currentWidth * 90 / 100;
+        // Set default position of color chooser
+        // const canvasChooser = this.chooser.nativeElement;
+        // const context = canvasChooser.getContext('2d');
+        // const bounding = canvasChooser.getBoundingClientRect();
+        // const currentWidth = window.innerWidth;
+        // const width = currentWidth * 90 / 100;
+        //
+        // const touchX = width / 2;
+        this.chooserX = this.chooserHeight;
+        this.colorFromChooser = '#000000';
+        this.colorChanged.emit(this.colorFromChooser);
+        //
 
-        const touchX = width / 2;
-        const x = (touchX - bounding.left) * this.getPixelRatio(context);
-        this.chooserX = x;
-        this.colorFromChooser = '#000';
 
         this.initChooser();
         this.initPalette();
@@ -220,7 +222,7 @@ export class ColorPickerComponent implements OnInit {
         const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
 
 
-        const colors = ['#FFFFFF', '#000000', '#FF0000', '#FDD220', '#8ABF77', '#78F6DA', '#413BFB', '#FF00EC', '#FF0000'];
+        const colors = ['#000000', '#FFFFFF', '#FF0000', '#FDD220', '#8ABF77', '#78F6DA', '#413BFB', '#FF00EC', '#FF0000'];
         const interval = 1 / (colors.length - 1);
         colors.map((color, key) => {
             gradient.addColorStop(key * interval, color);
@@ -274,14 +276,19 @@ export class ColorPickerComponent implements OnInit {
         const touchX = event.pageX || event.changedTouches[0].pageX || event.changedTouches[0].screenX;
         const touchY = event.pageY || event.changedTouches[0].pageY || event.changedTouches[0].screenY;
 
-        const x = (touchX - bounding.left) * this.getPixelRatio(context);
+        // stop selector x position from out of bounding
+        let movingX = (touchX - bounding.left);
+        if (movingX < this.chooserHeight) {
+            movingX = this.chooserHeight / 2;
+        } else if (movingX > (bounding.width - this.chooserHeight)) {
+            movingX = bounding.width - this.chooserHeight / 2;
+        }
+        // --end
+
+        const x = movingX * this.getPixelRatio(context);
+        // const x = (touchX - bounding.left) * this.getPixelRatio(context);
         const y = (touchY - bounding.top) * this.getPixelRatio(context);
 
-        console.log('x ' + x);
-        console.log('y ' + y);
-        console.log('touchX ' + touchX);
-        console.log('touchY ' + touchY);
-        // console.log('bounding.top ' + bounding.top);
 
         if (fromChooser) {
             this.chooserX = x;
@@ -295,7 +302,16 @@ export class ColorPickerComponent implements OnInit {
         const red = imageData.data[0];
         const green = imageData.data[1];
         const blue = imageData.data[2];
-        return '#' + this.toHex(red) + this.toHex(green) + this.toHex(blue);
+        const color = '#' + this.toHex(red) + this.toHex(green) + this.toHex(blue);
+
+        console.log('x ' + x);
+        console.log('y ' + y);
+        console.log('touchX ' + touchX);
+        console.log('touchY ' + touchY);
+        console.log('Color  ' + color);
+        // console.log('bounding.top ' + bounding.top);
+
+        return color;
     };
 
     toHex = (n) => {

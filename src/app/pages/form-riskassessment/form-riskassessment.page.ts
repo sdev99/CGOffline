@@ -8,6 +8,7 @@ import {ActivatedRoute} from '@angular/router';
 import {FilehandlerService} from '../../services/filehandler.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
+import {SharedDataService} from '../../services/shared-data.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class FormRiskassessmentPage {
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
         public observablesService: ObservablesService,
+        public sharedDataService: SharedDataService,
     ) {
 
         route.queryParams.subscribe((params: any) => {

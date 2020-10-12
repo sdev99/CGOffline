@@ -4,6 +4,8 @@ import {fabric} from 'fabric';
 import {ActivatedRoute} from '@angular/router';
 import {ObservablesService} from '../../services/observables.service';
 import {EnumService} from '../../services/enum.service';
+import {SharedDataService} from '../../services/shared-data.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-signoff-digitalink',
@@ -16,8 +18,8 @@ export class SignoffDigitalinkPage implements OnInit {
 
     pageTitle = 'Sign-Off';
     title = 'You are signing-off';
-    subTitle = '';
-    aggrementTitle = '';
+    subTitle = 'Digital Ink Signature';
+    aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
     showDigitalInk = false;
 
     type;
@@ -27,6 +29,7 @@ export class SignoffDigitalinkPage implements OnInit {
         public navCtrl: NavController,
         public route: ActivatedRoute,
         public observablesService: ObservablesService,
+        public sharedDataService: SharedDataService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -60,13 +63,20 @@ export class SignoffDigitalinkPage implements OnInit {
                 break;
 
             default:
+                this.showDigitalInk = true;
+                this.initialiseDrawing();
         }
     }
 
     initialiseDrawing() {
         setTimeout(() => {
             this.canvasRef = new fabric.Canvas('digital-signature');
-            this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
+            if (this.sharedDataService.dedicatedMode) {
+                const ele = document.getElementById('digital-signature');
+                this.canvasRef.setDimensions({width: ele.offsetWidth, height: ele.offsetHeight});
+            } else {
+                this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
+            }
             this.canvasRef.on('selection:created', () => {
             });
             this.canvasRef.on('selection:cleared', () => {
@@ -124,7 +134,42 @@ export class SignoffDigitalinkPage implements OnInit {
                     break;
 
                 default:
-                    this.navCtrl.navigateForward(['/checkin-fail'], {});
+                    if(this.sharedDataService.dedicatedMode) {
+                        if (UtilService.randomBoolean()) {
+                            this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+                                queryParams: {
+                                    message: 'You have now checked-in',
+                                    nextPage: 'dashboard-dm'
+                                }
+                            });
+                        } else {
+                            this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+                                queryParams: {
+                                    failTitle: 'No Qualification',
+                                    failSubTitle: 'Check in Not Allowed',
+                                    failMessage: 'This check-in requires to have certain \n' +
+                                        'qualificaitons which you do not have.',
+                                    nextPage: 'dashboard-dm'
+                                }
+                            });
+                        }
+                    } else {
+                        if (UtilService.randomBoolean()) {
+                            this.navCtrl.navigateForward(['/checkin-success'], {
+                                queryParams: {
+                                    message: 'You Signed-Off Successfully',
+                                    nextPage: '/tabs/dashboard'
+                                }
+                            });
+                        } else {
+                            this.navCtrl.navigateForward(['/checkin-fail'], {
+                                queryParams: {
+                                    message: 'You Signed-Off Successfully',
+                                    nextPage: '/tabs/dashboard'
+                                }
+                            });
+                        }
+                    }
             }
         }
     }

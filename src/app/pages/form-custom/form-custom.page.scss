@@ -4,6 +4,13 @@ ion-header {
 }
 
 ion-content {
+  &.dedicated-mode {
+    ion-list {
+      width: 50%;
+      margin: 0 auto;
+    }
+  }
+
   ion-list {
     .list-item-container {
       padding: 1px 0;

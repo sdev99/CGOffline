@@ -1,29 +1,32 @@
-<ion-header mode="ios">
-    <app-modal-header modalTitle="Induction" (closeModal)="onClose()"></app-modal-header>
-    <ion-toolbar mode="ios">
-        <ion-buttons slot="start">
-            <ion-button class="arrow-button left" size="small" fill="clear" (click)="previous()">
-                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>
-            Item 4 <span class="light">of 42</span>
-        </ion-title>
-        <ion-buttons slot="end">
-            <ion-button class="arrow-button right" size="small" fill="clear" (click)="next()">
-                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
+<ion-header mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+    <ng-container *ngIf="!sharedDataService.dedicatedMode">
+        <app-modal-header modalTitle="Induction" (closeModal)="onClose()"></app-modal-header>
+        <app-next-prev-toolbar totalCount="42" currentCount="4" (previous)="previous()"
+                               (next)="next()"></app-next-prev-toolbar>
+    </ng-container>
+
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" modalTitle="Demo Location 1" modalSubTitle="Check In"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+
+
+    <app-back-continue-toolbar title="Form Name" *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
+                               (continue)="onContinue()"></app-back-continue-toolbar>
+
 </ion-header>
 
+<ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 
-<ion-content>
     <ion-list lines="none" mode="ios">
-        <ng-container *ngFor="let section of list">
+        <div class="list-item-container" *ngFor="let section of list;let idx=index"
+             [ngClass]="{error:!isValid(idx, section)}">
             <ion-radio-group [(ngModel)]="section.answer">
                 <ion-list-header lines="full">
-                    <h6>{{section.question}}</h6>
+                    <h6>
+                        <ion-note color="danger" *ngIf="section.required">*</ion-note>
+                        {{(idx + 1) + '. ' + section.question}}
+                    </h6>
                     <p *ngIf="section.note">Note: {{section.note}}</p>
                 </ion-list-header>
                 <div class="hr-line"></div>
@@ -32,10 +35,10 @@
                     <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
                 </ion-item>
             </ion-radio-group>
-        </ng-container>
+        </div>
     </ion-list>
 </ion-content>
 
-<ion-footer mode="ios">
+<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
     <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
 </ion-footer>

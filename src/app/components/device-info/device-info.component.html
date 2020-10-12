@@ -1,4 +1,4 @@
-<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent">
+<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()" swipeGesture="false">
     <ion-header>
         <app-modal-header modalTitle="Device Info" (closeModal)="closeInfoMenu()"></app-modal-header>
     </ion-header>
@@ -11,24 +11,22 @@
                 </ion-item>
                 <ion-item>
                     <ion-label>Device Status</ion-label>
-                    <ion-chip color="clear">
+                    <ion-chip *ngIf="isOnline" color="clear">
                         <ion-icon color="success" name="ellipse"></ion-icon>
                         <ion-label color="success">Online</ion-label>
+                    </ion-chip>
+
+                    <ion-chip *ngIf="!isOnline" color="clear">
+                        <ion-icon color="danger" name="ellipse"></ion-icon>
+                        <ion-label color="danger">Offline</ion-label>
                     </ion-chip>
                 </ion-item>
             </ion-list>
 
-            <div class="warning-view">
-                <ion-chip color="clear">
-                    <ion-icon src="./assets/icon/warning-alert.svg"></ion-icon>
-                    <ion-label color="warning">Synchronisation Needed</ion-label>
-                </ion-chip>
-                <p>
-                    Device has been used while offline and has data which needs to be synched with the main server.
-                </p>
-            </div>
 
-            <ion-button class="action-btn">
+            <app-sync-warning-msg *ngIf="isOnline"></app-sync-warning-msg>
+
+            <ion-button [disabled]="!isOnline" class="action-btn">
                 Synch Now
             </ion-button>
         </div>

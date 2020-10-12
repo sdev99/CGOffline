@@ -15,6 +15,9 @@ import {DashboardButtonComponent} from './dashboard-button/dashboard-button.comp
 import {DeviceInfoComponent} from './device-info/device-info.component';
 import {ModalHeaderDmComponent} from './modal-header-dm/modal-header-dm.component';
 import {BackContinueToolbarComponent} from './back-continue-toolbar/back-continue-toolbar.component';
+import {TopnavigationsBtnsDmComponent} from './topnavigations-btns-dm/topnavigations-btns-dm.component';
+import {TopnavigationsSegmentsDmComponent} from './topnavigations-segments-dm/topnavigations-segments-dm.component';
+import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.component';
 
 @NgModule({
     declarations: [
@@ -30,7 +33,10 @@ import {BackContinueToolbarComponent} from './back-continue-toolbar/back-continu
         DashboardButtonComponent,
         DeviceInfoComponent,
         ModalHeaderDmComponent,
-        BackContinueToolbarComponent
+        BackContinueToolbarComponent,
+        TopnavigationsBtnsDmComponent,
+        TopnavigationsSegmentsDmComponent,
+        SyncWarningMsgComponent
     ],
     imports: [
         IonicModule,
@@ -51,7 +57,10 @@ import {BackContinueToolbarComponent} from './back-continue-toolbar/back-continu
         DashboardButtonComponent,
         DeviceInfoComponent,
         ModalHeaderDmComponent,
-        BackContinueToolbarComponent
+        BackContinueToolbarComponent,
+        TopnavigationsBtnsDmComponent,
+        TopnavigationsSegmentsDmComponent,
+        SyncWarningMsgComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

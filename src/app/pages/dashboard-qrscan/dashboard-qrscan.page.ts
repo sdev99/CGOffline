@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController} from '@ionic/angular';
+import {NavController, Platform} from '@ionic/angular';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {DemoDataService} from '../../services/demo-data.service';
+import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-dashboard-qrscan',
@@ -10,11 +12,33 @@ import {DemoDataService} from '../../services/demo-data.service';
 })
 export class DashboardQrscanPage implements OnInit {
     scanSub;
+    dedicatedMode = true;
+    isTablet = false;
+    authFor = 'Check In/Out via QR';
 
     constructor(
         public navCtrl: NavController,
-        private qrScanner: QRScanner
+        private qrScanner: QRScanner,
+        public sharedDataService: SharedDataService,
+        public activatedRoute: ActivatedRoute
     ) {
+        this.dedicatedMode = sharedDataService.dedicatedMode;
+        this.isTablet = sharedDataService.isTablet;
+        if (!this.isTablet && this.dedicatedMode) {
+            this.isTablet = true;
+        }
+
+        this.activatedRoute.queryParams.subscribe((res) => {
+            if (res) {
+                if (res.authFor) {
+                    this.authFor = res.authFor;
+                }
+            }
+        });
+    }
+
+    ionViewWillEnter() {
+
     }
 
     ngOnInit() {
@@ -50,18 +74,34 @@ export class DashboardQrscanPage implements OnInit {
                             this.qrScanner.destroy();
 
                             const location = DemoDataService.locations[0];
-                            this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                                queryParams: {
-                                    headerTitle: 'Check In',
-                                    title: 'You are checking in',
-                                    subtitle: location.name,
-                                    buttonTitle: 'Check In Now',
-                                    nextPageData: JSON.stringify({
-                                        locationDetail: JSON.stringify(location)
-                                    }),
-                                    nextPagePath: '/checkin-induction'
-                                }
-                            });
+                            if (this.dedicatedMode) {
+                                this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                                    queryParams: {
+                                        headerTitle: 'Check In',
+                                        title: 'You are checking in',
+                                        subtitle: location.name,
+                                        buttonTitle: 'Check In Now',
+                                        nextPageData: JSON.stringify({
+                                            locationDetail: JSON.stringify(location)
+                                        }),
+                                        nextPagePath: '/checkin-induction'
+                                    }
+                                });
+                            } else {
+                                this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                                    queryParams: {
+                                        headerTitle: 'Check In',
+                                        title: 'You are checking in',
+                                        subtitle: location.name,
+                                        buttonTitle: 'Check In Now',
+                                        nextPageData: JSON.stringify({
+                                            locationDetail: JSON.stringify(location)
+                                        }),
+                                        nextPagePath: '/checkin-induction'
+                                    }
+                                });
+                            }
+
                         }
                         // this.qrScanner.hide(); // hide camera preview
                         // scanSub.unsubscribe(); // stop scanning

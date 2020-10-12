@@ -1,0 +1,45 @@
+ion-toolbar {
+  --background: #F6F8FA;
+  --border-color: transparent;
+  --border-width: 0;
+
+  ion-buttons {
+    padding: 8px 12px;
+
+    ion-button {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      display: flex;
+      align-items: center;
+      --color: #575568;
+      padding: 0 16px;
+
+      ion-icon {
+        color: #575568;
+      }
+
+      &.active {
+        --color: #2A6FDB;
+
+        ion-icon {
+          color: #2A6FDB;
+        }
+      }
+    }
+
+    .action-btn {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      --color: #FFFFFF;
+    }
+  }
+}

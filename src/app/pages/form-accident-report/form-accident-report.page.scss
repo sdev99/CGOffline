@@ -1,5 +1,12 @@
 $paddingHorizontal: 23px;
 ion-content {
+  &.dedicated-mode {
+    ion-list {
+      width: 50%;
+      margin: 0 auto;
+    }
+  }
+
   ion-list {
     ion-item {
       --min-height: 18px;

@@ -224,6 +224,21 @@ export class DemoDataService {
             'Whereas, the Bluestar premises are not open to the public, and the equipment, materials, and documents contained within the Bluestar premises are not generally known; each and every person intending to enter the Bluestar premises, on that person’s own behalf and/or on behalf of that person’s employer, any affiliate, or subsidiary thereof (referred to collectively as “Visitor”), agrees to this Confidentiality Agreement by signing in.\n' +
             'As a condition for entry into the Bluestar premises and other good and valuable consideration, Visitor agrees that:\n' +
             '1. Visitor understands that having access to Bluestar’s facility may result in being exposed to Bluestar’s highly confidential, proprietary, and/or trade secret information (“Confidential Information”).\n' +
+            '2. Visitor understands, acknowledges and agrees that Bluestar’s Confidential Information is extremely valuable to it and is sufficiently secret to derive economic value, actual or potential, from not being generally known by others, including Bluestar’s competitors, and is the subject of efforts that are reasonable to maintain its secrecy or confidentiality. Bluestar’s Confidential Information includes, but shall not be limited to: Whereas, Visitor desires to visit Bluestar Silicones USA Corp.’s (“Bluestar”) facility for legitimate business purposes directly and only related to Visitor’s business and/or proposed business with Bluestar;\n' +
+            'Whereas, Visitor recognizes, agrees, and understands that Bluestar would not provide Visitor with any access in or to its facility unless Visitor first agreed to be bound by, and to fully comply with, the terms and provisions of this Agreement;\n' +
+            'Whereas, the Bluestar premises are not open to the public, and the equipment, materials, and documents contained within the Bluestar premises are not generally known; each and every person intending to enter the Bluestar premises, on that person’s own behalf and/or on behalf of that person’s employer, any affiliate, or subsidiary thereof (referred to collectively as “Visitor”), agrees to this Confidentiality Agreement by signing in.\n' +
+            'As a condition for entry into the Bluestar premises and other good and valuable consideration, Visitor agrees that:\n' +
+            '1. Visitor understands that having access to Bluestar’s facility may result in being exposed to Bluestar’s highly confidential, proprietary, and/or trade secret information (“Confidential Information”).\n' +
+            '2. Visitor understands, acknowledges and agrees that Bluestar’s Confidential Information is extremely valuable to it and is sufficiently secret to derive economic value, actual or potential, from not being generally known by others, including Bluestar’s competitors, and is the subject of efforts that are reasonable to maintain its secrecy or confidentiality. Bluestar’s Confidential Information includes, but shall not be limited to: Whereas, Visitor desires to visit Bluestar Silicones USA Corp.’s (“Bluestar”) facility for legitimate business purposes directly and only related to Visitor’s business and/or proposed business with Bluestar;\n' +
+            'Whereas, Visitor recognizes, agrees, and understands that Bluestar would not provide Visitor with any access in or to its facility unless Visitor first agreed to be bound by, and to fully comply with, the terms and provisions of this Agreement;\n' +
+            'Whereas, the Bluestar premises are not open to the public, and the equipment, materials, and documents contained within the Bluestar premises are not generally known; each and every person intending to enter the Bluestar premises, on that person’s own behalf and/or on behalf of that person’s employer, any affiliate, or subsidiary thereof (referred to collectively as “Visitor”), agrees to this Confidentiality Agreement by signing in.\n' +
+            'As a condition for entry into the Bluestar premises and other good and valuable consideration, Visitor agrees that:\n' +
+            '1. Visitor understands that having access to Bluestar’s facility may result in being exposed to Bluestar’s highly confidential, proprietary, and/or trade secret information (“Confidential Information”).\n' +
+            '2. Visitor understands, acknowledges and agrees that Bluestar’s Confidential Information is extremely valuable to it and is sufficiently secret to derive economic value, actual or potential, from not being generally known by others, including Bluestar’s competitors, and is the subject of efforts that are reasonable to maintain its secrecy or confidentiality. Bluestar’s Confidential Information includes, but shall not be limited to: Whereas, Visitor desires to visit Bluestar Silicones USA Corp.’s (“Bluestar”) facility for legitimate business purposes directly and only related to Visitor’s business and/or proposed business with Bluestar;\n' +
+            'Whereas, Visitor recognizes, agrees, and understands that Bluestar would not provide Visitor with any access in or to its facility unless Visitor first agreed to be bound by, and to fully comply with, the terms and provisions of this Agreement;\n' +
+            'Whereas, the Bluestar premises are not open to the public, and the equipment, materials, and documents contained within the Bluestar premises are not generally known; each and every person intending to enter the Bluestar premises, on that person’s own behalf and/or on behalf of that person’s employer, any affiliate, or subsidiary thereof (referred to collectively as “Visitor”), agrees to this Confidentiality Agreement by signing in.\n' +
+            'As a condition for entry into the Bluestar premises and other good and valuable consideration, Visitor agrees that:\n' +
+            '1. Visitor understands that having access to Bluestar’s facility may result in being exposed to Bluestar’s highly confidential, proprietary, and/or trade secret information (“Confidential Information”).\n' +
             '2. Visitor understands, acknowledges and agrees that Bluestar’s Confidential Information is extremely valuable to it and is sufficiently secret to derive economic value, actual or potential, from not being generally known by others, including Bluestar’s competitors, and is the subject of efforts that are reasonable to maintain its secrecy or confidentiality. Bluestar’s Confidential Information includes, but shall not be limited to: '],
         }
     ];
@@ -232,6 +247,7 @@ export class DemoDataService {
         {
             question: 'I confrim i have been issued with all of the following PPE',
             note: 'is a text for the above question',
+            required: true,
             options: [
                 {title: 'Hard Hat', value: 1},
                 {title: 'Safety Glasses', value: 2},
@@ -242,6 +258,7 @@ export class DemoDataService {
         },
         {
             question: 'How long is this induction valid?',
+            required: true,
             options: [
                 {title: '1 Week', value: 1},
                 {title: '1 Month', value: 2},
@@ -763,6 +780,16 @@ export class DemoDataService {
         {name: 'User Three', id: 3},
         {name: 'User Four', id: 4},
         {name: 'User Five', id: 5},
+        {name: 'User One', id: 6},
+        {name: 'User Two', id: 7},
+        {name: 'User Three', id: 8},
+        {name: 'User Four', id: 9},
+        {name: 'User Five', id: 10},
+        {name: 'User One', id: 11},
+        {name: 'User Two', id: 12},
+        {name: 'User Three', id: 13},
+        {name: 'User Four', id: 14},
+        {name: 'User Five', id: 15},
     ];
 
     static usersGroups = [
@@ -785,6 +812,100 @@ export class DemoDataService {
         'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.\n' +
         '\n' +
         'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.';
+
+    static dmDocuments = [
+        {
+            type: 'pdf',
+            available: false,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Longer document title can go here ... '
+        },
+        {
+            type: 'image',
+            available: true,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Document title goes here'
+        },
+        {
+            type: 'form',
+            available: false,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Form title goes here',
+        },
+        {
+            type: 'document',
+            available: true,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Document title goes here'
+        },
+        {
+            type: 'video',
+            available: false,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Document title goes here'
+        },
+        {
+            type: 'video',
+            available: true,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Document title goes here'
+        }
+    ];
+
+    static dmPermits = [
+        {
+            title: 'Hot Works',
+            issued: '59 mins ago',
+            validity: '2020-12-11 11:12'
+        },
+        {
+            title: 'Hot Works',
+            issued: '59 mins ago',
+            validity: '2020-12-11 11:12'
+        },
+        {
+            title: 'Hot Works',
+            issued: '59 mins ago',
+            validity: '2020-12-03 11:12'
+        },
+        {
+            title: 'Confined Spaces',
+            issued: '4 hours ago',
+            validity: '2020-12-11 11:12'
+        },
+        {
+            title: 'Hot Works',
+            issued: '8 hours ago',
+            validity: '2020-12-11 11:12'
+        },
+        {
+            title: 'Hot Works',
+            issued: '14 hours ago',
+            validity: '2020-03-11 11:12'
+        },
+        {
+            title: 'Hot Works',
+            issued: '2 days ago',
+            validity: '2020-02-11 11:12'
+        },
+    ];
+
+    static dmGeneratePermits = [
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
+        }
+    ];
 
     constructor() {
     }

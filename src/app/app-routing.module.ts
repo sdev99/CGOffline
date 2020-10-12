@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'choose-location', pathMatch: 'full'},
+    {path: '', redirectTo: 'login', pathMatch: 'full'},
     {
         path: 'tabs',
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
@@ -120,10 +120,6 @@ const routes: Routes = [
         loadChildren: () => import('./pages/dashboard-dm/dashboard-dm.module').then(m => m.DashboardDmPageModule)
     },
     {
-        path: 'search-location',
-        loadChildren: () => import('./modals/search-location/search-location.module').then(m => m.SearchLocationPageModule)
-    },
-    {
         path: 'signoff-photo',
         loadChildren: () => import('./pages/signoff-photo/signoff-photo.module').then(m => m.SignoffPhotoPageModule)
     },
@@ -143,19 +139,66 @@ const routes: Routes = [
         path: 'checkinout-guest-dm',
         loadChildren: () => import('./pages/checkinout-guest-dm/checkinout-guest-dm.module').then(m => m.CheckinoutGuestDmPageModule)
     },
+    {
+        path: 'checkinout-alreadycheckin-dm',
+        loadChildren: () => import('./pages/checkinout-alreadycheckin-dm/checkinout-alreadycheckin-dm.module').then(m => m.CheckinoutAlreadycheckinDmPageModule)
+    },
+    {
+        path: 'checkinout-photoidentity-dm',
+        loadChildren: () => import('./pages/checkinout-photoidentity-dm/checkinout-photoidentity-dm.module').then(m => m.CheckinoutPhotoidentityDmPageModule)
+    },
+    {
+        path: 'documents-dm',
+        loadChildren: () => import('./pages/documents-dm/documents-dm.module').then(m => m.DocumentsDmPageModule)
+    },
+    {
+        path: 'permits-dm',
+        loadChildren: () => import('./pages/permits-dm/permits-dm.module').then(m => m.PermitsDmPageModule)
+    },
+    {
+        path: 'evacuation-dm',
+        loadChildren: () => import('./pages/evacuation-dm/evacuation-dm.module').then(m => m.EvacuationDmPageModule)
+    },
+    {
+        path: 'forms-dm',
+        loadChildren: () => import('./pages/forms-dm/forms-dm.module').then(m => m.FormsDmPageModule)
+    },
+    {
+        path: 'permits-generate-dm',
+        loadChildren: () => import('./pages/permits-generate-dm/permits-generate-dm.module').then(m => m.PermitsGenerateDmPageModule)
+    },
+    {
+        path: 'permit-issued-result-dm',
+        loadChildren: () => import('./pages/permit-issued-result-dm/permit-issued-result-dm.module').then(m => m.PermitIssuedResultDmPageModule)
+    },
   {
-    path: 'checkinout-alreadycheckin-dm',
-    loadChildren: () => import('./pages/checkinout-alreadycheckin-dm/checkinout-alreadycheckin-dm.module').then( m => m.CheckinoutAlreadycheckinDmPageModule)
+    path: 'device-sync-dm',
+    loadChildren: () => import('./pages/device-sync-dm/device-sync-dm.module').then( m => m.DeviceSyncDmPageModule)
   },
   {
-    path: 'checkinout-photoidentity-dm',
-    loadChildren: () => import('./pages/checkinout-photoidentity-dm/checkinout-photoidentity-dm.module').then( m => m.CheckinoutPhotoidentityDmPageModule)
+    path: 'checkinout-guest-phone-dm',
+    loadChildren: () => import('./pages/checkinout-guest-phone-dm/checkinout-guest-phone-dm.module').then(m => m.CheckinoutPhoneDmPageModule)
   },
   {
-    path: 'documents-dm',
-    loadChildren: () => import('./pages/documents-dm/documents-dm.module').then( m => m.DocumentsDmPageModule)
+    path: 'checkinout-success-dm',
+    loadChildren: () => import('./pages/checkinout-success-dm/checkinout-success-dm.module').then( m => m.CheckinoutSuccessDmPageModule)
+  },
+  {
+    path: 'checkinout-fail-dm',
+    loadChildren: () => import('./pages/checkinout-fail-dm/checkinout-fail-dm.module').then( m => m.CheckinoutFailDmPageModule)
+  },
+  {
+    path: 'checkinout-identityconfirm-dm',
+    loadChildren: () => import('./pages/checkinout-identityconfirm-dm/checkinout-identityconfirm-dm.module').then( m => m.CheckinoutIdentityconfirmDmPageModule)
+  },
+  {
+    path: 'document-openchoice-dm',
+    loadChildren: () => import('./pages/document-openchoice-dm/document-openchoice-dm.module').then( m => m.DocumentOpenchoiceDmPageModule)
+  },
+  {
+    path: 'form-open-auth-dm',
+    loadChildren: () => import('./pages/form-open-auth-dm/form-open-auth-dm.module').then( m => m.FormOpenAuthDmPageModule)
   }
-
 ];
 
 @NgModule({

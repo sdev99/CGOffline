@@ -1,0 +1,129 @@
+ion-header {
+  ::ng-deep app-modal-header {
+    ion-toolbar {
+      --border-color: transparent;
+      --border-width: 0;
+      --background: transparent;
+    }
+  }
+}
+
+
+ion-content {
+  .content {
+    display: flex;
+    height: 100%;
+    width: 40%;
+    min-width: 320px;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .text-1 {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 24px;
+      line-height: 31px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #171538;
+    }
+
+    .text-2 {
+      margin: 0;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 17px;
+      line-height: 22px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .action-btn {
+      width: calc(100% - 50px);
+      height: 50px;
+    }
+
+    .progress-title {
+      margin-top: 30px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 24px;
+      text-align: center;
+      color: #4A90E2;
+    }
+
+    .progress-bar-view {
+      width: 100%;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      ion-progress-bar {
+        height: 10px;
+        border-radius: 5px;
+        flex: 1;
+      }
+
+      ion-note {
+        margin: 0 12px;
+        font-family: Inter;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 140%;
+        color: #171538;
+      }
+    }
+
+    .success-icon {
+      width: 35px;
+      height: 35px;
+    }
+    .success-title {
+      margin-top: 12px;
+      margin-bottom: 12px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      color: #19DC76;
+      text-align: center;
+    }
+
+    .error-icon {
+      width: 35px;
+      height: 35px;
+    }
+    .error-title {
+      margin-top: 12px;
+      margin-bottom: 12px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      text-align: center;
+      color: #836A27;
+      &.failed {
+        color: #E74731;
+      }
+    }
+
+    .alert-msg {
+      --color: #171538;
+      margin-top: 40px;
+      --background: rgba(56, 128, 255, 0.2);
+      padding: 20px 30px;
+    }
+  }
+}

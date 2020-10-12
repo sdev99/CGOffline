@@ -1,0 +1,34 @@
+<ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-button [ngClass]="{active:activeBtn==='checkinout'}" (click)="checkInOutClick()">
+            <ion-icon slot="start" src="./assets/icon/checkinout.svg"></ion-icon>
+            Check In/Out
+        </ion-button>
+
+        <ion-button [ngClass]="{active:activeBtn==='document'}" (click)="documentsClick()">
+            <ion-icon slot="start" src="./assets/icon/document.svg"></ion-icon>
+            Documents
+        </ion-button>
+
+        <ion-button [ngClass]="{active:activeBtn==='form'}" (click)="formsClick()">
+            <ion-icon slot="start" src="./assets/icon/form.svg"></ion-icon>
+            Forms
+        </ion-button>
+
+        <ion-button [ngClass]="{active:activeBtn==='permit'}" (click)="permitsClick()">
+            <ion-icon slot="start" src="./assets/icon/permits.svg"></ion-icon>
+            Live Permits
+        </ion-button>
+
+        <ion-button [ngClass]="{active:activeBtn==='evacuation'}" (click)="evacuationClick()">
+            <ion-icon slot="start" src="./assets/icon/evacuation.svg"></ion-icon>
+            Evacuation
+        </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+        <ion-button class="action-btn" *ngIf="activeBtn === 'permit'" (click)="generatePermitClick()">
+            Generate Work Permit
+        </ion-button>
+    </ion-buttons>
+</ion-toolbar>

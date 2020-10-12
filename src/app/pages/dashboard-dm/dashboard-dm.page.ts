@@ -11,8 +11,6 @@ import {HomeExitDmPage} from '../../modals/home-exit-dm/home-exit-dm.page';
 export class DashboardDmPage implements OnInit {
 
     constructor(
-        private menu: MenuController,
-        public modalController: ModalController,
         public navController: NavController,
         private sharedDataService: SharedDataService,
     ) {
@@ -22,42 +20,24 @@ export class DashboardDmPage implements OnInit {
     ngOnInit() {
     }
 
-    openInfoMenu() {
-        this.menu.open('infoMenu');
-    }
-
-    async logOutClick() {
-        const modal = await this.modalController.create({
-            component: HomeExitDmPage,
-            cssClass: 'home-exit-dm-modal'
-        });
-        await modal.present();
-
-        modal.onWillDismiss().then(({data}) => {
-            if (data) {
-                this.navController.navigateRoot('choose-location');
-            }
-        });
-    }
-
     checkInOutClick() {
         this.navController.navigateForward('checkinout-option-dm');
     }
 
     documentsClick() {
-
+        this.navController.navigateForward('documents-dm');
     }
 
     formsClick() {
-
+        this.navController.navigateForward('forms-dm');
     }
 
     permitsClick() {
-
+        this.navController.navigateForward('permits-dm');
     }
 
     evacuationClick() {
-
+        this.navController.navigateForward('evacuation-dm');
     }
 
 }

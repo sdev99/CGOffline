@@ -1,0 +1,47 @@
+<ion-header>
+    <app-dashboard-header-dm title="Demo Location 1"></app-dashboard-header-dm>
+    <app-topnavigations-btns-dm activeBtn="form"></app-topnavigations-btns-dm>
+    <app-topnavigations-segments-dm [active]="listType"
+                                    [options]="listTypes"
+                                    [search]="searchQuery"
+                                    (searching)="onSearch($event)"
+                                    (changed)="segmentChanged($event)"></app-topnavigations-segments-dm>
+</ion-header>
+
+<ion-content>
+    <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
+        <!--    <ion-list-header lines="none">-->
+        <!--      <ion-label>Forms</ion-label>-->
+        <!--    </ion-list-header>-->
+
+
+        <ng-container *ngIf="listType === 'Form List'">
+            <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openFile(item)">
+                <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
+                <ion-label>{{item.title}}</ion-label>
+            </ion-item>
+        </ng-container>
+
+        <ng-container *ngIf="listType === 'Form Archive'">
+            <div tappable *ngFor="let item of list" (click)="openFile(item)">
+                <ion-item tappable>
+                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
+                    <ion-label class="text-1">{{item.title}}</ion-label>
+                    <ion-label class="text-2">
+                        Signed by &nbsp;<span class="text-3">{{item.signed_by}}</span>
+                    </ion-label>
+
+
+                    <ion-label class="text-2">
+                        Signed &nbsp;<span class="text-3">30 mins ago ({{item.signed_time | date:'dd MMM yyyy HH:mm'}}
+                        )</span>
+                    </ion-label>
+                </ion-item>
+            </div>
+        </ng-container>
+    </ion-list>
+
+    <ng-template #noDocument>
+        <app-empty-message message="No forms available"></app-empty-message>
+    </ng-template>
+</ion-content>

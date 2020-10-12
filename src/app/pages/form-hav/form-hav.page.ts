@@ -7,6 +7,7 @@ import {ActivatedRoute} from '@angular/router';
 import {EnumService} from '../../services/enum.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-form-hav',
@@ -28,6 +29,7 @@ export class FormHavPage {
         public modalController: ModalController,
         public route: ActivatedRoute,
         public observablesService: ObservablesService,
+        public sharedDataService: SharedDataService,
     ) {
         this.formGroup = new FormGroup({
             dateOfUsage: new FormControl(new Date().toISOString(), Validators.compose([

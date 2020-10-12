@@ -29,7 +29,7 @@ export class CheckinListPage implements OnInit {
     async presentModal() {
         const modal = await this.modalController.create({
             component: SearchLocationPage,
-            cssClass: 'search-location-modal',
+            cssClass: 'search-location',
             swipeToClose: true,
             showBackdrop: true,
             backdropDismiss: true,

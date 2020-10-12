@@ -18,6 +18,7 @@ import {File} from '@ionic-native/file/ngx';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 import {CameraPreview} from '@ionic-native/camera-preview/ngx';
+import {CommonModule} from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -27,10 +28,11 @@ import {CameraPreview} from '@ionic-native/camera-preview/ngx';
     imports: [
         BrowserModule,
         IonicModule.forRoot({
-            hardwareBackButton: false
+            hardwareBackButton: false,
         }),
         AppRoutingModule,
         ComponentsModule,
+        CommonModule,
         NgxQRCodeModule,
         PipesModule,
     ],

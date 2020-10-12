@@ -1,0 +1,25 @@
+<ion-header>
+    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Work Permit"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content fullscreen="true">
+    <div class="content">
+        <ng-container *ngIf="permitResult === 'success';else notSuccess">
+            <ion-icon src="./assets/icon/CheckSuccess.svg"></ion-icon>
+            <div class="text-1">Passed</div>
+            <div class="text-2">Permit Issued</div>
+            <div class="text-3">Your work permit is active until 24 Mar 2020 - 12:00.</div>
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
+        </ng-container>
+
+        <ng-template #notSuccess>
+            <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
+            <div class="text-1">Not Passed</div>
+            <div class="text-2 failed">No Permit</div>
+            <div class="text-3">You were found not eligible for a work permit.</div>
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Exit</ion-button>
+        </ng-template>
+    </div>
+
+</ion-content>

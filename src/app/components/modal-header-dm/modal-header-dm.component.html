@@ -1,18 +1,25 @@
 <ion-toolbar mode="ios" class="toolbar-1">
 
-  <ion-title size="large">{{modalTitle}}</ion-title>
+    <ion-title size="large">
+        {{modalTitle}}
+    </ion-title>
 
-  <ion-buttons slot="end">
-    <ion-button size="small" fill="clear" (click)="closeModal.emit()">
-      <ion-icon class="close-icon" slot="icon-only" src="./assets/icon/ic_cancel.svg"></ion-icon>
+    <ion-button *ngIf="showEvacuation" fill="clear" class="evacuation">
+        <ion-icon slot="start" src="./assets/icon/evacuation.svg"></ion-icon>
+        Evacuation
     </ion-button>
-  </ion-buttons>
+
+    <ion-buttons slot="end">
+        <ion-button size="small" fill="clear" (click)="onClose()">
+            <ion-icon class="close-icon" slot="icon-only" src="./assets/icon/ic_cancel.svg"></ion-icon>
+        </ion-button>
+    </ion-buttons>
 
 </ion-toolbar>
 
 
 <ion-toolbar mode="ios" *ngIf="modalSubTitle" class="toolbar-2">
-  <ion-title size="large">{{modalSubTitle}}</ion-title>
+    <ion-title size="large">{{modalSubTitle}}</ion-title>
 </ion-toolbar>
 
 

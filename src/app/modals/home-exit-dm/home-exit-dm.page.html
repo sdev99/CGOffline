@@ -1,22 +1,21 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Exit</ion-title>
+        <ion-title>{{title}}</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <p class="description">
-        You are about to exit this location that this device is dedicated for at the moment.
-        Are you sure you want to exit?
+        {{description}}
     </p>
 
     <ion-button class="action-btn" (click)="onDismiss(true)">
-        Yes
+        {{okBtnText}}
     </ion-button>
 
     <br/>
 
     <ion-button class="cancel-btn" fill="outline" (click)="onDismiss(false)">
-        Cancel
+        {{cancelBtnText}}
     </ion-button>
 </ion-content>

@@ -1,4 +1,41 @@
+ion-header {
+  &.dedicated-mode {
+    ::ng-deep app-back-continue-toolbar {
+      ion-toolbar {
+        padding-top: 22px;
+        --background: #F6F9FB;
+      }
+    }
+  }
+}
+
 ion-content {
+  &.dedicated-mode {
+    --background: #F6F9FB;
+
+    .va-content {
+      width: 60%;
+      margin: auto;
+      overflow: auto;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .action-btn-container {
+      width: 60%;
+      left: 20%;
+      bottom: 0;
+      position: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.3);
+
+      .action-btn {
+        width: 200px;
+      }
+    }
+  }
 
   .va-content {
     padding: 16px 24px;
@@ -11,3 +48,4 @@ ion-content {
   }
 
 }
+

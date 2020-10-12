@@ -3,14 +3,14 @@
     <ion-title size="large">Dashboard</ion-title>
 
     <ion-buttons slot="end">
-        <ion-button size="small" fill="clear" (click)="syncClick.emit()">
+        <ion-button size="small" fill="clear" (click)="syncClick()">
             <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/sync.svg"></ion-icon>
             <div class="badge"></div>
         </ion-button>
-        <ion-button size="small" fill="clear" (click)="infoClick.emit()">
+        <ion-button size="small" fill="clear" (click)="infoClick()">
             <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/info.svg"></ion-icon>
         </ion-button>
-        <ion-button size="small" fill="clear" (click)="logoutClick.emit()">
+        <ion-button size="small" fill="clear" (click)="logoutClick()">
             <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/logout-dm.svg"></ion-icon>
         </ion-button>
     </ion-buttons>

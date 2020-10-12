@@ -1,10 +1,10 @@
 <ion-header>
-    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out"
+    <app-modal-header-dm modalTitle="Demo Location 1" [modalSubTitle]="authFor"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
-<ion-content [ngClass]="{'camera-view':!photoCaptured}" fullscreen>
-    <app-back-continue-toolbar *ngIf="photoCaptured" (back)="onBack()"
+<ion-content [ngClass]="{'camera-view':!photoCaptured}">
+    <app-back-continue-toolbar (back)="onBack()"
                                (continue)="onContinue()"></app-back-continue-toolbar>
 
     <div class="content">

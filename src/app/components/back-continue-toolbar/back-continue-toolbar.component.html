@@ -8,7 +8,7 @@
     <ion-title>{{title}}</ion-title>
 
     <ion-buttons slot="end">
-        <ion-button [disabled]="disableRightBtn" class="arrow-button right"
+        <ion-button *ngIf="!hideRightBtn" [disabled]="disableRightBtn" class="arrow-button right"
                     (click)="continue.emit()">
             <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
             Continue

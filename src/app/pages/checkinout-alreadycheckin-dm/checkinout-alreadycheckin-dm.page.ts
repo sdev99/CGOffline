@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-checkinout-alreadycheckin-dm',
@@ -24,7 +25,25 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     }
 
     onContinue() {
-        this.navController.navigateForward('checkinout-photoidentity-dm');
+        // this.navController.navigateForward('checkinout-photoidentity-dm');
+        if (UtilService.randomBoolean()) {
+            this.navController.navigateForward(['/checkinout-success-dm'], {
+                queryParams: {
+                    type: 'checkout',
+                    message: 'You have now checked out',
+                }
+            });
+        } else {
+            this.navController.navigateForward(['/checkinout-fail-dm'], {
+                queryParams: {
+                    failTitle: 'No Qualification',
+                    failSubTitle: 'Check in Not Allowed',
+                    failMessage: 'This check-in requires to have certain \n' +
+                        'qualificaitons which you do not have.',
+                }
+            });
+        }
+
     }
 
 }

@@ -40,10 +40,36 @@ ion-header {
       }
     }
   }
+
+  &.dedicated-mode {
+    ::ng-deep app-back-continue-toolbar {
+      ion-toolbar {
+        padding-top: 22px;
+        --background: #F6F9FB;
+      }
+    }
+  }
 }
 
 ion-content {
+
+  &.dedicated-mode {
+    --background: #F6F9FB;
+
+    ion-list {
+      width: 60%;
+      margin: auto;
+    }
+  }
+
+
   ion-list {
+    background-color: transparent;
+
+    .list-item-container {
+      padding: 1px 0;
+    }
+
     ion-list-header {
       display: flex;
       flex-direction: column;

@@ -1,6 +1,14 @@
 ion-content {
   --background: #fff;
 
+  &.dedicated-mode {
+    --background: #F6F9FB;
+
+    .video-view {
+      height: 50vh;
+    }
+  }
+
   .text-title-1 {
     font-family: IBM Plex Sans;
     font-style: normal;

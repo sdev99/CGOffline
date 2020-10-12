@@ -1,9 +1,14 @@
 <ion-header>
-    <app-modal-header modalTitle="Induction" (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="Induction"
+                      (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" modalTitle="Demo Location 1"
+                         modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
-<ion-content>
+<ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
     <div class="content">
+        <div *ngIf="sharedDataService.dedicatedMode" class="page-title">Induction</div>
+
         <div class="text-1">
             You will now will be taken through the induction process.
         </div>
@@ -21,10 +26,15 @@
             <br/>
             You are going to sign-off at the end of the induction.
         </div>
+
+        <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="onContinue()">
+            Yes, Check out Now
+        </ion-button>
+
     </div>
 </ion-content>
 
-<ion-footer mode="ios">
+<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
     <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
 </ion-footer>
 

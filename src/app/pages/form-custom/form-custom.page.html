@@ -10,14 +10,13 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
     <ion-list lines="none" mode="ios">
 
         <!--        Dynamic Custom Form Fields -->
 
         <div class="list-item-container" *ngFor="let section of list; let idx=index"
              [ngClass]="{error:!isValid(idx, section)}">
-
 
             <ion-list-header lines="full">
                 <h6>
@@ -35,7 +34,6 @@
                     </ion-label>
                 </ion-item>
             </ion-list-header>
-
 
             <ng-container *ngIf="section.question_type === 'image_annotation'">
                 <div class="image-view  ion-margin-horizontal" *ngIf="answer[idx] && answer[idx].image; else addImageBtn">

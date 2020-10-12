@@ -1,0 +1,30 @@
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+
+@Component({
+    selector: 'app-topnavigations-segments-dm',
+    templateUrl: './topnavigations-segments-dm.component.html',
+    styleUrls: ['./topnavigations-segments-dm.component.scss'],
+})
+export class TopnavigationsSegmentsDmComponent implements OnInit {
+    @Input() active: any;
+    @Input() options: any;
+    @Input() search: any;
+    @Output() changed = new EventEmitter<any>();
+    @Output() searching = new EventEmitter<any>();
+    searchBarShow = false;
+
+    constructor() {
+    }
+
+    ngOnInit() {
+    }
+
+    onChanged(event) {
+        console.log('event.detail.value' + event.detail.value);
+        this.changed.emit(event.detail.value);
+    }
+
+    showSearchBar() {
+        this.searchBarShow = !this.searchBarShow;
+    }
+}

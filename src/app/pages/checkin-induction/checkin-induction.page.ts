@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkin-induction',
@@ -15,6 +16,7 @@ export class CheckinInductionPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
+        public sharedDataService: SharedDataService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {

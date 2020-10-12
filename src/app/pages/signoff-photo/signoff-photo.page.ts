@@ -4,6 +4,8 @@ import {PhotoService} from '../../services/photo.service';
 import {ObservablesService} from '../../services/observables.service';
 import {ActivatedRoute} from '@angular/router';
 import {EnumService} from '../../services/enum.service';
+import {SharedDataService} from '../../services/shared-data.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-signoff-photo',
@@ -21,6 +23,7 @@ export class SignoffPhotoPage implements OnInit {
         public photoService: PhotoService,
         public route: ActivatedRoute,
         public observablesService: ObservablesService,
+        public sharedDataService: SharedDataService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -53,16 +56,11 @@ export class SignoffPhotoPage implements OnInit {
             case EnumService.SignOffType.ACCIDENT_REPORT:
             case EnumService.SignOffType.CUSTOM_FORM:
             case EnumService.SignOffType.RISK_ASSESSMENT:
-                this.navCtrl.navigateForward(['/checkin-success'], {
-                    queryParams: {
-                        message: 'You Signed-Off Successfully'
-                    }
-                });
-
+                this.showCheckInResultScreen();
                 break;
 
             case EnumService.SignOffType.INDUCTION:
-                this.navCtrl.navigateForward(['/checkin-success'], {});
+                this.showCheckInResultScreen();
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, this.data);
                 break;
 
@@ -70,4 +68,44 @@ export class SignoffPhotoPage implements OnInit {
                 this.navCtrl.navigateForward(['/checkin-fail'], {});
         }
     }
+
+    showCheckInResultScreen = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            if (UtilService.randomBoolean()) {
+                this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+                    queryParams: {
+                        message: 'You have now checked-in',
+                        nextPage: 'dashboard-dm'
+                    }
+                });
+            } else {
+                this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+                    queryParams: {
+                        failTitle: 'No Qualification',
+                        failSubTitle: 'Check in Not Allowed',
+                        failMessage: 'This check-in requires to have certain \n' +
+                            'qualificaitons which you do not have.',
+                        nextPage: 'dashboard-dm'
+                    }
+                });
+            }
+        } else {
+            if (UtilService.randomBoolean()) {
+                this.navCtrl.navigateForward(['/checkin-success'], {
+                    queryParams: {
+                        message: 'You Signed-Off Successfully',
+                        nextPage: '/tabs/dashboard'
+                    }
+                });
+            } else {
+                this.navCtrl.navigateForward(['/checkin-fail'], {
+                    queryParams: {
+                        message: 'You Signed-Off Successfully',
+                        nextPage: '/tabs/dashboard'
+                    }
+                });
+            }
+        }
+
+    };
 }

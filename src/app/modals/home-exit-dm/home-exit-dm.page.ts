@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 
 @Component({
@@ -7,6 +7,11 @@ import {ModalController} from '@ionic/angular';
     styleUrls: ['./home-exit-dm.page.scss'],
 })
 export class HomeExitDmPage implements OnInit {
+    @Input() title: string;
+    @Input() description: string;
+    @Input() okBtnText: string;
+    @Input() cancelBtnText: string;
+
     constructor(
         public modalController: ModalController
     ) {

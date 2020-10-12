@@ -13,6 +13,35 @@ ion-content {
   --padding-start: 23px;
   --padding-end: 23px;
 
+  &.dedicated-mode {
+    .content {
+      width: 50%;
+      margin: auto;
+      text-align: center;
+
+      .canvas-container-d-s {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .digital-signature {
+          width: 322px;
+          height: 190px;
+        }
+      }
+
+      .agree-checkbox {
+        justify-content: center;
+      }
+
+      .action-btn {
+        width: 140px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+
   .hr-line {
     margin-top: 12px;
     width: auto;
@@ -65,7 +94,11 @@ ion-content {
   }
 
   .agree-checkbox {
-    --padding-start: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 16px 0;
+    flex-direction: row;
 
     ion-label {
       font-family: IBM Plex Sans;

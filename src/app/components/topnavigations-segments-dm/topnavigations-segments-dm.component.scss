@@ -1,0 +1,69 @@
+ion-toolbar {
+  --background: #E8EAF2;
+  --border-color: transparent;
+  --border-width: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-right: 0;
+
+  ion-buttons {
+    margin: 0;
+  }
+
+
+  ion-searchbar {
+    margin-top: 8px;
+    padding: 0;
+    width: 100%;
+    --background: transparent;
+    --border-radius: 0;
+    --box-shadow: none;
+    --icon-color: #A1A8CA;
+    --placeholder-color: #171538;
+    --placeholder-font-style: normal;
+    --placeholder-opacity: 0.8;
+    //--clear-button-color:transparent;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #171538;
+
+    .searchbar-input-container {
+      height: 50px !important;
+      width: 100%;
+    }
+
+    ion-icon {
+      left: 40px !important;
+    }
+
+    input {
+      padding-left: 75px !important;
+    }
+  }
+
+  ion-segment {
+    ion-segment-button {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 17px;
+      line-height: 22px;
+      display: flex;
+      align-items: center;
+      --color-checked: #2A6FDB;
+      --color: #777595;
+      text-transform: none;
+    }
+  }
+
+  .search-btn {
+    --background: #A1A8CA;
+    --border-radius: 0;
+    height: 56px;
+    width: 56px;
+    --color: #fff;
+  }
+}

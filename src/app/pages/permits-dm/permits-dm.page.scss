@@ -1,0 +1,59 @@
+ion-content {
+  ion-list {
+    ion-list-header {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 20px;
+      line-height: 26px;
+      display: flex;
+      align-items: center;
+      color: #171538;
+      padding-left: 40px;
+    }
+
+    ion-item {
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+      --padding-start: 40px;
+      --padding-end: 16px;
+      --border-color: #E8EAF2;
+
+      .text-1 {
+        font-family: SF Pro Display;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 17px;
+        display: flex;
+        align-items: center;
+        color: #444444;
+      }
+
+      .text-2 {
+        font-family: SF Pro Display;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 14px;
+        display: flex;
+        align-items: center;
+
+        color: #888888;
+      }
+
+      .text-3 {
+        font-family: SF Pro Display;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 17px;
+        display: flex;
+        align-items: center;
+
+        color: #444444;
+      }
+
+    }
+  }
+}

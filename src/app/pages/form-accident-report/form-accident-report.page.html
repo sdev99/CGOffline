@@ -3,7 +3,7 @@
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 
-<ion-content mode="ios">
+<ion-content mode="ios"  [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
     <Form [formGroup]="formGroup">
         <ion-list lines="none">
             <ion-item class="date-item">

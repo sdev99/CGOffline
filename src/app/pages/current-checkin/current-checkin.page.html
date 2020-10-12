@@ -19,7 +19,7 @@
         </ion-list-header>
 
         <ion-item *ngFor="let item of list" (click)="openWorkPermit(item)">
-            <ion-icon slot="start" [src]="fileIcon(item.type)"></ion-icon>
+            <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
             <ion-label>{{item.title}}</ion-label>
         </ion-item>
     </ion-list>

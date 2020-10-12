@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-checkinout-name-dm',
@@ -7,16 +8,35 @@ import {NavController} from '@ionic/angular';
     styleUrls: ['./checkinout-name-dm.page.scss'],
 })
 export class CheckinoutNameDmPage implements OnInit {
+    @ViewChild('itemRef') itemRef: any;
     name;
     showList = false;
     items = ['Fisher Serenity', 'Alreadycheckin Test', 'Murphy Claire', 'Edwards Priscilla', 'Flores Esther', 'Lane Connie', 'Cooper Regina', 'Mccoy Kristin'];
+    authFor = '';
 
     constructor(
+        public activatedRoute: ActivatedRoute,
         public navController: NavController,
     ) {
+        this.activatedRoute.queryParams.subscribe((res) => {
+            if (res) {
+                if (res.authFor) {
+                    this.authFor = res.authFor;
+                }
+            }
+        });
     }
 
+    @HostListener('document:click', ['$event'])
+    andClickEvent = (event) => {
+        const item: any = this.itemRef.nativeElement || this.itemRef.el;
+        if (!item.contains(event.target)) {
+            this.showList = false;
+        }
+    };
+
     ngOnInit() {
+
     }
 
     onClose() {
@@ -31,11 +51,18 @@ export class CheckinoutNameDmPage implements OnInit {
         if (this.name === 'Alreadycheckin Test') {
             this.navController.navigateForward('checkinout-alreadycheckin-dm');
         } else {
-            this.navController.navigateRoot('dashboard-dm');
+            this.navController.navigateForward('checkinout-identityconfirm-dm', {
+                queryParams: {
+                    name: this.name,
+                    authFor: this.authFor
+                }
+            });
         }
     }
 
-    onSelect(item) {
+    onSelect(event, item) {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         console.log('Item ' + item);
         this.name = item;
         this.showList = false;

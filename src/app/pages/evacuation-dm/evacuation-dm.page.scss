@@ -1,0 +1,125 @@
+ion-content {
+  --overflow: hidden;
+
+  ::ng-deep app-empty-message {
+    .content {
+      background: #F6F9FB;
+    }
+  }
+
+  .content-view {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+
+    .users-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .evacuated-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .list-container {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    ion-searchbar {
+      --border-radius: 0;
+      --box-shadow: none;
+      border-bottom: 1px solid #DCE7EF;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      color: #A1A8CA;
+    }
+
+    ion-toolbar {
+      ion-title {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 17px;
+        line-height: 22px;
+      }
+    }
+
+    .users-view {
+      flex: 1;
+      z-index: 2;
+      box-shadow: 0px 4px 25px rgba(141, 150, 190, 0.2);
+
+      ion-toolbar {
+
+        ion-title {
+          color: #FFFFFF;
+        }
+
+        &.user-present {
+          --background: #F9461C;
+        }
+
+        &.evacuated-completed {
+          --background: #19DC76;
+        }
+      }
+    }
+
+    .evacuated-view {
+      flex: 1;
+      z-index: 1;
+
+      ion-toolbar {
+        --background: #CDE5FE;
+
+        ion-title {
+          color: #171538;
+        }
+      }
+    }
+  }
+
+  ion-list {
+    background: transparent;
+
+    ion-item {
+      --padding-start: 32px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+      --border-color: #E8EAF2;
+
+      img {
+        width: 40px;
+        height: 40px;
+      }
+
+      ion-label {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 17px;
+        line-height: 22px;
+        color: #444444;
+      }
+
+      .evacuate-btn {
+        width: 96px;
+        height: 32px;
+        --background: #E74731;
+        --border-radius: 4px;
+        --color: #ffffff;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 17px;
+        line-height: 22px;
+        text-align: center;
+      }
+    }
+  }
+}

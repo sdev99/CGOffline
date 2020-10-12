@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {PermissionType, Plugins} from '@capacitor/core';
 
-import {Platform} from '@ionic/angular';
+import {NavController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
@@ -26,6 +26,7 @@ export class AppComponent {
         private sharedDataService: SharedDataService,
         private utilService: UtilService,
         private observablesService: ObservablesService,
+        private navController: NavController,
     ) {
         this.initializeApp();
     }
@@ -34,6 +35,19 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
+
+            if (this.sharedDataService.isTablet) {
+                localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
+                this.sharedDataService.dedicatedMode = true;
+            } else {
+                localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
+                this.sharedDataService.dedicatedMode = false;
+            }
+
+
+            if (this.sharedDataService.dedicatedMode) {
+                this.navController.navigateRoot('choose-location');
+            }
 
             try {
                 const notificationPermission = await Permissions.query({

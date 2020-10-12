@@ -27,8 +27,6 @@
 
 body * {
   font-family: IBM Plex Sans;
-  font-style: normal;
-  font-weight: normal;
 }
 
 .toolbar-background {
@@ -462,16 +460,19 @@ ion-item {
   height: auto;
 }
 
-.search-location-modal {
-  --width: 80%;
-  --height: 80vh;
-  --border-radius: 5px;
-}
+ion-modal {
+  &.search-location {
+    --width: 80%;
+    --height: 80vh;
+    --border-radius: 5px;
+  }
 
-.home-exit-dm-modal {
-  --width: 402px;
-  --height: 383px;
-  --border-radius: 0px;
+  &.home-exit-dm {
+    --width: 402px;
+    --height: 383px;
+    --border-radius: 0px;
+  }
+
 }
 
 .item-no-vertical-padding {

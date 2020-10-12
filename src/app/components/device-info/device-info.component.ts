@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MenuController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-device-info',
@@ -8,6 +9,7 @@ import {SharedDataService} from '../../services/shared-data.service';
     styleUrls: ['./device-info.component.scss'],
 })
 export class DeviceInfoComponent implements OnInit {
+    isOnline = UtilService.randomBoolean();
 
     constructor(
         private menu: MenuController,
@@ -16,6 +18,12 @@ export class DeviceInfoComponent implements OnInit {
     }
 
     ngOnInit() {
+
+    }
+
+    menuWillOpen() {
+        this.isOnline = UtilService.randomBoolean();
+        console.log('menuWillOpen');
     }
 
     closeInfoMenu() {

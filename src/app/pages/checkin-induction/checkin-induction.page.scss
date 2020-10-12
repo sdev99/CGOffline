@@ -5,6 +5,14 @@ ion-header {
 ion-content {
   --background: #fff;
 
+  &.dedicated-mode {
+    --background: #F6F9FB;
+
+    .action-btn {
+      width: 207px;
+    }
+  }
+
   .content {
     width: 100%;
     align-items: center;
@@ -12,6 +20,19 @@ ion-content {
     flex-direction: column;
     justify-content: center;
     height: 100%;
+
+    .page-title {
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 31px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #171538;
+      margin-bottom: 27px;
+    }
 
     .text-title-1 {
       font-family: IBM Plex Sans;

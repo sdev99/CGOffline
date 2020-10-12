@@ -35,7 +35,7 @@ export class CheckinoutGuestDmPage implements OnInit {
     onContinue() {
         this.isSubmitted = true;
         if (this.formGroup.valid) {
-            this.navController.navigateRoot('dashboard-dm');
+            this.navController.navigateForward('checkinout-guest-phone-dm');
         }
     }
 

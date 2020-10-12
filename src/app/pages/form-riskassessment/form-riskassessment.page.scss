@@ -16,6 +16,14 @@ ion-header {
 
 ion-content {
 
+  &.dedicated-mode {
+    ion-list {
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
   .hr-line {
     margin: 0px $paddingHorizontal;
     width: auto;

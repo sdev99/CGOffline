@@ -19,6 +19,10 @@ export class EnumService {
         APP_RESTORED_RESULT: 'APP_RESTORED_RESULT',
     };
 
+    static LocalStorageKeys = {
+        IS_DEDICATED_MODE: 'DEDICATED_MODE',
+    };
+
     constructor() {
     }
 }

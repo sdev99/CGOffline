@@ -1,0 +1,64 @@
+ion-content {
+  --background: #F6F9FB;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+
+    ion-icon {
+      width: 100px;
+      height: 100px;
+    }
+
+    .text-1 {
+      margin-top: 12px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 20px;
+      line-height: 26px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #171538;
+    }
+
+    .text-2 {
+      margin-top: 6px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 29px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #19DC76;
+
+      &.failed {
+        color: #E74731;
+      }
+    }
+
+    .text-3 {
+      margin-top: 24px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .action-btn {
+      margin-top: 30px;
+      width: 224px;
+    }
+  }
+}

@@ -9,6 +9,7 @@ export class BackContinueToolbarComponent implements OnInit {
 
     @Input() title: string;
     @Input() disableRightBtn: boolean;
+    @Input() hideRightBtn: boolean;
 
     @Output() back = new EventEmitter<void>();
     @Output() continue = new EventEmitter<void>();

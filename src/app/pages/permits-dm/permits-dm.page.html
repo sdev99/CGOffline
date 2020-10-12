@@ -1,0 +1,28 @@
+<ion-header>
+    <app-dashboard-header-dm title="Demo Location 1"></app-dashboard-header-dm>
+    <app-topnavigations-btns-dm activeBtn="permit"></app-topnavigations-btns-dm>
+    <app-topnavigations-segments-dm [active]="listType" [options]="listTypes"
+                                    (changed)="segmentChanged($event)"></app-topnavigations-segments-dm>
+</ion-header>
+
+<ion-content>
+    <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
+
+        <ion-item tappable *ngFor="let item of list" (click)="openFile(item)">
+            <ion-label class="text-1">{{item.title}}</ion-label>
+            <ion-label class="text-2">
+                issues &nbsp;<span class="text-3">{{item.issued}}</span>
+            </ion-label>
+
+
+            <ion-label class="text-2">
+                Valid for &nbsp;<span class="text-3">7 days ({{item.validity | date:'dd MMM yyyy HH:mm'}})</span>
+            </ion-label>
+        </ion-item>
+    </ion-list>
+
+    <ng-template #noDocument>
+        <app-empty-message message="No permits available"></app-empty-message>
+    </ng-template>
+</ion-content>
+

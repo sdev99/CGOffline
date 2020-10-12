@@ -27,6 +27,20 @@ ion-toolbar {
       font-weight: bold;
       color: #FFFFFF;
     }
+
+    .evacuation {
+      position: absolute;
+      left: 144px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      --color: #F9461C;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-left: 16px;
+    }
   }
 
   &.toolbar-2 {
