@@ -7,11 +7,17 @@ ion-content {
 
   .content {
     display: flex;
-    flex-direction: row;
     flex: 1;
     height: 100%;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+
+    .dashboard-btns-container {
+      flex-wrap: wrap;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }

@@ -39,7 +39,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         const width = element.offsetWidth;
         const height = element.offsetHeight;
         const left = element.offsetLeft;
-        const top = element.offsetTop;
+        const top = element.parentElement.offsetTop + element.offsetTop;
 
         const cameraPreviewOpts: CameraPreviewOptions = {
             camera: 'front',

@@ -19,6 +19,7 @@ import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 import {CameraPreview} from '@ionic-native/camera-preview/ngx';
 import {CommonModule} from '@angular/common';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 @NgModule({
     declarations: [
@@ -45,6 +46,7 @@ import {CommonModule} from '@angular/common';
         FileTransfer,
         UniqueDeviceID,
         CameraPreview,
+        ScreenOrientation,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

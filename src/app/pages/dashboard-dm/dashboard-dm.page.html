@@ -4,30 +4,32 @@
 
 <ion-content mode="md" >
     <div class="content">
-        <app-dashboard-button
-                icon="./assets/icon/checkinout.svg"
-                title="Check In/Out"
-                (click)="checkInOutClick()"></app-dashboard-button>
+       <div class="dashboard-btns-container">
+           <app-dashboard-button
+                   icon="./assets/icon/checkinout.svg"
+                   title="Check In/Out"
+                   (click)="checkInOutClick()"></app-dashboard-button>
 
-        <app-dashboard-button
-                icon="./assets/icon/document.svg"
-                title="Documents"
-                (click)="documentsClick()"></app-dashboard-button>
+           <app-dashboard-button
+                   icon="./assets/icon/document.svg"
+                   title="Documents"
+                   (click)="documentsClick()"></app-dashboard-button>
 
-        <app-dashboard-button
-                icon="./assets/icon/form.svg"
-                title="Forms"
-                (click)="formsClick()"></app-dashboard-button>
+           <app-dashboard-button
+                   icon="./assets/icon/form.svg"
+                   title="Forms"
+                   (click)="formsClick()"></app-dashboard-button>
 
-        <app-dashboard-button
-                icon="./assets/icon/permits.svg"
-                title="Permits"
-                (click)="permitsClick()"></app-dashboard-button>
+           <app-dashboard-button
+                   icon="./assets/icon/permits.svg"
+                   title="Permits"
+                   (click)="permitsClick()"></app-dashboard-button>
 
-        <app-dashboard-button
-                icon="./assets/icon/evacuation.svg"
-                title="Evacuation"
-                (click)="evacuationClick()"></app-dashboard-button>
+           <app-dashboard-button
+                   icon="./assets/icon/evacuation.svg"
+                   title="Evacuation"
+                   (click)="evacuationClick()"></app-dashboard-button>
+       </div>
     </div>
 </ion-content>
 

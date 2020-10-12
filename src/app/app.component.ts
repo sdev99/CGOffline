@@ -9,6 +9,7 @@ import {ObservablesService} from './services/observables.service';
 import {EnumService} from './services/enum.service';
 import {SharedDataService} from './services/shared-data.service';
 import {UtilService} from './services/util.service';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 const {Geolocation, PushNotifications, Permissions} = Plugins;
 
@@ -27,6 +28,7 @@ export class AppComponent {
         private utilService: UtilService,
         private observablesService: ObservablesService,
         private navController: NavController,
+        private screenOrientation: ScreenOrientation
     ) {
         this.initializeApp();
     }
@@ -39,6 +41,7 @@ export class AppComponent {
             if (this.sharedDataService.isTablet) {
                 localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
                 this.sharedDataService.dedicatedMode = true;
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
             } else {
                 localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
                 this.sharedDataService.dedicatedMode = false;
