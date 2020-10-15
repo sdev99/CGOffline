@@ -1,15 +1,16 @@
 <ion-header>
-    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Work Permit"
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Work Permit"
                          (closeModal)="onClose()"></app-modal-header-dm>
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 
 <ion-content mode="md">
-    <app-back-continue-toolbar [disableRightBtn]="!isValid()" title="Hot Works Permit Questionnaire" (back)="onBack()"
+    <app-back-continue-toolbar title="Hot Works Permit Questionnaire" (back)="onBack()"
                                (continue)="onContinue()"></app-back-continue-toolbar>
 
 
     <ion-list lines="none">
-        <ion-card *ngFor="let item of list">
+        <ion-card *ngFor="let item of list" [ngClass]="{error:(submitted&&!isValid(item))}">
 
             <ion-card-title class="ion-padding-horizontal ion-padding-top">
                 <ion-text *ngIf="item.required">*

@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {DemoDataService} from '../../services/demo-data.service';
 import {UtilService} from '../../services/util.service';
 import {NavController} from '@ionic/angular';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-new-account-setup',
@@ -46,7 +47,7 @@ export class NewAccountSetupPage {
             setTimeout(() => {
                 this.utilService.hideLoading();
                 if (password === passwordConfirm) {
-                    localStorage.setItem('isLoggedIn', '1');
+                    localStorage.setItem(EnumService.LocalStorageKeys.IS_LOGGEDIN, '1');
                     this.navCtrl.navigateRoot('/tabs/dashboard');
                 } else {
                     this.errorMessage = 'Password not matching';

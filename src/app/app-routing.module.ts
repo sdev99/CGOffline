@@ -171,34 +171,46 @@ const routes: Routes = [
         path: 'permit-issued-result-dm',
         loadChildren: () => import('./pages/permit-issued-result-dm/permit-issued-result-dm.module').then(m => m.PermitIssuedResultDmPageModule)
     },
+    {
+        path: 'device-sync-dm',
+        loadChildren: () => import('./pages/device-sync-dm/device-sync-dm.module').then(m => m.DeviceSyncDmPageModule)
+    },
+    {
+        path: 'checkinout-guest-phone-dm',
+        loadChildren: () => import('./pages/checkinout-guest-phone-dm/checkinout-guest-phone-dm.module').then(m => m.CheckinoutPhoneDmPageModule)
+    },
+    {
+        path: 'checkinout-success-dm',
+        loadChildren: () => import('./pages/checkinout-success-dm/checkinout-success-dm.module').then(m => m.CheckinoutSuccessDmPageModule)
+    },
+    {
+        path: 'checkinout-fail-dm',
+        loadChildren: () => import('./pages/checkinout-fail-dm/checkinout-fail-dm.module').then(m => m.CheckinoutFailDmPageModule)
+    },
+    {
+        path: 'checkinout-identityconfirm-dm',
+        loadChildren: () => import('./pages/checkinout-identityconfirm-dm/checkinout-identityconfirm-dm.module').then(m => m.CheckinoutIdentityconfirmDmPageModule)
+    },
+    {
+        path: 'document-openchoice-dm',
+        loadChildren: () => import('./pages/document-openchoice-dm/document-openchoice-dm.module').then(m => m.DocumentOpenchoiceDmPageModule)
+    },
+    {
+        path: 'form-open-auth-dm',
+        loadChildren: () => import('./pages/form-open-auth-dm/form-open-auth-dm.module').then(m => m.FormOpenAuthDmPageModule)
+    },
+    {
+        path: 'checkin-workpermit',
+        loadChildren: () => import('./pages/checkin-workpermit/checkin-workpermit.module').then(m => m.CheckinWorkpermitPageModule)
+    },
   {
-    path: 'device-sync-dm',
-    loadChildren: () => import('./pages/device-sync-dm/device-sync-dm.module').then( m => m.DeviceSyncDmPageModule)
+    path: 'form-cover-dm',
+    loadChildren: () => import('./pages/form-cover-dm/form-cover-dm.module').then( m => m.FormCoverDmPageModule)
   },
   {
-    path: 'checkinout-guest-phone-dm',
-    loadChildren: () => import('./pages/checkinout-guest-phone-dm/checkinout-guest-phone-dm.module').then(m => m.CheckinoutPhoneDmPageModule)
+    path: 'portrait-mode',
+    loadChildren: () => import('./modals/portrait-mode/portrait-mode.module').then( m => m.PortraitModePageModule)
   },
-  {
-    path: 'checkinout-success-dm',
-    loadChildren: () => import('./pages/checkinout-success-dm/checkinout-success-dm.module').then( m => m.CheckinoutSuccessDmPageModule)
-  },
-  {
-    path: 'checkinout-fail-dm',
-    loadChildren: () => import('./pages/checkinout-fail-dm/checkinout-fail-dm.module').then( m => m.CheckinoutFailDmPageModule)
-  },
-  {
-    path: 'checkinout-identityconfirm-dm',
-    loadChildren: () => import('./pages/checkinout-identityconfirm-dm/checkinout-identityconfirm-dm.module').then( m => m.CheckinoutIdentityconfirmDmPageModule)
-  },
-  {
-    path: 'document-openchoice-dm',
-    loadChildren: () => import('./pages/document-openchoice-dm/document-openchoice-dm.module').then( m => m.DocumentOpenchoiceDmPageModule)
-  },
-  {
-    path: 'form-open-auth-dm',
-    loadChildren: () => import('./pages/form-open-auth-dm/form-open-auth-dm.module').then( m => m.FormOpenAuthDmPageModule)
-  }
 ];
 
 @NgModule({

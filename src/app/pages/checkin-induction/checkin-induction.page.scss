@@ -19,7 +19,7 @@ ion-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100%;
+    min-height: 100%;
 
     .page-title {
       font-family: IBM Plex Sans;

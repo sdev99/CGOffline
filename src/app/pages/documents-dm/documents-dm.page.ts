@@ -3,6 +3,7 @@ import {DemoDataService} from '../../services/demo-data.service';
 import {UtilService} from '../../services/util.service';
 import {FilehandlerService} from '../../services/filehandler.service';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-documents-dm',
@@ -21,13 +22,14 @@ export class DocumentsDmPage implements OnInit {
         private navController: NavController,
         private filehandlerService: FilehandlerService,
         private utilService: UtilService,
+        private sharedDataService: SharedDataService,
     ) {
     }
 
     ngOnInit() {
         setTimeout(() => {
             this.list = DemoDataService.dmDocuments.clone();
-        }, 5000);
+        }, 2000);
     }
 
     onSearch(search) {
@@ -36,6 +38,12 @@ export class DocumentsDmPage implements OnInit {
 
     segmentChanged(event) {
         this.listType = event;
+    }
+
+    searchbarShowHide(visible) {
+        if (!visible) {
+            this.searchQuery = '';
+        }
     }
 
     openFile(item) {

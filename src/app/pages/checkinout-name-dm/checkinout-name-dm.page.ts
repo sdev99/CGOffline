@@ -1,6 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-name-dm',
@@ -12,11 +13,12 @@ export class CheckinoutNameDmPage implements OnInit {
     name;
     showList = false;
     items = ['Fisher Serenity', 'Alreadycheckin Test', 'Murphy Claire', 'Edwards Priscilla', 'Flores Esther', 'Lane Connie', 'Cooper Regina', 'Mccoy Kristin'];
-    authFor = '';
+    authFor = 'Check In/Out by Name';
 
     constructor(
         public activatedRoute: ActivatedRoute,
         public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
@@ -58,6 +60,16 @@ export class CheckinoutNameDmPage implements OnInit {
                 }
             });
         }
+    }
+
+    searchBarFocus() {
+        console.log('searchBarFocus');
+        this.showList = true;
+    }
+
+    searchBarChange() {
+        console.log('searchBarChange');
+        this.showList = true;
     }
 
     onSelect(event, item) {

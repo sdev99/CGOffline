@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-fail-dm',
@@ -14,6 +15,7 @@ export class CheckinoutFailDmPage implements OnInit {
     failMessage = '';
 
     constructor(
+        public sharedDataService: SharedDataService,
         public navCtrl: NavController,
         public activatedRoute: ActivatedRoute
     ) {

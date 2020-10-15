@@ -1,4 +1,4 @@
-<app-modal-header-dm title="Demo Location 1" modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
+<app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
 
 <ion-content fullscreen="true">
     <div class="content">

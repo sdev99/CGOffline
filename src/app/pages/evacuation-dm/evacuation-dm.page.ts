@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {ModalController, NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {HomeExitDmPage} from '../../modals/home-exit-dm/home-exit-dm.page';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-evacuation-dm',
@@ -21,6 +22,7 @@ export class EvacuationDmPage implements OnInit {
         public activatedRoute: ActivatedRoute,
         public navController: NavController,
         public modalController: ModalController,
+        public sharedDataService: SharedDataService,
     ) {
 
     }

@@ -4,6 +4,7 @@ import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-dashboard-qrscan',
@@ -72,37 +73,9 @@ export class DashboardQrscanPage implements OnInit {
                             this.qrScanner.hide(); // hide camera preview
                             this.scanSub.unsubscribe(); // stop scanning
                             this.qrScanner.destroy();
-
-                            const location = DemoDataService.locations[0];
-                            if (this.dedicatedMode) {
-                                this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                                    queryParams: {
-                                        headerTitle: 'Check In',
-                                        title: 'You are checking in',
-                                        subtitle: location.name,
-                                        buttonTitle: 'Check In Now',
-                                        nextPageData: JSON.stringify({
-                                            locationDetail: JSON.stringify(location)
-                                        }),
-                                        nextPagePath: '/checkin-induction'
-                                    }
-                                });
-                            } else {
-                                this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                                    queryParams: {
-                                        headerTitle: 'Check In',
-                                        title: 'You are checking in',
-                                        subtitle: location.name,
-                                        buttonTitle: 'Check In Now',
-                                        nextPageData: JSON.stringify({
-                                            locationDetail: JSON.stringify(location)
-                                        }),
-                                        nextPagePath: '/checkin-induction'
-                                    }
-                                });
-                            }
-
+                            this.openNextScreen();
                         }
+
                         // this.qrScanner.hide(); // hide camera preview
                         // scanSub.unsubscribe(); // stop scanning
                     });
@@ -117,6 +90,41 @@ export class DashboardQrscanPage implements OnInit {
                 }
             })
             .catch((e: any) => console.log('Error is', e));
+    };
+
+    openNextScreen = () => {
+        const location = DemoDataService.locations[0];
+        if (this.dedicatedMode) {
+            if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT) {
+                this.navCtrl.navigateForward('/form-cover-dm');
+            } else {
+                this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                    queryParams: {
+                        headerTitle: 'Check In',
+                        title: 'You are checking in',
+                        subtitle: location.name,
+                        buttonTitle: 'Check In Now',
+                        nextPageData: JSON.stringify({
+                            locationDetail: JSON.stringify(location)
+                        }),
+                        nextPagePath: '/checkin-induction'
+                    }
+                });
+            }
+        } else {
+            this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                queryParams: {
+                    headerTitle: 'Check In',
+                    title: 'You are checking in',
+                    subtitle: location.name,
+                    buttonTitle: 'Check In Now',
+                    nextPageData: JSON.stringify({
+                        locationDetail: JSON.stringify(location)
+                    }),
+                    nextPagePath: '/checkin-induction'
+                }
+            });
+        }
     };
 
     onClose() {

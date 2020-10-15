@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-form-open-auth-dm',
@@ -12,7 +13,8 @@ export class FormOpenAuthDmPage implements OnInit {
 
     constructor(
         public navController: NavController,
-        public activatedRoute: ActivatedRoute
+        public activatedRoute: ActivatedRoute,
+        public sharedDataService: SharedDataService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {

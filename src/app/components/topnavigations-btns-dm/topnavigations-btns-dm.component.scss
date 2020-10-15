@@ -3,6 +3,22 @@ ion-toolbar {
   --border-color: transparent;
   --border-width: 0;
 
+  .toolbar-container {
+    padding-top: var(--padding-top);
+    padding-bottom: var(--padding-bottom);
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: var(--min-height);
+    contain: content;
+    overflow-x: auto !important;
+    z-index: 10;
+    box-sizing: border-box;
+  }
+
   ion-buttons {
     padding: 8px 12px;
 

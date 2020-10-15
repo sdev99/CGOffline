@@ -41,7 +41,6 @@ export class AppComponent {
             if (this.sharedDataService.isTablet) {
                 localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
                 this.sharedDataService.dedicatedMode = true;
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
             } else {
                 localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
                 this.sharedDataService.dedicatedMode = false;
@@ -49,7 +48,15 @@ export class AppComponent {
 
 
             if (this.sharedDataService.dedicatedMode) {
-                this.navController.navigateRoot('choose-location');
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+
+                if (this.sharedDataService.dedicatedModeLocationUse) {
+                    if (localStorage.getItem('test_login') !== 'true') {
+                        this.navController.navigateRoot('dashboard-dm');
+                    }
+                } else {
+                    this.navController.navigateRoot('choose-location');
+                }
             }
 
             try {

@@ -1,6 +1,7 @@
 <ion-header>
-    <app-modal-header-dm modalTitle="Demo Location 1" modalSubTitle="Check In/Out as Guest"
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In/Out as Guest"
                          (closeModal)="onClose()"></app-modal-header-dm>
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 
 <ion-content>
@@ -9,7 +10,7 @@
 
     <ion-item lines="none">
         <ion-label position="stacked">Enter your phone number</ion-label>
-        <ion-input [(ngModel)]="phoneNumber"></ion-input>
+        <ion-input inputmode="numeric" type="text" appPhoneInput [(ngModel)]="phoneNumber"></ion-input>
     </ion-item>
 
 

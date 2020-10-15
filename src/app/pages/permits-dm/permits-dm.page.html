@@ -1,14 +1,18 @@
 <ion-header>
-    <app-dashboard-header-dm title="Demo Location 1"></app-dashboard-header-dm>
+    <app-dashboard-header-dm [title]="sharedDataService.dedicatedModeLocationUse.title"></app-dashboard-header-dm>
     <app-topnavigations-btns-dm activeBtn="permit"></app-topnavigations-btns-dm>
-    <app-topnavigations-segments-dm [active]="listType" [options]="listTypes"
+    <app-topnavigations-segments-dm [active]="listType"
+                                    [options]="listTypes"
+                                    [search]="searchQuery"
+                                    (searching)="onSearch($event)"
+                                    (searchbarShowHide)="searchbarShowHide($event)"
                                     (changed)="segmentChanged($event)"></app-topnavigations-segments-dm>
 </ion-header>
 
 <ion-content>
     <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
 
-        <ion-item tappable *ngFor="let item of list" (click)="openFile(item)">
+        <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title' " (click)="openFile(item)">
             <ion-label class="text-1">{{item.title}}</ion-label>
             <ion-label class="text-2">
                 issues &nbsp;<span class="text-3">{{item.issued}}</span>
@@ -24,5 +28,8 @@
     <ng-template #noDocument>
         <app-empty-message message="No permits available"></app-empty-message>
     </ng-template>
+
+    <app-empty-message *ngIf="(list | listFilter:searchQuery:'title').length == 0"
+                       message="No Results Found"></app-empty-message>
 </ion-content>
 

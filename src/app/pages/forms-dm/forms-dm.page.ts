@@ -3,6 +3,8 @@ import {FilehandlerService} from '../../services/filehandler.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {UtilService} from '../../services/util.service';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-forms-dm',
@@ -20,17 +22,24 @@ export class FormsDmPage implements OnInit {
     constructor(
         private filehandlerService: FilehandlerService,
         private navController: NavController,
+        private sharedDataService: SharedDataService,
     ) {
     }
 
     ngOnInit() {
         setTimeout(() => {
             this.list = DemoDataService.dmDocuments.clone();
-        }, 3000);
+        }, 2000);
     }
 
     onSearch(search) {
         this.searchQuery = search;
+    }
+
+    searchbarShowHide(visible) {
+        if (!visible) {
+            this.searchQuery = '';
+        }
     }
 
     segmentChanged(event) {
@@ -38,6 +47,7 @@ export class FormsDmPage implements OnInit {
     }
 
     openFile(item) {
+        this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM
         this.navController.navigateForward('/form-open-auth-dm', {
             queryParams: item
         });

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-guest-dm',
@@ -13,6 +14,7 @@ export class CheckinoutGuestDmPage implements OnInit {
 
     constructor(
         public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
         this.formGroup = new FormGroup({
             fname: new FormControl('', Validators.compose([Validators.required])),
@@ -35,7 +37,7 @@ export class CheckinoutGuestDmPage implements OnInit {
     onContinue() {
         this.isSubmitted = true;
         if (this.formGroup.valid) {
-            this.navController.navigateForward('checkinout-guest-phone-dm');
+            this.navController.navigateForward('/checkin-induction');
         }
     }
 

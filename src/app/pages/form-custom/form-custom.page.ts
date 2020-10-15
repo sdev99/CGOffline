@@ -10,13 +10,15 @@ import {ActivatedRoute} from '@angular/router';
 import {FilehandlerService} from '../../services/filehandler.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {PortraitModePage} from '../../modals/portrait-mode/portrait-mode.page';
 
 @Component({
     selector: 'app-form-custom',
     templateUrl: './form-custom.page.html',
     styleUrls: ['./form-custom.page.scss'],
 })
-export class FormCustomPage {
+export class FormCustomPage implements OnDestroy {
 
     errorMessage = '';
 
@@ -29,6 +31,8 @@ export class FormCustomPage {
     currentPageIndex = 1;
     totalPage = 32;
 
+    screenOrientationModal;
+
     constructor(
         public navCtrl: NavController,
         public photoService: PhotoService,
@@ -37,6 +41,7 @@ export class FormCustomPage {
         public modalController: ModalController,
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
+        private screenOrientation: ScreenOrientation
     ) {
 
         this.list.map((item, key) => {
@@ -50,14 +55,59 @@ export class FormCustomPage {
                 }
             }
         });
+
+        if (this.sharedDataService.dedicatedMode) {
+
+            if (screenOrientation.type.includes('landscape')) {
+                screenOrientation.unlock();
+                this.showOrientationModal();
+            }
+
+            screenOrientation.onChange().subscribe(() => {
+                if (screenOrientation.type.includes('portrait')) {
+                    if (this.screenOrientationModal) {
+                        this.screenOrientationModal.dismiss();
+                    }
+                }
+                if (screenOrientation.type.includes('landscape')) {
+                    screenOrientation.unlock();
+                    this.showOrientationModal();
+                }
+            });
+        }
     }
+
 
     ionViewDidEnter() {
 
     }
 
     ionViewWillLeave(): void {
+    }
 
+    ngOnDestroy() {
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+    }
+
+    async showOrientationModal() {
+        const modal = await this.modalController.create({
+            component: PortraitModePage,
+            swipeToClose: false,
+            showBackdrop: false,
+            backdropDismiss: false,
+            animated: false,
+            componentProps: {},
+            cssClass: 'portrait-mode-model'
+        });
+        await modal.present();
+
+        modal.onWillDismiss().then(({data}) => {
+            if (data) {
+                // this.navCtrl.back();
+            }
+        });
+
+        this.screenOrientationModal = modal;
     }
 
     openFile() {

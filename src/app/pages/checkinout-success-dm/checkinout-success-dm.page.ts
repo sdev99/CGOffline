@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-success-dm',
@@ -15,6 +16,7 @@ export class CheckinoutSuccessDmPage implements OnInit {
 
     constructor(
         public navCtrl: NavController,
+        public sharedDataService: SharedDataService,
         public activatedRoute: ActivatedRoute
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {

@@ -1,5 +1,5 @@
 <ion-header>
-    <app-modal-header-dm modalTitle="Demo Location 1" [modalSubTitle]="authFor"
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" [modalSubTitle]="authFor"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
@@ -9,8 +9,8 @@
 
     <ion-item lines="none" class="search-item">
         <ion-label position="stacked">Enter your name</ion-label>
-        <ion-searchbar #itemRef [(ngModel)]="name" (ionFocus)="showList=true"
-                       (ionChange)="showList=true"></ion-searchbar>
+        <ion-searchbar #itemRef [(ngModel)]="name" (ionFocus)="searchBarFocus()"
+                       (ionChange)="searchBarChange()"></ion-searchbar>
         <ion-list *ngIf="showList && (items | listFilter:name:'').length>0" lines="none">
             <ion-item *ngFor="let item of items | listFilter:name:''"
                       (click)="onSelect($event, item)">{{ item }}</ion-item>

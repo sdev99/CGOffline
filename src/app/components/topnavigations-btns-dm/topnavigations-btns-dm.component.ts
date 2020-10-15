@@ -38,7 +38,7 @@ export class TopnavigationsBtnsDmComponent implements OnInit {
     }
 
     generatePermitClick() {
-        this.navController.navigateRoot('permits-generate-dm');
+        this.navController.navigateForward('checkin-workpermit');
     }
 
 }

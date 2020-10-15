@@ -1,13 +1,13 @@
-<ion-header>
-    <app-modal-header-dm modalTitle="Demo Location 1" [modalSubTitle]="authFor"
+<ion-header #headerView>
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" [modalSubTitle]="authFor"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
-<ion-content [ngClass]="{'camera-view':!photoCaptured}">
+<ion-content [ngClass]="{'camera-view':!photoCaptured}" >
     <app-back-continue-toolbar (back)="onBack()"
-                               (continue)="onContinue()"></app-back-continue-toolbar>
+                               (continue)="onContinue()" [disableRightBtn]="!photoCaptured"></app-back-continue-toolbar>
 
-    <div class="content">
+    <div class="content" #content>
         <div class="text-1">
             Photo Identity
         </div>

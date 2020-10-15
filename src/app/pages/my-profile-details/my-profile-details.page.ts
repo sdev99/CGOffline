@@ -3,6 +3,7 @@ import {NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-my-profile-details',
@@ -18,7 +19,7 @@ export class MyProfileDetailsPage implements OnInit {
         public navCtrl: NavController,
         private sharedDataService: SharedDataService
     ) {
-        const userData = localStorage.getItem('USER_DATA');
+        const userData = localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA);
         if (userData) {
             this.user = JSON.parse(userData);
             this.offsetData = UtilService.findObj(DemoDataService.timeZones, 'offset', this.user.timeZone);
@@ -35,7 +36,7 @@ export class MyProfileDetailsPage implements OnInit {
 
 
     logout() {
-        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem(EnumService.LocalStorageKeys.IS_LOGGEDIN);
         this.navCtrl.navigateRoot('login');
     }
 }

@@ -4,6 +4,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-login',
@@ -36,7 +37,7 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit() {
-        if (localStorage.getItem('isLoggedIn') === '1') {
+        if (localStorage.getItem(EnumService.LocalStorageKeys.IS_LOGGEDIN) === '1') {
             this.navCtrl.navigateRoot('/tabs/dashboard');
         }
     }
@@ -57,8 +58,8 @@ export class LoginPage implements OnInit {
                 } else if (password === 'wronglogin') {
                     this.errorMessage = 'Wrong username or password';
                 } else {
-                    localStorage.setItem('isLoggedIn', '1');
-                    localStorage.setItem('USER_DATA', JSON.stringify({
+                    localStorage.setItem(EnumService.LocalStorageKeys.IS_LOGGEDIN, '1');
+                    localStorage.setItem(EnumService.LocalStorageKeys.USER_DATA, JSON.stringify({
                         email,
                         phone: '+01234567890',
                         timeZone: 'GMT+02:00',

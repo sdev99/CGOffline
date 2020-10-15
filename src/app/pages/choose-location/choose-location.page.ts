@@ -10,9 +10,16 @@ import {EnumService} from '../../services/enum.service';
 })
 export class ChooseLocationPage implements OnInit {
     locations = [
-        {title: 'Another location name goes here on a single line of text', id: 1},
-        {title: 'My project name goes here', id: 2},
-        {title: 'Inventory item #40', id: 3},
+        {title: 'Demo Location One', id: 1},
+        {title: 'Demo Location Two', id: 2},
+        {title: 'Demo Location Three', id: 3},
+        {title: 'Demo Location Four', id: 3},
+        {title: 'Demo Location Five', id: 3},
+        {title: 'Demo Location Six', id: 3},
+        {title: 'Demo Location Seven', id: 3},
+        {title: 'Demo Location Eight', id: 3},
+        {title: 'Demo Location Nine', id: 3},
+        {title: 'Demo Location Ten', id: 3},
     ];
     selectedLocation;
 
@@ -30,6 +37,8 @@ export class ChooseLocationPage implements OnInit {
     }
 
     onContinue() {
+        this.sharedDataService.dedicatedModeLocationUse = this.selectedLocation;
+        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify(this.selectedLocation));
         this.navCtrl.navigateForward(['/dashboard-dm']);
     }
 

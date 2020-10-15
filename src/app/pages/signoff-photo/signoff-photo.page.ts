@@ -56,12 +56,21 @@ export class SignoffPhotoPage implements OnInit {
             case EnumService.SignOffType.ACCIDENT_REPORT:
             case EnumService.SignOffType.CUSTOM_FORM:
             case EnumService.SignOffType.RISK_ASSESSMENT:
+            case EnumService.SignOffType.DOCUMENT_DM:
                 this.showCheckInResultScreen();
                 break;
 
             case EnumService.SignOffType.INDUCTION:
                 this.showCheckInResultScreen();
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, this.data);
+                break;
+
+            case EnumService.SignOffType.WORK_PERMIT:
+                this.navCtrl.navigateForward('permit-issued-result-dm', {
+                    queryParams: {
+                        permitResult: UtilService.randomBoolean() ? 'success' : 'failed'
+                    }
+                });
                 break;
 
             default:
@@ -84,7 +93,7 @@ export class SignoffPhotoPage implements OnInit {
                         failTitle: 'No Qualification',
                         failSubTitle: 'Check in Not Allowed',
                         failMessage: 'This check-in requires to have certain \n' +
-                            'qualificaitons which you do not have.',
+                            'qualifications which you do not have.',
                         nextPage: 'dashboard-dm'
                     }
                 });
@@ -99,10 +108,7 @@ export class SignoffPhotoPage implements OnInit {
                 });
             } else {
                 this.navCtrl.navigateForward(['/checkin-fail'], {
-                    queryParams: {
-                        message: 'You Signed-Off Successfully',
-                        nextPage: '/tabs/dashboard'
-                    }
+                    queryParams: {}
                 });
             }
         }

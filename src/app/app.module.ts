@@ -20,6 +20,7 @@ import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 import {CameraPreview} from '@ionic-native/camera-preview/ngx';
 import {CommonModule} from '@angular/common';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {DirectivesModule} from './directives/directives.module';
 
 @NgModule({
     declarations: [
@@ -30,12 +31,14 @@ import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
         BrowserModule,
         IonicModule.forRoot({
             hardwareBackButton: false,
+            mode: 'ios'
         }),
         AppRoutingModule,
         ComponentsModule,
         CommonModule,
         NgxQRCodeModule,
         PipesModule,
+        DirectivesModule
     ],
     providers: [
         QRScanner,

@@ -1,0 +1,76 @@
+<ion-header mode="ios">
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title"
+                         (closeModal)="onClose()"></app-modal-header-dm>
+</ion-header>
+
+<ion-content fullscreen="true">
+
+    <div class="top-content">
+        <div class="text-1">You are about to fill</div>
+        <div class="text-2" *ngIf="activityDetail">
+            {{activityDetail.name}}
+        </div>
+
+        <div class="text-3">
+            {{formType}}
+        </div>
+
+        <div class="text-4">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s.
+        </div>
+    </div>
+
+
+    <div class="bottom-content">
+        <div class="text-5">
+            INSTRUCTIONS
+        </div>
+
+        <div class="text-4">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s.
+        </div>
+
+
+        <div class="ion-margin-top" *ngIf="formType != 'WORK PERMIT'">
+            <div class="text-5">
+                ATTACHMENTS
+            </div>
+
+            <ion-item lines="none" class="form-item" (click)="openFile()">
+                <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+                <ion-label>
+                    Site Audit Form
+                </ion-label>
+            </ion-item>
+
+            <ion-item lines="none" class="form-item" (click)="openFile()">
+                <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+                <ion-label>
+                    Related attachment for this particular activity
+                </ion-label>
+            </ion-item>
+
+            <ion-item lines="none" class="form-item" (click)="openFile()">
+                <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
+                <ion-label>
+                    Another attachment for this activity
+                </ion-label>
+            </ion-item>
+
+            <ion-item lines="none" class="form-item" (click)="openFile()">
+                <ion-icon slot="start" src="./assets/icon/attachment3.svg"></ion-icon>
+                <ion-label>
+                    One more attachment right here
+                </ion-label>
+            </ion-item>
+        </div>
+
+        <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
+
+    </div>
+
+</ion-content>
+
+

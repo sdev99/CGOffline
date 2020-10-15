@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-checkin-workpermit',
@@ -14,7 +16,8 @@ export class CheckinWorkpermitPage implements OnInit {
     isCheckedIn = true;
 
     constructor(
-        public navCtrl: NavController,
+        public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
     }
 
@@ -50,7 +53,19 @@ export class CheckinWorkpermitPage implements OnInit {
     }
 
     back() {
-        this.navCtrl.back();
+        this.navController.back();
     }
 
+    onSelect(item) {
+        if (this.sharedDataService.dedicatedMode) {
+            this.sharedDataService.signOffFor = EnumService.SignOffType.WORK_PERMIT;
+            this.navController.navigateForward('form-open-auth-dm', {
+                queryParams: item
+            });
+        } else {
+            this.navController.navigateForward('form-cover', {
+                queryParams: item
+            });
+        }
+    }
 }

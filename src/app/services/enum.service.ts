@@ -10,7 +10,16 @@ export class EnumService {
         ACCIDENT_REPORT: 'accident-report',
         CUSTOM_FORM: 'custom-form',
         RISK_ASSESSMENT: 'risk-assessment',
-        INDUCTION: 'induction'
+        INDUCTION: 'induction',
+        DOCUMENT_DM: 'document_dedicated_mode',
+        FORMS_DM: 'forms_dedicated_mode',
+        WORK_PERMIT: 'work_permit',
+    };
+
+    static CheckInType = {
+        QrCode: 'qr_code',
+        MY_NAME: 'my_name',
+        AS_GUEST: 'as_guest',
     };
 
     static ObserverKeys = {
@@ -20,7 +29,10 @@ export class EnumService {
     };
 
     static LocalStorageKeys = {
-        IS_DEDICATED_MODE: 'DEDICATED_MODE',
+        IS_LOGGEDIN: 'isLoggedIn',
+        USER_DATA: 'user_data',
+        IS_DEDICATED_MODE: 'dedicated_mode',
+        DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use'
     };
 
     constructor() {

@@ -12,7 +12,7 @@ ion-header {
 ion-content {
   .content {
     display: flex;
-    height: 100%;
+    min-height: 100%;
     width: 40%;
     min-width: 320px;
     margin: auto;

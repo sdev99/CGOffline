@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-document-openchoice-dm',
@@ -12,7 +14,8 @@ export class DocumentOpenchoiceDmPage implements OnInit {
 
     constructor(
         private navController: NavController,
-        public activatedRoute: ActivatedRoute
+        public activatedRoute: ActivatedRoute,
+        public sharedDataService: SharedDataService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
@@ -29,7 +32,10 @@ export class DocumentOpenchoiceDmPage implements OnInit {
     }
 
     viewAndSignOff() {
-        this.navController.navigateForward('/signoff-digitalink');
+        this.sharedDataService.signOffFor = EnumService.SignOffType.DOCUMENT_DM;
+        this.navController.navigateForward('/signoff-digitalink',{
+
+        });
     }
 
     viewOnly() {

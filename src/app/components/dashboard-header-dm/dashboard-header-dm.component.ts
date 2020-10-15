@@ -18,7 +18,6 @@ export class DashboardHeaderDmComponent implements OnInit {
         public navController: NavController,
         public modalController: ModalController,
         private menu: MenuController,
-        public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         public observablesService: ObservablesService,
     ) {

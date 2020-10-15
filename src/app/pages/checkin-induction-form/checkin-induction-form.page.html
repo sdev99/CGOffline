@@ -5,7 +5,7 @@
                                (next)="next()"></app-next-prev-toolbar>
     </ng-container>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" modalTitle="Demo Location 1" modalSubTitle="Check In"
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
                          (closeModal)="onClose()"></app-modal-header-dm>
 
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>

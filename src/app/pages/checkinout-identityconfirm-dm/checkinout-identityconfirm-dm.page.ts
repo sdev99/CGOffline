@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-identityconfirm-dm',
@@ -14,7 +15,8 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
 
     constructor(
         public navController: NavController,
-        public activatedRoute: ActivatedRoute
+        public activatedRoute: ActivatedRoute,
+        public sharedDataService: SharedDataService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
@@ -41,7 +43,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
 
     onContinue() {
         if (this.authFor === 'Authentication') {
-            this.navController.navigateForward('/form-cover');
+            this.navController.navigateForward('/form-cover-dm');
         } else {
             this.navController.navigateForward('/checkin-induction');
         }
@@ -50,7 +52,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
     thisisNotMe() {
         this.navController.navigateForward('checkinout-photoidentity-dm', {
             queryParams: {
-                authFor: this.authFor
+                authFor: this.authFor,
             }
         });
     }

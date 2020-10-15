@@ -11,6 +11,7 @@ export class TopnavigationsSegmentsDmComponent implements OnInit {
     @Input() search: any;
     @Output() changed = new EventEmitter<any>();
     @Output() searching = new EventEmitter<any>();
+    @Output() searchbarShowHide = new EventEmitter<any>();
     searchBarShow = false;
 
     constructor() {
@@ -26,5 +27,6 @@ export class TopnavigationsSegmentsDmComponent implements OnInit {
 
     showSearchBar() {
         this.searchBarShow = !this.searchBarShow;
+        this.searchbarShowHide.emit(this.searchBarShow);
     }
 }

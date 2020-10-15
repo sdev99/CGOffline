@@ -40,6 +40,10 @@ export class SignoffDigitalinkPage implements OnInit {
                     this.data = JSON.parse(params.data);
                 }
             }
+
+            if (sharedDataService.signOffFor) {
+                this.type = sharedDataService.signOffFor;
+            }
         });
     }
 
@@ -58,6 +62,23 @@ export class SignoffDigitalinkPage implements OnInit {
             case EnumService.SignOffType.INDUCTION:
                 this.aggrementTitle = 'I confirm that I\'ve read the induction.';
                 this.subTitle = 'Induction';
+                this.showDigitalInk = true;
+                this.initialiseDrawing();
+                break;
+            case EnumService.SignOffType.DOCUMENT_DM:
+                this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                this.pageTitle = 'Sign-Off';
+                this.title = 'Sign-Off';
+                this.subTitle = '';
+                this.showDigitalInk = true;
+                this.initialiseDrawing();
+                break;
+
+            case EnumService.SignOffType.WORK_PERMIT:
+                this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                this.pageTitle = 'Sign-Off';
+                this.title = 'Sign-Off';
+                this.subTitle = '';
                 this.showDigitalInk = true;
                 this.initialiseDrawing();
                 break;
@@ -115,26 +136,21 @@ export class SignoffDigitalinkPage implements OnInit {
                 case EnumService.SignOffType.ACCIDENT_REPORT:
                 case EnumService.SignOffType.CUSTOM_FORM:
                 case EnumService.SignOffType.RISK_ASSESSMENT:
-                    this.navCtrl.navigateForward(['/signoff-photo'], {
-                        queryParams: {
-                            type: this.type,
-                            data: JSON.stringify(this.data)
-                        }
-                    });
-
-                    break;
-
                 case EnumService.SignOffType.INDUCTION:
+                case EnumService.SignOffType.DOCUMENT_DM:
+                case EnumService.SignOffType.WORK_PERMIT:
                     this.navCtrl.navigateForward(['/signoff-photo'], {
                         queryParams: {
                             type: this.type,
                             data: JSON.stringify(this.data)
                         }
                     });
+
                     break;
+
 
                 default:
-                    if(this.sharedDataService.dedicatedMode) {
+                    if (this.sharedDataService.dedicatedMode) {
                         if (UtilService.randomBoolean()) {
                             this.navCtrl.navigateForward(['/checkinout-success-dm'], {
                                 queryParams: {
@@ -148,7 +164,7 @@ export class SignoffDigitalinkPage implements OnInit {
                                     failTitle: 'No Qualification',
                                     failSubTitle: 'Check in Not Allowed',
                                     failMessage: 'This check-in requires to have certain \n' +
-                                        'qualificaitons which you do not have.',
+                                        'qualifications which you do not have.',
                                     nextPage: 'dashboard-dm'
                                 }
                             });

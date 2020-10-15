@@ -1,18 +1,27 @@
 <ion-header>
-    <app-dashboard-header [showPlaceNavigationBtns]="false" [isCurrentCheckin]="true" [hideCheckinButton]="isCheckedIn"
-    ></app-dashboard-header>
+    <ng-container *ngIf="!sharedDataService.dedicatedMode">
+        <app-dashboard-header [showPlaceNavigationBtns]="false" [isCurrentCheckin]="true"
+                              [hideCheckinButton]="isCheckedIn"
+        ></app-dashboard-header>
 
-    <ion-toolbar>
-        <ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
-        <ion-title class="ion-text-left">Work Permit Forms</ion-title>
-    </ion-toolbar>
+        <ion-toolbar>
+            <ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark"
+                             mode="md"></ion-back-button>
+            <ion-title class="ion-text-left">Work Permit Forms</ion-title>
+        </ion-toolbar>
+    </ng-container>
+
+    <ng-container *ngIf="sharedDataService.dedicatedMode">
+        <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Work Permit"
+                             (closeModal)="back()"></app-modal-header-dm>
+    </ng-container>
 
 </ion-header>
 
 
 <ion-content>
     <ion-list *ngIf="list && list.length>0" class="activity-list" lines="full">
-        <ion-item *ngFor="let item of list">
+        <ion-item *ngFor="let item of list" (click)="onSelect(item)">
             <ion-icon slot="start" src="./assets/icon/workpermit.svg"></ion-icon>
             <ion-label>{{item.title}}</ion-label>
         </ion-item>

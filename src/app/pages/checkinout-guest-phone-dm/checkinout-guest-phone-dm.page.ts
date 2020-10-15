@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-guest-phone-dm',
@@ -8,10 +9,12 @@ import {NavController} from '@ionic/angular';
 })
 export class CheckinoutGuestPhoneDmPage implements OnInit {
     phoneNumber;
+    errorMessage = '';
 
 
     constructor(
         public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
     }
 
@@ -30,8 +33,22 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
 
 
     onContinue() {
+        this.errorMessage = '';
         if (this.phoneNumber) {
-            this.navController.navigateForward('checkinout-alreadycheckin-dm');
+            if (this.phoneNumber.toString() === '1111111111') {
+                this.errorMessage = 'Mobile number is already used on another device.';
+            } else {
+                if (this.phoneNumber.toString() === '0123456789') {
+                    this.navController.navigateForward('checkinout-identityconfirm-dm', {
+                        queryParams: {
+                            userName: 'Guest User ',
+                            authFor: 'Check In/Out as Guest'
+                        }
+                    });
+                } else {
+                    this.navController.navigateForward('checkinout-guest-dm');
+                }
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 <ion-header mode="ios">
 
-    <app-modal-header-dm modalTitle="Demo Location 1" *ngIf="dedicatedMode; else personalMode"
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" *ngIf="dedicatedMode; else personalMode"
                          [modalSubTitle]="authFor" (closeModal)="onClose()"></app-modal-header-dm>
 
     <ng-template #personalMode>

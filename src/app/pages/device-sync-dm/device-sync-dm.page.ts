@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AlertController, ModalController, NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-device-sync-dm',
@@ -16,8 +17,14 @@ export class DeviceSyncDmPage implements OnInit {
 
     constructor(
         public navController: NavController,
-        public alertController: AlertController
+        public alertController: AlertController,
+        public activatedRoute: ActivatedRoute
     ) {
+        this.activatedRoute.queryParams.subscribe((data) => {
+            if (data && data.startSync) {
+                this.onSync();
+            }
+        });
     }
 
     ngOnInit() {

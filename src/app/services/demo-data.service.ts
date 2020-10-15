@@ -113,7 +113,8 @@ export class DemoDataService {
             formType: {
                 title: 'Custom Form',
                 id: 'custom'
-            }
+            },
+            attachments: [{title: 'Related attachment for this particular activity'}, {title: 'Site Audit Form'}, {title: 'Another attachment for this activity'}, {title: 'One more attachment right here'}]
         },
         {
             status: 'active',

@@ -19,6 +19,7 @@ ion-content {
       overflow: auto;
       font-size: 14px;
       line-height: 20px;
+      padding-bottom: 150px;
     }
 
     .action-btn-container {
@@ -29,7 +30,7 @@ ion-content {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.1);
 
       .action-btn {
         width: 200px;

@@ -7,6 +7,7 @@ import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx'
 import {File} from '@ionic-native/file/ngx';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {FilehandlerService} from '../../services/filehandler.service';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-form-cover',
@@ -14,15 +15,13 @@ import {FilehandlerService} from '../../services/filehandler.service';
     styleUrls: ['./form-cover.page.scss'],
 })
 export class FormCoverPage {
-    fileTransfer: FileTransferObject;
     activityDetail = DemoDataService.activityList[4];
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
-        private transfer: FileTransfer,
-        private file: File
+        public sharedDataService: SharedDataService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {

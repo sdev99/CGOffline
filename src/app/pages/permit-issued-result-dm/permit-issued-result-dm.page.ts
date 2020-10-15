@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {NavController} from '@ionic/angular';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-permit-issued-result-dm',
@@ -13,6 +14,7 @@ export class PermitIssuedResultDmPage implements OnInit {
     constructor(
         public activatedRoute: ActivatedRoute,
         public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {

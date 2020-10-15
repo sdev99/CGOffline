@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-checkinout-alreadycheckin-dm',
@@ -10,6 +11,7 @@ import {UtilService} from '../../services/util.service';
 export class CheckinoutAlreadycheckinDmPage implements OnInit {
     constructor(
         public navController: NavController,
+        public sharedDataService: SharedDataService,
     ) {
     }
 
@@ -39,7 +41,7 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
                     failTitle: 'No Qualification',
                     failSubTitle: 'Check in Not Allowed',
                     failMessage: 'This check-in requires to have certain \n' +
-                        'qualificaitons which you do not have.',
+                        'qualifications which you do not have.',
                 }
             });
         }

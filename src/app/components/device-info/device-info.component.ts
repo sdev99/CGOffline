@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuController} from '@ionic/angular';
+import {MenuController, NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 
@@ -13,6 +13,7 @@ export class DeviceInfoComponent implements OnInit {
 
     constructor(
         private menu: MenuController,
+        public navController: NavController,
         private sharedDataService: SharedDataService,
     ) {
     }
@@ -28,6 +29,15 @@ export class DeviceInfoComponent implements OnInit {
 
     closeInfoMenu() {
         this.menu.close('infoMenu');
+    }
+
+    async syncClick() {
+        this.closeInfoMenu();
+        this.navController.navigateForward('device-sync-dm', {
+            queryParams: {
+                startSync: true
+            }
+        });
     }
 
 }

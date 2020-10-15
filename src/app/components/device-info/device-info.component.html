@@ -6,27 +6,32 @@
         <div class="content">
             <ion-list lines="full">
                 <ion-item>
-                    <ion-label>UID</ion-label>
+                    <ion-label slot="start">UID</ion-label>
                     <ion-note color="medium" slot="end">{{sharedDataService.deviceUID}}</ion-note>
                 </ion-item>
                 <ion-item>
-                    <ion-label>Device Status</ion-label>
-                    <ion-chip *ngIf="isOnline" color="clear">
+                    <ion-label slot="start">Device Status</ion-label>
+                    <ion-chip *ngIf="isOnline" color="clear" slot="end">
                         <ion-icon color="success" name="ellipse"></ion-icon>
                         <ion-label color="success">Online</ion-label>
                     </ion-chip>
 
-                    <ion-chip *ngIf="!isOnline" color="clear">
+                    <ion-chip *ngIf="!isOnline" color="clear" slot="end">
                         <ion-icon color="danger" name="ellipse"></ion-icon>
                         <ion-label color="danger">Offline</ion-label>
                     </ion-chip>
+                </ion-item>
+
+                <ion-item>
+                    <ion-label slot="start">Last Sync</ion-label>
+                    <ion-note color="medium" slot="end">24Mar 2020 16:37</ion-note>
                 </ion-item>
             </ion-list>
 
 
             <app-sync-warning-msg *ngIf="isOnline"></app-sync-warning-msg>
 
-            <ion-button [disabled]="!isOnline" class="action-btn">
+            <ion-button [disabled]="!isOnline" class="action-btn" (click)="syncClick()">
                 Synch Now
             </ion-button>
         </div>

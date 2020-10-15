@@ -1,7 +1,8 @@
 <ion-header mode="ios">
     <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="{{pageTitle}}"
                       (closeModal)="onClose()"></app-modal-header>
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" modalTitle="Demo Location 1" modalSubTitle="Sign-Off"
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.dedicatedModeLocationUse.title"
+                         [modalSubTitle]="pageTitle"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
@@ -10,7 +11,7 @@
     <div class="content">
         <div class="title-1">{{title}}</div>
 
-        <div class="ion-text-center">
+        <div class="ion-text-center" *ngIf="subTitle">
             <ion-button fill="clear" class="button-1">{{subTitle}}</ion-button>
         </div>
 

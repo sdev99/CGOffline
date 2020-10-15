@@ -8,6 +8,7 @@ import { PermitsDmPageRoutingModule } from './permits-dm-routing.module';
 
 import { PermitsDmPage } from './permits-dm.page';
 import {ComponentsModule} from '../../components/components.module';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {ComponentsModule} from '../../components/components.module';
         FormsModule,
         IonicModule,
         PermitsDmPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        PipesModule
     ],
   declarations: [PermitsDmPage]
 })

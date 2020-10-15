@@ -9,6 +9,7 @@ import { CheckinoutPhoneDmPageRoutingModule } from './checkinout-guest-phone-dm-
 import { CheckinoutGuestPhoneDmPage } from './checkinout-guest-phone-dm.page';
 import {ComponentsModule} from '../../components/components.module';
 import {PipesModule} from '../../pipes/pipes.module';
+import {DirectivesModule} from '../../directives/directives.module';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import {PipesModule} from '../../pipes/pipes.module';
         IonicModule,
         CheckinoutPhoneDmPageRoutingModule,
         ComponentsModule,
-        PipesModule
+        PipesModule,
+        DirectivesModule
     ],
   declarations: [CheckinoutGuestPhoneDmPage]
 })
