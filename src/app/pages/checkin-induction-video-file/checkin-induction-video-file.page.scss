@@ -1,11 +1,27 @@
 ion-content {
   --background: #fff;
+  --overflow: auto;
+
+  .content-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
 
   &.dedicated-mode {
     --background: #F6F9FB;
 
     .video-view {
-      height: 50vh;
+      flex: 1;
+      min-height: 220px;
+      max-height: 500px;
     }
   }
 
@@ -22,7 +38,8 @@ ion-content {
   .video-view {
     width: 90%;
     margin: 5%;
-    height: 200px;
+    min-height: 200px;
+    flex: 1;
     background-color: #F8F9FB;
 
     iframe {

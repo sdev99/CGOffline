@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
@@ -9,6 +9,8 @@ import {SharedDataService} from '../../services/shared-data.service';
     styleUrls: ['./checkinout-identityconfirm-dm.page.scss'],
 })
 export class CheckinoutIdentityconfirmDmPage implements OnInit {
+    @ViewChild('imagePreview', {read: ElementRef}) imagePreview: ElementRef;
+
     photoCaptured = './assets/images/demo-profile.svg';
     userName;
     authFor = 'Check In/Out by Name';
@@ -32,6 +34,10 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
 
     }
 
+    ionViewWillEnter() {
+        const element = this.imagePreview.nativeElement;
+        element.style.width = element.offsetHeight + 'px';
+    }
 
     onClose() {
         this.navController.navigateRoot('dashboard-dm');
@@ -41,18 +47,22 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
         this.navController.back();
     }
 
-    onContinue() {
+    nextPage = () => {
         if (this.authFor === 'Authentication') {
-            this.navController.navigateForward('/form-cover-dm');
-        } else {
-            this.navController.navigateForward('/checkin-induction');
+            return 'form-cover-dm';
         }
+        return 'checkin-induction';
+    };
+
+    onContinue() {
+        this.navController.navigateForward(this.nextPage());
     }
 
     thisisNotMe() {
         this.navController.navigateForward('checkinout-photoidentity-dm', {
             queryParams: {
                 authFor: this.authFor,
+                nextPage: this.nextPage()
             }
         });
     }

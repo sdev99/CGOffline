@@ -25,8 +25,7 @@ ion-content {
 
       ion-img {
         margin-top: 40px;
-        width: 350px;
-        height: 350px;
+        flex:1;
       }
 
       .action-btn {
@@ -48,12 +47,13 @@ ion-content {
     ion-img {
       width: 220px;
       height: 220px;
+      flex: 1;
       background-color: #D4E2F8;
       margin-bottom: 20px;
     }
 
     .heading-1 {
-      margin-top: 48px;
+      margin-top: 8%;
       font-family: Inter;
       font-style: normal;
       font-weight: 600;
@@ -64,7 +64,7 @@ ion-content {
 
 
     .title-1 {
-      margin-top: 48px;
+      margin-top: 8%;
       font-family: Inter;
       font-style: normal;
       font-weight: 600;

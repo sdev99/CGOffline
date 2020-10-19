@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AlertController, ModalController, NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
 import {ActivatedRoute} from '@angular/router';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-device-sync-dm',
@@ -18,7 +19,8 @@ export class DeviceSyncDmPage implements OnInit {
     constructor(
         public navController: NavController,
         public alertController: AlertController,
-        public activatedRoute: ActivatedRoute
+        public activatedRoute: ActivatedRoute,
+        public utilService: UtilService,
     ) {
         this.activatedRoute.queryParams.subscribe((data) => {
             if (data && data.startSync) {
@@ -71,6 +73,7 @@ export class DeviceSyncDmPage implements OnInit {
                 clearInterval(interval);
                 if (UtilService.randomBoolean()) {
                     this.synchProgressState = 'completed';
+                    localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
                 } else {
                     if (UtilService.randomBoolean()) {
                         this.synchProgressState = 'failed';

@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {UtilService} from '../../services/util.service';
 import {SharedDataService} from '../../services/shared-data.service';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 @Component({
     selector: 'app-permits-generate-dm',
@@ -15,13 +16,51 @@ export class PermitsGenerateDmPage implements OnInit {
     errorMessage = '';
     submitted = false;
 
+    screenOrientationSubscribe;
+    isShowOritationPortrait = false;
+
     constructor(
         public navController: NavController,
         public sharedDataService: SharedDataService,
+        private screenOrientation: ScreenOrientation,
+        private ngZone: NgZone,
     ) {
     }
 
     ngOnInit() {
+    }
+
+    handleOrientation = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            if (this.screenOrientation.type.includes('landscape')) {
+                this.screenOrientation.unlock();
+                this.isShowOritationPortrait = true;
+            }
+
+            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+                this.ngZone.run(() => {
+                    if (this.screenOrientation.type.includes('portrait')) {
+                        this.isShowOritationPortrait = false;
+                    }
+                    if (this.screenOrientation.type.includes('landscape')) {
+                        this.isShowOritationPortrait = true;
+                    }
+                });
+            });
+        }
+    };
+
+
+    ionViewWillEnter() {
+        this.handleOrientation();
+    }
+
+    ionViewDidLeave(): void {
+
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            this.screenOrientationSubscribe.unsubscribe();
+        }
     }
 
     onClose() {

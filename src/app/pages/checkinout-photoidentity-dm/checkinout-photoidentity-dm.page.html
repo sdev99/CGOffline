@@ -4,25 +4,27 @@
 </ion-header>
 
 <ion-content [ngClass]="{'camera-view':!photoCaptured}" >
-    <app-back-continue-toolbar (back)="onBack()"
-                               (continue)="onContinue()" [disableRightBtn]="!photoCaptured"></app-back-continue-toolbar>
+   <div class="content-container">
+       <app-back-continue-toolbar (back)="onBack()"
+                                  (continue)="onContinue()" [disableRightBtn]="!photoCaptured"></app-back-continue-toolbar>
 
-    <div class="content" #content>
-        <div class="text-1">
-            Photo Identity
-        </div>
-        <div class="text-2">
-            We need to take a photo of you.
-            <br/>
-            Please align your face in to the below area.
-        </div>
-        <div class="ion-img-view" #imagePreview>
-            <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
-        </div>
+       <div class="content" #content>
+           <div class="text-1">
+               Photo Identity
+           </div>
+           <div class="text-2">
+               We need to take a photo of you.
+               <br/>
+               Please align your face in to the below area.
+           </div>
+           <div class="ion-img-view" #imagePreview>
+               <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
+           </div>
 
-        <ion-button class="action-btn" (click)="takePhoto()">
-            {{photoCaptured ? 'Take a New Photo' : 'Take the Photo'}}
-        </ion-button>
-    </div>
+           <ion-button class="action-btn" (click)="takePhoto()">
+               {{photoCaptured ? 'Take a New Photo' : 'Take the Photo'}}
+           </ion-button>
+       </div>
+   </div>
 
 </ion-content>

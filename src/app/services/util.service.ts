@@ -107,4 +107,8 @@ export class UtilService {
 
         await alert.present();
     }
+
+     getCurrentDateTIme() {
+        return new Date().toISOString().slice(0, 19).replace('T', ' ');
+    }
 }

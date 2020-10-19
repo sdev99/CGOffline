@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx';
 import {File} from '@ionic-native/file/ngx';
+import {UtilService} from './util.service';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @Injectable({
     providedIn: 'root'
@@ -12,24 +14,45 @@ export class FilehandlerService {
     constructor(
         private fileOpener: FileOpener,
         private transfer: FileTransfer,
-        private file: File
+        private file: File,
+        private utilService: UtilService,
+        private http: HTTP
     ) {
     }
 
     openFile(fileUrl = '') {
-        const url = './assets/dummy.pdf';
+        const demoFile = 'http://www.africau.edu/images/default/sample.pdf';
+        this.utilService.presentLoadingWithOptions('File downloading...');
+        const fileName = demoFile.replace(/^.*[\\\/]/, '');
+        const extension = fileName.split('.').pop();
+
+        this.http.downloadFile(demoFile, {}, {}, this.file.dataDirectory + fileName).then((response) => {
+            this.utilService.hideLoading();
+            const url = response.nativeURL;
+            this.fileOpener.showOpenWithDialog(url, 'application/' + extension).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+        }).catch((error) => {
+            this.utilService.hideLoading();
+            console.log('Error download file', error);
+        });
+
+        // const pdfUrl = 'http://www.africau.edu/images/default/sample.pdf';
 
         // this.fileTransfer = this.transfer.create();
         // this.fileTransfer
-        //     .download(encodeURI(url), this.file.dataDirectory + 'form.pdf')
+        //     .download(encodeURI(demoFile), this.file.dataDirectory + 'form.pdf')
         //     .then(entry => {
-        //       console.log('download complete: ' + entry.toURL());
-        //
-        //     });
-
-        this.fileOpener
-            .showOpenWithDialog(url, 'application/pdf')
-            .then(() => console.log('File is opened'))
-            .catch(e => console.log('Error opening file', e));
+        //         debugger;
+        //         this.utilService.hideLoading();
+        //         console.log('download complete: ' + entry.toURL());
+        //         const url = entry.toURL();
+        //         this.fileOpener
+        //             .showOpenWithDialog(url, 'application/pdf')
+        //             .then(() => console.log('File is opened'))
+        //             .catch(e => console.log('Error opening file', e));
+        //     }).catch((error) => {
+        //     debugger;
+        //     this.utilService.hideLoading();
+        //     console.log('Error download file', error);
+        // });
     }
 }

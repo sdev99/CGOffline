@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {fabric} from 'fabric';
 import {Location} from '@angular/common';
 import {NavController, AlertController} from '@ionic/angular';
@@ -7,6 +7,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {ObservablesService} from '../../services/observables.service';
 import {EnumService} from '../../services/enum.service';
 import {Subscription} from 'rxjs';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
 
@@ -99,14 +100,17 @@ export class ImageAnnotationPage implements OnInit {
     defaultFontSize = 26;
     defaultColor;
 
+
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         public alertController: AlertController,
         public observablesService: ObservablesService,
+        private screenOrientation: ScreenOrientation,
     ) {
         this.defaultColor = sharedDataService.annotationColor;
     }
+
 
     ngOnInit() {
         this.canvasRef = new fabric.Canvas('c');
@@ -121,8 +125,24 @@ export class ImageAnnotationPage implements OnInit {
         this.customiseControl();
     }
 
-    ionViewWillLeave(): void {
 
+    handleOrientation = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            if (this.screenOrientation.type.includes('landscape')) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+            }
+        }
+    };
+
+
+    ionViewWillEnter() {
+        this.handleOrientation();
+    }
+
+    ionViewWillLeave(): void {
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+        }
     }
 
     initialise() {

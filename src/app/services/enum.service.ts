@@ -32,7 +32,8 @@ export class EnumService {
         IS_LOGGEDIN: 'isLoggedIn',
         USER_DATA: 'user_data',
         IS_DEDICATED_MODE: 'dedicated_mode',
-        DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use'
+        DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use',
+        SYNC_DATE_TIME: 'sync_date_time'
     };
 
     constructor() {

@@ -18,6 +18,7 @@ import {BackContinueToolbarComponent} from './back-continue-toolbar/back-continu
 import {TopnavigationsBtnsDmComponent} from './topnavigations-btns-dm/topnavigations-btns-dm.component';
 import {TopnavigationsSegmentsDmComponent} from './topnavigations-segments-dm/topnavigations-segments-dm.component';
 import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.component';
+import {PortraitOrientationComponent} from './portrait-orientation/portrait-orientation.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.compo
         BackContinueToolbarComponent,
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
-        SyncWarningMsgComponent
+        SyncWarningMsgComponent,
+        PortraitOrientationComponent
     ],
     imports: [
         IonicModule,
@@ -60,7 +62,8 @@ import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.compo
         BackContinueToolbarComponent,
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
-        SyncWarningMsgComponent
+        SyncWarningMsgComponent,
+        PortraitOrientationComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

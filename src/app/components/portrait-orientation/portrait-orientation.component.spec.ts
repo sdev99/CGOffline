@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { PortraitModePage } from './portrait-mode.page';
+import { PortraitOrientationComponent } from './portrait-orientation.component';
 
-describe('PortraitModePage', () => {
-  let component: PortraitModePage;
-  let fixture: ComponentFixture<PortraitModePage>;
+describe('PortraitOrientationComponent', () => {
+  let component: PortraitOrientationComponent;
+  let fixture: ComponentFixture<PortraitOrientationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PortraitModePage ],
+      declarations: [ PortraitOrientationComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PortraitModePage);
+    fixture = TestBed.createComponent(PortraitOrientationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

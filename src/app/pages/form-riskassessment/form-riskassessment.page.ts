@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ExitConfirmationPage} from '../../modals/exit-confirmation/exit-confirmation.page';
@@ -9,6 +9,7 @@ import {FilehandlerService} from '../../services/filehandler.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
 import {SharedDataService} from '../../services/shared-data.service';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 
 @Component({
@@ -37,6 +38,9 @@ export class FormRiskassessmentPage {
 
     unanswerCount = 0;
 
+    screenOrientationSubscribe;
+    isShowOritationPortrait = false;
+
     constructor(
         public navCtrl: NavController,
         public modalController: ModalController,
@@ -44,6 +48,8 @@ export class FormRiskassessmentPage {
         private filehandlerService: FilehandlerService,
         public observablesService: ObservablesService,
         public sharedDataService: SharedDataService,
+        private screenOrientation: ScreenOrientation,
+        private ngZone: NgZone,
     ) {
 
         route.queryParams.subscribe((params: any) => {
@@ -63,6 +69,39 @@ export class FormRiskassessmentPage {
 
     ionViewWillLeave(): void {
 
+    }
+
+    handleOrientation = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            if (this.screenOrientation.type.includes('landscape')) {
+                this.screenOrientation.unlock();
+                this.isShowOritationPortrait = true;
+            }
+
+            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+                this.ngZone.run(() => {
+                    if (this.screenOrientation.type.includes('portrait')) {
+                        this.isShowOritationPortrait = false;
+                    }
+                    if (this.screenOrientation.type.includes('landscape')) {
+                        this.isShowOritationPortrait = true;
+                    }
+                });
+            });
+        }
+    };
+
+
+    ionViewWillEnter() {
+        this.handleOrientation();
+    }
+
+    ionViewDidLeave(): void {
+
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            this.screenOrientationSubscribe.unsubscribe();
+        }
     }
 
     openFile() {

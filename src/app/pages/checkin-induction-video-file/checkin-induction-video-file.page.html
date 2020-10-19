@@ -1,26 +1,29 @@
 <ion-header>
     <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="Induction"
                       (closeModal)="onBack()"></app-modal-header>
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
+                         [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
-                               (continue)="onContinue()"></app-back-continue-toolbar>
+    <div class="content-container">
 
-    <div class="content">
+        <app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
+                                   (continue)="onContinue()"></app-back-continue-toolbar>
 
-        <h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">
-            Video
-        </h6>
+        <div class="content">
 
-        <div class="video-view" *ngIf="files && files.length>0">
-            <iframe width="400" height="200"
-                    [src]="files[currentIndex] | safeurl">
-            </iframe>
+            <h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">
+                Video
+            </h6>
+
+            <div class="video-view" *ngIf="files && files.length>0">
+                <iframe width="400" height="200"
+                        [src]="files[currentIndex] | safeurl">
+                </iframe>
+            </div>
         </div>
-
     </div>
 </ion-content>
 

@@ -1,4 +1,5 @@
-<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()" swipeGesture="false">
+<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()"
+          swipeGesture="false">
     <ion-header>
         <app-modal-header modalTitle="Device Info" (closeModal)="closeInfoMenu()"></app-modal-header>
     </ion-header>
@@ -24,7 +25,9 @@
 
                 <ion-item>
                     <ion-label slot="start">Last Sync</ion-label>
-                    <ion-note color="medium" slot="end">24Mar 2020 16:37</ion-note>
+                    <ion-note color="medium" slot="end"
+                              *ngIf="lastSyncTime()">{{lastSyncTime() | date:'dd MMM yyyy HH:mm'}}</ion-note>
+                    <ion-note color="medium" slot="end" *ngIf="!lastSyncTime()">No synced yet</ion-note>
                 </ion-item>
             </ion-list>
 

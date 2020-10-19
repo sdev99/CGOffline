@@ -1,3 +1,18 @@
+ion-header {
+  ::ng-deep app-back-continue-toolbar {
+    ion-toolbar {
+      padding-top: 16px;
+      --background: #F6F9FB;
+
+      ion-title {
+        padding: 0 14px;
+        position: relative;
+        font-size: 22px;
+      }
+    }
+  }
+}
+
 ion-content {
   --background: #F6F9FB;
 
@@ -39,6 +54,26 @@ ion-content {
       --border-color: #4A90E2;
       --border-color-checked: #4A90E2;
       --color: #4A90E2;
+    }
+  }
+
+  .text-bottom-msg {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+    color: #171538;
+    padding: 0 32px;
+    background-color: #ffffff;
+
+    ion-label {
+      //max-width: 80%;
+    }
+
+    .action-btn {
+      width: 200px;
     }
   }
 }

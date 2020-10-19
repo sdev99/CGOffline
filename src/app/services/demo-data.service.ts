@@ -905,6 +905,46 @@ export class DemoDataService {
         {
             title: 'Is a fire extinguisher on the job?',
             required: true
+        },
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
+        },
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
+        },
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
+        },
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
+        },
+        {
+            title: 'Gas test taken?',
+            required: true
+        },
+        {
+            title: 'Is a fire extinguisher on the job?',
+            required: true
         }
     ];
 

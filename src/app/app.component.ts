@@ -47,8 +47,12 @@ export class AppComponent {
             }
 
 
+            //for test
+            // this.sharedDataService.dedicatedMode = true;
+
+
             if (this.sharedDataService.dedicatedMode) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
 
                 if (this.sharedDataService.dedicatedModeLocationUse) {
                     if (localStorage.getItem('test_login') !== 'true') {

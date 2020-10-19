@@ -38,9 +38,22 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     }
 
     ngOnInit() {
+
+    }
+
+    ionViewDidEnter = () => {
         setTimeout(() => {
             this.startCamera();
         }, 500);
+    };
+
+    ionViewWillLeave = () => {
+        this.cameraPreview.stopCamera();
+    };
+
+    ionViewWillEnter() {
+        const element = this.imagePreview.nativeElement;
+        element.style.width = element.offsetHeight + 'px';
     }
 
     startCamera = () => {
@@ -51,7 +64,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         const width = element.offsetWidth;
         const height = element.offsetHeight;
         const left = element.offsetLeft;
-        const top = header.offsetHeight +  element.offsetTop;
+        const top = header.offsetHeight + element.offsetTop;
 
         const cameraPreviewOpts: CameraPreviewOptions = {
             camera: 'front',
@@ -83,7 +96,9 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     }
 
     onContinue() {
-        if (this.authFor === 'Authentication') {
+        if (this.nextPage) {
+            this.navController.navigateForward(this.nextPage);
+        } else if (this.authFor === 'Authentication') {
             this.navController.navigateForward('/form-cover-dm');
         } else {
             this.navController.navigateRoot('dashboard-dm');

@@ -1,0 +1,9 @@
+<ion-header>
+  <app-modal-header-dm (closeModal)="onClose()"
+                       [modalTitle]="sharedDataService.dedicatedModeLocationUse.title"></app-modal-header-dm>
+</ion-header>
+
+<div class="content">
+  <ion-img src="./assets/icon/portrait-mode.png"></ion-img>
+  <ion-label>Please rotate the device to "Portrait mode"</ion-label>
+</div>

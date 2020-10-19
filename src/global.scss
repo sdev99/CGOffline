@@ -477,6 +477,11 @@ ion-modal {
     --width: 100vw;
     --height: 100%;
   }
+
+  &.image-annotation-modal {
+    --width: 100vw;
+    --height: 100%;
+  }
 }
 
 .item-no-vertical-padding {

@@ -21,6 +21,7 @@ import {CameraPreview} from '@ionic-native/camera-preview/ngx';
 import {CommonModule} from '@angular/common';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {DirectivesModule} from './directives/directives.module';
+import {HTTP} from '@ionic-native/http/ngx';
 
 @NgModule({
     declarations: [
@@ -50,6 +51,7 @@ import {DirectivesModule} from './directives/directives.module';
         UniqueDeviceID,
         CameraPreview,
         ScreenOrientation,
+        HTTP,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
 

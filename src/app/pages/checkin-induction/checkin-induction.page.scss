@@ -4,6 +4,7 @@ ion-header {
 
 ion-content {
   --background: #fff;
+  --overflow: auto;
 
   &.dedicated-mode {
     --background: #F6F9FB;

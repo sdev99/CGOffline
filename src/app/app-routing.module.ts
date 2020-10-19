@@ -203,14 +203,10 @@ const routes: Routes = [
         path: 'checkin-workpermit',
         loadChildren: () => import('./pages/checkin-workpermit/checkin-workpermit.module').then(m => m.CheckinWorkpermitPageModule)
     },
-  {
-    path: 'form-cover-dm',
-    loadChildren: () => import('./pages/form-cover-dm/form-cover-dm.module').then( m => m.FormCoverDmPageModule)
-  },
-  {
-    path: 'portrait-mode',
-    loadChildren: () => import('./modals/portrait-mode/portrait-mode.module').then( m => m.PortraitModePageModule)
-  },
+    {
+        path: 'form-cover-dm',
+        loadChildren: () => import('./pages/form-cover-dm/form-cover-dm.module').then(m => m.FormCoverDmPageModule)
+    }
 ];
 
 @NgModule({

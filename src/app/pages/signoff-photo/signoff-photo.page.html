@@ -1,6 +1,8 @@
 <ion-header mode="ios">
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="" (closeModal)="onClose()"></app-modal-header>
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Sign-Off"
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle=""
+                      (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
+                         [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Sign-Off"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
@@ -22,7 +24,8 @@
             <div class="text-1">
                 To finish the sign-off, you need to take a selfie of your self, using your device camera.
             </div>
-            <ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="takePhoto()">
+            <ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn"
+                        (click)="takePhoto()">
                 <ion-icon name="camera-outline" slot="start"></ion-icon>
                 Take a Photo
             </ion-button>
@@ -42,6 +45,5 @@
     <ion-button *ngIf="capturedPhoto" expand="full" class="action-btn" (click)="continue()">
         Continue
     </ion-button>
-
 </ion-footer>
 

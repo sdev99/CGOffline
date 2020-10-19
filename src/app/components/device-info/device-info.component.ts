@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MenuController, NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-device-info',
@@ -15,11 +16,20 @@ export class DeviceInfoComponent implements OnInit {
         private menu: MenuController,
         public navController: NavController,
         private sharedDataService: SharedDataService,
+        private utilService: UtilService,
     ) {
     }
 
     ngOnInit() {
 
+    }
+
+    lastSyncTime() {
+        const dateTime = localStorage.getItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME);
+        if (dateTime) {
+            return dateTime;
+        }
+        return null;
     }
 
     menuWillOpen() {

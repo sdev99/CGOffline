@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {PhotoService} from '../../services/photo.service';
@@ -11,14 +11,13 @@ import {FilehandlerService} from '../../services/filehandler.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
-import {PortraitModePage} from '../../modals/portrait-mode/portrait-mode.page';
 
 @Component({
     selector: 'app-form-custom',
     templateUrl: './form-custom.page.html',
     styleUrls: ['./form-custom.page.scss'],
 })
-export class FormCustomPage implements OnDestroy {
+export class FormCustomPage {
 
     errorMessage = '';
 
@@ -31,7 +30,9 @@ export class FormCustomPage implements OnDestroy {
     currentPageIndex = 1;
     totalPage = 32;
 
-    screenOrientationModal;
+    screenOrientationSubscribe;
+    isShowOritationPortrait = false;
+
 
     constructor(
         public navCtrl: NavController,
@@ -41,7 +42,8 @@ export class FormCustomPage implements OnDestroy {
         public modalController: ModalController,
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
-        private screenOrientation: ScreenOrientation
+        private screenOrientation: ScreenOrientation,
+        private ngZone: NgZone,
     ) {
 
         this.list.map((item, key) => {
@@ -56,58 +58,39 @@ export class FormCustomPage implements OnDestroy {
             }
         });
 
-        if (this.sharedDataService.dedicatedMode) {
+    }
 
-            if (screenOrientation.type.includes('landscape')) {
-                screenOrientation.unlock();
-                this.showOrientationModal();
+    handleOrientation = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            if (this.screenOrientation.type.includes('landscape')) {
+                this.screenOrientation.unlock();
+                this.isShowOritationPortrait = true;
             }
 
-            screenOrientation.onChange().subscribe(() => {
-                if (screenOrientation.type.includes('portrait')) {
-                    if (this.screenOrientationModal) {
-                        this.screenOrientationModal.dismiss();
+            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+                this.ngZone.run(() => {
+                    if (this.screenOrientation.type.includes('portrait')) {
+                        this.isShowOritationPortrait = false;
                     }
-                }
-                if (screenOrientation.type.includes('landscape')) {
-                    screenOrientation.unlock();
-                    this.showOrientationModal();
-                }
+                    if (this.screenOrientation.type.includes('landscape')) {
+                        this.isShowOritationPortrait = true;
+                    }
+                });
             });
         }
+    };
+
+
+    ionViewWillEnter() {
+        this.handleOrientation();
     }
 
+    ionViewDidLeave(): void {
 
-    ionViewDidEnter() {
-
-    }
-
-    ionViewWillLeave(): void {
-    }
-
-    ngOnDestroy() {
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
-    }
-
-    async showOrientationModal() {
-        const modal = await this.modalController.create({
-            component: PortraitModePage,
-            swipeToClose: false,
-            showBackdrop: false,
-            backdropDismiss: false,
-            animated: false,
-            componentProps: {},
-            cssClass: 'portrait-mode-model'
-        });
-        await modal.present();
-
-        modal.onWillDismiss().then(({data}) => {
-            if (data) {
-                // this.navCtrl.back();
-            }
-        });
-
-        this.screenOrientationModal = modal;
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            this.screenOrientationSubscribe.unsubscribe();
+        }
     }
 
     openFile() {

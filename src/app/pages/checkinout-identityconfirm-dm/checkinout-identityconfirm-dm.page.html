@@ -4,23 +4,26 @@
 </ion-header>
 
 <ion-content fullscreen>
-    <app-back-continue-toolbar *ngIf="photoCaptured" (back)="onBack()"
-                               (continue)="onContinue()"></app-back-continue-toolbar>
+    <div class="content-container">
 
-    <div class="content">
-        <div class="text-1">
-            Please confirm your identity
-        </div>
-        <div class="text-2">
-            {{userName}}
-        </div>
-        <div class="ion-img-view">
-            <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
-        </div>
+        <app-back-continue-toolbar *ngIf="photoCaptured" (back)="onBack()"
+                                   (continue)="onContinue()"></app-back-continue-toolbar>
 
-        <ion-button class="action-btn" (click)="thisisNotMe()">
-            This is Not Me
-        </ion-button>
+        <div class="content">
+            <div class="text-1">
+                Please confirm your identity
+            </div>
+            <div class="text-2">
+                {{userName}}
+            </div>
+            <div class="ion-img-view" #imagePreview>
+                <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
+            </div>
+
+            <ion-button class="action-btn" (click)="thisisNotMe()">
+                This is Not Me
+            </ion-button>
+        </div>
     </div>
 
 </ion-content>
