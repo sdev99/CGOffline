@@ -57,6 +57,7 @@ export class SignoffPhotoPage implements OnInit {
             case EnumService.SignOffType.CUSTOM_FORM:
             case EnumService.SignOffType.RISK_ASSESSMENT:
             case EnumService.SignOffType.DOCUMENT_DM:
+            case EnumService.SignOffType.FORMS_DM:
                 this.showCheckInResultScreen();
                 break;
 

@@ -138,6 +138,7 @@ export class SignoffDigitalinkPage implements OnInit {
                 case EnumService.SignOffType.RISK_ASSESSMENT:
                 case EnumService.SignOffType.INDUCTION:
                 case EnumService.SignOffType.DOCUMENT_DM:
+                case EnumService.SignOffType.FORMS_DM:
                 case EnumService.SignOffType.WORK_PERMIT:
                     this.navCtrl.navigateForward(['/signoff-photo'], {
                         queryParams: {
