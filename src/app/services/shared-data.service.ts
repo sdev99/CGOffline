@@ -15,6 +15,8 @@ export class SharedDataService {
     deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     isTablet = false;
     dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
+    //when open form or document , useful for next screens
+    viewFormDetail;
 
     dedicatedModeLocationUse;
 

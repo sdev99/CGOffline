@@ -28,7 +28,7 @@ export class FormsDmPage implements OnInit {
 
     ngOnInit() {
         setTimeout(() => {
-            this.list = DemoDataService.dmDocuments.clone();
+            this.list = DemoDataService.dmForms.clone();
         }, 2000);
     }
 
@@ -46,12 +46,12 @@ export class FormsDmPage implements OnInit {
         this.listType = event;
     }
 
-    openFile(item) {
-        this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM
+    openForm(item) {
+        this.sharedDataService.viewFormDetail = item;
+        this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
         this.navController.navigateForward('/form-open-auth-dm', {
             queryParams: item
         });
-        // this.filehandlerService.openFile();
     }
 
 }

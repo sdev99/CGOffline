@@ -14,7 +14,7 @@ import {UtilService} from '../../services/util.service';
 })
 export class FormCoverDmPage implements OnInit {
 
-    activityDetail = DemoDataService.activityList[4];
+    formDetail;
     formType = 'WORK PERMIT';
 
     constructor(
@@ -27,8 +27,15 @@ export class FormCoverDmPage implements OnInit {
         route.queryParams.subscribe((params: any) => {
             if (params) {
                 if (params.activity) {
-                    this.activityDetail = JSON.parse(params.activity);
+                    this.formDetail = JSON.parse(params.activity);
                 }
+            }
+
+            if (!this.formDetail) {
+                this.formDetail = sharedDataService.viewFormDetail;
+            }
+            if (!this.formDetail) {
+                this.formDetail = DemoDataService.dmForms[2];
             }
         });
     }
@@ -40,10 +47,14 @@ export class FormCoverDmPage implements OnInit {
                 this.formType = 'WORK PERMIT';
                 break;
             case EnumService.SignOffType.FORMS_DM:
-                this.formType = this.activityDetail.formType.title;
+                this.formType = this.formDetail.formType.title;
                 break;
             default:
-                this.formType = 'CUSTOM FORM';
+                if (this.formDetail.formType) {
+                    this.formType = this.formDetail.formType.title;
+                } else {
+                    this.formType = 'CUSTOM FORM';
+                }
         }
     }
 
@@ -59,39 +70,39 @@ export class FormCoverDmPage implements OnInit {
         if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT) {
             this.navCtrl.navigateForward(['/permits-generate-dm'], {
                 queryParams: {
-                    activityDetail: JSON.stringify(this.activityDetail)
+                    formDetail: JSON.stringify(this.formDetail)
                 }
             });
         } else if (this.formType === EnumService.SignOffType.FORMS_DM) {
             this.utilService.presentLoadingWithOptions();
             this.navCtrl.navigateForward(['/permits-generate-dm'], {
                 queryParams: {
-                    activityDetail: JSON.stringify(this.activityDetail)
+                    formDetail: JSON.stringify(this.formDetail)
                 }
             });
         } else {
-            if (this.activityDetail.formType.id === 'hav') {
+            if (this.formDetail.formType.id === 'hav') {
                 this.navCtrl.navigateForward(['/form-hav'], {
                     queryParams: {
-                        activityDetail: JSON.stringify(this.activityDetail)
+                        formDetail: JSON.stringify(this.formDetail)
                     }
                 });
-            } else if (this.activityDetail.formType.id === 'risk_assesstment') {
+            } else if (this.formDetail.formType.id === 'risk_assesstment') {
                 this.navCtrl.navigateForward(['/form-riskassessment'], {
                     queryParams: {
-                        activityDetail: JSON.stringify(this.activityDetail)
+                        formDetail: JSON.stringify(this.formDetail)
                     }
                 });
-            } else if (this.activityDetail.formType.id === 'custom') {
+            } else if (this.formDetail.formType.id === 'custom') {
                 this.navCtrl.navigateForward(['/form-custom'], {
                     queryParams: {
-                        activityDetail: JSON.stringify(this.activityDetail)
+                        formDetail: JSON.stringify(this.formDetail)
                     }
                 });
-            } else if (this.activityDetail.formType.id === 'accident_report') {
+            } else if (this.formDetail.formType.id === 'accident_report') {
                 this.navCtrl.navigateForward(['/form-accident-report'], {
                     queryParams: {
-                        activityDetail: JSON.stringify(this.activityDetail)
+                        formDetail: JSON.stringify(this.formDetail)
                     }
                 });
             }

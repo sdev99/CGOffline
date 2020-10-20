@@ -5,9 +5,30 @@ ion-header {
 
 ion-content {
   &.dedicated-mode {
+    --background: #F6F9FB;
     ion-list {
-      width: 60%;
-      margin: 0 auto;
+      width: 70%;
+      border-radius: 12px;
+      margin: 20px auto 0;
+    }
+
+    .text-bottom-msg {
+      box-shadow: 0px 0 20px rgba(0, 0, 0, 0.3);
+
+      margin-top: 40px;
+      color: #171538;
+      padding: 0 16px;
+      background-color: #ffffff;
+
+      ion-label {
+        padding: 16px 0;
+      }
+
+      .action-btn {
+        width: 200px;
+        margin: 0;
+        margin-left: 16px;
+      }
     }
   }
 

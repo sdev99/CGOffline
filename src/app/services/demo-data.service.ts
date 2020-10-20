@@ -859,6 +859,54 @@ export class DemoDataService {
         }
     ];
 
+
+    static dmForms = [
+        {
+            type: 'form',
+            available: false,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Demo Hav form ',
+            formType: {
+                title: 'Hand-Arm Vibration Exposure Calculator',
+                id: 'hav'
+            }
+        },
+        {
+            type: 'form',
+            available: true,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Demo Risk assessment form',
+            formType: {
+                title: 'Form RiskAssessment',
+                id: 'risk_assesstment'
+            }
+        },
+        {
+            type: 'form',
+            available: false,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Demo Custom Form',
+            formType: {
+                title: 'Custom Form',
+                id: 'custom'
+            }
+        },
+        {
+            type: 'form',
+            available: true,
+            signed_by: 'Angu Tamba',
+            signed_time: '2020-12-11 11:12',
+            title: 'Demo Accident Report Form',
+            formType: {
+                title: 'Accident Report',
+                id: 'accident_report'
+            }
+        }
+    ];
+
     static dmPermits = [
         {
             title: 'Hot Works',

@@ -100,7 +100,6 @@ export class ImageAnnotationPage implements OnInit {
     defaultFontSize = 26;
     defaultColor;
 
-
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
@@ -121,28 +120,7 @@ export class ImageAnnotationPage implements OnInit {
     }
 
     ionViewDidEnter(): void {
-
         this.customiseControl();
-    }
-
-
-    handleOrientation = () => {
-        if (this.sharedDataService.dedicatedMode) {
-            if (this.screenOrientation.type.includes('landscape')) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-            }
-        }
-    };
-
-
-    ionViewWillEnter() {
-        this.handleOrientation();
-    }
-
-    ionViewWillLeave(): void {
-        if (this.sharedDataService.dedicatedMode) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-        }
     }
 
     initialise() {

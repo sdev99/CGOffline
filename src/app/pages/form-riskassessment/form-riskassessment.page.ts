@@ -58,6 +58,12 @@ export class FormRiskassessmentPage {
                     this.activityDetail = JSON.parse(params.activityDetail);
                 }
             }
+            if (!this.activityDetail) {
+                this.activityDetail = sharedDataService.viewFormDetail;
+            }
+            if (!this.activityDetail) {
+                this.activityDetail = DemoDataService.dmForms[1];
+            }
         });
 
         this.totalItem = this.list.length;
@@ -76,11 +82,14 @@ export class FormRiskassessmentPage {
             if (this.screenOrientation.type.includes('landscape')) {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
+            } else {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
+                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
                         this.isShowOritationPortrait = false;
                     }
                     if (this.screenOrientation.type.includes('landscape')) {

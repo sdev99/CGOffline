@@ -2,18 +2,63 @@ $paddingHorizontal: 23px;
 
 ion-content {
   &.dedicated-mode {
-    .explosure.top {
-      width: 50%;
-      margin-left: auto;
-      margin-right: auto;
+    --background: #F6F9FB;
+
+    .explosure {
+      background-color: #ffffff;
+      flex-direction: row;
+      padding: 10px 20px;
+      border-radius: 12px;
+
+      ion-label {
+        flex: 1;
+        text-align: left;
+      }
+
+      &.top {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      &.bottom {
+        background-color: #F6F9FB;
+        border-radius: 0;
+        margin: 12px 1px 0;
+      }
+
+      .points {
+        margin: 8px;
+      }
     }
 
     ion-list {
-      width: 50%;
+      width: 70%;
       margin-left: auto;
       margin-right: auto;
+      border-radius: 12px;
+    }
+
+    .text-bottom-msg {
+      box-shadow: 0px 0 20px rgba(0, 0, 0, 0.3);
+
+      margin-top: 40px;
+      color: #171538;
+      padding: 0 16px;
+      background-color: #ffffff;
+
+      ion-label {
+        padding: 16px 0;
+      }
+
+      .action-btn {
+        width: 200px;
+        margin: 0;
+        margin-left: 16px;
+      }
     }
   }
+
 
   .hr-line-full {
     width: 100%;

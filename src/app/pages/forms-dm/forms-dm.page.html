@@ -17,14 +17,14 @@
 
 
         <ng-container *ngIf="listType === 'Form List'">
-            <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openFile(item)">
+            <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openForm(item)">
                 <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
                 <ion-label>{{item.title}}</ion-label>
             </ion-item>
         </ng-container>
 
         <ng-container *ngIf="listType === 'Form Archive'">
-            <div tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openFile(item)">
+            <div tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openForm(item)">
                 <ion-item tappable>
                     <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
                     <ion-label class="text-1">{{item.title}}</ion-label>

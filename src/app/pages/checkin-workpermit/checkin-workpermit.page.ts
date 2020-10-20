@@ -58,6 +58,7 @@ export class CheckinWorkpermitPage implements OnInit {
 
     onSelect(item) {
         if (this.sharedDataService.dedicatedMode) {
+            this.sharedDataService.viewFormDetail = item;
             this.sharedDataService.signOffFor = EnumService.SignOffType.WORK_PERMIT;
             this.navController.navigateForward('form-open-auth-dm', {
                 queryParams: item

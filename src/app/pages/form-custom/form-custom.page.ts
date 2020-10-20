@@ -32,6 +32,7 @@ export class FormCustomPage {
 
     screenOrientationSubscribe;
     isShowOritationPortrait = false;
+    isOpenImageAnnotation = false;
 
 
     constructor(
@@ -56,8 +57,13 @@ export class FormCustomPage {
                     this.activityDetail = JSON.parse(params.activityDetail);
                 }
             }
+            if (!this.activityDetail) {
+                this.activityDetail = sharedDataService.viewFormDetail;
+            }
+            if (!this.activityDetail) {
+                this.activityDetail = DemoDataService.dmForms[2];
+            }
         });
-
     }
 
     handleOrientation = () => {
@@ -65,11 +71,14 @@ export class FormCustomPage {
             if (this.screenOrientation.type.includes('landscape')) {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
+            } else {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
+                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
                         this.isShowOritationPortrait = false;
                     }
                     if (this.screenOrientation.type.includes('landscape')) {
@@ -80,16 +89,20 @@ export class FormCustomPage {
         }
     };
 
+    ionViewDidEnter() {
+        this.isOpenImageAnnotation = false;
+    }
 
     ionViewWillEnter() {
         this.handleOrientation();
     }
 
     ionViewDidLeave(): void {
-
-        if (this.sharedDataService.dedicatedMode) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-            this.screenOrientationSubscribe.unsubscribe();
+        if (!this.isOpenImageAnnotation) {
+            if (this.sharedDataService.dedicatedMode) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                this.screenOrientationSubscribe.unsubscribe();
+            }
         }
     }
 
@@ -145,6 +158,7 @@ export class FormCustomPage {
     }
 
     openImageAnnotation = (index, photo) => {
+        this.isOpenImageAnnotation = true;
         this.sharedDataService.setAnnotationImage(photo);
         this.sharedDataService.onAnnotationImageDone = (image) => {
             this.answer[index] = {
