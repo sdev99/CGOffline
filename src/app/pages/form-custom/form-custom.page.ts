@@ -67,7 +67,6 @@ export class FormCustomPage {
     }
 
     handleOrientation = () => {
-        if (this.sharedDataService.dedicatedMode) {
             if (this.screenOrientation.type.includes('landscape')) {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
@@ -86,7 +85,6 @@ export class FormCustomPage {
                     }
                 });
             });
-        }
     };
 
     ionViewDidEnter() {
@@ -99,10 +97,8 @@ export class FormCustomPage {
 
     ionViewDidLeave(): void {
         if (!this.isOpenImageAnnotation) {
-            if (this.sharedDataService.dedicatedMode) {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
                 this.screenOrientationSubscribe.unsubscribe();
-            }
         }
     }
 

@@ -93,26 +93,24 @@ export class FormAccidentReportPage {
     }
 
     handleOrientation = () => {
-        if (this.sharedDataService.dedicatedMode) {
-            if (this.screenOrientation.type.includes('landscape')) {
-                this.screenOrientation.unlock();
-                this.isShowOritationPortrait = true;
-            } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-            }
-
-            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
-                this.ngZone.run(() => {
-                    if (this.screenOrientation.type.includes('portrait')) {
-                        this.isShowOritationPortrait = false;
-                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-                    }
-                    if (this.screenOrientation.type.includes('landscape')) {
-                        this.isShowOritationPortrait = true;
-                    }
-                });
-            });
+        if (this.screenOrientation.type.includes('landscape')) {
+            this.screenOrientation.unlock();
+            this.isShowOritationPortrait = true;
+        } else {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
         }
+
+        this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+            this.ngZone.run(() => {
+                if (this.screenOrientation.type.includes('portrait')) {
+                    this.isShowOritationPortrait = false;
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                }
+                if (this.screenOrientation.type.includes('landscape')) {
+                    this.isShowOritationPortrait = true;
+                }
+            });
+        });
     };
 
 
@@ -122,10 +120,8 @@ export class FormAccidentReportPage {
 
     ionViewDidLeave(): void {
         if (!this.isOpenImageAnnotation) {
-            if (this.sharedDataService.dedicatedMode) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-                this.screenOrientationSubscribe.unsubscribe();
-            }
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            this.screenOrientationSubscribe.unsubscribe();
         }
     }
 
