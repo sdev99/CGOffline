@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {DemoDataService} from '../../services/demo-data.service';
 import {UtilService} from '../../services/util.service';
 import {NavController} from '@ionic/angular';
+import {AccountService} from '../../services/account.service';
 
 @Component({
     selector: 'app-forgot-password',
@@ -19,10 +20,11 @@ export class ForgotPasswordPage {
 
     constructor(
         public utilService: UtilService,
+        public accountService: AccountService,
         public navCtrl: NavController,
     ) {
         this.myForm = new FormGroup({
-            email: new FormControl('test@gmail.com', Validators.compose([
+            email: new FormControl('', Validators.compose([
                 Validators.required,
                 Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
             ]))
@@ -35,12 +37,14 @@ export class ForgotPasswordPage {
 
         if (this.myForm.valid) {
             const email = this.myForm.controls.email.value;
-
             this.utilService.presentLoadingWithOptions();
-            setTimeout(() => {
+            this.accountService.forgotpassword(email).subscribe((res) => {
                 this.utilService.hideLoading();
                 this.navCtrl.navigateRoot('/linksend-success');
-            }, 2000);
+            }, ({message}) => {
+                this.utilService.hideLoading();
+                this.errorMsg = message;
+            });
         }
     }
 }

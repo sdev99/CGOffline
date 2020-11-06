@@ -71,7 +71,6 @@ export class UtilService {
         this.loading = await this.loadingController.create({
             cssClass: 'my-loading-class',
             spinner: null,
-            duration: 10000,
             message: '<ion-icon src="./assets/icon/Loader.svg"/>',
             translucent: false,
             backdropDismiss: false,

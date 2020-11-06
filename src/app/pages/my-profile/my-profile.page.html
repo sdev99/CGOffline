@@ -18,10 +18,10 @@
         <ion-img (click)="addProfilePhoto()"
                  [src]="capturedPhoto?capturedPhoto.dataUrl:'./assets/images/demo-profile.svg'"
                  class="profile-img"></ion-img>
-        <h3>Oliver Egginton</h3>
+        <h3 *ngIf="profile">{{profile.userFullName}}</h3>
         <ngx-qrcode
                 [elementType]="elementType"
-                [value]="qrCodeValue"
+                [value]="user.userId"
                 cssClass="qr-code"
                 errorCorrectionLevel="L">
         </ngx-qrcode>

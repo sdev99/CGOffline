@@ -22,6 +22,8 @@ import {CommonModule} from '@angular/common';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {DirectivesModule} from './directives/directives.module';
 import {HTTP} from '@ionic-native/http/ngx';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
 
 @NgModule({
     declarations: [
@@ -39,7 +41,8 @@ import {HTTP} from '@ionic-native/http/ngx';
         CommonModule,
         NgxQRCodeModule,
         PipesModule,
-        DirectivesModule
+        DirectivesModule,
+        HttpClientModule
     ],
     providers: [
         QRScanner,
@@ -52,7 +55,8 @@ import {HTTP} from '@ionic-native/http/ngx';
         CameraPreview,
         ScreenOrientation,
         HTTP,
-        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
+        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        {provide: HTTP_INTERCEPTORS, useClass: HttpConfigInterceptor, multi: true},
     ],
 
     bootstrap: [AppComponent]

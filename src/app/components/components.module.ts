@@ -19,6 +19,7 @@ import {TopnavigationsBtnsDmComponent} from './topnavigations-btns-dm/topnavigat
 import {TopnavigationsSegmentsDmComponent} from './topnavigations-segments-dm/topnavigations-segments-dm.component';
 import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.component';
 import {PortraitOrientationComponent} from './portrait-orientation/portrait-orientation.component';
+import {ScreenInnerLoadingComponent} from './screen-inner-loading/screen-inner-loading.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import {PortraitOrientationComponent} from './portrait-orientation/portrait-orie
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
         SyncWarningMsgComponent,
-        PortraitOrientationComponent
+        PortraitOrientationComponent,
+        ScreenInnerLoadingComponent,
     ],
     imports: [
         IonicModule,
@@ -63,7 +65,8 @@ import {PortraitOrientationComponent} from './portrait-orientation/portrait-orie
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
         SyncWarningMsgComponent,
-        PortraitOrientationComponent
+        PortraitOrientationComponent,
+        ScreenInnerLoadingComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

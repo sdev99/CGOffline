@@ -1,0 +1,21 @@
+.loader-container {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  flex: 1;
+  z-index: 999;
+  background-color: #FFFFFF;
+
+  ion-icon {
+    width: 32px;
+    height: 32px;
+
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration: 1.5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+  }
+}

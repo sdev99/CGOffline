@@ -1,5 +1,11 @@
 import {Component} from '@angular/core';
-import {PermissionType, Plugins} from '@capacitor/core';
+import {
+    PermissionType,
+    Plugins,
+    PushNotification,
+    PushNotificationToken,
+    PushNotificationActionPerformed,
+} from '@capacitor/core';
 
 import {NavController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
@@ -10,6 +16,8 @@ import {EnumService} from './services/enum.service';
 import {SharedDataService} from './services/shared-data.service';
 import {UtilService} from './services/util.service';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {AccountService} from './services/account.service';
+import {ApiService} from './services/api.service';
 
 const {Geolocation, PushNotifications, Permissions} = Plugins;
 
@@ -28,7 +36,9 @@ export class AppComponent {
         private utilService: UtilService,
         private observablesService: ObservablesService,
         private navController: NavController,
-        private screenOrientation: ScreenOrientation
+        private screenOrientation: ScreenOrientation,
+        private accountService: AccountService,
+        private apiService: ApiService,
     ) {
         this.initializeApp();
     }
@@ -37,6 +47,17 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
+
+            this.uniqueDeviceID.get()
+                .then((uuid: any) => {
+                    this.sharedDataService.deviceUID = uuid;
+                    this.checkForAccessKey();
+                })
+                .catch((error: any) => {
+                    console.log(error);
+                    this.checkForAccessKey();
+                });
+
 
             if (this.sharedDataService.isTablet) {
                 localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
@@ -47,7 +68,10 @@ export class AppComponent {
             }
 
 
-            //for test
+            this.accountService.getTimeZoneList().subscribe(() => {
+            });
+
+            // for test
             // this.sharedDataService.dedicatedMode = true;
 
 
@@ -68,8 +92,39 @@ export class AppComponent {
                     name: PermissionType.Notifications
                 });
                 if (notificationPermission.state !== 'granted') {
-                    await PushNotifications.requestPermission();
+                    await PushNotifications.requestPermission().then((result) => {
+                        if (result.granted) {
+                            // Register with Apple / Google to receive push via APNS/FCM
+                            PushNotifications.register();
+                        }
+                    });
+                } else {
+                    PushNotifications.register();
                 }
+
+                // On success, we should be able to receive notifications
+                PushNotifications.addListener('registration',
+                    (token: PushNotificationToken) => {
+                        this.sharedDataService.pushToken = token.value;
+                        console.log('Push registration success, token: ' + token.value);
+                    }
+                );
+
+                // Show us the notification payload if the app is open on our device
+                PushNotifications.addListener('pushNotificationReceived',
+                    (notification: PushNotification) => {
+                        console.log('Push received: ' + JSON.stringify(notification));
+                    }
+                );
+
+                // Method called when tapping on a notification
+                PushNotifications.addListener('pushNotificationActionPerformed',
+                    (notification: PushNotificationActionPerformed) => {
+                        console.log('Push action performed: ' + JSON.stringify(notification));
+                    }
+                );
+
+
                 const locationPermission = await Permissions.query({
                     name: PermissionType.Geolocation
                 });
@@ -81,12 +136,6 @@ export class AppComponent {
             }
 
 
-            this.uniqueDeviceID.get()
-                .then((uuid: any) => {
-                    this.sharedDataService.deviceUID = uuid;
-                })
-                .catch((error: any) => console.log(error));
-
             Plugins.App.addListener('appRestoredResult', (data: any) => {
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.APP_RESTORED_RESULT, data.data);
             });
@@ -97,4 +146,29 @@ export class AppComponent {
 
         });
     }
+
+    checkForAccessKey = () => {
+        if (!localStorage.getItem(EnumService.LocalStorageKeys.API_ACCESS_KEY)) {
+            this.utilService.presentLoadingWithOptions();
+            this.accountService.getAccessKey().subscribe((data) => {
+                this.checkForToken();
+            }, error => {
+                this.utilService.hideLoading();
+            });
+        } else {
+            this.checkForToken();
+        }
+    };
+
+    checkForToken = () => {
+        if (!localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN)) {
+            this.utilService.presentLoadingWithOptions();
+            this.accountService.getToken().subscribe((token) => {
+                this.utilService.hideLoading();
+            }, error => {
+                this.utilService.hideLoading();
+            });
+        }
+    };
+
 }

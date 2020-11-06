@@ -4,6 +4,9 @@ import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
+import {Profile} from '../../_models/profile';
 
 @Component({
     selector: 'app-my-profile-details',
@@ -11,19 +14,25 @@ import {EnumService} from '../../services/enum.service';
     styleUrls: ['./my-profile-details.page.scss'],
 })
 export class MyProfileDetailsPage implements OnInit {
-    user;
+    user: User;
+    profile: Profile;
+
     offsetData;
     languageData;
 
     constructor(
         public navCtrl: NavController,
-        private sharedDataService: SharedDataService
+        private sharedDataService: SharedDataService,
+        private accountService: AccountService,
+        private utilService: UtilService,
     ) {
-        const userData = localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA);
-        if (userData) {
-            this.user = JSON.parse(userData);
-            this.offsetData = UtilService.findObj(DemoDataService.timeZones, 'offset', this.user.timeZone);
-            this.languageData = UtilService.findObj(DemoDataService.languages, 'code', this.user.language);
+        this.user = accountService.userValue;
+        this.profile = sharedDataService.userProfile;
+
+
+        if (this.profile) {
+            this.offsetData = UtilService.findObj(sharedDataService.timeZoneList, 'offset', this.profile.timeZoneID);
+            this.languageData = UtilService.findObj(DemoDataService.languages, 'code', this.profile.mobileAppLanguageID);
         }
     }
 
@@ -36,7 +45,11 @@ export class MyProfileDetailsPage implements OnInit {
 
 
     logout() {
-        localStorage.removeItem(EnumService.LocalStorageKeys.IS_LOGGEDIN);
-        this.navCtrl.navigateRoot('login');
+        this.utilService.presentLoadingWithOptions();
+        this.accountService.logout().subscribe(() => {
+            this.utilService.hideLoading();
+        }, error => {
+            this.utilService.hideLoading();
+        });
     }
 }

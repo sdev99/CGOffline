@@ -2,7 +2,8 @@
     <app-modal-header modalTitle="Terms & Conditions" (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollY]="!loading">
+    <app-screen-inner-loading *ngIf="loading"></app-screen-inner-loading>
     <div class="aggrement-content" [innerHTML]="termsConditionsText"></div>
 </ion-content>
 

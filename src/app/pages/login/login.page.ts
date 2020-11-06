@@ -5,6 +5,7 @@ import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
 import {EnumService} from '../../services/enum.service';
+import {AccountService} from '../../services/account.service';
 
 @Component({
     selector: 'app-login',
@@ -23,9 +24,10 @@ export class LoginPage implements OnInit {
         public utilService: UtilService,
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
+        public accountService: AccountService,
     ) {
         this.loginForm = new FormGroup({
-            email: new FormControl('test@domain.com', Validators.compose([
+            email: new FormControl('', Validators.compose([
                 Validators.required,
                 Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
             ])),
@@ -51,23 +53,22 @@ export class LoginPage implements OnInit {
             const password = this.loginForm.controls.password.value;
 
             this.utilService.presentLoadingWithOptions();
-            setTimeout(() => {
-                this.utilService.hideLoading();
-                if (password === 'newaccount') {
-                    this.navCtrl.navigateRoot('/new-account-setup');
-                } else if (password === 'wronglogin') {
-                    this.errorMessage = 'Wrong username or password';
-                } else {
-                    localStorage.setItem(EnumService.LocalStorageKeys.IS_LOGGEDIN, '1');
-                    localStorage.setItem(EnumService.LocalStorageKeys.USER_DATA, JSON.stringify({
-                        email,
-                        phone: '+01234567890',
-                        timeZone: 'GMT+02:00',
-                        language: this.selectedLanguage
-                    }));
-                    this.navCtrl.navigateRoot('/tabs/dashboard');
-                }
-            }, 2000);
+
+            this.accountService.login(email, password)
+                .subscribe((data) => {
+                    this.utilService.hideLoading();
+                    this.utilService.hideLoading();
+                    if (password === 'newaccount') {
+                        this.navCtrl.navigateRoot('/new-account-setup');
+                    } else if (password === 'wronglogin') {
+                        this.errorMessage = 'Wrong username or password';
+                    } else {
+                        this.navCtrl.navigateRoot('/tabs/dashboard');
+                    }
+                }, ({message}) => {
+                    this.utilService.hideLoading();
+                    this.errorMessage = message;
+                });
         }
     }
 }
