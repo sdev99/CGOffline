@@ -13,19 +13,22 @@ export class SharedDataService {
     annotationColor = '#98C16B';
     onAnnotationImageDone;
     checkedInPlaces = [];
-    deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
-    // deviceUID = '00001'; // For test dedicated mode
+    // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
+    deviceUID = '00001'; // For test dedicated mode
+
     pushToken = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     isTablet = false;
     dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
     // when open form or document , useful for next screens
     viewFormDetail;
+    dedicatedModeDeviceDetailData;
 
     // Data from Api
     userProfile: Profile;
     timeZoneList;
     companyLanguageList;
     globalDirectories;
+    locationItemList;
 
 
     dedicatedModeLocationUse;
@@ -41,6 +44,10 @@ export class SharedDataService {
         const dedicatedModeLocationUse = localStorage.getItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE);
         if (dedicatedModeLocationUse) {
             this.dedicatedModeLocationUse = JSON.parse(dedicatedModeLocationUse);
+        }
+        const dedicatedModeDeviceDetail = localStorage.getItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL);
+        if (dedicatedModeDeviceDetail) {
+            this.dedicatedModeDeviceDetailData = JSON.parse(dedicatedModeDeviceDetail);
         }
 
         const userProfile = localStorage.getItem(EnumService.LocalStorageKeys.USER_PROFILE);

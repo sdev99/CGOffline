@@ -1,0 +1,5 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target" : { "namespace": "android_app", "package_name": "com.compliancegenie.app",
+    "sha256_cert_fingerprints": ["5C:55:96:58:3D:37:62:37:B2:42:A6:EC:29:12:29:0D:D9:DA:A8:1C:3D:44:BC:29:E3:C6:7B:51:49:39:AC:D2"] }
+}]

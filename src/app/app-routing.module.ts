@@ -6,7 +6,7 @@ const routes: Routes = [
     {path: '', redirectTo: 'tabs/dashboard', pathMatch: 'full'},
     {
         path: 'tabs',
-        data: { authGuardRedirect: 'login' },
+        data: {authGuardRedirect: 'login'},
         loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
         canActivate: [AuthGuard]
     },
@@ -135,16 +135,6 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'choose-location',
-        loadChildren: () => import('./pages/choose-location/choose-location.module').then(m => m.ChooseLocationPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'dashboard-dm',
-        loadChildren: () => import('./pages/dashboard-dm/dashboard-dm.module').then(m => m.DashboardDmPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
         path: 'signoff-photo',
         loadChildren: () => import('./pages/signoff-photo/signoff-photo.module').then(m => m.SignoffPhotoPageModule),
         canActivate: [AuthGuard]
@@ -251,7 +241,21 @@ const routes: Routes = [
         path: 'form-cover-dm',
         loadChildren: () => import('./pages/form-cover-dm/form-cover-dm.module').then(m => m.FormCoverDmPageModule),
         canActivate: [AuthGuard]
-    }
+    },
+    {
+        path: 'choose-location',
+        loadChildren: () => import('./pages/choose-location/choose-location.module').then(m => m.ChooseLocationPageModule),
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'dashboard-dm',
+        loadChildren: () => import('./pages/dashboard-dm/dashboard-dm.module').then(m => m.DashboardDmPageModule),
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'forgot-password-reset',
+        loadChildren: () => import('./pages/forgot-password-reset/forgot-password-reset.module').then(m => m.ForgotPasswordResetPageModule)
+    },
 ];
 
 @NgModule({

@@ -35,6 +35,7 @@ export class EnumService {
         API_ACCESS_KEY: 'api_access_key',
         API_TOKEN: 'api_token',
         IS_DEDICATED_MODE: 'dedicated_mode',
+        DEDICATED_MODE_DEVICE_DETAIL: 'dedicated_mode_device_detail',
         DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use',
         SYNC_DATE_TIME: 'sync_date_time'
     };
@@ -46,6 +47,7 @@ export class EnumService {
         GetGlobalDirectories: 'GetGlobalDirectories',
         GetTimeZoneList: 'GetTimeZoneList',
         GetCompanyLanguageList: 'GetCompanyLanguageList',
+        GetLocationItemList: 'GetLocationItemList',
         UpdatePushNotification: 'UpdatePushNotification',
         UserSignIn: 'UserSignIn',
         ForgotPassword: 'ForgotPassword',

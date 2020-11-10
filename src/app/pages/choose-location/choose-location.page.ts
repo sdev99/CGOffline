@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
+import {AccountService} from '../../services/account.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-choose-location',
@@ -26,11 +28,25 @@ export class ChooseLocationPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
+        public accountService: AccountService,
+        public utilService: UtilService,
     ) {
     }
 
     ngOnInit() {
+        this.getLocationItemList();
     }
+
+    getLocationItemList = () => {
+        if (this.sharedDataService.dedicatedModeDeviceDetailData) {
+            this.accountService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res) => {
+                if (res) {
+                    this.locations = res;
+                }
+            }, (error) => {
+            });
+        }
+    };
 
     onClose() {
         this.navCtrl.back();

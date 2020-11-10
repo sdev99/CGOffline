@@ -16,6 +16,8 @@ Array.prototype.clone = function() {
 })
 export class UtilService {
     loading: HTMLIonLoadingElement = null;
+    loadingStarting = false;
+    loadingStopping = false;
 
     static FileIcon(type) {
         let iconName = '';
@@ -61,31 +63,46 @@ export class UtilService {
         return Math.round(Math.random());
     }
 
+
+    static getQueryStringValue = (url, key) => {
+        return decodeURIComponent(url.replace(new RegExp('^(?:.*[&\\?]' + encodeURIComponent(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
+    };
+
     constructor(
         private loadingController: LoadingController,
         public alertController: AlertController,
     ) {
     }
 
-    async presentLoadingWithOptions(message = '') {
-        this.loading = await this.loadingController.create({
-            cssClass: 'my-loading-class',
-            spinner: null,
-            message: '<ion-icon src="./assets/icon/Loader.svg"/>',
-            translucent: false,
-            backdropDismiss: false,
-            mode: 'md'
-        });
-        await this.loading.present();
-
-        const {role, data} = await this.loading.onDidDismiss();
-        console.log('Loading dismissed with role:', role);
+    presentLoadingWithOptions(message = '') {
+        console.log('Show loading');
+        if (!this.loading && !this.loadingStarting) {
+            this.loadingStarting = true;
+            console.log('Show loading 1');
+            this.loadingController.create({
+                cssClass: 'my-loading-class',
+                spinner: null,
+                message: '<ion-icon src="./assets/icon/Loader.svg"/>',
+                translucent: false,
+                backdropDismiss: false,
+                mode: 'md'
+            }).then((loading) => {
+                this.loading = loading;
+                this.loading.present();
+                this.loadingStarting = false;
+            });
+        }
     }
 
-    async hideLoading() {
-        if (this.loading) {
-            await this.loading.dismiss();
-            this.loading = null;
+    hideLoading() {
+        console.log('Hide loading');
+        if (this.loading && !this.loadingStopping) {
+            this.loadingStopping = true;
+            console.log('Hide loading 1');
+            this.loading.dismiss().then(() => {
+                this.loading = null;
+                this.loadingStopping = false;
+            });
         }
     }
 
@@ -107,7 +124,7 @@ export class UtilService {
         await alert.present();
     }
 
-     getCurrentDateTIme() {
+    getCurrentDateTIme() {
         return new Date().toISOString().slice(0, 19).replace('T', ' ');
     }
 }

@@ -9,19 +9,19 @@ import {Profile} from '../../_models/profile';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
-    selector: 'app-new-account-setup',
-    templateUrl: './new-account-setup.page.html',
-    styleUrls: ['./new-account-setup.page.scss'],
+    selector: 'app-forgot-password-reset',
+    templateUrl: './forgot-password-reset.page.html',
+    styleUrls: ['./forgot-password-reset.page.scss'],
 })
-export class NewAccountSetupPage implements OnInit {
+export class ForgotPasswordResetPage implements OnInit {
 
     errorMessage = '';
     isSubmitted = false;
     myForm: FormGroup;
     isConfirm = false;
 
-    userId;
-    userProfile: Profile;
+    resetCode;
+
 
     constructor(
         public utilService: UtilService,
@@ -33,11 +33,10 @@ export class NewAccountSetupPage implements OnInit {
         route.queryParams.subscribe((params: any) => {
             if (params) {
                 if (params.code) {
-                    this.userId = JSON.parse(params.userId);
+                    this.resetCode = JSON.parse(params.code);
                 }
             }
         });
-
 
         this.myForm = new FormGroup({
             password: new FormControl('', Validators.compose([
@@ -53,12 +52,6 @@ export class NewAccountSetupPage implements OnInit {
 
     ngOnInit() {
         this.utilService.presentLoadingWithOptions();
-        this.accountService.getUserProfile(this.userId).subscribe((userProfile) => {
-            this.userProfile = userProfile;
-            this.utilService.hideLoading();
-        }, error => {
-            this.utilService.hideLoading();
-        });
     }
 
     onSubmit() {
@@ -72,13 +65,13 @@ export class NewAccountSetupPage implements OnInit {
 
             if (password === confirmPassword) {
                 this.utilService.presentLoadingWithOptions();
-                this.accountService.newAccountSetup({
-                    userId: this.userId,
+                this.accountService.resetpassword({
                     password,
-                    confirmPassword
+                    confirmPassword,
+                    shortCode: this.resetCode,
                 }).subscribe((response) => {
                     this.utilService.hideLoading();
-                    this.navCtrl.navigateRoot('/tabs/dashboard');
+                    this.navCtrl.navigateRoot('/login');
                 }, (error) => {
                     this.utilService.hideLoading();
                 });

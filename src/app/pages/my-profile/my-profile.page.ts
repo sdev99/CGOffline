@@ -33,6 +33,7 @@ export class MyProfilePage implements OnInit {
         });
     }
 
+
     ngOnInit() {
         this.accountService.getUserProfile(this.user.userId).subscribe((profile) => {
             this.profile = profile;
@@ -41,6 +42,16 @@ export class MyProfilePage implements OnInit {
         this.accountService.getCompanyLanguageList(this.user.companyID).subscribe((user) => {
         }, error => {
         });
+    }
+
+
+    ionViewDidEnter() {
+        this.user = this.accountService.userValue;
+        this.profile = this.sharedDataService.userProfile;
+    }
+
+    scanQrCode(): void {
+
     }
 
     onClose() {

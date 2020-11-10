@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {MenuController, ModalController, NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {HomeExitDmPage} from '../../modals/home-exit-dm/home-exit-dm.page';
+import {ApiService} from '../../services/api.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
 
 @Component({
     selector: 'app-dashboard-dm',
@@ -9,11 +12,15 @@ import {HomeExitDmPage} from '../../modals/home-exit-dm/home-exit-dm.page';
     styleUrls: ['./dashboard-dm.page.scss'],
 })
 export class DashboardDmPage implements OnInit {
+    dedicatedModeDeviceDetailData;
 
     constructor(
         public navController: NavController,
         private sharedDataService: SharedDataService,
+        private apiService: ApiService,
+        private accountService: AccountService,
     ) {
+        this.dedicatedModeDeviceDetailData = this.sharedDataService.dedicatedModeDeviceDetailData;
     }
 
 

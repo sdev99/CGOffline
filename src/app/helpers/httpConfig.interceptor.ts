@@ -61,32 +61,40 @@ export class HttpConfigInterceptor implements HttpInterceptor {
             }),
             catchError((err: HttpErrorResponse) => {
                 // if token expired then get new token and resend request again
-                if (err.error.StatusCode === EnumService.ApiResponseCode.InvalidToken) {
-                    return from(this.accountService.getToken()).pipe(mergeMap(res => {
-                        request = request.clone({
-                            setHeaders: {
-                                accessID,
-                                token: res.token
-                            }
-                        });
-                        return this.intercept(request, next);
-                    }));
-                }
                 const error: Response = err.error;
-                if (error.StatusCode === EnumService.ApiResponseCode.InvalidData) {
-                    let errorMessage = '';
-                    error.ResponseException.ValidationErrors.map((data) => {
-                        errorMessage = errorMessage + data.Field + ' : ' + data.Message + '\n';
-                    });
+
+                if (error) {
+                    if (error.StatusCode === EnumService.ApiResponseCode.InvalidToken) {
+                        return from(this.accountService.getToken()).pipe(mergeMap(res => {
+                            request = request.clone({
+                                setHeaders: {
+                                    accessID,
+                                    token: res.token
+                                }
+                            });
+                            return this.intercept(request, next);
+                        }));
+                    } else if (error.StatusCode === EnumService.ApiResponseCode.InvalidData) {
+                        let errorMessage = '';
+                        error.ResponseException.ValidationErrors.map((data) => {
+                            errorMessage = errorMessage + data.Field + ' : ' + data.Message + '\n';
+                        });
+                        return throwError({
+                            error,
+                            message: errorMessage
+                        });
+                    }
+
                     return throwError({
                         error,
-                        message: errorMessage
+                        message: error.ResponseException.ExceptionMessage
                     });
                 }
                 return throwError({
-                    error,
-                    message: error.ResponseException.ExceptionMessage
+                    error: err,
+                    message: err.message
                 });
+
             }));
     }
 }

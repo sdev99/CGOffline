@@ -57,7 +57,6 @@ export class LoginPage implements OnInit {
             this.accountService.login(email, password)
                 .subscribe((data) => {
                     this.utilService.hideLoading();
-                    this.utilService.hideLoading();
                     if (password === 'newaccount') {
                         this.navCtrl.navigateRoot('/new-account-setup');
                     } else if (password === 'wronglogin') {

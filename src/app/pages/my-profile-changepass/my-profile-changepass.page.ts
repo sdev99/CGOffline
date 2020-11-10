@@ -3,6 +3,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
 import {UtilService} from '../../services/util.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
 
 @Component({
     selector: 'app-my-profile-changepass',
@@ -13,12 +15,15 @@ export class MyProfileChangepassPage implements OnInit {
     errorMsg = '';
     isSubmitted = false;
     profileForm: FormGroup;
+    user: User;
 
 
     constructor(
         public navCtrl: NavController,
         public utilService: UtilService,
+        public accountService: AccountService,
     ) {
+        this.user = accountService.userValue;
         this.profileForm = new FormGroup({
             oldpassword: new FormControl('', Validators.compose([
                 Validators.required,
@@ -44,11 +49,19 @@ export class MyProfileChangepassPage implements OnInit {
         this.errorMsg = '';
 
         if (this.profileForm.valid) {
+            const oldpassword = this.profileForm.controls.oldpassword.value;
             const password = this.profileForm.controls.newpassword.value;
             const passwordConfirm = this.profileForm.controls.confirmnewpassword.value;
 
             this.utilService.presentLoadingWithOptions();
-            setTimeout(() => {
+
+            this.accountService.changePassword({
+                userId: this.user.userId,
+                firstName: this.user.firstName,
+                oldPassword: oldpassword,
+                newPassword: password,
+                confirmPassword: passwordConfirm,
+            }).subscribe(() => {
                 this.utilService.hideLoading();
                 if (password === passwordConfirm) {
                     this.navCtrl.navigateRoot(['checkin-success'], {
@@ -60,7 +73,10 @@ export class MyProfileChangepassPage implements OnInit {
                 } else {
                     this.errorMsg = 'New (and confirmed) password must be identical';
                 }
-            }, 1000);
+            }, (error) => {
+                this.utilService.hideLoading();
+                this.errorMsg = error.message;
+            });
         }
     }
 

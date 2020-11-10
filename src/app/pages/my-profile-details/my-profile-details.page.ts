@@ -31,12 +31,13 @@ export class MyProfileDetailsPage implements OnInit {
 
 
         if (this.profile) {
-            this.offsetData = UtilService.findObj(sharedDataService.timeZoneList, 'offset', this.profile.timeZoneID);
-            this.languageData = UtilService.findObj(DemoDataService.languages, 'code', this.profile.mobileAppLanguageID);
+            this.offsetData = UtilService.findObj(sharedDataService.timeZoneList, 'timeZoneID', this.profile.timeZoneID);
+            this.languageData = UtilService.findObj(sharedDataService.companyLanguageList, 'code', this.profile.mobileAppLanguageID);
         }
     }
 
     ngOnInit() {
+
     }
 
     onClose() {
@@ -46,7 +47,7 @@ export class MyProfileDetailsPage implements OnInit {
 
     logout() {
         this.utilService.presentLoadingWithOptions();
-        this.accountService.logout().subscribe(() => {
+        this.accountService.logout(this.user.userId).subscribe(() => {
             this.utilService.hideLoading();
         }, error => {
             this.utilService.hideLoading();

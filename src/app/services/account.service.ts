@@ -97,6 +97,24 @@ export class AccountService {
         }));
     }
 
+    getLocationItemList(companyId) {
+        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                const list = data.Result;
+                this.sharedDataService.locationItemList = list;
+                return list;
+            }
+
+            return null;
+        }));
+    }
+
+    getDeviceDetails(deviceUID) {
+        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceDetails}/${deviceUID}`).pipe(map((data: Response) => {
+            return data;
+        }));
+    }
+
     getAccessKey() {
         return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccessKey}`).pipe(map((data: Response) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
@@ -130,12 +148,20 @@ export class AccountService {
         }));
     }
 
-    newAccountSetup(data) {
+    newAccountSetup(body) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.AccountSetup}`, {
             deviceID: this.sharedDataService.pushToken,
             platformName: this.platform.is('ios') ? 'IOS' : 'Android',
-            ...data
-        });
+            ...body
+        }).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                const userInfo = data.Result;
+                localStorage.setItem(EnumService.LocalStorageKeys.USER_DATA, JSON.stringify(userInfo));
+                this.userSubject.next(userInfo);
+                return data;
+            }
+            return throwError(new Error(data.ResponseException.ExceptionMessage));
+        }));
     }
 
     forgotpassword(email) {
@@ -148,11 +174,20 @@ export class AccountService {
         }));
     }
 
-    resetpassword(email) {
+    updatePushNotification(body) {
+        return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdatePushNotification}`, body).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                return true;
+            }
+            return false;
+        }));
+    }
+
+    resetpassword(body) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ResetPassword}`, {
             deviceID: this.sharedDataService.pushToken,
             platformName: this.platform.is('ios') ? 'IOS' : 'Android',
-            email,
+            ...body
         }).pipe(map((data: Response) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const message = data.Message;
@@ -162,16 +197,35 @@ export class AccountService {
         }));
     }
 
-
-    logout() {
-        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${this.sharedDataService.deviceUID}`, {
-            params: {
-                deviceID: this.sharedDataService.pushToken
+    changePassword(body) {
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ChangePassword}`, body).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                const message = data.Message;
+                return message;
             }
-        }).pipe(map((data: Response) => {
+            return data.Message;
+        }));
+    }
+
+    updateProfile(body) {
+        return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdateUserProfile}`, body).pipe(map((data: Response) => {
+            return data;
+        }));
+    }
+
+
+    logout(userId) {
+        const option: any = {
+            body: {
+                deviceID: this.sharedDataService.deviceUID
+            }
+        };
+
+        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(map((data: any) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 // remove user from local storage and set current user to null
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_DATA);
+                localStorage.removeItem(EnumService.LocalStorageKeys.USER_PROFILE);
                 this.userSubject.next(null);
                 this.router.navigate(['/login']);
             }
