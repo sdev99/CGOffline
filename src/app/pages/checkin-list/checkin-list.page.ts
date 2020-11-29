@@ -3,6 +3,12 @@ import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ModalController} from '@ionic/angular';
 import {SearchLocationPage} from '../../modals/search-location/search-location.page';
+import {ApiService} from '../../services/api.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
+import {SharedDataService} from '../../services/shared-data.service';
+import {EnumService} from '../../services/enum.service';
+import {LocationItem} from '../../_models/locationItem';
 
 @Component({
     selector: 'app-checkin-list',
@@ -10,17 +16,34 @@ import {SearchLocationPage} from '../../modals/search-location/search-location.p
     styleUrls: ['./checkin-list.page.scss'],
 })
 export class CheckinListPage implements OnInit {
+    user: User;
 
-    locations = DemoDataService.locations.clone();
+    locations = [];
 
     constructor(
         public navCtrl: NavController,
-        public modalController: ModalController
+        public modalController: ModalController,
+        public apiService: ApiService,
+        public accountService: AccountService,
+        public sharedDataService: SharedDataService,
     ) {
+        this.user = this.accountService.userValue;
+        this.locations = sharedDataService.locationItemList;
     }
 
     ngOnInit() {
+        this.getLocationItemList();
     }
+
+    getLocationItemList = () => {
+        this.apiService.getLocationItemList(this.user.companyID).subscribe((res) => {
+            if (res) {
+                this.locations = res;
+            }
+        }, (error) => {
+        });
+    };
+
 
     onClose() {
         this.navCtrl.back();
@@ -40,20 +63,20 @@ export class CheckinListPage implements OnInit {
         });
         await modal.present();
 
-        modal.onWillDismiss().then((data) => {
+        modal.onWillDismiss().then(({data}) => {
             if (data) {
                 this.openLocation(data);
             }
         });
-
     }
 
-    openLocation(location) {
+    openLocation(location: LocationItem) {
+        this.sharedDataService.checkInOutForLocation = location;
         this.navCtrl.navigateForward(['/checkinout-confirm'], {
             queryParams: {
                 headerTitle: 'Check In',
                 title: 'You are checking in',
-                subtitle: location.name,
+                subtitle: location.locationName,
                 buttonTitle: 'Check In Now',
                 nextPageData: JSON.stringify({
                     locationDetail: JSON.stringify(location)

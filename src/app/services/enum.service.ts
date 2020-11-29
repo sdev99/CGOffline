@@ -5,15 +5,22 @@ import {Injectable} from '@angular/core';
 })
 export class EnumService {
 
+    static ActivityType = {
+        CUSTOM_ACTIVITY: 'Custom Activity',
+        DOCUMENT_SIGNOFF_ACTIVITY: 'Document Sign-Off',
+        FORM_SIGNOFF_ACTIVITY: 'Form Sign-Off',
+    };
+
     static SignOffType = {
         HAV: 'hav-form',
         ACCIDENT_REPORT: 'accident-report',
         CUSTOM_FORM: 'custom-form',
         RISK_ASSESSMENT: 'risk-assessment',
         INDUCTION: 'induction',
+        WORK_PERMIT: 'work_permit',
+        DOCUMENT_ACTIVITY: 'document_activity',
         DOCUMENT_DM: 'document_dedicated_mode',
         FORMS_DM: 'forms_dedicated_mode',
-        WORK_PERMIT: 'work_permit',
     };
 
     static CheckInType = {
@@ -22,10 +29,20 @@ export class EnumService {
         AS_GUEST: 'as_guest',
     };
 
+    static InductionContentTypes = {
+        IMAGE_FILE: 'ImageFile',
+        RICH_TEXT: 'RichText',
+        VIDEO_FILE: 'VideoFile',
+        FORM: 'Form',
+        VISITOR_AGREEMENT: 'VisitorAgreement',
+    };
+
+
     static ObserverKeys = {
         BACK_BUTTON_PRESSED: 'BACK_BUTTON_PRESSED',
         NEW_CHECKED_IN: 'NEW_CHECKED_IN',
         APP_RESTORED_RESULT: 'APP_RESTORED_RESULT',
+        ACTIVITY_COMPLETED: 'ACTIVITY_COMPLETED',
     };
 
     static LocalStorageKeys = {
@@ -37,7 +54,10 @@ export class EnumService {
         IS_DEDICATED_MODE: 'dedicated_mode',
         DEDICATED_MODE_DEVICE_DETAIL: 'dedicated_mode_device_detail',
         DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use',
-        SYNC_DATE_TIME: 'sync_date_time'
+        SYNC_DATE_TIME: 'sync_date_time',
+        CHECKED_IN_PLACES: 'checked_in_places',
+        CURRENT_SELECTED_CHECKIN_PLACE: 'current_selected_checkin_place',
+        GLOBAL_DIRECTORIES: 'global_directories'
     };
 
     static ApiMethods = {
@@ -47,6 +67,7 @@ export class EnumService {
         GetGlobalDirectories: 'GetGlobalDirectories',
         GetTimeZoneList: 'GetTimeZoneList',
         GetCompanyLanguageList: 'GetCompanyLanguageList',
+        GetEntityByQRCode: 'GetEntityByQRCode',
         GetLocationItemList: 'GetLocationItemList',
         UpdatePushNotification: 'UpdatePushNotification',
         UserSignIn: 'UserSignIn',
@@ -58,6 +79,22 @@ export class EnumService {
         ChangePassword: 'ChangePassword',
         UserDeviceDelete: 'UserDeviceDelete',
         GetDeviceDetails: 'GetDeviceDetails',
+        GetUserCurrentCheckInDetails: 'GetUserCurrentCheckInDetails',
+        GetCheckInDetails: 'GetCheckInDetails',
+        InsertCheckInDetails: 'InsertCheckInDetails',
+        InsertCheckOutDetails: 'InsertCheckOutDetails',
+        CheckInPhotoUpload: 'CheckInPhotoUpload',
+        InductionPhotoUpload: 'InductionPhotoUpload',
+        InductionSignatureUpload: 'InductionSignatureUpload',
+        GetUserActivityList: 'GetUserActivityList',
+        GetUserActivityDetail: 'GetUserActivityDetail',
+        ActivityCompleted: 'ActivityCompleted',
+        GetActivitySignOffFormDetail: 'GetActivitySignOffFormDetail',
+        GetActivitySignOffDocumentDetail: 'GetActivitySignOffDocumentDetail',
+        DownloadDocument: 'DownloadDocument',
+        GetPersonalModeAvailableForms: 'GetPersonalModeAvailableForms',
+        InsertPersonalModeSignOffDetails: 'InsertPersonalModeSignOffDetails',
+        MySignedDocuments: 'MySignedDocuments',
     };
 
     static ApiResponseCode = {

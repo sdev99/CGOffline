@@ -503,7 +503,6 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
         const downlaodImg = this.canvasRef.toDataURL('jpeg');
-        this.sharedDataService.setPreviewImage(downlaodImg);
         if (this.sharedDataService.onAnnotationImageDone) {
             this.sharedDataService.onAnnotationImageDone(downlaodImg);
         }

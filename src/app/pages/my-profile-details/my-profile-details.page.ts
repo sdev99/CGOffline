@@ -44,13 +44,24 @@ export class MyProfileDetailsPage implements OnInit {
         this.navCtrl.back();
     }
 
+    async logout() {
+        const loading = await this.utilService.startLoadingWithOptions();
 
-    logout() {
-        this.utilService.presentLoadingWithOptions();
         this.accountService.logout(this.user.userId).subscribe(() => {
-            this.utilService.hideLoading();
+            Object.keys(EnumService.LocalStorageKeys).map((LocalStorageKey) => {
+                if (
+                    LocalStorageKey !== EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES &&
+                    LocalStorageKey !== EnumService.LocalStorageKeys.API_ACCESS_KEY &&
+                    LocalStorageKey !== EnumService.LocalStorageKeys.API_TOKEN
+                ) {
+                    localStorage.removeItem(LocalStorageKey);
+                }
+            });
+            this.sharedDataService.resetAllSharedVariable();
+
+            this.utilService.hideLoadingFor(loading);
         }, error => {
-            this.utilService.hideLoading();
+            this.utilService.hideLoadingFor(loading);
         });
     }
 }

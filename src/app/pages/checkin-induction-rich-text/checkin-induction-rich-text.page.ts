@@ -3,6 +3,9 @@ import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {InductionItem} from '../../_models/inductionItem';
+import {UtilService} from '../../services/util.service';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-checkin-induction-rich-text',
@@ -11,27 +14,22 @@ import {SharedDataService} from '../../services/shared-data.service';
 })
 export class CheckinInductionRichTextPage implements OnInit {
 
-    inductionFiles = DemoDataService.inductionFiles.clone();
-    files = [];
-    currentIndex = 0;
-    locationDetail;
+    inductionContentItemIndex = 0;
+    inductionItem: InductionItem;
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
-        this.inductionFiles.map((item) => {
-            if (item.type === 'richtext') {
-                this.files = item.content;
-                return;
-            }
-        });
-
         route.queryParams.subscribe((params: any) => {
             if (params) {
-                if (params.locationDetail) {
-                    this.locationDetail = JSON.parse(params.locationDetail);
+                this.inductionContentItemIndex = params.inductionContentItemIndex;
+                if (sharedDataService.checkInDetail
+                    && sharedDataService.checkInDetail.checkInInductionItems
+                    && sharedDataService.checkInDetail.checkInInductionItems.length > this.inductionContentItemIndex) {
+                    this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.inductionContentItemIndex];
                 }
             }
         });
@@ -53,14 +51,6 @@ export class CheckinInductionRichTextPage implements OnInit {
     }
 
     onContinue() {
-        if (this.files.length > (this.currentIndex + 1)) {
-            this.currentIndex++;
-        } else {
-            this.navCtrl.navigateForward(['/checkin-induction-form'], {
-                queryParams: {
-                    locationDetail: JSON.stringify(this.locationDetail)
-                }
-            });
-        }
+        this.sharedDataService.inductionNavigationProcess(this.inductionContentItemIndex);
     }
 }

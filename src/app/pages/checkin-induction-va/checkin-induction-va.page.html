@@ -14,7 +14,7 @@
 </ion-header>
 
 <ion-content fullscreen [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div *ngIf="files && files.length>0" class="va-content" [innerHTML]="files[currentIndex]"></div>
+    <div *ngIf="inductionItem.contentDetails" class="va-content" [innerHTML]="inductionItem.contentDetails"></div>
 
 
     <div class="action-btn-container" *ngIf="sharedDataService.dedicatedMode">

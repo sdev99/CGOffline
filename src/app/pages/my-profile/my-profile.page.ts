@@ -5,6 +5,7 @@ import {AccountService} from '../../services/account.service';
 import {User} from '../../_models';
 import {SharedDataService} from '../../services/shared-data.service';
 import {Profile} from '../../_models/profile';
+import {ApiService} from '../../services/api.service';
 
 @Component({
     selector: 'app-my-profile',
@@ -23,6 +24,7 @@ export class MyProfilePage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public photoService: PhotoService,
+        public apiService: ApiService,
         public accountService: AccountService,
         public sharedDataService: SharedDataService,
     ) {
@@ -39,7 +41,7 @@ export class MyProfilePage implements OnInit {
             this.profile = profile;
         }, error => {
         });
-        this.accountService.getCompanyLanguageList(this.user.companyID).subscribe((user) => {
+        this.apiService.getCompanyLanguageList(this.user.companyID).subscribe((user) => {
         }, error => {
         });
     }

@@ -24,14 +24,18 @@ import {DirectivesModule} from './directives/directives.module';
 import {HTTP} from '@ionic-native/http/ngx';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
+import {SearchLocationPage} from './modals/search-location/search-location.page';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
     declarations: [
         AppComponent,
+        SearchLocationPage,
     ],
     entryComponents: [],
     imports: [
         BrowserModule,
+        FormsModule,
         IonicModule.forRoot({
             hardwareBackButton: false,
             mode: 'ios'
@@ -39,10 +43,10 @@ import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
         AppRoutingModule,
         ComponentsModule,
         CommonModule,
-        NgxQRCodeModule,
         PipesModule,
+        NgxQRCodeModule,
         DirectivesModule,
-        HttpClientModule
+        HttpClientModule,
     ],
     providers: [
         QRScanner,

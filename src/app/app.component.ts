@@ -20,6 +20,7 @@ import {AccountService} from './services/account.service';
 import {ApiService} from './services/api.service';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
+import {Capacitor} from '@capacitor/core';
 
 const {Geolocation, PushNotifications, Permissions, App} = Plugins;
 
@@ -49,6 +50,7 @@ export class AppComponent {
 
     initializeApp() {
         this.platform.ready().then(async () => {
+
             this.statusBar.styleDefault();
             this.splashScreen.hide();
 
@@ -102,39 +104,39 @@ export class AppComponent {
         });
     };
 
-    checkForAccessKey = () => {
+    checkForAccessKey = async () => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_ACCESS_KEY)) {
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
             this.accountService.getAccessKey().subscribe((data) => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
                 this.checkForToken();
             }, error => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
             });
         } else {
             this.checkForToken();
         }
     };
 
-    checkForToken = () => {
+    checkForToken = async () => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN)) {
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
             this.accountService.getToken().subscribe((token) => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
                 this.checkDeviceForDedicatedMode();
             }, error => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
             });
         } else {
             this.checkDeviceForDedicatedMode();
         }
     };
 
-    checkDeviceForDedicatedMode = () => {
-        this.accountService.getTimeZoneList().subscribe(() => {
+    checkDeviceForDedicatedMode = async () => {
+        this.apiService.getTimeZoneList().subscribe(() => {
         });
 
-        this.utilService.presentLoadingWithOptions();
+        const loading = await this.utilService.startLoadingWithOptions();
         this.accountService.getDeviceDetails(this.sharedDataService.deviceUID).subscribe((data) => {
 
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful && data.Result && data.Result.companyID) {
@@ -145,16 +147,16 @@ export class AppComponent {
                     this.sharedDataService.dedicatedModeDeviceDetailData = data.Result;
                     this.configureAppForDedicatedMode();
                     setTimeout(() => {
-                        this.utilService.hideLoading();
+                        this.utilService.hideLoadingFor(loading);
                     }, 500);
                 } else {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
                     localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
                     this.sharedDataService.dedicatedMode = false;
                     this.configureAppForPersonalMode();
                 }
             } else {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
 
                 localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
                 this.sharedDataService.dedicatedMode = false;
@@ -162,7 +164,7 @@ export class AppComponent {
             }
 
         }, (error) => {
-            this.utilService.hideLoading();
+            this.utilService.hideLoadingFor(loading);
 
             localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
             this.sharedDataService.dedicatedMode = false;
@@ -188,46 +190,48 @@ export class AppComponent {
     configureAppForPersonalMode = async () => {
 
         try {
-            const notificationPermission = await Permissions.query({
-                name: PermissionType.Notifications
-            });
-            if (notificationPermission.state !== 'granted') {
-                await PushNotifications.requestPermission().then((result) => {
-                    if (result.granted) {
-                        // Register with Apple / Google to receive push via APNS/FCM
-                        this.registerForPushNotification();
-                    } else {
-                        this.accountService.updatePushNotification({
-                            isPushNotification: false
-                        });
-                    }
+
+            if (Capacitor.isNative) {
+                const notificationPermission = await Permissions.query({
+                    name: PermissionType.Notifications
                 });
-            } else {
-                this.registerForPushNotification();
+                if (notificationPermission.state !== 'granted') {
+                    await PushNotifications.requestPermission().then((result) => {
+                        if (result.granted) {
+                            // Register with Apple / Google to receive push via APNS/FCM
+                            this.registerForPushNotification();
+                        } else {
+                            this.accountService.updatePushNotification({
+                                isPushNotification: false
+                            });
+                        }
+                    });
+                } else {
+                    this.registerForPushNotification();
+                }
+
+                // On success, we should be able to receive notifications
+                PushNotifications.addListener('registration',
+                    (token: PushNotificationToken) => {
+                        this.sharedDataService.pushToken = token.value;
+                        console.log('Push registration success, token: ' + token.value);
+                    }
+                );
+
+                // Show us the notification payload if the app is open on our device
+                PushNotifications.addListener('pushNotificationReceived',
+                    (notification: PushNotification) => {
+                        console.log('Push received: ' + JSON.stringify(notification));
+                    }
+                );
+
+                // Method called when tapping on a notification
+                PushNotifications.addListener('pushNotificationActionPerformed',
+                    (notification: PushNotificationActionPerformed) => {
+                        console.log('Push action performed: ' + JSON.stringify(notification));
+                    }
+                );
             }
-
-            // On success, we should be able to receive notifications
-            PushNotifications.addListener('registration',
-                (token: PushNotificationToken) => {
-                    this.sharedDataService.pushToken = token.value;
-                    console.log('Push registration success, token: ' + token.value);
-                }
-            );
-
-            // Show us the notification payload if the app is open on our device
-            PushNotifications.addListener('pushNotificationReceived',
-                (notification: PushNotification) => {
-                    console.log('Push received: ' + JSON.stringify(notification));
-                }
-            );
-
-            // Method called when tapping on a notification
-            PushNotifications.addListener('pushNotificationActionPerformed',
-                (notification: PushNotificationActionPerformed) => {
-                    console.log('Push action performed: ' + JSON.stringify(notification));
-                }
-            );
-
 
             const locationPermission = await Permissions.query({
                 name: PermissionType.Geolocation
@@ -236,6 +240,27 @@ export class AppComponent {
             if (locationPermission.state !== 'granted') {
                 await Geolocation.requestPermissions();
             }
+
+            Geolocation.getCurrentPosition().then((response) => {
+                if (response) {
+                    this.sharedDataService.myCurrentGeoLocation = response;
+                    console.log('Current Location CP', response);
+                }
+            }).catch((error) => {
+                console.log('GetCurrentPosition Error ', error);
+            });
+
+
+            try {
+                Geolocation.watchPosition({}, (response) => {
+                    if (response) {
+                        this.sharedDataService.myCurrentGeoLocation = response;
+                        console.log('Current Location WP', response);
+                    }
+                });
+            } catch (e) {
+                console.log('WatchPosition Error ', e);
+            }
         } catch (e) {
 
         }
@@ -243,9 +268,9 @@ export class AppComponent {
 
 
     registerForPushNotification = () => {
-        PushNotifications.register();
-        this.accountService.updatePushNotification({
-            isPushNotification: true
-        });
+        // PushNotifications.register();
+        // this.accountService.updatePushNotification({
+        //     isPushNotification: true
+        // });
     };
 }

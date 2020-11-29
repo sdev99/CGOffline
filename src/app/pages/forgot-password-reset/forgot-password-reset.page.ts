@@ -33,7 +33,7 @@ export class ForgotPasswordResetPage implements OnInit {
         route.queryParams.subscribe((params: any) => {
             if (params) {
                 if (params.code) {
-                    this.resetCode = JSON.parse(params.code);
+                    this.resetCode = params.code;
                 }
             }
         });
@@ -51,10 +51,9 @@ export class ForgotPasswordResetPage implements OnInit {
     }
 
     ngOnInit() {
-        this.utilService.presentLoadingWithOptions();
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMessage = '';
 
@@ -62,18 +61,20 @@ export class ForgotPasswordResetPage implements OnInit {
             const password = this.myForm.controls.password.value;
             const confirmPassword = this.myForm.controls.passwordConfirm.value;
 
-
             if (password === confirmPassword) {
-                this.utilService.presentLoadingWithOptions();
+                const loading = await this.utilService.startLoadingWithOptions();
+
                 this.accountService.resetpassword({
                     password,
                     confirmPassword,
                     shortCode: this.resetCode,
                 }).subscribe((response) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                     this.navCtrl.navigateRoot('/login');
                 }, (error) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                 });
             } else {
                 this.errorMessage = 'Password not matching';

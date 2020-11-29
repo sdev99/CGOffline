@@ -55,7 +55,10 @@ export class PhotoService {
         const capturedPhoto = await Plugins.Camera.getPhoto({
             resultType: CameraResultType.DataUrl,
             source: CameraSource.Camera,
-            quality: 100
+            quality: 100,
+            width: 500,
+            height: 500,
+            allowEditing: true
         });
         try {
             callBack(capturedPhoto);
@@ -68,7 +71,9 @@ export class PhotoService {
         const capturedPhoto = await Plugins.Camera.getPhoto({
             resultType: CameraResultType.DataUrl,
             source: CameraSource.Photos,
-            quality: 100
+            quality: 100,
+            width: 500,
+            height: 500,
         });
         try {
             callBack(capturedPhoto);

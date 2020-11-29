@@ -2,9 +2,9 @@
     <div class="content">
         <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
 
-        <div class="title-1">You cannot check-in</div>
-        <div class="text-1">No Qualification</div>
-        <div class="text-2">You do not have the required qualifications.</div>
+        <div class="title-1" *ngIf="title">{{title}}</div>
+        <div class="text-1" *ngIf="errorTitle">{{errorTitle}}</div>
+        <div class="text-2" *ngIf="errorMessage">{{errorMessage}}</div>
     </div>
 
 </ion-content>

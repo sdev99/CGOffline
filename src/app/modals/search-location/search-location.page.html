@@ -1,8 +1,8 @@
-<ion-searchbar #search autofocus placeholder="Search entities" mode="md" [(ngModel)]="searchText"></ion-searchbar>
+<ion-searchbar #searchBar autofocus placeholder="Search entities" mode="md" [(ngModel)]="searchText"></ion-searchbar>
 <ion-content>
     <ion-list inset="false" lines="none">
-        <ion-item *ngFor="let item of list | listFilter:searchText:'name'" (click)="onDismiss(item)">
-            <ion-label>{{item.name}}</ion-label>
+        <ion-item *ngFor="let item of list | listFilter:searchText:'locationName'" (click)="onDismiss(item)">
+            <ion-label>{{item.locationName}}</ion-label>
         </ion-item>
     </ion-list>
 </ion-content>

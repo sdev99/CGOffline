@@ -8,6 +8,7 @@ import {File} from '@ionic-native/file/ngx';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {FilehandlerService} from '../../services/filehandler.service';
 import {SharedDataService} from '../../services/shared-data.service';
+import {ActivityListItem} from '../../_models/activityListItem';
 
 @Component({
     selector: 'app-form-cover',
@@ -15,7 +16,8 @@ import {SharedDataService} from '../../services/shared-data.service';
     styleUrls: ['./form-cover.page.scss'],
 })
 export class FormCoverPage {
-    activityDetail = DemoDataService.activityList[4];
+    activityListItem: ActivityListItem;
+    activityDetail;
 
     constructor(
         public navCtrl: NavController,
@@ -23,13 +25,7 @@ export class FormCoverPage {
         private filehandlerService: FilehandlerService,
         public sharedDataService: SharedDataService,
     ) {
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activity) {
-                    this.activityDetail = JSON.parse(params.activity);
-                }
-            }
-        });
+        this.activityListItem = sharedDataService.currentActivityOpen;
     }
 
     openFile() {

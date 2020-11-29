@@ -6,6 +6,8 @@ import {ActivatedRoute} from '@angular/router';
 import {EnumService} from '../../services/enum.service';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
+import {Response} from '../../_models';
+import {ApiService} from '../../services/api.service';
 
 @Component({
     selector: 'app-signoff-photo',
@@ -13,6 +15,8 @@ import {UtilService} from '../../services/util.service';
     styleUrls: ['./signoff-photo.page.scss'],
 })
 export class SignoffPhotoPage implements OnInit {
+    errorMessage;
+
     capturedPhoto;
 
     type;
@@ -21,6 +25,8 @@ export class SignoffPhotoPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public photoService: PhotoService,
+        public apiService: ApiService,
+        public utilService: UtilService,
         public route: ActivatedRoute,
         public observablesService: ObservablesService,
         public sharedDataService: SharedDataService,
@@ -35,6 +41,10 @@ export class SignoffPhotoPage implements OnInit {
                 }
             }
         });
+
+        if (sharedDataService.signOffFor) {
+            this.type = sharedDataService.signOffFor;
+        }
     }
 
     ngOnInit() {
@@ -51,37 +61,46 @@ export class SignoffPhotoPage implements OnInit {
     }
 
     continue() {
-        switch (this.type) {
-            case EnumService.SignOffType.HAV:
-            case EnumService.SignOffType.ACCIDENT_REPORT:
-            case EnumService.SignOffType.CUSTOM_FORM:
-            case EnumService.SignOffType.RISK_ASSESSMENT:
-            case EnumService.SignOffType.DOCUMENT_DM:
-            case EnumService.SignOffType.FORMS_DM:
-                this.showCheckInResultScreen();
-                break;
+        fetch(this.capturedPhoto)
+            .then(res => res.blob())
+            .then(blob => {
+                const file = new File([blob], 'user' + this.utilService.getCurrentTimeStamp() + '.jpeg', {type: 'image/jpeg'});
 
-            case EnumService.SignOffType.INDUCTION:
-                this.showCheckInResultScreen();
-                this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, this.data);
-                break;
+                switch (this.type) {
+                    case EnumService.SignOffType.INDUCTION:
+                        this.uploadInductionPhoto(file);
+                        break;
 
-            case EnumService.SignOffType.WORK_PERMIT:
-                this.navCtrl.navigateForward('permit-issued-result-dm', {
-                    queryParams: {
-                        permitResult: UtilService.randomBoolean() ? 'success' : 'failed'
-                    }
-                });
-                break;
+                    case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+                        this.uploadSignoffPhoto(file);
+                        break;
 
-            default:
-                this.navCtrl.navigateForward(['/checkin-fail'], {});
-        }
+                    case EnumService.SignOffType.HAV:
+                    case EnumService.SignOffType.ACCIDENT_REPORT:
+                    case EnumService.SignOffType.CUSTOM_FORM:
+                    case EnumService.SignOffType.RISK_ASSESSMENT:
+                    case EnumService.SignOffType.DOCUMENT_DM:
+                    case EnumService.SignOffType.FORMS_DM:
+                        this.uploadSignoffPhoto(file);
+                        break;
+
+                    case EnumService.SignOffType.WORK_PERMIT:
+                        this.navCtrl.navigateForward('permit-issued-result-dm', {
+                            queryParams: {
+                                permitResult: UtilService.randomBoolean() ? 'success' : 'failed'
+                            }
+                        });
+                        break;
+
+                    default:
+                        this.uploadCheckinPhoto(file);
+                }
+            });
     }
 
-    showCheckInResultScreen = () => {
+    showCheckInResultScreen = (status = false) => {
         if (this.sharedDataService.dedicatedMode) {
-            if (UtilService.randomBoolean()) {
+            if (status) {
                 this.navCtrl.navigateForward(['/checkinout-success-dm'], {
                     queryParams: {
                         message: 'You have now checked-in',
@@ -100,7 +119,7 @@ export class SignoffPhotoPage implements OnInit {
                 });
             }
         } else {
-            if (UtilService.randomBoolean()) {
+            if (status) {
                 this.navCtrl.navigateForward(['/checkin-success'], {
                     queryParams: {
                         message: 'You Signed-Off Successfully',
@@ -113,6 +132,68 @@ export class SignoffPhotoPage implements OnInit {
                 });
             }
         }
+    };
 
+    /**
+     * Upload photo for induction signoff
+     */
+    uploadInductionPhoto = async (file) => {
+        const loading = await this.utilService.startLoadingWithOptions();
+
+        this.apiService.inductionPhotoUpload(file).subscribe((res: Response) => {
+            this.utilService.hideLoadingFor(loading);
+
+            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.checkInPostData.userSignaturePhoto = res.Result;
+                this.sharedDataService.submitInductionCheckInData(this.apiService);
+            } else {
+                this.errorMessage = res.Message;
+            }
+        }, (error) => {
+            this.utilService.hideLoadingFor(loading);
+            this.errorMessage = error.message ? error.message : error;
+        });
+    };
+
+    /**
+     * Upload photo for signoff
+     */
+    uploadSignoffPhoto = async (file) => {
+        const loading = await this.utilService.startLoadingWithOptions();
+
+        this.apiService.inductionPhotoUpload(file).subscribe((res: Response) => {
+            this.utilService.hideLoadingFor(loading);
+
+            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = res.Result;
+                this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+            } else {
+                this.errorMessage = res.Message;
+            }
+        }, (error) => {
+            this.utilService.hideLoadingFor(loading);
+            this.errorMessage = error.message ? error.message : error;
+        });
+    };
+
+    /**
+     * Upload photo for checkin
+     */
+    uploadCheckinPhoto = async (file) => {
+        const loading = await this.utilService.startLoadingWithOptions();
+
+        this.apiService.checkInPhotoUpload(file).subscribe((res: Response) => {
+            this.utilService.hideLoadingFor(loading);
+
+            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.checkInPostData.userPhoto = res.Result;
+                this.sharedDataService.submitInductionCheckInData(this.apiService);
+            } else {
+                this.errorMessage = res.Message;
+            }
+        }, (error) => {
+            this.utilService.hideLoadingFor(loading);
+            this.errorMessage = error.message ? error.message : error;
+        });
     };
 }

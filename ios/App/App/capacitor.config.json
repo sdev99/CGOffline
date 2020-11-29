@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "com.compliancegenie.app",
   "appName": "ComplianceGenie",
   "bundledWebRuntime": false,
   "npmClient": "npm",

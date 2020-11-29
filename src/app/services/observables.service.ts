@@ -22,5 +22,9 @@ export class ObservablesService {
     getObservable(key): Subject<any> {
         return this.intialiseFirstTime(key);
     }
+
+    removeObservable(key): void {
+        this.intialiseFirstTime(key).unsubscribe();
+    }
 }
 

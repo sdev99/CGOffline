@@ -20,11 +20,6 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'annotation-preview',
-        loadChildren: () => import('./pages/annotation-preview/annotation-preview.module').then(m => m.AnnotationPreviewPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
         path: 'forgot-password',
         loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
     },
@@ -245,7 +240,6 @@ const routes: Routes = [
     {
         path: 'choose-location',
         loadChildren: () => import('./pages/choose-location/choose-location.module').then(m => m.ChooseLocationPageModule),
-        canActivate: [AuthGuard]
     },
     {
         path: 'dashboard-dm',

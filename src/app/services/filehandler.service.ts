@@ -20,18 +20,18 @@ export class FilehandlerService {
     ) {
     }
 
-    openFile(fileUrl = '') {
-        const demoFile = 'http://www.africau.edu/images/default/sample.pdf';
-        this.utilService.presentLoadingWithOptions('File downloading...');
-        const fileName = demoFile.replace(/^.*[\\\/]/, '');
+    async openFile(fileUrl = 'http://www.africau.edu/images/default/sample.pdf') {
+        const loading = await this.utilService.startLoadingWithOptions('File downloading...');
+
+        const fileName = fileUrl.replace(/^.*[\\\/]/, '');
         const extension = fileName.split('.').pop();
 
-        this.http.downloadFile(demoFile, {}, {}, this.file.dataDirectory + fileName).then((response) => {
-            this.utilService.hideLoading();
+        this.http.downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName).then((response) => {
+            this.utilService.hideLoadingFor(loading);
             const url = response.nativeURL;
             this.fileOpener.showOpenWithDialog(url, 'application/' + extension).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
         }).catch((error) => {
-            this.utilService.hideLoading();
+            this.utilService.hideLoadingFor(loading);
             console.log('Error download file', error);
         });
 

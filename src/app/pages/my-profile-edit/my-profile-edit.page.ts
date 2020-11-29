@@ -67,7 +67,7 @@ export class MyProfileEditPage implements OnInit {
         this.navCtrl.back();
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMsg = '';
         const {email, phone, timezone, language} = this.profileForm.controls;
@@ -75,7 +75,8 @@ export class MyProfileEditPage implements OnInit {
         if (this.profileForm.valid) {
             const timezoneData = UtilService.findObj(this.sharedDataService.timeZoneList, 'timeZoneID', timezone.value);
             const languageData = UtilService.findObj(this.sharedDataService.companyLanguageList, 'code', language.value);
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
+
 
             this.accountService.updateProfile({
                 userId: this.user.userId,
@@ -93,7 +94,8 @@ export class MyProfileEditPage implements OnInit {
 
                 // get updated userprofile detail
                 this.accountService.getUserProfile(this.user.userId).subscribe(async (profile) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                     this.profile = profile;
                     this.navCtrl.navigateBack(['/tabs/my-profile']);
                     const toast = await this.toastController.create({
@@ -103,11 +105,13 @@ export class MyProfileEditPage implements OnInit {
                     });
                     toast.present();
                 }, error => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                 });
             }, (error) => {
                 this.errorMsg = error.message;
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
+
             });
         } else if (!email.value && !phone.value && !timezone.value && !language.value) {
             this.errorMsg = 'All fileds are required to be filled.';

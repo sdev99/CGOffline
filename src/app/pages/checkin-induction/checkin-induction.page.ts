@@ -3,6 +3,10 @@ import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {CheckinDetail} from '../../_models/checkinDetail';
+import {LocationItem} from '../../_models/locationItem';
+import {EnumService} from '../../services/enum.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-checkin-induction',
@@ -12,12 +16,19 @@ import {SharedDataService} from '../../services/shared-data.service';
 export class CheckinInductionPage implements OnInit {
     inductionFiles = DemoDataService.inductionFiles.clone();
     locationDetail;
+    checkinDetail: CheckinDetail;
+    checkInOutForLocation: LocationItem;
+
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
+        this.checkInOutForLocation = this.sharedDataService.checkInOutForLocation;
+        this.checkinDetail = this.sharedDataService.checkInDetail;
+
         route.queryParams.subscribe((params: any) => {
             if (params) {
                 if (params.locationDetail) {
@@ -60,10 +71,8 @@ export class CheckinInductionPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateForward(['/checkin-induction-video-file'], {
-            queryParams: {
-                locationDetail: JSON.stringify(this.locationDetail)
-            }
-        });
+        if (this.checkinDetail) {
+            this.sharedDataService.inductionNavigationProcess(-1);
+        }
     }
 }

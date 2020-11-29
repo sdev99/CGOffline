@@ -1,6 +1,6 @@
 <ion-content fullscreen="true">
     <h2 class="page-title">New Account Setup</h2>
-    <p class="page-description">
+    <p class="page-description" *ngIf="userProfile">
         Hello, {{userProfile.userFullName}}.
         <br/>
         You're one step away from using the platform.

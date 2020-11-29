@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DemoDataService} from '../../services/demo-data.service';
 import {IonSearchbar, ModalController} from '@ionic/angular';
 
@@ -10,7 +10,7 @@ import {IonSearchbar, ModalController} from '@ionic/angular';
 export class SearchLocationPage implements OnInit {
     @Input() list: any;
 
-    @ViewChild(IonSearchbar) search: IonSearchbar;
+    @ViewChild('searchBar') searchBar: any;
     searchText = '';
 
     constructor(
@@ -20,8 +20,14 @@ export class SearchLocationPage implements OnInit {
 
     ngOnInit() {
         setTimeout(() => {
-            this.search.setFocus();
-        }, 500);
+            if (this.searchBar) {
+                if (this.searchBar.setFocus) {
+                    this.searchBar.setFocus();
+                } else {
+                    this.searchBar.nativeElement.setFocus();
+                }
+            }
+        }, 1000);
     }
 
     ionViewDidLoad() {

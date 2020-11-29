@@ -8,6 +8,7 @@ import { CheckinListPageRoutingModule } from './checkin-list-routing.module';
 
 import { CheckinListPage } from './checkin-list.page';
 import {ComponentsModule} from '../../components/components.module';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {ComponentsModule} from '../../components/components.module';
         FormsModule,
         IonicModule,
         CheckinListPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        PipesModule
     ],
   declarations: [CheckinListPage]
 })

@@ -66,7 +66,7 @@ export class FormCoverDmPage implements OnInit {
         this.navCtrl.back();
     }
 
-    onContinue() {
+    async onContinue() {
         if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT) {
             this.navCtrl.navigateForward(['/permits-generate-dm'], {
                 queryParams: {
@@ -74,7 +74,7 @@ export class FormCoverDmPage implements OnInit {
                 }
             });
         } else if (this.formType === EnumService.SignOffType.FORMS_DM) {
-            this.utilService.presentLoadingWithOptions();
+
             this.navCtrl.navigateForward(['/permits-generate-dm'], {
                 queryParams: {
                     formDetail: JSON.stringify(this.formDetail)

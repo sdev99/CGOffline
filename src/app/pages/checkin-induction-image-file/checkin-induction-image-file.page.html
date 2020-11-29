@@ -16,8 +16,8 @@
                 Image
             </h6>
 
-            <div class="image-view" *ngIf="files && files.length>0">
-                <ion-img [src]="files[currentIndex]">
+            <div class="image-view" *ngIf="inductionItem">
+                <ion-img [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName">
                 </ion-img>
             </div>
         </div>

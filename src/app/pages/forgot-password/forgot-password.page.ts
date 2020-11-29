@@ -31,18 +31,21 @@ export class ForgotPasswordPage {
         });
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMsg = '';
 
         if (this.myForm.valid) {
             const email = this.myForm.controls.email.value;
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
+
             this.accountService.forgotpassword(email).subscribe((res) => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
+
                 this.navCtrl.navigateRoot('/linksend-success');
             }, ({message}) => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
+
                 this.errorMsg = message;
             });
         }

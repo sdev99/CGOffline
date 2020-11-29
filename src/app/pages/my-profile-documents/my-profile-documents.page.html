@@ -3,13 +3,31 @@
 </ion-header>
 
 <ion-content>
-    <ion-list lines="none">
-        <ion-item mode="md" lines="full" *ngFor="let item of list" (click)="openFile()">
-            <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
-            <ion-label>
-                <h4>{{item.title}}</h4>
-                <p>Expires on {{item.exipreTime | date:'dd MMM yyyy HH:mm'}}</p>
-            </ion-label>
-        </ion-item>
-    </ion-list>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <ng-container *ngIf="list && list.length>0; else emptyMessage">
+        <ion-list lines="none">
+            <ion-item mode="md" lines="full" *ngFor="let item of list" (click)="openFile(item)">
+                <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
+                <ion-label class="ion-text-wrap">
+                    <h4>{{item.documentTitle}}</h4>
+                    <!--                <p>Expires on {{item.timeDifference | date:'dd MMM yyyy HH:mm'}}</p>-->
+                    <p>{{item.formattedCreatedDate}}</p>
+                </ion-label>
+            </ion-item>
+        </ion-list>
+
+        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">
+            <ion-infinite-scroll-content
+                    loadingSpinner="bubbles"
+                    loadingText="">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </ng-container>
+
+    <ng-template #emptyMessage>
+        <app-empty-message message="There are no signed-off files."></app-empty-message>
+    </ng-template>
 </ion-content>

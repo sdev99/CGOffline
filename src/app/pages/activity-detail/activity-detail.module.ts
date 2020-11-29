@@ -8,6 +8,7 @@ import { ActivityDetailPageRoutingModule } from './activity-detail-routing.modul
 
 import { ActivityDetailPage } from './activity-detail.page';
 import {ComponentsModule} from '../../components/components.module';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {ComponentsModule} from '../../components/components.module';
         FormsModule,
         IonicModule,
         ActivityDetailPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        PipesModule
     ],
   declarations: [ActivityDetailPage]
 })

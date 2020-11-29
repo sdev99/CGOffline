@@ -4,6 +4,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
 import {UtilService} from '../../services/util.service';
+import {ApiService} from '../../services/api.service';
 
 @Component({
     selector: 'app-choose-location',
@@ -29,6 +30,7 @@ export class ChooseLocationPage implements OnInit {
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
+        public apiService: ApiService,
         public utilService: UtilService,
     ) {
     }
@@ -39,7 +41,7 @@ export class ChooseLocationPage implements OnInit {
 
     getLocationItemList = () => {
         if (this.sharedDataService.dedicatedModeDeviceDetailData) {
-            this.accountService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res) => {
+            this.apiService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res) => {
                 if (res) {
                     this.locations = res;
                 }

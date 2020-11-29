@@ -7,6 +7,8 @@
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+
     <div class="content">
         <div *ngIf="sharedDataService.dedicatedMode" class="heading-1">Sign-Off</div>
 

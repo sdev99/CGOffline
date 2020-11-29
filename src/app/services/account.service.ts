@@ -60,17 +60,6 @@ export class AccountService {
         }));
     }
 
-    getTimeZoneList() {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetTimeZoneList}`).pipe(map((data: Response) => {
-            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                const list = data.Result;
-                this.sharedDataService.timeZoneList = list;
-                return list;
-            }
-
-            return null;
-        }));
-    }
 
     getUserProfile(userId) {
         return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserProfileById}/${userId}`).pipe(map((data: Response) => {
@@ -79,30 +68,6 @@ export class AccountService {
                 localStorage.setItem(EnumService.LocalStorageKeys.USER_PROFILE, JSON.stringify(userProfile));
                 this.sharedDataService.userProfile = userProfile;
                 return userProfile;
-            }
-
-            return null;
-        }));
-    }
-
-    getCompanyLanguageList(companyId) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyLanguageList}/${companyId}`).pipe(map((data: Response) => {
-            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                const list = data.Result;
-                this.sharedDataService.companyLanguageList = list;
-                return list;
-            }
-
-            return null;
-        }));
-    }
-
-    getLocationItemList(companyId) {
-        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(map((data: Response) => {
-            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                const list = data.Result;
-                this.sharedDataService.locationItemList = list;
-                return list;
             }
 
             return null;

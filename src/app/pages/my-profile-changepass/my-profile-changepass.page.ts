@@ -44,7 +44,7 @@ export class MyProfileChangepassPage implements OnInit {
         this.navCtrl.back();
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMsg = '';
 
@@ -53,7 +53,8 @@ export class MyProfileChangepassPage implements OnInit {
             const password = this.profileForm.controls.newpassword.value;
             const passwordConfirm = this.profileForm.controls.confirmnewpassword.value;
 
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
+
 
             this.accountService.changePassword({
                 userId: this.user.userId,
@@ -62,7 +63,8 @@ export class MyProfileChangepassPage implements OnInit {
                 newPassword: password,
                 confirmPassword: passwordConfirm,
             }).subscribe(() => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
+
                 if (password === passwordConfirm) {
                     this.navCtrl.navigateRoot(['checkin-success'], {
                         queryParams: {
@@ -74,7 +76,8 @@ export class MyProfileChangepassPage implements OnInit {
                     this.errorMsg = 'New (and confirmed) password must be identical';
                 }
             }, (error) => {
-                this.utilService.hideLoading();
+                this.utilService.hideLoadingFor(loading);
+
                 this.errorMsg = error.message;
             });
         }

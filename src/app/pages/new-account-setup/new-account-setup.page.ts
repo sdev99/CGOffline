@@ -32,8 +32,8 @@ export class NewAccountSetupPage implements OnInit {
 
         route.queryParams.subscribe((params: any) => {
             if (params) {
-                if (params.code) {
-                    this.userId = JSON.parse(params.userId);
+                if (params.userId) {
+                    this.userId = params.userId;
                 }
             }
         });
@@ -51,17 +51,18 @@ export class NewAccountSetupPage implements OnInit {
         });
     }
 
-    ngOnInit() {
-        this.utilService.presentLoadingWithOptions();
+    async ngOnInit() {
+        const loading = await this.utilService.startLoadingWithOptions();
+
         this.accountService.getUserProfile(this.userId).subscribe((userProfile) => {
             this.userProfile = userProfile;
-            this.utilService.hideLoading();
+            this.utilService.hideLoadingFor(loading);
         }, error => {
-            this.utilService.hideLoading();
+            this.utilService.hideLoadingFor(loading);
         });
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMessage = '';
 
@@ -71,16 +72,17 @@ export class NewAccountSetupPage implements OnInit {
 
 
             if (password === confirmPassword) {
-                this.utilService.presentLoadingWithOptions();
+                const loading = await this.utilService.startLoadingWithOptions();
+
                 this.accountService.newAccountSetup({
                     userId: this.userId,
                     password,
                     confirmPassword
                 }).subscribe((response) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
                     this.navCtrl.navigateRoot('/tabs/dashboard');
                 }, (error) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
                 });
             } else {
                 this.errorMessage = 'Password not matching';

@@ -44,7 +44,7 @@ export class LoginPage implements OnInit {
         }
     }
 
-    onSubmit() {
+    async onSubmit() {
         this.isSubmitted = true;
         this.errorMessage = '';
 
@@ -52,11 +52,12 @@ export class LoginPage implements OnInit {
             const email = this.loginForm.controls.email.value;
             const password = this.loginForm.controls.password.value;
 
-            this.utilService.presentLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
 
             this.accountService.login(email, password)
                 .subscribe((data) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                     if (password === 'newaccount') {
                         this.navCtrl.navigateRoot('/new-account-setup');
                     } else if (password === 'wronglogin') {
@@ -65,7 +66,8 @@ export class LoginPage implements OnInit {
                         this.navCtrl.navigateRoot('/tabs/dashboard');
                     }
                 }, ({message}) => {
-                    this.utilService.hideLoading();
+                    this.utilService.hideLoadingFor(loading);
+
                     this.errorMessage = message;
                 });
         }

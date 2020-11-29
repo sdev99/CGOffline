@@ -3,6 +3,10 @@ import {NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {InductionItem} from '../../_models/inductionItem';
+import {UtilService} from '../../services/util.service';
+import {EnumService} from '../../services/enum.service';
+import {ApiService} from '../../services/api.service';
 
 @Component({
     selector: 'app-checkin-induction-form',
@@ -12,30 +16,46 @@ import {SharedDataService} from '../../services/shared-data.service';
 export class CheckinInductionFormPage implements OnInit {
 
     list = DemoDataService.inductionForm.clone().concat();
-    locationDetail;
-
     errorMessage = '';
     isSubmitted = false;
+
+    inductionContentItemIndex = 0;
+    inductionItem: InductionItem;
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
+        public apiService: ApiService,
     ) {
         route.queryParams.subscribe((params: any) => {
             if (params) {
-                if (params.locationDetail) {
-                    this.locationDetail = JSON.parse(params.locationDetail);
+                this.inductionContentItemIndex = params.inductionContentItemIndex;
+                if (sharedDataService.checkInDetail
+                    && sharedDataService.checkInDetail.checkInInductionItems
+                    && sharedDataService.checkInDetail.checkInInductionItems.length > this.inductionContentItemIndex) {
+                    this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.inductionContentItemIndex];
                 }
             }
         });
     }
 
     ngOnInit() {
+        this.getFormDetails();
     }
 
     onBack() {
         this.navCtrl.back();
+    }
+
+    async getFormDetails() {
+        const loading = await this.utilService.startLoadingWithOptions();
+        this.apiService.getActivitySignOffFormDetail(this.inductionItem.formID).subscribe((response) => {
+            this.utilService.hideLoadingFor(loading);
+        }, (error) => {
+            this.utilService.hideLoadingFor(loading);
+        });
     }
 
     onClose() {
@@ -45,7 +65,6 @@ export class CheckinInductionFormPage implements OnInit {
             this.navCtrl.navigateRoot('tabs/dashboard');
         }
     }
-
 
     onContinue() {
         this.isSubmitted = true;
@@ -59,11 +78,7 @@ export class CheckinInductionFormPage implements OnInit {
         });
 
         if (isValid) {
-            this.navCtrl.navigateForward(['/checkin-induction-va'], {
-                queryParams: {
-                    locationDetail: JSON.stringify(this.locationDetail)
-                }
-            });
+            this.sharedDataService.inductionNavigationProcess(this.inductionContentItemIndex);
         } else {
             this.errorMessage = invalidCount + ' required questions are not answered yet';
         }

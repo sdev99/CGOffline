@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-checkin-fail',
@@ -7,10 +8,31 @@ import {NavController} from '@ionic/angular';
     styleUrls: ['./checkin-fail.page.scss'],
 })
 export class CheckinFailPage implements OnInit {
+    title = '';
+    errorTitle = '';
+    errorMessage = '';
+    nextPage = '/tabs/dashboard';
 
     constructor(
         public navCtrl: NavController,
+        public activatedRoute: ActivatedRoute
     ) {
+        this.activatedRoute.queryParams.subscribe((res) => {
+            if (res) {
+                if (res.title) {
+                    this.title = res.title;
+                }
+                if (res.errorTitle) {
+                    this.errorTitle = res.errorTitle;
+                }
+                if (res.message) {
+                    this.errorMessage = res.message;
+                }
+                if (res.nextPage) {
+                    this.nextPage = res.nextPage;
+                }
+            }
+        });
     }
 
     ngOnInit() {
@@ -21,6 +43,6 @@ export class CheckinFailPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateBack(['/tabs/dashboard']);
+        this.navCtrl.navigateBack([this.nextPage]);
     }
 }

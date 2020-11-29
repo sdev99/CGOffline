@@ -24,7 +24,7 @@
     <ion-label>
         <ng-container *ngIf="checkedIn;else notCheckedIn">
             Checked-in:
-            &nbsp; {{checkedPlaces.length == 1 ? checkedPlaces[0].name : 'to ' + checkedPlaces.length + ' places'}}
+            &nbsp; {{checkedPlaces.length == 1 ? checkedPlaces[0].entityName : 'to ' + checkedPlaces.length + ' places'}}
         </ng-container>
         <ng-template #notCheckedIn>You aren’t checked in</ng-template>
     </ion-label>
@@ -44,12 +44,13 @@
 </ion-item>
 
 
-<div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList">
-    <ion-list class="check-in-places-list" lines="none">
+<div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList" (click)="showCheckedInPlacesList=false">
+    <ion-list class="check-in-places-list" lines="none"
+              (click)="$event.stopImmediatePropagation();$event.stopPropagation()">
         <ion-item *ngFor="let place of checkedPlaces"
-                  [ngClass]="{'selected':(selectedPlace&&selectedPlace.id === place.id)}"
+                  [ngClass]="{'selected':(selectedPlace&&selectedPlace.userCheckInDetailID === place.userCheckInDetailID)}"
                   (click)="placedChange(place)">
-            <ion-label>{{place.name}}</ion-label>
+            <ion-label>{{place.entityName}}</ion-label>
             <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="viewCheckinPlace(place)">
                 <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
             </ion-button>

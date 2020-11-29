@@ -1,25 +1,27 @@
 <ion-header>
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode"  modalTitle="Induction" (closeModal)="onClose()"></app-modal-header>
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
-    (closeModal)="onClose()"></app-modal-header-dm>
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="Induction"
+                      (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
+                         [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
+                         (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
     <app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
                                (continue)="onContinue()"></app-back-continue-toolbar>
     <div class="content">
-        <h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode" >
+        <h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">
             Rich Text
         </h6>
 
-        <div class="text-view" *ngIf="files && files.length>0">
-            <div [innerText]="files[currentIndex]"></div>
+        <div class="text-view" *ngIf="inductionItem">
+            <div [innerHTML]="inductionItem.contentDetails"></div>
         </div>
 
     </div>
 </ion-content>
 
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode" >
+<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
     <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
 </ion-footer>
 

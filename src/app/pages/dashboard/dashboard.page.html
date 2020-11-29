@@ -4,34 +4,43 @@
 
 <ion-content>
 
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-list *ngIf="activityList && activityList.length > 0; else emptyMessageComponent" class="activity-list"
               lines="full">
 
-        <ion-list-header lines="full">
+        <ion-list-header lines="full" *ngIf="activityOverviewData">
             <ion-label>Activity List</ion-label>
             <div class="status-badge ion-margin-end">
-                <span>4</span>
+                <span>{{activityOverviewData.rejectedCount}}</span>
                 <ion-badge color="light" class="rejected">Rejected</ion-badge>
             </div>
             <div class="status-badge">
-                <span>4</span>
+                <span>{{activityOverviewData.overDueCount}}</span>
                 <ion-badge color="warning" class="overdue">Overdue</ion-badge>
             </div>
         </ion-list-header>
 
         <ion-item *ngFor="let activity of activityList" (click)="openActivityDetail(activity)">
             <div class="alert-icon-container">
-                <ion-icon *ngIf="activity.status === 'overdue'" name="alert-circle" color="danger"></ion-icon>
+                <ion-icon *ngIf="activity.isHighPriority" name="alert-circle" color="danger"></ion-icon>
             </div>
             <ion-label>
-                <h6>{{activity.name}}</h6>
+                <h6>{{activity.activityTitle}}</h6>
                 <div class="detail">
-                    <ion-badge *ngIf="activity.status === 'overdue'" color="warning" class="overdue">Overdue</ion-badge>
-                    <ng-container *ngIf="activity.status === 'rejected'">
+                    <ion-badge *ngIf="activity.isOverDue" color="warning" class="overdue">Overdue</ion-badge>
+                    <ng-container *ngIf="activity.isRejected">
                         <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
                         <ion-badge color="light" class="rejected">Rejected</ion-badge>
                     </ng-container>
-                    <span class="time">Last week</span>
+                    <span class="time" *ngIf="activity.activityTime; else customTime">{{activity.activityTime}}</span>
+                    <ng-template #customTime>
+                        <span class="time" *ngIf="activity.activityDate === activity.todayDate">Today</span>
+                        <span class="time"
+                              *ngIf="activity.activityDate !== activity.todayDate">{{activity.activityDate | timeAgo}}</span>
+                    </ng-template>
                 </div>
             </ion-label>
         </ion-item>

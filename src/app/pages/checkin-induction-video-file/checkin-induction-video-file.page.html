@@ -18,9 +18,9 @@
                 Video
             </h6>
 
-            <div class="video-view" *ngIf="files && files.length>0">
+            <div class="video-view" *ngIf="inductionItem">
                 <iframe width="400" height="200"
-                        [src]="files[currentIndex] | safeurl">
+                        [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl">
                 </iframe>
             </div>
         </div>

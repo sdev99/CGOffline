@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
-import {AlertController, LoadingController} from '@ionic/angular';
+import {AlertController, LoadingController, NavController} from '@ionic/angular';
+import {EnumService} from './enum.service';
+import {SharedDataService} from './shared-data.service';
 
 declare global {
     interface Array<T> {
@@ -18,6 +20,28 @@ export class UtilService {
     loading: HTMLIonLoadingElement = null;
     loadingStarting = false;
     loadingStopping = false;
+
+    static InductionContentTypeScreenIdentify(contentType) {
+        let routeName = '';
+        switch (contentType) {
+            case EnumService.InductionContentTypes.VIDEO_FILE:
+                routeName = 'checkin-induction-video-file';
+                break;
+            case EnumService.InductionContentTypes.IMAGE_FILE:
+                routeName = 'checkin-induction-image-file';
+                break;
+            case EnumService.InductionContentTypes.RICH_TEXT:
+                routeName = 'checkin-induction-rich-text';
+                break;
+            case EnumService.InductionContentTypes.FORM:
+                routeName = 'checkin-induction-form';
+                break;
+            case EnumService.InductionContentTypes.VISITOR_AGREEMENT:
+                routeName = 'checkin-induction-va';
+                break;
+        }
+        return routeName;
+    }
 
     static FileIcon(type) {
         let iconName = '';
@@ -68,11 +92,37 @@ export class UtilService {
         return decodeURIComponent(url.replace(new RegExp('^(?:.*[&\\?]' + encodeURIComponent(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
     };
 
+    static fireCallBack(callBack = null, data = null) {
+        if (callBack) {
+            callBack(data);
+        }
+    }
+
     constructor(
         private loadingController: LoadingController,
-        public alertController: AlertController,
+        private alertController: AlertController,
+        private navCtrl: NavController,
     ) {
     }
+
+    async startLoadingWithOptions(message = ''): Promise<HTMLIonLoadingElement> {
+        const loading = await this.loadingController.create({
+            cssClass: 'my-loading-class',
+            spinner: null,
+            message: '<ion-icon src="./assets/icon/Loader.svg"/>',
+            translucent: false,
+            backdropDismiss: false,
+            mode: 'md'
+        });
+        await loading.present();
+        return loading;
+    }
+
+    async hideLoadingFor(loading: HTMLIonLoadingElement) {
+        loading.dismiss();
+        loading = null;
+    }
+
 
     presentLoadingWithOptions(message = '') {
         console.log('Show loading');
@@ -88,21 +138,17 @@ export class UtilService {
                 mode: 'md'
             }).then((loading) => {
                 this.loading = loading;
-                this.loading.present();
                 this.loadingStarting = false;
+                this.loading.present();
             });
         }
     }
 
     hideLoading() {
         console.log('Hide loading');
-        if (this.loading && !this.loadingStopping) {
-            this.loadingStopping = true;
-            console.log('Hide loading 1');
-            this.loading.dismiss().then(() => {
-                this.loading = null;
-                this.loadingStopping = false;
-            });
+        if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
         }
     }
 
@@ -124,7 +170,12 @@ export class UtilService {
         await alert.present();
     }
 
+    getCurrentTimeStamp() {
+        return Math.floor(Date.now());
+    }
+
     getCurrentDateTIme() {
         return new Date().toISOString().slice(0, 19).replace('T', ' ');
     }
+
 }
