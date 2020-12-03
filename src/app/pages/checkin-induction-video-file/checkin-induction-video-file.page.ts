@@ -52,20 +52,29 @@ export class CheckinInductionVideoFilePage implements OnInit {
     }
 
     ionViewWillLeave() {
-        const iframes = document.getElementsByTagName('iframe');
-        if (iframes != null) {
-            // tslint:disable-next-line:prefer-for-of
-            for (let i = 0; i < iframes.length; i++) {
-                iframes[i].src = iframes[i].src; // causes a reload so it stops playing, music, video, etc.
-            }
-        }
+        this.stopVideoPlay();
     }
 
     ionViewWillEnter() {
         console.log('ionViewWillEnter');
     }
 
+    stopVideoPlay() {
+        const iframes = document.getElementsByTagName('iframe');
+        if (iframes != null) {
+            // tslint:disable-next-line:prefer-for-of
+            for (let i = 0; i < iframes.length; i++) {
+                iframes[i].src = iframes[i].src; // causes a reload so it stops playing, music, video, etc.
+                iframes[i].contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'stopVideo'
+                }), '*');
+            }
+        }
+    }
+
     onContinue() {
+        this.stopVideoPlay();
         this.sharedDataService.inductionNavigationProcess(this.inductionContentItemIndex);
     }
 

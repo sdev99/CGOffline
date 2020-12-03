@@ -25,8 +25,8 @@ export class CheckinFailPage implements OnInit {
                 if (res.errorTitle) {
                     this.errorTitle = res.errorTitle;
                 }
-                if (res.message) {
-                    this.errorMessage = res.message;
+                if (res.errorMessage) {
+                    this.errorMessage = res.errorMessage;
                 }
                 if (res.nextPage) {
                     this.nextPage = res.nextPage;

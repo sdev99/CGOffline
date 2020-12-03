@@ -53,6 +53,7 @@ export class AppComponent {
 
             this.statusBar.styleDefault();
             this.splashScreen.hide();
+            this.sharedDataService.apiServiceRerence = this.apiService;
 
             this.setupDeepLink();
 

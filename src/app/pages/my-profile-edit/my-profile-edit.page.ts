@@ -46,7 +46,7 @@ export class MyProfileEditPage implements OnInit {
             phone: new FormControl(this.profile.phone, Validators.compose([
                 Validators.required,
                 Validators.minLength(10),
-                Validators.pattern('^[0-9()-]+$')
+                Validators.pattern('^[+0-9()-]+$')
             ])),
             timezone: new FormControl(this.profile.timeZoneID, Validators.compose([
                 Validators.required,

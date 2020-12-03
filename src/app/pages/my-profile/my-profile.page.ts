@@ -15,11 +15,9 @@ import {ApiService} from '../../services/api.service';
 export class MyProfilePage implements OnInit {
     qrCodeValue = 'Oliver Egginton';
     elementType = 'url';
-    capturedPhoto;
 
     user: User;
     profile: Profile;
-
 
     constructor(
         public navCtrl: NavController,
@@ -35,7 +33,6 @@ export class MyProfilePage implements OnInit {
         });
     }
 
-
     ngOnInit() {
         this.accountService.getUserProfile(this.user.userId).subscribe((profile) => {
             this.profile = profile;
@@ -45,7 +42,6 @@ export class MyProfilePage implements OnInit {
         }, error => {
         });
     }
-
 
     ionViewDidEnter() {
         this.user = this.accountService.userValue;
@@ -60,10 +56,5 @@ export class MyProfilePage implements OnInit {
         this.navCtrl.back();
     }
 
-    addProfilePhoto() {
-        this.photoService.choosePhotoOption((photo) => {
-            this.capturedPhoto = photo;
-        });
-    }
 
 }

@@ -15,16 +15,24 @@
 <ion-content>
 
     <div class="content">
-        <ion-img (click)="addProfilePhoto()"
-                 [src]="capturedPhoto?capturedPhoto.dataUrl:'./assets/images/demo-profile.svg'"
-                 class="profile-img"></ion-img>
+        <ion-img
+                [src]="(profile&&profile.photo&&sharedDataService.globalDirectories)?(sharedDataService.globalDirectories.userDirectory+''+profile.photo):'./assets/images/demo-profile.svg'"
+                class="profile-img"></ion-img>
         <h3 *ngIf="profile">{{profile.userFullName}}</h3>
-        <ngx-qrcode
-                [elementType]="elementType"
-                [value]="user.userId"
-                cssClass="qr-code"
-                errorCorrectionLevel="L">
-        </ngx-qrcode>
+
+        <ion-img *ngIf="profile&&profile.qrCodeImage;"
+                 [src]="'data:image/jpeg;base64,'+ profile.qrCodeImage"
+                 class="qr-code"></ion-img>
+
+        <!--        <ng-template #createQrCode>-->
+        <!--            <ngx-qrcode-->
+        <!--                    [elementType]="elementType"-->
+        <!--                    [value]="user.userId"-->
+        <!--                    cssClass="qr-code"-->
+        <!--                    errorCorrectionLevel="L">-->
+        <!--            </ngx-qrcode>-->
+        <!--        </ng-template>-->
+
 
         <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">View / Update Settings</ion-button>
         <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">View My Signed Documents

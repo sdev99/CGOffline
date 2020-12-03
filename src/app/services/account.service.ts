@@ -75,7 +75,7 @@ export class AccountService {
     }
 
     getDeviceDetails(deviceUID) {
-        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceDetails}/${deviceUID}`).pipe(map((data: Response) => {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceDetails}/${deviceUID}`).pipe(map((data: Response) => {
             return data;
         }));
     }

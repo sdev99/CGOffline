@@ -11,6 +11,14 @@ export class EnumService {
         FORM_SIGNOFF_ACTIVITY: 'Form Sign-Off',
     };
 
+    static FormTypes = {
+        CUSTOM: 'Custom',
+        RISK_ASSESSMENT: 'Risk Assessment',
+        WORK_PERMIT: 'Work Permits',
+        HAV: 'HAV Exposure Calculator',
+        ACCIDENT_REPORT: 'Accident Report'
+    };
+
     static SignOffType = {
         HAV: 'hav-form',
         ACCIDENT_REPORT: 'accident-report',
@@ -27,6 +35,16 @@ export class EnumService {
         QrCode: 'qr_code',
         MY_NAME: 'my_name',
         AS_GUEST: 'as_guest',
+    };
+
+    static ViewFormForType = {
+        Induction: 'induction',
+        Activity: 'activity',
+    };
+
+    static ConfirmForCheckType = {
+        CheckIn: 'checkin',
+        CheckOut: 'checkout',
     };
 
     static InductionContentTypes = {
@@ -61,40 +79,51 @@ export class EnumService {
     };
 
     static ApiMethods = {
-        GetAccessKey: 'GetAccessKey',
-        GetToken: 'GetToken',
-        GetTermsOfServices: 'GetTermsOfServices',
-        GetGlobalDirectories: 'GetGlobalDirectories',
-        GetTimeZoneList: 'GetTimeZoneList',
-        GetCompanyLanguageList: 'GetCompanyLanguageList',
-        GetEntityByQRCode: 'GetEntityByQRCode',
-        GetLocationItemList: 'GetLocationItemList',
-        UpdatePushNotification: 'UpdatePushNotification',
-        UserSignIn: 'UserSignIn',
-        ForgotPassword: 'ForgotPassword',
-        ResetPassword: 'ResetPassword',
-        AccountSetup: 'AccountSetup',
-        GetUserProfileById: 'GetUserProfileById',
-        UpdateUserProfile: 'UpdateUserProfile',
-        ChangePassword: 'ChangePassword',
-        UserDeviceDelete: 'UserDeviceDelete',
-        GetDeviceDetails: 'GetDeviceDetails',
-        GetUserCurrentCheckInDetails: 'GetUserCurrentCheckInDetails',
-        GetCheckInDetails: 'GetCheckInDetails',
-        InsertCheckInDetails: 'InsertCheckInDetails',
-        InsertCheckOutDetails: 'InsertCheckOutDetails',
-        CheckInPhotoUpload: 'CheckInPhotoUpload',
-        InductionPhotoUpload: 'InductionPhotoUpload',
-        InductionSignatureUpload: 'InductionSignatureUpload',
-        GetUserActivityList: 'GetUserActivityList',
-        GetUserActivityDetail: 'GetUserActivityDetail',
-        ActivityCompleted: 'ActivityCompleted',
-        GetActivitySignOffFormDetail: 'GetActivitySignOffFormDetail',
-        GetActivitySignOffDocumentDetail: 'GetActivitySignOffDocumentDetail',
-        DownloadDocument: 'DownloadDocument',
-        GetPersonalModeAvailableForms: 'GetPersonalModeAvailableForms',
-        InsertPersonalModeSignOffDetails: 'InsertPersonalModeSignOffDetails',
-        MySignedDocuments: 'MySignedDocuments',
+        GetAccessKey: 'GetAccessKey', // GET
+        GetToken: 'GetToken', // GET
+        GetTermsOfServices: 'GetTermsOfServices', // GET
+        GetGlobalDirectories: 'GetGlobalDirectories', // GET
+        GetTimeZoneList: 'GetTimeZoneList', // GET
+        GetCompanyLanguageList: 'GetCompanyLanguageList', // GET
+        UpdatePushNotification: 'UpdatePushNotification', // PUT
+        UserSignIn: 'UserSignIn', // POST
+        ForgotPassword: 'ForgotPassword', // POST
+        ResetPassword: 'ResetPassword', // POST
+        AccountSetup: 'AccountSetup', // POST
+        GetUserProfileById: 'GetUserProfileById',  // GET
+        UpdateUserProfile: 'UpdateUserProfile', // PUT
+        ChangePassword: 'ChangePassword', // POST
+        UserDeviceDelete: 'UserDeviceDelete', // DELETE
+        GetLocationItemList: 'GetLocationItemList',  // DELETE
+        GetDeviceDetails: 'GetDeviceDetails', // GET
+        GetUserCurrentCheckInDetails: 'GetUserCurrentCheckInDetails', // GET
+        GetEntityByQRCode: 'GetEntityByQRCode', // GET
+        GetCheckInDetails: 'GetCheckInDetails', // GET
+        InsertCheckInDetails: 'InsertCheckInDetails', // POST
+        GetCheckInDetails_Guest: 'GetCheckInDetails_Guest', // GET
+        InsertCheckInDetails_Guest: 'InsertCheckInDetails_Guest', // POST
+        InsertCheckOutDetails: 'InsertCheckOutDetails', // POST
+        CheckInPhotoUpload: 'CheckInPhotoUpload', // POST
+        InductionPhotoUpload: 'InductionPhotoUpload', // POST
+        InductionSignatureUpload: 'InductionSignatureUpload', // POST
+        GetUserActivityList: 'GetUserActivityList', // GET
+        GetUserActivityDetail: 'GetUserActivityDetail', // GET
+        ActivityCompleted: 'ActivityCompleted', // POST
+        GetActivitySignOffFormDetail: 'GetActivitySignOffFormDetail', // GET
+        GetActivitySignOffDocumentDetail: 'GetActivitySignOffDocumentDetail', // GET
+        GetPersonalModeAvailableDocuments: 'GetPersonalModeAvailableDocuments', // GET
+        GetPersonalModeAvailableWorkPermits: 'GetPersonalModeAvailableWorkPermits', // GET
+        GetPersonalModeAvailableForms: 'GetPersonalModeAvailableForms', // GET
+        InsertPersonalModeSignOffDetails: 'InsertPersonalModeSignOffDetails', // POST
+        MySignedDocuments: 'MySignedDocuments', // GET
+        DownloadDocument: 'DownloadDocument', // GET
+        GetDeviceEntityDetails: 'GetDeviceEntityDetails', // GET
+        ActivateDevice: 'ActivateDevice', // POST
+        SynchDevice: 'SynchDevice', // POST
+        GetDedicatedModeAssignedItemDetail: 'GetDedicatedModeAssignedItemDetail', // GET
+        GetUserByQRCode: 'GetUserByQRCode', // GET
+        GetGuestUserDetailByPhone: 'GetGuestUserDetailByPhone', // GET
+        ChangeAllQRCode: 'ChangeAllQRCode', // GET
     };
 
     static ApiResponseCode = {

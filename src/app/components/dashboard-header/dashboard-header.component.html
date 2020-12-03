@@ -51,7 +51,7 @@
                   [ngClass]="{'selected':(selectedPlace&&selectedPlace.userCheckInDetailID === place.userCheckInDetailID)}"
                   (click)="placedChange(place)">
             <ion-label>{{place.entityName}}</ion-label>
-            <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="viewCheckinPlace(place)">
+            <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="checkoutPlace(place, $event)">
                 <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
             </ion-button>
         </ion-item>

@@ -51,7 +51,7 @@ export class ApiService {
     }
 
     getLocationItemList(companyId) {
-        return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(map((data: Response) => {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(map((data: Response) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const list = data.Result;
                 this.sharedDataService.locationItemList = list;
@@ -76,9 +76,9 @@ export class ApiService {
      * @param file image to be upload
      * Note: Please crop image before uploading as per design
      */
-    checkInPhotoUpload(file) {
+    checkInPhotoUpload(file, fileName = '') {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', file, fileName);
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.CheckInPhotoUpload}`, formData);
     }
 
@@ -88,9 +88,9 @@ export class ApiService {
      * @param file image to be upload
      * Note: Please crop image before uploading as per design
      */
-    inductionPhotoUpload(file) {
+    inductionPhotoUpload(file, fileName = '') {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', file, fileName);
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InductionPhotoUpload}`, formData);
     }
 
@@ -100,9 +100,9 @@ export class ApiService {
      * @param file image to be upload
      * Note: Please crop image before uploading as per design
      */
-    inductionSignatureUpload(file) {
+    inductionSignatureUpload(file, fileName = '') {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', file, fileName);
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InductionSignatureUpload}`, formData);
     }
 
@@ -169,6 +169,24 @@ export class ApiService {
     }
 
     /**
+     * This API will return all available documents for current checked in locations
+     * @param userId current logged in user id
+     * @param companyID we will get company id at the time of login
+     */
+    getPersonalModeAvailableDocuments(userId, companyID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}`);
+    }
+
+    /**
+     * This API will return all available work permits for current checked in locations
+     * @param userId current logged in user id
+     * @param companyID we will get company id at the time of login
+     */
+    getPersonalModeAvailableWorkPermits(userId, companyID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}`);
+    }
+
+    /**
      * This API will return you the list of current locations which was checked in by current logged in user.
      * @param userId current logged in user id
      */
@@ -207,5 +225,13 @@ export class ApiService {
      */
     insertCheckInDetails(postBody: CheckInPostData) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckInDetails}`, postBody);
+    }
+
+    /**
+     *  This API will use at the time of user check out from the location
+     * @param postBody {userCheckInDetailID, userId, checkOutLatitude, checkOutLongitude}
+     */
+    insertCheckOutDetails(postBody) {
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails}`, postBody);
     }
 }

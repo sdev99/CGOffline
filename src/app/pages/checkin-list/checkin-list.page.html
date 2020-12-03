@@ -1,9 +1,10 @@
-<ion-header mode="ios">
-    <app-modal-header modalTitle="Check In" (closeModal)="onClose()"></app-modal-header>
-    <ion-searchbar (click)="presentModal()" placeholder="Search entities" mode="md" class="search-field"></ion-searchbar>
-</ion-header>
-
 <ion-content>
+    <ion-header mode="ios">
+        <app-modal-header modalTitle="Check In" (closeModal)="onClose()"></app-modal-header>
+        <ion-searchbar (click)="presentModal()" placeholder="Search entities" mode="md"
+                       class="search-field"></ion-searchbar>
+    </ion-header>
+
 
     <ion-list inset="false" lines="none">
         <ion-item *ngFor="let location of locations" (click)="openLocation(location)">

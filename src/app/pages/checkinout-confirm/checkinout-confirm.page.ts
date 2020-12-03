@@ -10,6 +10,8 @@ import {UtilService} from '../../services/util.service';
 import {EnumService} from '../../services/enum.service';
 import {CheckinDetail} from '../../_models/checkinDetail';
 import {LocationItem} from '../../_models/locationItem';
+import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
+import {ObservablesService} from '../../services/observables.service';
 
 @Component({
     selector: 'app-checkinout-confirm',
@@ -24,11 +26,15 @@ export class CheckinoutConfirmPage implements OnInit {
     buttonTitle = 'Check Out Now';
     headerTitle = 'Check Out';
 
+    locationCheckType = EnumService.ConfirmForCheckType.CheckIn;
+
     nextPageData;
     nextPagePath;
 
-    checkInOutForLocation: LocationItem;
+    checkInForLocation: LocationItem;
     checkinDetail: CheckinDetail;
+
+    checkOutForCheckedInDetail: CheckedInDetailItem;
 
     constructor(
         public navCtrl: NavController,
@@ -37,8 +43,9 @@ export class CheckinoutConfirmPage implements OnInit {
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
         public utilService: UtilService,
+        private observablesService: ObservablesService,
     ) {
-        this.checkInOutForLocation = sharedDataService.checkInOutForLocation;
+
 
         this.user = this.accountService.userValue;
         this.activatedRoute.queryParams.subscribe((res) => {
@@ -65,12 +72,21 @@ export class CheckinoutConfirmPage implements OnInit {
                     this.nextPagePath = res.nextPagePath;
                 }
 
+                if (res.locationCheckType) {
+                    this.locationCheckType = res.locationCheckType;
+                }
+
             }
         });
     }
 
     ngOnInit() {
-        this.getCheckinDetails();
+        if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckIn) {
+            this.checkInForLocation = this.sharedDataService.checkInForLocation;
+            this.getCheckinDetails();
+        } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
+            this.checkOutForCheckedInDetail = this.sharedDataService.checkOutForCheckedInDetail;
+        }
     }
 
     onClose() {
@@ -78,9 +94,9 @@ export class CheckinoutConfirmPage implements OnInit {
     }
 
     getCheckinDetails = async () => {
-        if (this.user && this.checkInOutForLocation) {
+        if (this.user && this.checkInForLocation) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getCheckInDetails(this.user.userId, this.checkInOutForLocation.locationID).subscribe((response: Response) => {
+            this.apiService.getCheckInDetails(this.user.userId, this.checkInForLocation.locationID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.checkinDetail = response.Result as CheckinDetail;
@@ -90,19 +106,72 @@ export class CheckinoutConfirmPage implements OnInit {
                 }
             }, (error) => {
                 this.utilService.hideLoadingFor(loading);
+                this.utilService.showAlert(error.message, '', () => {
+                    if (this.checkIfSimultaneousCheckIn(error.message)) {
+                        this.onClose();
+                    }
+                });
+
             });
         }
     };
 
-    onContinue() {
-        if (this.checkinDetail.checkInEntityDetail.processInduction && this.checkinDetail.checkInInductionItems && this.checkinDetail.checkInInductionItems.length > 0) {
-            this.sharedDataService.checkInDetail = this.checkinDetail;
-            this.navCtrl.navigateForward(['checkin-induction']);
-        } else if (this.checkinDetail.checkInEntityDetail.checkInPersonalPhoto) {
-            this.sharedDataService.checkInDetail = this.checkinDetail;
-            this.navCtrl.navigateForward(['signoff-photo']);
+    checkIfSimultaneousCheckIn = (error) => {
+        if (error.indexOf('SimultaneousCheckIn') !== -1) {
+            return true;
+        }
+        return false;
+    };
+
+    async onContinue() {
+        if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
+            const loading = await this.utilService.startLoadingWithOptions();
+            this.apiService.insertCheckOutDetails({
+                userCheckInDetailID: this.checkOutForCheckedInDetail.userCheckInDetailID,
+                userId: this.user.userId,
+                checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
+                checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
+            }).subscribe((response: Response) => {
+                this.utilService.hideLoadingFor(loading);
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, true);
+
+                    this.navCtrl.navigateForward(['/checkin-success'], {
+                        queryParams: {
+                            message: 'You have now checked out',
+                            nextPage: '/tabs/dashboard',
+                            actionBtnTitle: 'Continue'
+                        }
+                    });
+                } else {
+                    this.navCtrl.navigateForward(['/checkin-fail'], {
+                        queryParams: {
+                            title: 'You cannot check out',
+                            errorMessage: response.Message,
+                            nextPage: '/tabs/dashboard'
+                        }
+                    });
+                }
+            }, (error) => {
+                this.utilService.hideLoadingFor(loading);
+                this.navCtrl.navigateForward(['/checkin-fail'], {
+                    queryParams: {
+                        title: 'You cannot check out',
+                        errorMessage: error.message || error,
+                        nextPage: '/tabs/dashboard'
+                    }
+                });
+            });
         } else {
-            this.sharedDataService.submitInductionCheckInData(this.apiService);
+            if (this.checkinDetail.checkInEntityDetail.processInduction && this.checkinDetail.checkInInductionItems && this.checkinDetail.checkInInductionItems.length > 0) {
+                this.sharedDataService.checkInDetail = this.checkinDetail;
+                this.navCtrl.navigateForward(['checkin-induction']);
+            } else if (this.checkinDetail.checkInEntityDetail.checkInPersonalPhoto) {
+                this.sharedDataService.checkInDetail = this.checkinDetail;
+                this.navCtrl.navigateForward(['signoff-photo']);
+            } else {
+                this.sharedDataService.submitInductionCheckInData(this.apiService);
+            }
         }
     }
 

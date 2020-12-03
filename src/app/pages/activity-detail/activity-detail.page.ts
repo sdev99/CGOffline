@@ -14,6 +14,7 @@ import {AccountService} from '../../services/account.service';
 import {ObservablesService} from '../../services/observables.service';
 import {ActivitySignOffDocumentDetail} from '../../_models/activitySignOffDocumentDetail';
 import {SignOffDetailsPostData} from '../../_models/signOffDetailsPostData';
+import {ActivitySignOffFormDetail} from '../../_models/activitySignOffFormDetail';
 
 @Component({
     selector: 'app-activity-detail',
@@ -105,12 +106,13 @@ export class ActivityDetailPage implements OnInit {
     async openForm() {
         if (this.activityListItem) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getActivitySignOffFormDetail(this.activityListItem.formID).subscribe((response) => {
+            this.apiService.getActivitySignOffFormDetail(this.activityListItem.formID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
-                // if (this.activityListItem.formID) {
-                //     this.sharedDataService.currentActivityOpen = this.activityListItem;
-                //     this.navCtrl.navigateForward(['/form-cover']);
-                // }
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.sharedDataService.viewFormFor = EnumService.ViewFormForType.Activity;
+                    this.sharedDataService.activitySignOffFormDetail = response.Result as ActivitySignOffFormDetail;
+                    this.navCtrl.navigateForward(['/form-cover']);
+                }
             }, (error) => {
                 this.utilService.hideLoadingFor(loading);
             });
@@ -129,6 +131,7 @@ export class ActivityDetailPage implements OnInit {
                     const activitySignOffDocumentDetail = response.Result as ActivitySignOffDocumentDetail;
                     this.sharedDataService.signOffFor = EnumService.SignOffType.DOCUMENT_ACTIVITY;
                     this.sharedDataService.activitySignOffDocumentDetail = activitySignOffDocumentDetail;
+
                     this.sharedDataService.signOffDetailsPostData = {
                         userId: this.user.userId,
                         activityIndividualID: this.activityListItem.activityIndividualID,
@@ -140,12 +143,12 @@ export class ActivityDetailPage implements OnInit {
 
                     if (activitySignOffDocumentDetail.isDigitalSignOff) {
                         this.navCtrl.navigateForward(['/signoff-digitalink']);
+                    } else if (activitySignOffDocumentDetail.isPhotoSignOff) {
+                        this.navCtrl.navigateForward(['/signoff-photo']);
+                    } else {
+                        this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
                     }
                 }
-                // if (this.activityListItem.formID) {
-                //     this.sharedDataService.currentActivityOpen = this.activityListItem;
-                //     this.navCtrl.navigateForward(['/form-cover']);
-                // }
             }, (error) => {
                 this.utilService.hideLoadingFor(loading);
             });

@@ -60,19 +60,25 @@ export class SignoffPhotoPage implements OnInit {
         this.navCtrl.back();
     }
 
-    continue() {
-        fetch(this.capturedPhoto)
-            .then(res => res.blob())
-            .then(blob => {
-                const file = new File([blob], 'user' + this.utilService.getCurrentTimeStamp() + '.jpeg', {type: 'image/jpeg'});
 
+    continue() {
+        const fileName = 'user' + this.utilService.getCurrentTimeStamp() + '.jpeg';
+        const mimeType = 'image/jpeg';
+        this.utilService.dataUriToFile(this.capturedPhoto.dataUrl, fileName, mimeType)
+            .then((file) => {
                 switch (this.type) {
                     case EnumService.SignOffType.INDUCTION:
-                        this.uploadInductionPhoto(file);
+                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+                            this.sharedDataService.submitInductionCheckInData(this.apiService);
+                        });
                         break;
 
                     case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-                        this.uploadSignoffPhoto(file);
+                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                            this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = photoName;
+                            this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                        });
                         break;
 
                     case EnumService.SignOffType.HAV:
@@ -81,7 +87,10 @@ export class SignoffPhotoPage implements OnInit {
                     case EnumService.SignOffType.RISK_ASSESSMENT:
                     case EnumService.SignOffType.DOCUMENT_DM:
                     case EnumService.SignOffType.FORMS_DM:
-                        this.uploadSignoffPhoto(file);
+                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+                            this.sharedDataService.submitInductionCheckInData(this.apiService);
+                        });
                         break;
 
                     case EnumService.SignOffType.WORK_PERMIT:
@@ -93,7 +102,10 @@ export class SignoffPhotoPage implements OnInit {
                         break;
 
                     default:
-                        this.uploadCheckinPhoto(file);
+                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+                            this.sharedDataService.submitInductionCheckInData(this.apiService);
+                        });
                 }
             });
     }
@@ -135,59 +147,15 @@ export class SignoffPhotoPage implements OnInit {
     };
 
     /**
-     * Upload photo for induction signoff
+     * Upload photo for  signoff
      */
-    uploadInductionPhoto = async (file) => {
+    uploadInductionPhoto = async (file, fileName = '', callBack = null) => {
         const loading = await this.utilService.startLoadingWithOptions();
 
-        this.apiService.inductionPhotoUpload(file).subscribe((res: Response) => {
+        this.apiService.inductionPhotoUpload(file, fileName).subscribe((res: Response) => {
             this.utilService.hideLoadingFor(loading);
-
             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                this.sharedDataService.checkInPostData.userSignaturePhoto = res.Result;
-                this.sharedDataService.submitInductionCheckInData(this.apiService);
-            } else {
-                this.errorMessage = res.Message;
-            }
-        }, (error) => {
-            this.utilService.hideLoadingFor(loading);
-            this.errorMessage = error.message ? error.message : error;
-        });
-    };
-
-    /**
-     * Upload photo for signoff
-     */
-    uploadSignoffPhoto = async (file) => {
-        const loading = await this.utilService.startLoadingWithOptions();
-
-        this.apiService.inductionPhotoUpload(file).subscribe((res: Response) => {
-            this.utilService.hideLoadingFor(loading);
-
-            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = res.Result;
-                this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
-            } else {
-                this.errorMessage = res.Message;
-            }
-        }, (error) => {
-            this.utilService.hideLoadingFor(loading);
-            this.errorMessage = error.message ? error.message : error;
-        });
-    };
-
-    /**
-     * Upload photo for checkin
-     */
-    uploadCheckinPhoto = async (file) => {
-        const loading = await this.utilService.startLoadingWithOptions();
-
-        this.apiService.checkInPhotoUpload(file).subscribe((res: Response) => {
-            this.utilService.hideLoadingFor(loading);
-
-            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                this.sharedDataService.checkInPostData.userPhoto = res.Result;
-                this.sharedDataService.submitInductionCheckInData(this.apiService);
+                UtilService.fireCallBack(callBack, res.Result);
             } else {
                 this.errorMessage = res.Message;
             }

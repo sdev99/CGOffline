@@ -17,7 +17,7 @@ export class CheckinInductionPage implements OnInit {
     inductionFiles = DemoDataService.inductionFiles.clone();
     locationDetail;
     checkinDetail: CheckinDetail;
-    checkInOutForLocation: LocationItem;
+    checkInForLocation: LocationItem;
 
 
     constructor(
@@ -26,7 +26,7 @@ export class CheckinInductionPage implements OnInit {
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
     ) {
-        this.checkInOutForLocation = this.sharedDataService.checkInOutForLocation;
+        this.checkInForLocation = this.sharedDataService.checkInForLocation;
         this.checkinDetail = this.sharedDataService.checkInDetail;
 
         route.queryParams.subscribe((params: any) => {

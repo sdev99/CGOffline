@@ -27,44 +27,6 @@ ion-header {
         color: #2A6FDB;
       }
 
-      .detail {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin-top: 4px;
-
-        ion-icon {
-          width: 16px;
-          height: 16px;
-          margin-right: 3px;
-        }
-
-        ion-badge {
-          margin: 4px 0;
-          font-family: IBM Plex Sans;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 10px;
-          margin-right: 9px;
-
-          &.overdue {
-            color: #FFFFFF;
-          }
-
-          &.rejected {
-            color: #E74731;
-          }
-        }
-
-        .time {
-          font-family: IBM Plex Sans;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 10px;
-          line-height: 13px;
-          color: #171538;
-        }
-      }
 
       .form-text-row {
         width: 100%;
@@ -148,7 +110,7 @@ ion-content {
       --padding-top: 0;
       --padding-bottom: 0;
 
-      ion-icon {
+      ion-img {
         width: 17.31px;
         height: 20px;
         margin-right: 12px;

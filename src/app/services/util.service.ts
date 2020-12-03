@@ -34,7 +34,8 @@ export class UtilService {
                 routeName = 'checkin-induction-rich-text';
                 break;
             case EnumService.InductionContentTypes.FORM:
-                routeName = 'checkin-induction-form';
+                // routeName = 'checkin-induction-form';
+                routeName = 'form-cover';
                 break;
             case EnumService.InductionContentTypes.VISITOR_AGREEMENT:
                 routeName = 'checkin-induction-va';
@@ -123,6 +124,18 @@ export class UtilService {
         loading = null;
     }
 
+    dataUriToFile(url, filename, mimeType) {
+        return new Promise((resolve, reject) => {
+            const byteString = window.atob(url.replace(/^data:image\/(png|jpeg|jpg);base64,/, ''));
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const int8Array = new Uint8Array(arrayBuffer);
+            for (let i = 0; i < byteString.length; i++) {
+                int8Array[i] = byteString.charCodeAt(i);
+            }
+            const imageBlob = new Blob([int8Array], {type: mimeType});
+            resolve(imageBlob);
+        });
+    }
 
     presentLoadingWithOptions(message = '') {
         console.log('Show loading');

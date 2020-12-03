@@ -48,9 +48,7 @@ export class DashboardHeaderComponent implements OnInit {
         if (this.checkedIn && this.checkedPlaces) {
             if (!sharedDataService.currentSelectedCheckinPlace) {
                 const place = this.checkedPlaces[0];
-                sharedDataService.currentSelectedCheckinPlace = place;
-                localStorage.setItem(EnumService.LocalStorageKeys.CURRENT_SELECTED_CHECKIN_PLACE, JSON.stringify(place));
-                this.selectedPlace = place;
+                this.placedChange(place);
             } else {
                 this.selectedPlace = sharedDataService.currentSelectedCheckinPlace;
             }
@@ -74,8 +72,29 @@ export class DashboardHeaderComponent implements OnInit {
                 this.checkedPlaces = checkedInPlaces;
                 localStorage.setItem(EnumService.LocalStorageKeys.CHECKED_IN_PLACES, JSON.stringify(checkedInPlaces));
 
+                // Check if selected checkedInPlaces is currently checked or not
+                // if not then select first place from list
                 if (checkedInPlaces && checkedInPlaces.length > 0) {
+                    if (this.selectedPlace) {
+                        let found = false;
+                        checkedInPlaces.map((item: CheckedInDetailItem) => {
+                            if (this.selectedPlace.userCheckInDetailID === item.userCheckInDetailID) {
+                                found = true;
+                                return;
+                            }
+                        });
+                        if (!found) {
+                            const place = checkedInPlaces && checkedInPlaces.length > 0 ? checkedInPlaces[0] : null;
+                            this.placedChange(place);
+                        }
+                    } else {
+                        const place = this.checkedPlaces[0];
+                        this.placedChange(place);
+                    }
                     this.checkedIn = true;
+                } else {
+                    this.checkedIn = false;
+                    this.placedChange(null);
                 }
             }
         });
@@ -91,13 +110,36 @@ export class DashboardHeaderComponent implements OnInit {
 
     placedChange(place) {
         this.selectedPlace = place;
+        this.sharedDataService.currentSelectedCheckinPlace = place;
         this.showCheckedInPlacesList = false;
+        if (place) {
+            localStorage.setItem(EnumService.LocalStorageKeys.CURRENT_SELECTED_CHECKIN_PLACE, JSON.stringify(place));
+        } else {
+            localStorage.removeItem(EnumService.LocalStorageKeys.CURRENT_SELECTED_CHECKIN_PLACE);
+        }
     }
 
     viewCheckinPlace(place) {
         this.navCtrl.navigateBack(['/tabs/current-checkin'], {
             queryParams: {
                 place: JSON.stringify(place)
+            }
+        });
+    }
+
+    checkoutPlace(place: CheckedInDetailItem, event) {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        this.showCheckedInPlacesList = false;
+
+        this.sharedDataService.checkOutForCheckedInDetail = place;
+        this.navCtrl.navigateForward(['/checkinout-confirm'], {
+            queryParams: {
+                headerTitle: 'Check Out',
+                title: 'You are checking out',
+                subtitle: place.entityName,
+                buttonTitle: 'Check Out Now',
+                locationCheckType: EnumService.ConfirmForCheckType.CheckOut
             }
         });
     }

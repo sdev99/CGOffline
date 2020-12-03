@@ -16,11 +16,13 @@ import {ApiService} from './api.service';
 import {Response} from '../_models';
 import {ObservablesService} from './observables.service';
 import {CheckedInDetailItem} from '../_models/checkedInDetailItem';
+import {ActivitySignOffFormDetail} from '../_models/activitySignOffFormDetail';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SharedDataService {
+    apiServiceRerence: ApiService;
 
     myCurrentGeoLocation: GeolocationPosition;
 
@@ -39,7 +41,7 @@ export class SharedDataService {
 
     // Data from Api
     checkedInPlaces: Array<CheckedInDetailItem> = [];
-    currentSelectedCheckinPlace;
+    currentSelectedCheckinPlace: CheckedInDetailItem;
 
     userProfile: Profile;
     timeZoneList;
@@ -51,6 +53,7 @@ export class SharedDataService {
     checkInDetail: CheckinDetail;
     currentActivityOpen: ActivityListItem;
     activitySignOffDocumentDetail: ActivitySignOffDocumentDetail; // For document activity signoff
+    activitySignOffFormDetail: ActivitySignOffFormDetail; // For form activity signoff
     viewFormDetail;
 
     dedicatedModeLocationUse;
@@ -58,8 +61,11 @@ export class SharedDataService {
     checkinoutDmAs = '';
     signOffFor = '';
 
+    viewFormFor; // View form for induction process or activity detail
+
     // Store location data for checkinout
-    checkInOutForLocation: LocationItem;
+    checkInForLocation: LocationItem;
+    checkOutForCheckedInDetail: CheckedInDetailItem;
 
     // Store  all screen checkin details for whole process and use this data on end of checkin data send to server
     checkInPostData: CheckInPostData;
@@ -126,7 +132,7 @@ export class SharedDataService {
         this.dedicatedModeLocationUse = null;
         this.checkinoutDmAs = '';
         this.signOffFor = '';
-        this.checkInOutForLocation = null;
+        this.checkInForLocation = null;
         this.checkInPostData = null;
         this.signOffDetailsPostData = null;
     }
@@ -159,12 +165,12 @@ export class SharedDataService {
             }
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
-
+            const exception = error.error as Response;
             this.navCtrl.navigateForward(['/checkin-fail'], {
                 queryParams: {
                     title: 'You cannot check-in',
-                    errorTitle: 'NOT QUALIFIED',
-                    errorMessage: error.message || error,
+                    errorTitle: exception ? exception.ResponseException?.ValidationErrors[0].Field : '',
+                    errorMessage: exception ? exception.ResponseException?.ValidationErrors[0].Message : error.message,
                     nextPage: '/tabs/dashboard'
                 }
             });
@@ -254,11 +260,26 @@ export class SharedDataService {
 
             if (inductionItems && inductionContentItemIndex < inductionItems.length - 1) {
                 const inductionContentItem = inductionItems[inductionContentItemIndex + 1];
-                this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType), {
-                    queryParams: {
-                        inductionContentItemIndex: inductionContentItemIndex + 1
-                    }
-                });
+                if (inductionContentItem.contentType === EnumService.InductionContentTypes.FORM) {
+                    this.apiServiceRerence.getActivitySignOffFormDetail(inductionContentItem.formID).subscribe((response: Response) => {
+                        if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                            this.viewFormFor = EnumService.ViewFormForType.Induction;
+                            this.activitySignOffFormDetail = response.Result as ActivitySignOffFormDetail;
+                            this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType), {
+                                queryParams: {
+                                    inductionContentItemIndex: inductionContentItemIndex + 1
+                                }
+                            });
+                        }
+                    });
+
+                } else {
+                    this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType), {
+                        queryParams: {
+                            inductionContentItemIndex: inductionContentItemIndex + 1
+                        }
+                    });
+                }
             } else if (this.checkInDetail.checkInInduction.isDigitalSignOff || this.checkInDetail.checkInInduction.isSignatureSignOff) {
                 this.signOffFor = EnumService.SignOffType.INDUCTION;
                 this.navCtrl.navigateForward(['/signoff-digitalink']);
