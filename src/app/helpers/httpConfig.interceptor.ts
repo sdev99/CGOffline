@@ -87,7 +87,7 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 
                     return throwError({
                         error,
-                        message: error.ResponseException.ExceptionMessage
+                        message: error?.ResponseException?.ExceptionMessage
                     });
                 }
                 return throwError({

@@ -1,23 +1,42 @@
 import {Injectable} from '@angular/core';
+import {EnumService} from './enum.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class StaticDataService {
+
+    static riskRatings = [
+        {title: '1 Low', class: 'risk-rating-low', value: 1},
+        {title: '2 Low', class: 'risk-rating-low', value: 2},
+        {title: '3 Low', class: 'risk-rating-low', value: 3},
+        {title: '4 Moderate', class: 'risk-rating-moderate', value: 4},
+        {title: '5 Moderate', class: 'risk-rating-moderate', value: 5},
+        {title: '6 Moderate', class: 'risk-rating-moderate', value: 6},
+        {title: '8 High', class: 'risk-rating-high', value: 8},
+        {title: '9 High', class: 'risk-rating-high', value: 9},
+        {title: '10 High', class: 'risk-rating-high', value: 10},
+        {title: '12 High', class: 'risk-rating-high', value: 12},
+        {title: '15 Extreme', class: 'risk-rating-extreme', value: 15},
+        {title: '16 Extreme', class: 'risk-rating-extreme', value: 16},
+        {title: '20 Extreme', class: 'risk-rating-extreme', value: 20},
+        {title: '25 Extreme', class: 'risk-rating-extreme', value: 25},
+    ];
+
     static types = [
-        {name: 'Struck by'},
-        {name: 'Falls From Height'},
-        {name: 'Cuts, Bruises and Bumps'},
-        {name: 'Vehicle Movements'},
-        {name: 'Confined Space Entry'},
-        {name: 'Medical Incident'},
-        {name: 'Strains and Pains'},
-        {name: 'Lifting Pulling and Pushing'},
-        {name: 'Injury From Tools'},
-        {name: 'Dropped Objects'},
-        {name: 'Caught in Between'},
-        {name: 'Acts of Violence'},
-        {name: 'Contacts With Moving Parts'}
+        {name: 'Struck by', id: 'StruckBy'},
+        {name: 'Falls From Height', id: 'FallsFromHeight'},
+        {name: 'Cuts, Bruises and Bumps', id: 'CutsBruisesAndBumps'},
+        {name: 'Vehicle Movements', id: 'VehicleMovements'},
+        {name: 'Confined Space Entry', id: 'ConfinedSpaceEntry'},
+        {name: 'Medical Incident', id: 'MdeicalIncident'},
+        {name: 'Strains and Pains', id: 'StrainsAndPains'},
+        {name: 'Lifting Pulling and Pushing', id: 'LiftingPullingAndPushing'},
+        {name: 'Injury From Tools', id: 'InjuryFromTools'},
+        {name: 'Dropped Objects', id: 'DroppedObjects'},
+        {name: 'Caught in Between', id: 'CaughtInBetween'},
+        {name: 'Acts of Violence', id: 'ActsofViolence'},
+        {name: 'Contacts With Moving Parts', id: 'ContactsWithMovingParts'}
     ];
 
     static classifications = [
@@ -41,18 +60,16 @@ export class StaticDataService {
             parts: [
                 {
                     name: 'Head Soft Tissue',
-                    id: 'HeadSoftTissue',
+                    id: EnumService.AccidentBodyPartsIds.HeadSoftTissue,
                     path: {
-                        d: 'M92.9984 3C103.499 4.5 108.999 19.5 105.998 19.5L72.0002 19.5C68.5 19.4999 72.9988 6 84.9547 3H92.9984Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1'
                     }
                 },
                 {
                     name: 'Face',
-                    id: 'HeadFace',
+                    id: EnumService.AccidentBodyPartsIds.HeadFace,
                     path: {
-                        d: 'M94.3706 21.1489H89.1791L83.9877 21.1481C82.6033 20.3536 79.2116 19.2412 76.7197 21.1481C73.6048 23.5317 63.2219 43.7924 89.1791 59.2859C115.136 43.7924 104.753 23.5325 101.639 21.1489C99.1467 19.242 95.7549 20.3543 94.3706 21.1489Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1'
                     }
@@ -64,35 +81,31 @@ export class StaticDataService {
             parts: [
                 {
                     name: 'Abdomen',
-                    id: 'TorsoAbdomen',
+                    id: EnumService.AccidentBodyPartsIds.TorsoAbdomen,
                     path: {
-                        d: 'M117.831 194.939C117.831 194.939 115.018 219.118 110.018 225.162C104.305 232.069 97.9851 233.162 91.2671 233.162C84.501 233.162 78.715 231.117 72.9984 224.206C67.9982 218.162 65.1855 193.983 65.1855 193.983C65.1855 193.983 65.1852 176.805 85.0171 176.801C93.5 176.801 93.5 176.805 97.5174 176.805C117.831 176.801 117.831 194.939 117.831 194.939Z',
                         fill: '#A1A8CA'
                     }
                 },
                 {
                     name: 'Chest',
-                    id: 'TorsoChest',
+                    id: EnumService.AccidentBodyPartsIds.TorsoChest,
                     path: {
-                        d: 'M60 101.031C60 90.5756 65.3857 89.0509 68.0785 89.5955H88.2748H92.7252H112.921C115.614 89.0509 121 90.5756 121 101.031C121 114.1 120.102 127.986 116.512 133.704C112.921 139.421 111.575 144.322 104.843 145.139C99.4573 145.793 94.5205 145.411 92.7252 145.139H88.2748C86.4795 145.411 81.5427 145.793 76.157 145.139C69.4249 144.322 68.0785 139.421 64.4881 133.704C60.8976 127.986 60 114.1 60 101.031Z',
                         fill: '#A0A8C9',
                         stroke: '#CACEE1'
                     }
                 },
                 {
                     name: 'Neck',
-                    id: 'TorsoNeck',
+                    id: EnumService.AccidentBodyPartsIds.TorsoNeck,
                     path: {
-                        d: 'M98.2643 75.4318H82.2648C74.2651 73.8138 76.9316 68.1785 79.5982 63.3336C81.7315 59.4576 86.1166 60.9029 87.598 62.5179H93.82C94.7089 60.1111 98.6397 60.4505 100.042 61.7238C100.931 62.531 102.175 64.2936 103.597 68.1677C105.02 72.0419 100.635 74.6247 98.2643 75.4318Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1'
                     }
                 },
                 {
                     name: 'Ribs',
-                    id: 'TorsoRibs',
+                    id: EnumService.AccidentBodyPartsIds.TorsoRibs,
                     path: {
-                        d: 'M106.334 89.407C106.334 93.0951 100.011 94.0172 97.2013 92.9107C95.6342 92.4405 92 91.5 90 91.5C88 91.5 84.3658 92.4405 82.7987 92.9107C79.9885 94.0172 73.6657 93.0951 73.6657 89.407C73.6657 85.7188 77.354 83.8748 79.4616 83.6904C81.1477 83.5428 81.5693 82.1536 81.5693 81.4775C80.2227 80.7399 77.1433 79.7072 75.5977 81.4775C73.6657 83.6904 68.7479 87.5629 69.6261 89.407C70.5043 91.2511 71.5587 94.5704 77.1787 95.8613C82.7987 97.1521 84.9066 96.7833 84.9066 100.656C84.9066 104.528 83.3256 104.528 79.4616 104.528C75.5977 104.528 67.8701 103.606 66.465 100.656C65.0599 97.7053 63.6548 96.4145 65.0599 92.9107C66.465 89.407 62.9521 90.1446 62.9521 91.2511C62.9521 92.3575 60.4932 98.0741 64.3571 101.947C68.2211 105.819 76.6516 107.295 79.9887 106.926C83.3257 106.557 85.7846 105.819 85.7846 108.401C85.7846 110.983 86.1357 111.351 82.7987 111.905C79.4616 112.458 74.7196 113.749 70.1531 112.827C65.5866 111.905 60.4932 108.585 59.7907 107.295C59.0882 106.004 56.9805 105.819 58.3856 108.401C59.7907 110.983 63.8302 115.04 70.1531 115.408C76.476 115.777 78.408 116.146 83.3258 115.04C87.26 114.154 86.6043 117.007 85.7846 118.543C84.6723 119.404 81.4992 121.273 77.7055 121.863C72.9633 122.6 67.5185 123.154 64.3571 121.863C61.8281 120.83 58.9711 118.851 57.8588 117.99C57.0391 116.761 55.5053 115.335 55.9268 119.465C56.4538 121.309 62.601 123.891 63.8305 124.444C65.0599 124.998 69.9777 127.21 82.4477 124.076C86.663 121.125 87.6582 125.735 84.0284 128.133C81.0426 129.915 74.3685 133.517 71.5584 133.665C68.0457 133.849 61.5472 134.034 56.6294 127.395C54.5214 125.551 54.5214 129.239 56.2781 131.083C57.3319 132.62 60.1415 134.956 64.3571 136.062C70.504 137.168 75.5977 134.956 75.5977 134.956C77.0027 134.218 79.6721 133.37 79.1101 135.878C78.5481 138.386 75.9487 140.242 74.7192 140.857C73.0802 142.209 68.6078 144.508 63.8305 142.885C59.0531 141.262 57.0392 138.521 56.6294 137.353C55.5756 137.168 53.9597 137.464 55.9268 140.119C58.3856 143.438 62.601 147.864 71.5584 144.914C74.7192 144.36 73.6073 148.11 70.1531 151.183C69.1579 151.921 66.1137 153.175 61.8985 152.29C59.7907 150.446 55.4 148.602 56.2781 148.602C55.6927 148.602 55.0488 149.339 57.1563 152.29C59.2638 155.24 64.8256 155.978 67.3431 155.978C67.8115 156.285 68.4672 157.232 67.3431 158.56C65.9381 160.219 65.5868 162.617 63.3035 161.879C61.4769 161.289 59.2638 158.806 58.3856 157.638C57.5075 156.654 55.7161 155.351 55.5756 158.006C57.1563 160.035 58.3271 161.695 59.7907 161.879C60.9616 162.555 63.3035 164.203 63.3035 165.383C63.3035 166.858 64.0062 168.702 61.8985 168.149C60.2122 167.706 58.854 166.12 58.3856 165.383C57.8002 165.875 57.0509 167.153 58.737 168.333C60.4231 169.513 61.7814 170.546 62.2497 170.915C62.8937 171.714 64.4979 172.316 65.7624 168.333C67.3431 163.354 80.6914 134.587 90 134.956C99.3086 134.587 112.657 163.354 114.238 168.333C115.502 172.316 117.106 171.714 117.75 170.915C118.219 170.546 119.577 169.513 121.263 168.333C122.949 167.153 122.2 165.875 121.614 165.383C121.146 166.12 119.788 167.706 118.102 168.149C115.994 168.702 116.696 166.858 116.696 165.383C116.696 164.203 119.038 162.555 120.209 161.879C121.673 161.695 122.844 160.035 124.424 158.006C124.284 155.351 122.493 156.654 121.614 157.638C120.736 158.806 118.523 161.289 116.696 161.879C114.413 162.617 114.062 160.219 112.657 158.56C111.533 157.232 112.189 156.285 112.657 155.978C115.174 155.978 120.736 155.24 122.844 152.29C124.951 149.339 124.307 148.602 123.722 148.602C124.6 148.602 120.209 150.446 118.102 152.29C113.886 153.175 110.842 151.921 109.847 151.183C106.393 148.11 105.281 144.36 108.442 144.914C117.399 147.864 121.614 143.438 124.073 140.119C126.04 137.464 124.424 137.168 123.371 137.353C122.961 138.521 120.947 141.262 116.17 142.885C111.392 144.508 106.92 142.209 105.281 140.857C104.051 140.242 101.452 138.386 100.89 135.878C100.328 133.37 102.997 134.218 104.402 134.956C104.402 134.956 109.496 137.168 115.643 136.062C119.859 134.956 122.668 132.62 123.722 131.083C125.479 129.239 125.479 125.551 123.371 127.395C118.453 134.034 111.954 133.849 108.442 133.665C105.631 133.517 98.9574 129.915 95.9716 128.133C92.3418 125.735 93.337 121.125 97.5523 124.076C110.022 127.21 114.94 124.998 116.17 124.444C117.399 123.891 123.546 121.309 124.073 119.465C124.495 115.335 122.961 116.761 122.141 117.99C121.029 118.851 118.172 120.83 115.643 121.863C112.482 123.154 107.037 122.6 102.295 121.863C98.5008 121.273 95.3277 119.404 94.2154 118.543C93.3957 117.007 92.74 114.154 96.6742 115.04C101.592 116.146 103.524 115.777 109.847 115.408C116.17 115.04 120.209 110.983 121.614 108.401C123.019 105.819 120.912 106.004 120.209 107.295C119.507 108.585 114.413 111.905 109.847 112.827C105.28 113.749 100.538 112.458 97.2013 111.905C93.8642 111.351 94.2154 110.983 94.2154 108.401C94.2154 105.819 96.6743 106.557 100.011 106.926C103.348 107.295 111.779 105.819 115.643 101.947C119.507 98.0741 117.048 92.3575 117.048 91.2511C117.048 90.1446 113.535 89.407 114.94 92.9107C116.345 96.4145 114.94 97.7053 113.535 100.656C112.13 103.606 104.402 104.528 100.538 104.528C96.6744 104.528 95.0934 104.528 95.0934 100.656C95.0934 96.7833 97.2013 97.1521 102.821 95.8613C108.441 94.5704 109.496 91.2511 110.374 89.407C111.252 87.5629 106.334 83.6904 104.402 81.4775C102.857 79.7072 99.7773 80.7399 98.4307 81.4775C98.4307 82.1536 98.8523 83.5428 100.538 83.6904C102.646 83.8748 106.334 85.7188 106.334 89.407Z',
                         fill: '#B6BEDF',
                         stroke: '#CACEE1'
                     }
@@ -104,25 +117,22 @@ export class StaticDataService {
             parts: [
                 {
                     name: 'Upper Back',
-                    id: 'BackUpperBack',
+                    id: EnumService.AccidentBodyPartsIds.BackUpperBack,
                     path: {
-                        d: 'M51.0702 115.53C51.0702 124.499 56.3659 127.925 60.1066 127.458H90.1381H122.399C126.14 127.925 131.993 124.499 131.993 115.53C131.993 104.319 132.375 94.5245 127.387 89.6195C122.399 84.7145 120.529 80.5102 111.177 79.8095C103.696 79.2489 96.838 79.5759 94.3442 79.8095H88.1619C85.6681 79.576 78.8101 79.249 71.3287 79.8095C61.9769 80.5102 60.1066 84.7145 55.119 89.6195C50.1314 94.5245 51.0702 104.319 51.0702 115.53Z',
                         fill: '#8B93B8'
                     }
                 },
                 {
                     name: 'Lower Back',
-                    id: 'BackLowerBack',
+                    id: EnumService.AccidentBodyPartsIds.BackLowerBack,
                     path: {
-                        d: 'M58 165.07C58 157.495 63.7897 154.601 66.631 154.996C68.327 154.996 83.6185 151.5 90.0149 151.5L113.946 154.996C116.787 154.601 123 157.495 123 165.07C123 174.539 121.522 182.811 117.734 186.953C113.946 191.096 112.525 194.647 105.422 195.239C99.7393 195.712 94.5303 195.436 92.6362 195.239H87.9404C86.0462 195.436 80.8372 195.712 75.1547 195.239C68.0516 194.647 66.631 191.096 62.8426 186.953C59.0543 182.811 58 174.539 58 165.07Z',
                         fill: '#8B93B8'
                     }
                 },
                 {
                     name: 'Buttocks',
-                    id: 'BackButtocks',
+                    id: EnumService.AccidentBodyPartsIds.BackButtocks,
                     path: {
-                        d: 'M66.1279 248.996C75.928 251.017 83.575 246.471 86.1736 243.945C88.7721 241.419 91.2279 241.419 93.8264 243.945C96.425 246.471 104.072 251.017 113.872 248.996C126.122 246.471 131.691 243.945 131.691 239.398C131.691 234.852 134.475 222.844 123.338 218.181C116.099 215.151 110.532 216.666 102.179 219.192C93.8264 221.717 86.1736 221.717 77.8208 219.192C69.468 216.666 63.9006 215.151 56.6618 218.181C45.5248 222.844 48.3095 234.852 48.3095 239.398C48.3095 243.945 53.8777 246.471 66.1279 248.996Z',
                         fill: '#8B93B8'
                     }
                 },
@@ -133,27 +143,24 @@ export class StaticDataService {
             parts: [
                 {
                     name: 'Shoulder - Right',
-                    id: 'ArmsShoulderRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsShoulderRight,
                     path: {
-                        d: 'M38.7166 108.767L57.1457 89.9797C47.8239 77.517 34.9561 90.8114 31.9864 100.568C29.0168 110.325 35.2358 110.099 38.7166 108.767Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1',
                     }
                 },
                 {
                     name: 'Shoulder - Left',
-                    id: 'ArmsShoulderLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsShoulderLeft,
                     path: {
-                        d: 'M140.61 109.203L122.181 90.4156C131.502 77.9529 144.37 91.2472 147.34 101.004C150.309 110.761 144.09 110.535 140.61 109.203Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1',
                     }
                 },
                 {
                     name: 'Elbow - Right',
-                    id: 'ArmsElbowRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsElbowRight,
                     path: {
-                        d: 'M28 165.327L29.1875 155.779C37.5 146.217 44.625 151.798 47 155.779V162.945L38.6875 172.5H32.75C30.85 172.5 28.3958 168.114 28 165.327Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1',
                         strokeWidth: 2.44942
@@ -161,9 +168,8 @@ export class StaticDataService {
                 },
                 {
                     name: 'Elbow - Left',
-                    id: 'ArmsElbowLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsElbowLeft,
                     path: {
-                        d: 'M150 165.327L148.812 155.779C140.5 146.217 133.375 151.798 131 155.779V162.945L139.312 172.5H145.25C147.15 172.5 149.604 168.114 150 165.327Z',
                         fill: '#A1A8CA',
                         stroke: '#CACEE1',
                         strokeWidth: 2.44942
@@ -171,65 +177,57 @@ export class StaticDataService {
                 },
                 {
                     name: 'Lower Arm - Right',
-                    id: 'ArmsLowerRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsLowerRight,
                     path: {
-                        d: 'M21.9831 218C21.5831 200.8 27.8164 181.833 30.9831 174.5C37.4831 174.5 42.4831 174.5 41.9831 180C41.5831 184.4 34.4831 207.167 30.9831 218C28.1498 225.167 22.3831 235.2 21.9831 218Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Lower Arm - Left',
-                    id: 'ArmsLowerLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsLowerLeft,
                     path: {
-                        d: 'M158.999 218C159.399 200.8 153.166 181.833 149.999 174.5C143.499 174.5 138.499 174.5 138.999 180C139.399 184.4 146.499 207.167 149.999 218C152.833 225.167 158.599 235.2 158.999 218Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Wrist - Right',
-                    id: 'ArmsWristRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsWristRight,
                     path: {
-                        d: 'M18.5 230.5C20.5 228.9 24 231.167 25.5 232.5C25.5 239.3 22.5 241.333 21 241.5L16 238.5C16 236.5 16.5 232.1 18.5 230.5Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Wrist - Left',
-                    id: 'ArmsWristLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsWristLeft,
                     path: {
-                        d: 'M160 230.5C158 228.9 154.5 231.167 153 232.5C153 239.3 156 241.333 157.5 241.5L162.5 238.5C162.5 236.5 162 232.1 160 230.5Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Hand - Right',
-                    id: 'ArmsHandRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsHandRight,
                     path: {
-                        d: 'M13.7368 244.119C17.5263 242.319 24.1579 244.87 27 246.37C27 254.024 21.3158 256.312 18.4737 256.5L9 253.123C9 250.872 9.94737 245.92 13.7368 244.119Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Hand - Left',
-                    id: 'ArmsHandLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsHandLeft,
                     path: {
-                        d: 'M165.263 244.119C161.474 242.319 154.842 244.87 152 246.37C152 254.024 157.684 256.312 160.526 256.5L170 253.123C170 250.872 169.053 245.92 165.263 244.119Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Finger - Right',
-                    id: 'ArmsFingerRight',
+                    id: EnumService.AccidentBodyPartsIds.ArmsFingerRight,
                     path: {
-                        d: 'M21.6036 259.047C18.9082 256.211 10.0216 257.707 8 260.071C8 272.126 8 278.5 14.865 278.5C14.865 278.5 20.8034 275.94 21.6036 273.182C22.4039 270.423 24.2991 261.884 21.6036 259.047Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Finger - Left',
-                    id: 'ArmsFingerLeft',
+                    id: EnumService.AccidentBodyPartsIds.ArmsFingerLeft,
                     path: {
-                        d: 'M156.396 259.047C159.092 256.211 167.978 257.707 170 260.071C170 272.126 170 278.5 163.135 278.5C163.135 278.5 157.197 275.94 156.396 273.182C155.596 270.423 153.701 261.884 156.396 259.047Z',
                         fill: '#A0A8C9'
                     }
                 },
@@ -240,85 +238,170 @@ export class StaticDataService {
             parts: [
                 {
                     name: 'Ankle - Right',
-                    id: 'LegsAnkleRight',
+                    id: EnumService.AccidentBodyPartsIds.LegsAnkleRight,
                     path: {
-                        d: 'M52.8947 421.55C55.2105 419.95 59.2632 422.217 61 423.55C61 430.35 57.5263 432.384 55.7895 432.55L50 429.55C50 427.55 50.5789 423.15 52.8947 421.55Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Ankle - Left',
-                    id: 'LegsAnkleLeft',
+                    id: EnumService.AccidentBodyPartsIds.LegsAnkleLeft,
                     path: {
-                        d: 'M141.105 421.572C138.789 419.909 134.737 422.264 133 423.65C133 430.714 136.474 432.827 138.211 433L144 429.883C144 427.805 143.421 423.234 141.105 421.572Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Foot - Right',
-                    id: 'LegsFootRight',
+                    id: EnumService.AccidentBodyPartsIds.LegsFootRight,
                     path: {
-                        d: 'M57.4171 442.173C59.9498 440.494 58.6834 436.295 58.6834 436.295C47.7085 431.677 49.397 435.456 47.2864 435.456C45.1759 435.456 44.7538 439.654 41.799 442.173C39.5 444.133 36 446.335 36 447.175C36 447.847 40.5327 449.59 41.799 450.15L47.2864 451C48.6935 450.72 51.0854 450.234 52.7739 448.891C54.4623 447.547 54.4623 446.372 54.8844 444.692C54.8844 444.692 56.2532 442.945 57.4171 442.173Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Foot - Left',
-                    id: 'LegsFootLeft',
+                    id: EnumService.AccidentBodyPartsIds.LegsFootLeft,
                     path: {
-                        d: 'M135.583 442.173C133.05 440.494 134.317 436.295 134.317 436.295C145.291 431.677 143.603 435.456 145.714 435.456C147.824 435.456 148.246 439.654 151.201 442.173C153.5 444.133 157 446.335 157 447.175C157 447.847 152.467 449.59 151.201 450.15L145.714 451C144.307 450.72 141.915 450.234 140.226 448.891C138.538 447.547 138.538 446.372 138.116 444.692C138.116 444.692 136.747 442.945 135.583 442.173Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Knee - Right',
-                    id: 'LegsKneeRight',
+                    id: EnumService.AccidentBodyPartsIds.LegsKneeRight,
                     path: {
-                        d: 'M53.7368 323.858C57.5263 321.364 64.1579 324.897 67 326.974C67 337.572 61.3158 340.74 58.4737 341L49 336.325C49 333.208 49.9474 326.351 53.7368 323.858Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Knee - Left',
-                    id: 'LegsKneeLeft',
+                    id: EnumService.AccidentBodyPartsIds.LegsKneeLeft,
                     path: {
-                        d: 'M131.263 323.858C127.474 321.364 120.842 324.897 118 326.974C118 337.572 123.684 340.74 126.526 341L136 336.325C136 333.208 135.053 326.351 131.263 323.858Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Upper Leg - Right',
-                    id: 'LegsUpperRight',
+                    id: EnumService.AccidentBodyPartsIds.LegsUpperRight,
                     path: {
-                        d: 'M72.9547 286.5C72.9547 278.9 81.2877 266.5 82.9544 261C84.8684 254 62.9547 253.5 54.9547 256.5C48.5547 258.9 48.9547 274.167 49.9547 281.5C50.288 287 48.7541 300.2 51.9541 309C55.1541 317.8 65.6214 315.667 68.9547 313.5L71.9547 306.5C71.9547 306.5 72.9547 296 72.9547 286.5Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Upper Leg - Left',
-                    id: 'LegsUpperLeft',
+                    id: EnumService.AccidentBodyPartsIds.LegsUpperLeft,
                     path: {
-                        d: 'M110.5 286.5C110.5 278.9 102.167 266.5 100.501 261C98.5867 254 120.5 253.5 128.5 256.5C134.9 258.9 134.5 274.167 133.5 281.5C133.167 287 134.701 300.2 131.501 309C128.301 317.8 117.834 315.667 114.5 313.5L111.5 306.5C111.5 306.5 110.5 296 110.5 286.5Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Toe - Right',
-                    id: 'LegsToeRight',
+                    id: EnumService.AccidentBodyPartsIds.LegsToeRight,
                     path: {
-                        d: 'M34.3079 450.5C37.5079 449.7 44.3079 453.5 47.3079 455.5C49.2521 456.7 46.7853 458.333 43.8086 459L32.3086 456.5L29.3081 454C29.3081 452.667 31.1079 451.3 34.3079 450.5Z',
                         fill: '#A0A8C9'
                     }
                 },
                 {
                     name: 'Toe - Left',
-                    id: 'LegsToeLeft',
+                    id: EnumService.AccidentBodyPartsIds.LegsToeLeft,
                     path: {
-                        d: 'M158.001 450.5C154.801 449.7 148.001 453.5 145.001 455.5C143.057 456.7 145.523 458.333 148.5 459L160 456.5L163 454C163 452.667 161.201 451.3 158.001 450.5Z',
                         fill: '#A0A8C9'
                     }
                 },
             ]
         }
     ];
+
+
+    static fileMimeTypes = {
+        '3dmf': 'x-world/x-3dmf',
+        '3dm': 'x-world/x-3dmf',
+        avi: 'video/x-msvideo',
+        ai: 'application/postscript',
+        bin: 'application/octet-stream',
+        bmp: 'image/bmp',
+        cab: 'application/x-shockwave-flash',
+        c: 'text/plain',
+        'c++': 'text/plain',
+        class: 'application/java',
+        css: 'text/css',
+        csv: 'text/comma-separated-values',
+        cdr: 'application/cdr',
+        doc: 'application/msword',
+        dot: 'application/msword',
+        docx: 'application/msword',
+        dwg: 'application/acad',
+        eps: 'application/postscript',
+        exe: 'application/octet-stream',
+        gif: 'image/gif',
+        gz: 'application/gzip',
+        gtar: 'application/x-gtar',
+        flv: 'video/x-flv',
+        fh4: 'image/x-freehand',
+        fh5: 'image/x-freehand',
+        fhc: 'image/x-freehand',
+        help: 'application/x-helpfile',
+        hlp: 'application/x-helpfile',
+        html: 'text/html',
+        htm: 'text/html',
+        ico: 'image/x-icon',
+        imap: 'application/x-httpd-imap',
+        inf: 'application/inf',
+        jpe: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        jpg: 'image/jpeg',
+        js: 'application/x-javascript',
+        java: 'text/x-java-source',
+        latex: 'application/x-latex',
+        log: 'text/plain',
+        m3u: 'audio/x-mpequrl',
+        midi: 'audio/midi',
+        mid: 'audio/midi',
+        mov: 'video/quicktime',
+        mp3: 'audio/mpeg',
+        mpeg: 'video/mpeg',
+        mpg: 'video/mpeg',
+        mp2: 'video/mpeg',
+        mp4: 'video/mp4',
+        ogg: 'application/ogg',
+        phtml: 'application/x-httpd-php',
+        php: 'application/x-httpd-php',
+        pdf: 'application/pdf',
+        pgp: 'application/pgp',
+        png: 'image/png',
+        pps: 'application/mspowerpoint',
+        ppt: 'application/mspowerpoint',
+        ppz: 'application/mspowerpoint',
+        pot: 'application/mspowerpoint',
+        ps: 'application/postscript',
+        qt: 'video/quicktime',
+        qd3d: 'x-world/x-3dmf',
+        qd3: 'x-world/x-3dmf',
+        qxd: 'application/x-quark-express',
+        rar: 'application/x-rar-compressed',
+        ra: 'audio/x-realaudio',
+        ram: 'audio/x-pn-realaudio',
+        rm: 'audio/x-pn-realaudio',
+        rtf: 'text/rtf',
+        spr: 'application/x-sprite',
+        sprite: 'application/x-sprite',
+        stream: 'audio/x-qt-stream',
+        swf: 'application/x-shockwave-flash',
+        svg: 'text/xml-svg',
+        sgml: 'text/x-sgml',
+        sgm: 'text/x-sgml',
+        tar: 'application/x-tar',
+        tiff: 'image/tiff',
+        tif: 'image/tiff',
+        tgz: 'application/x-compressed',
+        tex: 'application/x-tex',
+        txt: 'text/plain',
+        vob: 'video/x-mpg',
+        wav: 'audio/x-wav',
+        wrl: 'x-world/x-vrml',
+        xla: 'application/msexcel',
+        xlsx: 'application/msexcel',
+        xls: 'application/vnd.ms-excel',
+        xlc: 'application/vnd.ms-excel',
+        xml: 'text/xml',
+        zip: 'application/zip',
+    };
 }

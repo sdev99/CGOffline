@@ -6,6 +6,7 @@ ion-header {
 ion-content {
   &.dedicated-mode {
     --background: #F6F9FB;
+
     ion-list {
       width: 70%;
       border-radius: 12px;

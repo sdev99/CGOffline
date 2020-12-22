@@ -53,7 +53,7 @@ export class SignoffPhotoPage implements OnInit {
     takePhoto() {
         this.photoService.takePhotoFromCamera((photo) => {
             this.capturedPhoto = photo;
-        });
+        }, true);
     }
 
     onClose() {
@@ -66,85 +66,27 @@ export class SignoffPhotoPage implements OnInit {
         const mimeType = 'image/jpeg';
         this.utilService.dataUriToFile(this.capturedPhoto.dataUrl, fileName, mimeType)
             .then((file) => {
-                switch (this.type) {
-                    case EnumService.SignOffType.INDUCTION:
-                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                this.uploadInductionPhoto(file, fileName, (photoName) => {
+                    switch (this.type) {
+                        case EnumService.SignOffType.INDUCTION:
                             this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
                             this.sharedDataService.submitInductionCheckInData(this.apiService);
-                        });
-                        break;
+                            break;
 
-                    case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-                        this.uploadInductionPhoto(file, fileName, (photoName) => {
+                        case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+                        case EnumService.SignOffType.FORM_ACTIVITY:
+                        case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+                        case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
+                        case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
                             this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = photoName;
                             this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
-                        });
-                        break;
+                            break;
 
-                    case EnumService.SignOffType.HAV:
-                    case EnumService.SignOffType.ACCIDENT_REPORT:
-                    case EnumService.SignOffType.CUSTOM_FORM:
-                    case EnumService.SignOffType.RISK_ASSESSMENT:
-                    case EnumService.SignOffType.DOCUMENT_DM:
-                    case EnumService.SignOffType.FORMS_DM:
-                        this.uploadInductionPhoto(file, fileName, (photoName) => {
-                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
-                            this.sharedDataService.submitInductionCheckInData(this.apiService);
-                        });
-                        break;
-
-                    case EnumService.SignOffType.WORK_PERMIT:
-                        this.navCtrl.navigateForward('permit-issued-result-dm', {
-                            queryParams: {
-                                permitResult: UtilService.randomBoolean() ? 'success' : 'failed'
-                            }
-                        });
-                        break;
-
-                    default:
-                        this.uploadInductionPhoto(file, fileName, (photoName) => {
-                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
-                            this.sharedDataService.submitInductionCheckInData(this.apiService);
-                        });
-                }
+                        default:
+                    }
+                });
             });
     }
-
-    showCheckInResultScreen = (status = false) => {
-        if (this.sharedDataService.dedicatedMode) {
-            if (status) {
-                this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-                    queryParams: {
-                        message: 'You have now checked-in',
-                        nextPage: 'dashboard-dm'
-                    }
-                });
-            } else {
-                this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-                    queryParams: {
-                        failTitle: 'No Qualification',
-                        failSubTitle: 'Check in Not Allowed',
-                        failMessage: 'This check-in requires to have certain \n' +
-                            'qualifications which you do not have.',
-                        nextPage: 'dashboard-dm'
-                    }
-                });
-            }
-        } else {
-            if (status) {
-                this.navCtrl.navigateForward(['/checkin-success'], {
-                    queryParams: {
-                        message: 'You Signed-Off Successfully',
-                        nextPage: '/tabs/dashboard'
-                    }
-                });
-            } else {
-                this.navCtrl.navigateForward(['/checkin-fail'], {
-                    queryParams: {}
-                });
-            }
-        }
-    };
 
     /**
      * Upload photo for  signoff

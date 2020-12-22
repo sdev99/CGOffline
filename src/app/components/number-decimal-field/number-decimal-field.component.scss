@@ -1,0 +1,17 @@
+.input-item {
+  ion-input {
+    min-height: 42px;
+    --color: #171538;
+    --placeholder-color: #171538;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    border: 1px solid #CACEE1;
+    border-radius: 3px;
+    --background: #FFFFFF;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+  }
+}

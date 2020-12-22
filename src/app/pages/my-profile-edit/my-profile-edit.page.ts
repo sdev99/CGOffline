@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, ToastController} from '@ionic/angular';
-import {DemoDataService} from '../../services/demo-data.service';
+import {NavController} from '@ionic/angular';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UtilService} from '../../services/util.service';
 import {User, Response} from '../../_models';
@@ -29,7 +28,6 @@ export class MyProfileEditPage implements OnInit {
         private accountService: AccountService,
         private sharedDataService: SharedDataService,
         private utilService: UtilService,
-        private toastController: ToastController,
     ) {
         this.user = accountService.userValue;
         this.profile = sharedDataService.userProfile;
@@ -39,15 +37,8 @@ export class MyProfileEditPage implements OnInit {
         this.languages = sharedDataService.companyLanguageList.clone();
 
         this.profileForm = new FormGroup({
-            email: new FormControl(this.profile.email, Validators.compose([
-                Validators.required,
-                Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
-            ])),
-            phone: new FormControl(this.profile.phone, Validators.compose([
-                Validators.required,
-                Validators.minLength(10),
-                Validators.pattern('^[+0-9()-]+$')
-            ])),
+            email: new FormControl(this.profile.email),
+            phone: new FormControl(this.profile.phone),
             timezone: new FormControl(this.profile.timeZoneID, Validators.compose([
                 Validators.required,
                 Validators.minLength(2)
@@ -80,16 +71,17 @@ export class MyProfileEditPage implements OnInit {
 
             this.accountService.updateProfile({
                 userId: this.user.userId,
-                email: email.value,
+                mobileAppLanguageID: language.value,
+                languageName: languageData.languageName,
+                timeZoneID: timezone.value,
+                timeZoneName: timezoneData.timeZoneName,
+
+                email: this.profile.email,
                 userFullName: this.profile.userFullName,
                 photo: this.profile.photo,
                 qrCodeImage: this.profile.qrCodeImage,
                 phoneCode: this.profile.phoneCode,
-                phone: phone.value,
-                timeZoneID: timezone.value,
-                timeZoneName: timezoneData.timeZoneName,
-                mobileAppLanguageID: language.value,
-                languageName: languageData.languageName,
+                phone: this.profile.phone,
             }).subscribe((data: Response) => {
 
                 // get updated userprofile detail
@@ -97,13 +89,13 @@ export class MyProfileEditPage implements OnInit {
                     this.utilService.hideLoadingFor(loading);
 
                     this.profile = profile;
-                    this.navCtrl.navigateBack(['/tabs/my-profile']);
-                    const toast = await this.toastController.create({
-                        message: data.Message,
-                        position: 'top',
-                        duration: 3000,
+
+                    this.navCtrl.navigateRoot(['checkin-success'], {
+                        queryParams: {
+                            message: 'Profile Updated',
+                            nextPage: '/tabs/my-profile'
+                        }
                     });
-                    toast.present();
                 }, error => {
                     this.utilService.hideLoadingFor(loading);
 
@@ -113,7 +105,7 @@ export class MyProfileEditPage implements OnInit {
                 this.utilService.hideLoadingFor(loading);
 
             });
-        } else if (!email.value && !phone.value && !timezone.value && !language.value) {
+        } else {
             this.errorMsg = 'All fileds are required to be filled.';
         }
 

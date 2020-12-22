@@ -247,7 +247,7 @@ ion-content {
 
     .risk-assesment-component {
       background-color: #F7FAFE;
-      margin: 0px $paddingHorizontal;
+      margin: 20px $paddingHorizontal;
       padding-bottom: 16px;
 
       .hr-line {
@@ -393,4 +393,8 @@ ion-content {
 
 ion-item {
   --background: transparent;
+}
+
+.brown-option {
+  --background: red;
 }

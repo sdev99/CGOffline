@@ -18,6 +18,14 @@
                           *ngIf="activityListItem.activityDate !== activityListItem.todayDate">{{activityListItem.activityDate | timeAgo}}</span>
                 </ng-template>
             </div>
+
+
+
+            <div class="reject-reason" *ngIf="activityListItem?.rejectedReason">
+                <h3>Rejection Reason</h3>
+                <p>{{activityListItem?.rejectedReason}}</p>
+            </div>
+
         </ion-label>
     </ion-item>
 
@@ -26,20 +34,15 @@
 </ion-header>
 <ion-content class="ion-padding-horizontal" fullscreen="true">
 
-    <ion-item lines="full" class="title-item">
-        <ion-label>
-            Please complete attached site audit form
-        </ion-label>
-    </ion-item>
-
-    <ion-item lines="full" class="title-item" *ngIf="activityListItem">
+    <ion-item lines="full" class="title-item"
+              *ngIf="activityListItem && (activityListItem.formattedDescription || activityListItem.formattedExplanation)">
         <ion-label class="ion-text-wrap">
-            <ng-container
-                    *ngIf="activityListItem.formattedDescription">{{activityListItem.formattedDescription}}</ng-container>
+            <p *ngIf="activityListItem.formattedDescription"
+               [innerHTML]="activityListItem.formattedDescription"></p>
 
             <ng-container *ngIf="activityListItem.formattedExplanation">
                 <h6>Explanation</h6>
-                <p>{{activityListItem.formattedExplanation}}</p>
+                <p [innerHTML]="activityListItem.formattedExplanation"></p>
             </ng-container>
         </ion-label>
     </ion-item>
@@ -62,7 +65,8 @@
     </ion-button>
     <ion-button expand="full"
                 *ngIf="activityListItem.activityType === EnumService.ActivityType.DOCUMENT_SIGNOFF_ACTIVITY"
-                class="action-btn" (click)="openDocument()">Open
+                class="action-btn" (click)="openDocument()">
+        {{documentViewed ? 'Sign-Off' : 'Open'}}
     </ion-button>
     <ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.CUSTOM_ACTIVITY"
                 class="action-btn" (click)="markAsCompleted()">Mark as Completed

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController} from '@ionic/angular';
+import {IonRouterOutlet, NavController} from '@ionic/angular';
 import {fabric} from 'fabric';
 import {ActivatedRoute} from '@angular/router';
 import {ObservablesService} from '../../services/observables.service';
@@ -39,8 +39,8 @@ export class SignoffDigitalinkPage implements OnInit {
         public observablesService: ObservablesService,
         public sharedDataService: SharedDataService,
         public apiService: ApiService,
+        private routerOutlet: IonRouterOutlet,
         private accountService: AccountService,
-        private filehandlerService: FilehandlerService,
     ) {
         this.user = this.accountService.userValue;
 
@@ -60,6 +60,15 @@ export class SignoffDigitalinkPage implements OnInit {
         }
     }
 
+
+    ionViewDidEnter = () => {
+        this.routerOutlet.swipeGesture = false;
+    };
+
+    ionViewWillLeave = () => {
+        this.routerOutlet.swipeGesture = true;
+    };
+
     ngOnInit() {
         switch (this.type) {
             case EnumService.SignOffType.INDUCTION:
@@ -71,11 +80,26 @@ export class SignoffDigitalinkPage implements OnInit {
                 }
                 break;
 
+
             case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+            case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
                 this.aggrementTitle = 'I confirm that I\'ve read the above document.';
-                if (this.sharedDataService.activitySignOffDocumentDetail) {
-                    this.subTitle = this.sharedDataService.activitySignOffDocumentDetail.documentTitle;
-                    if (this.sharedDataService.activitySignOffDocumentDetail && this.sharedDataService.activitySignOffDocumentDetail.isSignatureSignOff) {
+                if (this.sharedDataService.signOffDocumentDetail) {
+                    this.subTitle = this.sharedDataService.signOffDocumentDetail?.documentTitle;
+                    if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
+                        this.showDigitalInk = true;
+                        this.initialiseDrawing();
+                    }
+                }
+                break;
+
+            case EnumService.SignOffType.FORM_ACTIVITY:
+            case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+            case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
+                this.aggrementTitle = 'I confirm that I\'ve read the above form.';
+                if (this.sharedDataService.signOffFormDetail) {
+                    this.subTitle = this.sharedDataService.signOffFormDetail.formData.formTitle;
+                    if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail.formData.isSignatureSignOff) {
                         this.showDigitalInk = true;
                         this.initialiseDrawing();
                     }
@@ -138,26 +162,10 @@ export class SignoffDigitalinkPage implements OnInit {
 
     isDigitalSignEmpty = () => {
         if (this.canvasRef) {
-            const context = this.canvasRef.getContext('2d');
-            const pixelBuffer = new Uint32Array(
-                context.getImageData(0, 0, this.canvasRef.width, this.canvasRef.height).data.buffer
-            );
-            return !pixelBuffer.some(color => color !== 0);
+            return this.canvasRef.isEmpty();
         }
         return true;
     };
-
-    openAttachement() {
-        switch (this.type) {
-            case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-                if (this.sharedDataService.activitySignOffDocumentDetail) {
-                    const fileUri = this.sharedDataService.globalDirectories.documentDirectory + '' + this.sharedDataService.activitySignOffDocumentDetail.documentFileName;
-                    this.filehandlerService.openFile(fileUri);
-                }
-                break;
-            default:
-        }
-    }
 
     onClose() {
         this.navCtrl.back();
@@ -215,7 +223,7 @@ export class SignoffDigitalinkPage implements OnInit {
                     this.sharedDataService.checkInPostData.digitalInkSignature = signatureFileName;
                 }
 
-                if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail.checkInInduction.isPhotoSignOff) {
+                if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
                     this.navCtrl.navigateForward(['/signoff-photo']);
                 } else {
                     this.sharedDataService.submitInductionCheckInData(this.apiService);
@@ -223,69 +231,53 @@ export class SignoffDigitalinkPage implements OnInit {
                 break;
 
             case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+            case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
                 if (this.showDigitalInk && signatureFileName) {
                     this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
                 }
 
-                if (this.sharedDataService.activitySignOffDocumentDetail && this.sharedDataService.activitySignOffDocumentDetail.isPhotoSignOff) {
+                if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
                     this.navCtrl.navigateForward(['/signoff-photo']);
                 } else {
                     this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
                 }
                 break;
 
-            case EnumService.SignOffType.HAV:
-            case EnumService.SignOffType.ACCIDENT_REPORT:
-            case EnumService.SignOffType.CUSTOM_FORM:
-            case EnumService.SignOffType.RISK_ASSESSMENT:
-            case EnumService.SignOffType.DOCUMENT_DM:
-            case EnumService.SignOffType.FORMS_DM:
-            case EnumService.SignOffType.WORK_PERMIT:
-                this.navCtrl.navigateForward(['/signoff-photo'], {
-                    queryParams: {
-                        type: this.type,
-                        data: JSON.stringify(this.data)
-                    }
-                });
+            case EnumService.SignOffType.FORM_ACTIVITY:
+            case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+            case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
+                if (this.showDigitalInk && signatureFileName) {
+                    this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+                }
+
+                if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isPhotoSignOff) {
+                    this.navCtrl.navigateForward(['/signoff-photo']);
+                } else {
+                    this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                }
                 break;
 
             default:
-                if (this.sharedDataService.dedicatedMode) {
-                    if (UtilService.randomBoolean()) {
-                        this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-                            queryParams: {
-                                message: 'You have now checked-in',
-                                nextPage: 'dashboard-dm'
-                            }
-                        });
-                    } else {
-                        this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-                            queryParams: {
-                                failTitle: 'No Qualification',
-                                failSubTitle: 'Check in Not Allowed',
-                                failMessage: 'This check-in requires to have certain \n' +
-                                    'qualifications which you do not have.',
-                                nextPage: 'dashboard-dm'
-                            }
-                        });
-                    }
-                } else {
-                    if (UtilService.randomBoolean()) {
-                        this.navCtrl.navigateForward(['/checkin-success'], {
-                            queryParams: {
-                                message: 'You Signed-Off Successfully',
-                                nextPage: '/tabs/dashboard'
-                            }
-                        });
-                    } else {
-                        this.navCtrl.navigateForward(['/checkin-fail'], {
-                            queryParams: {
-                                errorMessage: 'You Signed-Off Successfully',
-                                nextPage: '/tabs/dashboard'
-                            }
-                        });
-                    }
-                }
+            // if (this.sharedDataService.dedicatedMode) {
+            //     if (UtilService.randomBoolean()) {
+            //         this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+            //             queryParams: {
+            //                 message: 'You have now checked-in',
+            //                 nextPage: 'dashboard-dm'
+            //             }
+            //         });
+            //     } else {
+            //         this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+            //             queryParams: {
+            //                 failTitle: 'No Qualification',
+            //                 failSubTitle: 'Check in Not Allowed',
+            //                 failMessage: 'This check-in requires to have certain \n' +
+            //                     'qualifications which you do not have.',
+            //                 nextPage: 'dashboard-dm'
+            //             }
+            //         });
+            //     }
+            // }
         }
     }
 }

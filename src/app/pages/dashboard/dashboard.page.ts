@@ -62,7 +62,6 @@ export class DashboardPage implements OnInit, OnDestroy {
         this.apiService.getActivityList(this.user.userId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const result = response.Result;
-                // {"activityOverviewData":{"rejectedCount":0,"overDueCount":0},"activityList":[]}}
                 if (result) {
                     this.activityList = result.activityList;
                     this.activityOverviewData = result.activityOverviewData;
@@ -70,6 +69,8 @@ export class DashboardPage implements OnInit, OnDestroy {
             }
             UtilService.fireCallBack(callBack);
         }, (error) => {
+            this.activityList = null;
+            this.activityOverviewData = null;
             UtilService.fireCallBack(callBack);
         });
     };

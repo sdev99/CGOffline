@@ -21,7 +21,7 @@
                 <ion-list lines="full" *ngIf="list && list.length>0;else allUserEvacuated">
                     <ion-item *ngFor="let item of list | listFilter:searchUser:'name';let idx=index">
                         <ion-avatar slot="start">
-                            <img src="./assets/images/demo-profile.svg">
+                            <img src="./assets/images/ProfileNone.png">
                         </ion-avatar>
                         <ion-label>{{item.name}}</ion-label>
                         <ion-button slot="end" class="evacuate-btn" (click)="evacuateUser(item,idx)">Evacuate
@@ -53,7 +53,7 @@
                 <ion-list lines="full" *ngIf="evacuatedList && evacuatedList.length>0;else noUserEvacuated">
                     <ion-item *ngFor="let item of evacuatedList | listFilter:searchEvacuatedUser:'name'">
                         <ion-avatar slot="start">
-                            <img src="./assets/images/demo-profile.svg">
+                            <img src="./assets/images/ProfileNone.png">
                         </ion-avatar>
                         <ion-label>{{item.name}}</ion-label>
                     </ion-item>

@@ -61,11 +61,13 @@ ion-item.checked-in-status-view {
   }
 
   .checkin-view-btn {
-    margin-right: 10px;
+    margin-right: 0;
+    padding: 8px;
+    height: auto;
 
     ion-icon {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       color: #ffffff;
     }
   }
@@ -138,11 +140,13 @@ ion-item.checked-in-status-view {
     }
 
     .checkin-view-btn {
-      margin-right: 10px;
+      margin-right: 0;
+      padding: 8px;
+      height: auto;
 
       ion-icon {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
         color: #575568;
       }
     }

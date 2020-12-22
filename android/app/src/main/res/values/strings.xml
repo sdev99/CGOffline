@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">ComplianceGenie</string>
-    <string name="title_activity_main">ComplianceGenie</string>
-    <string name="package_name">com.compliancegenie.app</string>
-    <string name="custom_url_scheme">com.compliancegenie.app</string>
+    <string name="app_name">Compliance Genie</string>
+    <string name="title_activity_main">Compliance Genie</string>
+    <string name="package_name">com.besafetechnologies.compliancegenie</string>
+    <string name="custom_url_scheme">com.besafetechnologies.compliancegenie</string>
 </resources>

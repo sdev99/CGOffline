@@ -10,9 +10,9 @@
         </ng-container>
 
         <ng-template #personalMode>
-            <app-modal-header modalTitle="Site Audit Form" (closeModal)="onClose()"></app-modal-header>
-            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)" [currentCount]="currentPageIndex"
-                                   [totalCount]="totalPage" (next)="next()"
+            <app-modal-header modalTitle="{{formBuilderDetail?.title}}" (closeModal)="onClose()"></app-modal-header>
+            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)" [currentCount]="currentQuestionIndex"
+                                   [totalCount]="questionElementIds.length" (next)="next()"
                                    (previous)="previous()"></app-next-prev-toolbar>
         </ng-template>
 
@@ -21,188 +21,212 @@
     </ion-header>
 
 
-    <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-        <ion-list lines="none" mode="ios">
+    <ion-content
+        #content
+        [scrollEvents]="true"
+        (ionScrollEnd)="onScrollEnd($event)"
+        (ionScroll)="onScroll($event)"
+        mode="ios"
+        [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+        <Form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-            <!--        Dynamic Custom Form Fields -->
+            <ion-list lines="none" mode="ios">
 
-            <div class="list-item-container" *ngFor="let section of list; let idx=index"
-                 [ngClass]="{error:!isValid(idx, section)}">
+                <ng-container *ngFor="let section of formBuilderDetail?.sections">
 
-                <ion-list-header lines="full">
-                    <h6>
-                        <ion-note color="danger" *ngIf="section.required">*</ion-note>
-                        {{(idx + 1) + '. ' + section.question}}</h6>
-
-                    <ion-item *ngIf="section.note" lines="none" class="ion-no-margin ion-no-padding note-item">
-                        <ion-label>Note: {{section.note}}</ion-label>
-                    </ion-item>
-
-                    <ion-item lines="none" class="form-item" *ngIf="section.document" (click)="openFile()">
-                        <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
-                        <ion-label>
-                            {{section.document.title}}
-                        </ion-label>
-                    </ion-item>
-                </ion-list-header>
-
-                <ng-container *ngIf="section.question_type === 'image_annotation'">
-                    <div class="image-view  ion-margin-horizontal"
-                         *ngIf="answer[idx] && answer[idx].image; else addImageBtn">
-
-                        <div class="close-btn">
-                            <ion-button class="edit-btn" fill="clear"
-                                        (click)="openImageAnnotation(idx,answer[idx].image)">
-                                <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-                            </ion-button>
-                            <ion-button fill="clear" (click)="answer[idx].image=null">
-                                <ion-icon name="close" slot="icon-only"></ion-icon>
-                            </ion-button>
-                        </div>
-                        <ion-img [src]="answer[idx].image"></ion-img>
-                    </div>
-
-                    <ng-template #addImageBtn>
-                        <div class="add-image ion-margin-horizontal">
-                            <!--                    <ion-img *ngIf="answer[idx] && answer[idx].image; else addImageBtn"-->
-                            <!--                             [src]="answer[idx].image"></ion-img>-->
-
-                            <ion-button class="add-img-btn" fill="clear" (click)="addImage(idx)">
-                                <ion-icon slot="icon-only" src="./assets/images/AddPhoto.svg"></ion-icon>
-                            </ion-button>
-                        </div>
-                    </ng-template>
-                    <div class="hr-line"></div>
-                    <ion-textarea class="picture-additional-text ion-margin-horizontal ion-margin-bottom"
-                                  autoGrow="true"
-                                  cols="3"></ion-textarea>
+                <app-custom-questions-container
+                        [sectionId]="section.sectionId"
+                        [questionElementIds]="questionElementIds"
+                        [questions]="section.questions"
+                        [isSubmitted]="isSubmitted"
+                        [formGroup]="formGroup"
+                ></app-custom-questions-container>
                 </ng-container>
 
+                <!--        Dynamic Custom Form Fields -->
 
-                <ng-container *ngIf="section.question_type === 'options'">
-                    <div class="hr-line"></div>
+                <div class="list-item-container" *ngFor="let section of []; let idx=index"
+                     [ngClass]="{error:!isValid(idx, section)}">
 
-                    <div *ngIf="section.canMultipleAsnwer; else singleAnswer;">
-                        <ion-item *ngFor="let item of section.options">
-                            <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
-                            <ion-checkbox mode="md" slot="start" [(ngModel)]="item.checked"
-                                          [value]="item.value"></ion-checkbox>
+                    <ion-list-header lines="full">
+                        <h6>
+                            <ion-note color="danger" *ngIf="section.required">*</ion-note>
+                            {{(idx + 1) + '. ' + section.question}}</h6>
+
+                        <ion-item *ngIf="section.note" lines="none" class="ion-no-margin ion-no-padding note-item">
+                            <ion-label>Note: {{section.note}}</ion-label>
+                        </ion-item>
+
+                        <ion-item lines="none" class="form-item" *ngIf="section.document" (click)="openFile()">
+                            <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
+                            <ion-label>
+                                {{section.document.title}}
+                            </ion-label>
+                        </ion-item>
+                    </ion-list-header>
+
+                    <ng-container *ngIf="section.question_type === 'image_annotation'">
+                        <div class="image-view  ion-margin-horizontal"
+                             *ngIf="answer[idx] && answer[idx].image; else addImageBtn">
+
+                            <div class="close-btn">
+                                <ion-button class="edit-btn" fill="clear"
+                                            (click)="openImageAnnotation(idx,answer[idx].image)">
+                                    <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                                </ion-button>
+                                <ion-button fill="clear" (click)="answer[idx].image=null">
+                                    <ion-icon name="close" slot="icon-only"></ion-icon>
+                                </ion-button>
+                            </div>
+                            <ion-img [src]="answer[idx].image"></ion-img>
+                        </div>
+
+                        <ng-template #addImageBtn>
+                            <div class="add-image ion-margin-horizontal">
+                                <!--                    <ion-img *ngIf="answer[idx] && answer[idx].image; else addImageBtn"-->
+                                <!--                             [src]="answer[idx].image"></ion-img>-->
+
+                                <ion-button class="add-img-btn" fill="clear" (click)="addImage(idx)">
+                                    <ion-icon slot="icon-only" src="./assets/images/AddPhoto.svg"></ion-icon>
+                                </ion-button>
+                            </div>
+                        </ng-template>
+                        <div class="hr-line"></div>
+                        <ion-textarea class="picture-additional-text ion-margin-horizontal ion-margin-bottom"
+                                      autoGrow="true"
+                                      cols="3"></ion-textarea>
+                    </ng-container>
+
+
+                    <ng-container *ngIf="section.question_type === 'options'">
+                        <div class="hr-line"></div>
+
+                        <div *ngIf="section.canMultipleAsnwer; else singleAnswer;">
+                            <ion-item *ngFor="let item of section.options">
+                                <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
+                                <ion-checkbox mode="md" slot="start" [(ngModel)]="item.checked"
+                                              [value]="item.value"></ion-checkbox>
+                            </ion-item>
+                        </div>
+
+                        <ng-template #singleAnswer>
+                            <ion-radio-group [(ngModel)]="section.selectedValue">
+                                <ion-item *ngFor="let item of section.options">
+                                    <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
+                                    <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
+                                </ion-item>
+                            </ion-radio-group>
+                        </ng-template>
+                    </ng-container>
+
+                    <div *ngIf="section.question_type === 'time'">
+                        <div class="hr-line"></div>
+                        <ion-item class="time-item">
+                            <ion-label position="stacked">Pick Time</ion-label>
+                            <div class="time-field">
+                                <ion-datetime [(ngModel)]="answer[idx].time" displayFormat="hh : mm"
+                                              pickerFormat="hh:mm"
+                                              placeholder="HH : mm"
+                                              display-timezone="utc"></ion-datetime>
+
+                                <ion-buttons class="am-pm-btns">
+                                    <ion-button
+                                            [ngClass]="{'active':(answer[idx]&&answer[idx].timePeriod==='am') || (!answer[idx] || !answer[idx].timePeriod)}"
+                                            (click)="timeSelect(idx, 'am')">
+                                        AM
+                                    </ion-button>
+                                    <ion-button
+                                            [ngClass]="{'active':(answer[idx]&&answer[idx].timePeriod==='pm')}"
+                                            (click)="timeSelect(idx, 'pm')">
+                                        PM
+                                    </ion-button>
+                                </ion-buttons>
+                            </div>
                         </ion-item>
                     </div>
 
-                    <ng-template #singleAnswer>
-                        <ion-radio-group [(ngModel)]="section.selectedValue">
-                            <ion-item *ngFor="let item of section.options">
-                                <ion-label [ngStyle]="{'color':item.color}">{{item.title}}</ion-label>
-                                <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
-                            </ion-item>
-                        </ion-radio-group>
-                    </ng-template>
-                </ng-container>
-
-                <div *ngIf="section.question_type === 'time'">
-                    <div class="hr-line"></div>
-                    <ion-item class="time-item">
-                        <ion-label position="stacked">Pick Time</ion-label>
-                        <div class="time-field">
-                            <ion-datetime [(ngModel)]="answer[idx].time" displayFormat="hh : mm" pickerFormat="hh:mm"
-                                          placeholder="HH : mm"
-                                          display-timezone="utc"></ion-datetime>
-
-                            <ion-buttons class="am-pm-btns">
-                                <ion-button
-                                        [ngClass]="{'active':(answer[idx]&&answer[idx].timePeriod==='am') || (!answer[idx] || !answer[idx].timePeriod)}"
-                                        (click)="timeSelect(idx, 'am')">
-                                    AM
-                                </ion-button>
-                                <ion-button
-                                        [ngClass]="{'active':(answer[idx]&&answer[idx].timePeriod==='pm')}"
-                                        (click)="timeSelect(idx, 'pm')">
-                                    PM
-                                </ion-button>
-                            </ion-buttons>
-                        </div>
-                    </ion-item>
-                </div>
-
-                <ng-container *ngIf="section.question_type === 'date'">
-                    <div class="hr-line"></div>
-                    <ion-item class="date-item">
-                        <ion-label position="stacked">Pick Date</ion-label>
-                        <div class="date-field">
-                            <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
-                            <ion-datetime [(ngModel)]="answer[idx].date" placeholder="Choose"
-                                          display-timezone="utc"></ion-datetime>
-                        </div>
-                    </ion-item>
-                </ng-container>
-
-                <div class="photo-view-container" *ngIf="section.question_type === 'photo'">
-                    <div class="hr-line-full"></div>
-                    <app-add-choose-photo
-                            [image]="answer[idx]?answer[idx].image:null"
-                            (photoAdded)="photoAdded(idx, $event)"
-                            (photoRemoved)="photoRemoved(idx)"
-                            (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
-                    ></app-add-choose-photo>
-                </div>
-
-                <ng-container *ngIf="section.isAdditionalComment">
-                    <div class="hr-line-full"></div>
-                    <div class="additional-comment">
-                        <ion-label>
-                            AdditionalComments
-                        </ion-label>
-                        <div class="hr-line-full"></div>
-                        <ion-textarea rows="6" placeholder=""></ion-textarea>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="section.notesWithPhoto">
-                    <div class="notes-view ion-margin-top">
-                        <ion-button *ngIf="!answer[idx] || !answer[idx].addNote; else addNoteTemplate;"
-                                    class="add-note-btn"
-                                    fill="clear"
-                                    (click)="addDateNote(idx)">
-                            <div class="button-inner">
-                                <ion-icon slot="start" name="add"></ion-icon>
-                                Add Notes
+                    <ng-container *ngIf="section.question_type === 'date'">
+                        <div class="hr-line"></div>
+                        <ion-item class="date-item">
+                            <ion-label position="stacked">Pick Date</ion-label>
+                            <div class="date-field">
+                                <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
+                                <ion-datetime [(ngModel)]="answer[idx].date" placeholder="Choose"
+                                              display-timezone="utc"></ion-datetime>
                             </div>
-                        </ion-button>
+                        </ion-item>
+                    </ng-container>
 
-                        <ng-template #addNoteTemplate>
-                            <ion-textarea rows="6" placeholder="Comment goes here"></ion-textarea>
-
-                            <app-add-choose-photo
-                                    [image]="answer[idx]?answer[idx].image:null"
-                                    (photoAdded)="photoAdded(idx, $event)"
-                                    (photoRemoved)="photoRemoved(idx)"
-                                    (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
-                            ></app-add-choose-photo>
-                        </ng-template>
+                    <div class="photo-view-container" *ngIf="section.question_type === 'photo'">
+                        <div class="hr-line-full"></div>
+                        <app-add-choose-photo
+                                [image]="answer[idx]?answer[idx].image:null"
+                                (photoAdded)="photoAdded(idx, $event)"
+                                (photoRemoved)="photoRemoved(idx)"
+                                (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
+                        ></app-add-choose-photo>
                     </div>
+
+                    <ng-container *ngIf="section.isAdditionalComment">
+                        <div class="hr-line-full"></div>
+                        <div class="additional-comment">
+                            <ion-label>
+                                AdditionalComments
+                            </ion-label>
+                            <div class="hr-line-full"></div>
+                            <ion-textarea rows="6" placeholder=""></ion-textarea>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="section.notesWithPhoto">
+                        <div class="notes-view ion-margin-top">
+                            <ion-button *ngIf="!answer[idx] || !answer[idx].addNote; else addNoteTemplate;"
+                                        class="add-note-btn"
+                                        fill="clear"
+                                        (click)="addDateNote(idx)">
+                                <div class="button-inner">
+                                    <ion-icon slot="start" name="add"></ion-icon>
+                                    Add Notes
+                                </div>
+                            </ion-button>
+
+                            <ng-template #addNoteTemplate>
+                                <ion-textarea rows="6" placeholder="Comment goes here"></ion-textarea>
+
+                                <app-add-choose-photo
+                                        [image]="answer[idx]?answer[idx].image:null"
+                                        (photoAdded)="photoAdded(idx, $event)"
+                                        (photoRemoved)="photoRemoved(idx)"
+                                        (editPhoto)="openImageAnnotation(idx, answer[idx].image)"
+                                ></app-add-choose-photo>
+                            </ng-template>
+                        </div>
+                    </ng-container>
+                </div>
+
+
+                <!--        End of form -->
+                <ng-container
+                        *ngIf="!sharedDataService.dedicatedMode">
+
+                    <div class="hr-line-full ion-margin-top"></div>
+
+                    <ion-item class="ion-margin-vertical text-bottom-msg">
+                        <ion-label class="ion-text-wrap ion-text-center">
+                            You've reached the end of the form.
+                            Please check your answers and sign-off.
+                        </ion-label>
+                    </ion-item>
+
+                    <ion-item class="ion-margin-vertical ion-padding-bottom">
+                        <ion-button type="submit" expand="full" class="action-btn">Sign-Off</ion-button>
+                    </ion-item>
+
                 </ng-container>
-            </div>
 
 
-            <!--        End of form -->
-            <ng-container *ngIf="!sharedDataService.dedicatedMode">
-
-                <div class="hr-line-full ion-margin-top"></div>
-
-                <ion-item class="ion-margin-vertical text-bottom-msg">
-                    <ion-label class="ion-text-wrap ion-text-center">
-                        You've reached the end of the form.
-                        Please check your answers and sign-off.
-                    </ion-label>
-                </ion-item>
-                <ion-item class="ion-margin-vertical ion-padding-bottom">
-                    <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
-                </ion-item>
-            </ng-container>
-
-
-        </ion-list>
+            </ion-list>
+        </Form>
 
         <!--        End of form -->
         <ng-container *ngIf="sharedDataService.dedicatedMode">
@@ -211,7 +235,7 @@
                     You've reached the end of the form.
                     Please check your answers and sign-off.
                 </ion-label>
-                <ion-button slot="end" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+                <ion-button slot="end" class="action-btn" (click)="onSubmit()">Sign-Off</ion-button>
             </ion-item>
         </ng-container>
     </ion-content>

@@ -11,6 +11,7 @@ export class ActivityListItem {
     isApproved: boolean;
     isRejected: boolean;
     approvedRejectedDate: string;
+    rejectedReason: string;
     activityTime: string;
     formattedDescription: string;
     formattedExplanation: string;

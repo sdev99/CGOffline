@@ -6,6 +6,8 @@ import {EnumService} from '../../services/enum.service';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 import {InductionItem} from '../../_models/inductionItem';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
 
 @Component({
     selector: 'app-checkin-induction-va',
@@ -13,7 +15,8 @@ import {InductionItem} from '../../_models/inductionItem';
     styleUrls: ['./checkin-induction-va.page.scss'],
 })
 export class CheckinInductionVaPage implements OnInit {
-    inductionContentItemIndex = 0;
+    user: User;
+
     inductionItem: InductionItem;
 
     constructor(
@@ -21,17 +24,15 @@ export class CheckinInductionVaPage implements OnInit {
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
+        public accountService: AccountService,
     ) {
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                this.inductionContentItemIndex = params.inductionContentItemIndex;
-                if (sharedDataService.checkInDetail
-                    && sharedDataService.checkInDetail.checkInInductionItems
-                    && sharedDataService.checkInDetail.checkInInductionItems.length > this.inductionContentItemIndex) {
-                    this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.inductionContentItemIndex];
-                }
-            }
-        });
+        this.user = accountService.userValue;
+
+        if (sharedDataService.checkInDetail
+            && sharedDataService.checkInDetail.checkInInductionItems
+            && sharedDataService.checkInDetail.checkInInductionItems.length > this.sharedDataService.inductionContentItemIndex) {
+            this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.sharedDataService.inductionContentItemIndex];
+        }
     }
 
     ngOnInit() {
@@ -45,12 +46,12 @@ export class CheckinInductionVaPage implements OnInit {
         if (this.sharedDataService.dedicatedMode) {
             this.navCtrl.navigateRoot('dashboard-dm');
         } else {
-            this.navCtrl.navigateRoot('tabs/dashboard');
+            this.navCtrl.navigateBack('/checkinout-confirm');
         }
     }
 
     onContinue() {
-        this.sharedDataService.inductionNavigationProcess(this.inductionContentItemIndex);
+        this.sharedDataService.inductionNavigationProcess(this.user.userId, this.sharedDataService.inductionContentItemIndex);
 
         // if (this.files.length > (this.currentIndex + 1)) {
         //     this.currentIndex++;

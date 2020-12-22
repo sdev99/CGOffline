@@ -191,6 +191,12 @@ export class AppComponent {
     configureAppForPersonalMode = async () => {
 
         try {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        } catch (e) {
+
+        }
+
+        try {
 
             if (Capacitor.isNative) {
                 const notificationPermission = await Permissions.query({
@@ -269,9 +275,9 @@ export class AppComponent {
 
 
     registerForPushNotification = () => {
-        // PushNotifications.register();
-        // this.accountService.updatePushNotification({
-        //     isPushNotification: true
-        // });
+        PushNotifications.register();
+        this.accountService.updatePushNotification({
+            isPushNotification: true
+        });
     };
 }

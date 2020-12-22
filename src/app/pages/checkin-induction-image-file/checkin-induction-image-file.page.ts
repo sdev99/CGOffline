@@ -6,6 +6,8 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {InductionItem} from '../../_models/inductionItem';
 import {UtilService} from '../../services/util.service';
 import {EnumService} from '../../services/enum.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
 
 @Component({
     selector: 'app-checkin-induction-image-file',
@@ -13,8 +15,8 @@ import {EnumService} from '../../services/enum.service';
     styleUrls: ['./checkin-induction-image-file.page.scss'],
 })
 export class CheckinInductionImageFilePage implements OnInit {
+    user: User;
 
-    inductionContentItemIndex = 0;
     inductionItem: InductionItem;
 
     constructor(
@@ -22,17 +24,15 @@ export class CheckinInductionImageFilePage implements OnInit {
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
+        public accountService: AccountService,
     ) {
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                this.inductionContentItemIndex = params.inductionContentItemIndex;
-                if (sharedDataService.checkInDetail
-                    && sharedDataService.checkInDetail.checkInInductionItems
-                    && sharedDataService.checkInDetail.checkInInductionItems.length > this.inductionContentItemIndex) {
-                    this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.inductionContentItemIndex];
-                }
-            }
-        });
+        this.user = accountService.userValue;
+
+        if (sharedDataService.checkInDetail
+            && sharedDataService.checkInDetail.checkInInductionItems
+            && sharedDataService.checkInDetail.checkInInductionItems.length > this.sharedDataService.inductionContentItemIndex) {
+            this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.sharedDataService.inductionContentItemIndex];
+        }
     }
 
     ngOnInit() {
@@ -46,11 +46,11 @@ export class CheckinInductionImageFilePage implements OnInit {
         if (this.sharedDataService.dedicatedMode) {
             this.navCtrl.navigateRoot('dashboard-dm');
         } else {
-            this.navCtrl.navigateRoot('tabs/dashboard');
+            this.navCtrl.navigateBack('/checkinout-confirm');
         }
     }
 
     onContinue() {
-        this.sharedDataService.inductionNavigationProcess(this.inductionContentItemIndex);
+        this.sharedDataService.inductionNavigationProcess(this.user.userId, this.sharedDataService.inductionContentItemIndex);
     }
 }

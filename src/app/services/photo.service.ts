@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActionSheetController} from '@ionic/angular';
-import {
-    Plugins, CameraResultType, CameraSource, AppRestoredResult
-} from '@capacitor/core';
+import {CameraDirection, CameraResultType, CameraSource, Plugins} from '@capacitor/core';
 import {ObservablesService} from './observables.service';
 import {EnumService} from './enum.service';
 
@@ -47,7 +45,7 @@ export class PhotoService {
         await actionSheet.present();
     }
 
-    async takePhotoFromCamera(callBack) {
+    async takePhotoFromCamera(callBack, isFrontCamera = false) {
         const subscribe = this.observablesService.getObservable(EnumService.ObserverKeys.APP_RESTORED_RESULT).subscribe((data) => {
             callBack(data.data);
             subscribe.unsubscribe();
@@ -58,6 +56,7 @@ export class PhotoService {
             quality: 70,
             width: 500,
             height: 500,
+            direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear
         });
         try {
             callBack(capturedPhoto);

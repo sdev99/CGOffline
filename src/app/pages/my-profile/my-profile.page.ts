@@ -13,7 +13,6 @@ import {ApiService} from '../../services/api.service';
     styleUrls: ['./my-profile.page.scss'],
 })
 export class MyProfilePage implements OnInit {
-    qrCodeValue = 'Oliver Egginton';
     elementType = 'url';
 
     user: User;
@@ -49,7 +48,7 @@ export class MyProfilePage implements OnInit {
     }
 
     scanQrCode(): void {
-
+        this.navCtrl.navigateForward('/dashboard-qrscan');
     }
 
     onClose() {

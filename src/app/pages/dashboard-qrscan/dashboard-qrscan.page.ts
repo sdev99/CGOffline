@@ -7,9 +7,10 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
 import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
-import {Response} from '../../_models';
+import {Response, User} from '../../_models';
 import {PermissionType, Plugins} from '@capacitor/core';
 import {LocationItem} from '../../_models/locationItem';
+import {AccountService} from '../../services/account.service';
 
 const {Camera, Permissions} = Plugins;
 
@@ -19,6 +20,7 @@ const {Camera, Permissions} = Plugins;
     styleUrls: ['./dashboard-qrscan.page.scss'],
 })
 export class DashboardQrscanPage implements OnInit {
+    user: User;
     scanSub;
     dedicatedMode = true;
     isTablet = false;
@@ -27,11 +29,13 @@ export class DashboardQrscanPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         private qrScanner: QRScanner,
+        public accountService: AccountService,
         public apiService: ApiService,
         public utilService: UtilService,
         public sharedDataService: SharedDataService,
         public activatedRoute: ActivatedRoute
     ) {
+        this.user = this.accountService.userValue;
         this.dedicatedMode = sharedDataService.dedicatedMode;
         this.isTablet = sharedDataService.isTablet;
         if (!this.isTablet && this.dedicatedMode) {
@@ -121,21 +125,15 @@ export class DashboardQrscanPage implements OnInit {
 
         this.apiService.getEntityByQRCode(qrCode).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
-
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                if (response.Result && response.Result.entityID && response.Result.entityName) {
-                    const locationItem: LocationItem = {
-                        locationID: response.Result.entityID,
-                        locationName: response.Result.entityName,
-                    };
+                const locationItem: LocationItem = response.Result as LocationItem;
+                if (locationItem && locationItem.locationID && locationItem.locationName) {
                     this.openNextScreen(locationItem);
                 } else {
-                    this.openNextScreen(response.Result);
+                    this.utilService.showAlert('Location not found', '', () => {
+                        this.scan();
+                    });
                 }
-            } else {
-                this.utilService.showAlert(response.Message, 'Not found!', () => {
-                    this.scan();
-                });
             }
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
@@ -168,19 +166,7 @@ export class DashboardQrscanPage implements OnInit {
             }
         } else {
             this.sharedDataService.checkInForLocation = location;
-            this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                queryParams: {
-                    headerTitle: 'Check In',
-                    title: 'You are checking in',
-                    subtitle: location.locationName,
-                    buttonTitle: 'Check In Now',
-                    nextPageData: JSON.stringify({
-                        locationDetail: JSON.stringify(location)
-                    }),
-                    nextPagePath: '/checkin-induction',
-                    locationCheckType: EnumService.ConfirmForCheckType.CheckIn
-                }
-            });
+            this.sharedDataService.getCheckinDetails(this.user.userId, this.apiService);
         }
     };
 

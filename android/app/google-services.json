@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "134066625113",
+    "project_id": "pushnotificationtest-52274",
+    "storage_bucket": "pushnotificationtest-52274.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134066625113:android:637f93af8dc89bf8e2ef48",
+        "android_client_info": {
+          "package_name": "com.besafetechnologies.compliancegenie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134066625113-6mohrik452cfhnc1sb84efto0dl75oqd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.besafetechnologies.compliancegenie",
+            "certificate_hash": "0f8b3875af1548f6aa9322c9b7dfd11322b6c32f"
+          }
+        },
+        {
+          "client_id": "134066625113-u1p8m16ithklmn0c0gk8h5tscjepgdm6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzFx-0HSIxpbqoxuLEe78ACFxIqjID9xI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134066625113-u1p8m16ithklmn0c0gk8h5tscjepgdm6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

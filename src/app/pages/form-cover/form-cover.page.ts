@@ -9,10 +9,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {FilehandlerService} from '../../services/filehandler.service';
 import {SharedDataService} from '../../services/shared-data.service';
 import {ActivityListItem} from '../../_models/activityListItem';
-import {ActivitySignOffFormDetail} from '../../_models/activitySignOffFormDetail';
+import {SignOffFormDetail} from '../../_models/signOffFormDetail';
 import {EnumService} from '../../services/enum.service';
 import {FormItem} from '../../_models/formItem';
 import {AttachmentItem} from '../../_models/attachmentItem';
+import {ApiService} from '../../services/api.service';
+import {UtilService} from '../../services/util.service';
+import {Response} from '../../_models';
 
 @Component({
     selector: 'app-form-cover',
@@ -20,73 +23,85 @@ import {AttachmentItem} from '../../_models/attachmentItem';
     styleUrls: ['./form-cover.page.scss'],
 })
 export class FormCoverPage {
-    activitySignOffFormDetail: ActivitySignOffFormDetail;
-    entityName;
-
-    inductionContentItemIndex = 0;
-    inductionItem;
+    signOffFormDetail: SignOffFormDetail;
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
+        private apiService: ApiService,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
-        if (sharedDataService.viewFormFor === EnumService.ViewFormForType.Activity || this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
-            this.activitySignOffFormDetail = sharedDataService.activitySignOffFormDetail;
-        }
 
-        if (sharedDataService.viewFormFor === EnumService.ViewFormForType.Activity) {
-            this.entityName = sharedDataService?.currentSelectedCheckinPlace?.entityName;
-        } else if (sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
-            this.entityName = sharedDataService?.checkInForLocation?.locationName;
 
-            route.queryParams.subscribe((params: any) => {
-                if (params) {
-                    this.inductionContentItemIndex = params.inductionContentItemIndex;
-                    if (sharedDataService.checkInDetail
-                        && sharedDataService.checkInDetail.checkInInductionItems
-                        && sharedDataService.checkInDetail.checkInInductionItems.length > this.inductionContentItemIndex) {
-                        this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.inductionContentItemIndex];
-                    }
-                }
-            });
+    }
+
+    ionViewWillEnter() {
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Activity ||
+            this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction ||
+            this.sharedDataService.viewFormFor === EnumService.ViewFormForType.CurrentCheckin ||
+            this.sharedDataService.viewFormFor === EnumService.ViewFormForType.CurrentCheckinWorkPermit
+        ) {
+            this.signOffFormDetail = this.sharedDataService.signOffFormDetail;
         }
     }
 
     openFile(attachmentItem: AttachmentItem) {
-        this.filehandlerService.openFile(this.sharedDataService.globalDirectories.documentDirectory + '' + attachmentItem.documentFileName);
+        this.filehandlerService.openFile(this.sharedDataService.globalDirectories?.documentDirectory + '' + attachmentItem.documentFileName);
     }
 
     onClose() {
-        this.navCtrl.back();
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
+    }
+
+    async getFormBuilderDetails(callBack) {
+        const formData = this.signOffFormDetail?.formData;
+        const loading = await this.utilService.startLoadingWithOptions();
+        this.apiService.getFormBuilderDetails(formData?.formID, formData?.formVersionID).subscribe((response: Response) => {
+            this.utilService.hideLoadingFor(loading);
+            callBack(response.Result);
+        }, error => {
+            this.utilService.showAlert(error.message || error);
+            this.utilService.hideLoadingFor(loading);
+        });
     }
 
     onContinue() {
-        let formData: FormItem;
-        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Activity || this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
-            formData = this.activitySignOffFormDetail?.formData;
-        }
+        if (this.signOffFormDetail) {
 
-        // when form data api create we will navigate
+            const formData: FormItem = this.signOffFormDetail?.formData;
 
-        switch (formData?.formType) {
-            case EnumService.FormTypes.HAV:
-                this.navCtrl.navigateForward(['/form-hav']);
-                break;
+            this.getFormBuilderDetails((formDetails) => {
+                this.sharedDataService.formBuilderDetails = formDetails;
 
-            case EnumService.FormTypes.RISK_ASSESSMENT:
-                this.navCtrl.navigateForward(['/form-riskassessment']);
-                break;
+                switch (formData?.formType) {
+                    case EnumService.FormTypes.HAV:
+                        this.navCtrl.navigateForward(['/form-hav']);
+                        break;
 
-            case EnumService.FormTypes.CUSTOM:
-                this.navCtrl.navigateForward(['/form-custom']);
-                break;
+                    case EnumService.FormTypes.RISK_ASSESSMENT:
+                        this.navCtrl.navigateForward(['/form-riskassessment']);
+                        break;
 
-            case EnumService.FormTypes.ACCIDENT_REPORT:
-                this.navCtrl.navigateForward(['/form-accident-report']);
-                break;
-            default:
+                    case EnumService.FormTypes.CUSTOM:
+                        this.navCtrl.navigateForward(['/form-custom']);
+                        break;
+
+                    case EnumService.FormTypes.ACCIDENT_REPORT:
+                        this.navCtrl.navigateForward(['/form-accident-report']);
+                        break;
+
+                    case EnumService.FormTypes.WORK_PERMIT:
+                        this.navCtrl.navigateForward(['/form-workpermit']);
+                        break;
+                    default:
+                }
+            });
         }
     }
 }

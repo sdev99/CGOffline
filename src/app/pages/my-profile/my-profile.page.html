@@ -16,7 +16,7 @@
 
     <div class="content">
         <ion-img
-                [src]="(profile&&profile.photo&&sharedDataService.globalDirectories)?(sharedDataService.globalDirectories.userDirectory+''+profile.photo):'./assets/images/demo-profile.svg'"
+                [src]="(profile&&profile.photo&&sharedDataService.globalDirectories)?(sharedDataService.globalDirectories.userDirectory+''+profile.photo):'./assets/images/ProfileNone.png'"
                 class="profile-img"></ion-img>
         <h3 *ngIf="profile">{{profile.userFullName}}</h3>
 

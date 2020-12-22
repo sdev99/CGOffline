@@ -1,0 +1,98 @@
+<ng-container *ngFor="let question of questions; let idx=index">
+    <ng-container *ngIf="!question.questionIsHidden">
+        <div class="list-item-container"
+             [formGroup]="formGroup"
+             [id]="UtilService.HtmlElementId(sectionId, question.questionId)"
+             [ngClass]="{'error':shouldShowError(question) && isError(question)}">
+
+            <app-question-list-header
+                    [questionTitle]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                    [note]="question.allowInstructionOrNote?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationInstructionOrNote:''"
+                    [required]="question.questionIsRequired"
+                    [attachments]="question.questionAttachments"
+                    [qNo]="(questionElementIds?questionElementIds.indexOf(UtilService.HtmlElementId(sectionId, question.questionId)):idx)+1"
+            ></app-question-list-header>
+
+            <div class="hr-line"></div>
+
+            <app-single-choice-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [list]="question.answerChoiceAttributes"
+            ></app-single-choice-field>
+
+            <app-multiple-choice-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [list]="question.answerChoiceAttributes"
+            ></app-multiple-choice-field>
+
+
+            <app-singleline-text-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleLineText"
+                    [form]="formGroup"
+                    [isError]="isError(question)"
+                    [inputName]="UtilService.FCName(question.questionId)"
+            ></app-singleline-text-field>
+
+            <app-multiline-text-field
+                    [isError]="isError(question)"
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+            ></app-multiline-text-field>
+
+            <app-number-integer-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldInteger"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [isError]="isError(question)"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-number-integer-field>
+
+            <app-number-decimal-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldDecimal"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [isError]="isError(question)"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-number-decimal-field>
+
+
+            <app-date-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [isError]="isError(question)"
+                    placeholder="Choose"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-date-field>
+
+            <app-time-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [isError]="isError(question)"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-time-field>
+
+            <app-date-time-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
+                    [form]="formGroup"
+                    [inputName]="UtilService.FCName(question.questionId)"
+                    [isError]="isError(question)"
+                    placeholder="Choose"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-date-time-field>
+
+            <app-photo-field
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
+                    [formControlName]="UtilService.FCName(question.questionId)"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+            ></app-photo-field>
+
+        </div>
+    </ng-container>
+</ng-container>

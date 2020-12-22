@@ -7,6 +7,8 @@ import {CheckinDetail} from '../../_models/checkinDetail';
 import {LocationItem} from '../../_models/locationItem';
 import {EnumService} from '../../services/enum.service';
 import {UtilService} from '../../services/util.service';
+import {AccountService} from '../../services/account.service';
+import {User} from '../../_models';
 
 @Component({
     selector: 'app-checkin-induction',
@@ -14,6 +16,8 @@ import {UtilService} from '../../services/util.service';
     styleUrls: ['./checkin-induction.page.scss'],
 })
 export class CheckinInductionPage implements OnInit {
+    user: User;
+
     inductionFiles = DemoDataService.inductionFiles.clone();
     locationDetail;
     checkinDetail: CheckinDetail;
@@ -25,7 +29,10 @@ export class CheckinInductionPage implements OnInit {
         public route: ActivatedRoute,
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
+        public accountService: AccountService,
     ) {
+        this.user = accountService.userValue;
+
         this.checkInForLocation = this.sharedDataService.checkInForLocation;
         this.checkinDetail = this.sharedDataService.checkInDetail;
 
@@ -67,12 +74,12 @@ export class CheckinInductionPage implements OnInit {
     }
 
     onClose() {
-        this.navCtrl.back();
+        this.navCtrl.navigateBack('/checkinout-confirm');
     }
 
     onContinue() {
         if (this.checkinDetail) {
-            this.sharedDataService.inductionNavigationProcess(-1);
+            this.sharedDataService.inductionNavigationProcess(this.user.userId, -1);
         }
     }
 }

@@ -1,0 +1,50 @@
+.time-item {
+  .time-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  ion-datetime {
+    width: 120px;
+    border: 1px solid #E8EAF2;
+    border-radius: 3px;
+    padding: 2px 16px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    height: 40px;
+    color: #777595;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .am-pm-btns {
+    border: 1px solid #E8EAF2;
+    border-radius: 5px;
+    height: 40px;
+    margin-left: 16px;
+
+    ion-button {
+      margin: 0;
+      height: 100%;
+      padding: 0 8px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      color: #777595;
+      text-align: center;
+      background-color: #F7FAFE;
+
+      &.active {
+        border: 1px solid rgba(74, 144, 226, 0.5);
+        border-radius: 5px;
+        background-color: #ffffff;
+      }
+    }
+  }
+}

@@ -18,10 +18,7 @@ export class DashboardHeaderComponent implements OnInit {
     @Input() showPlaceNavigationBtns = false;
     @Input() isCurrentCheckin = false;
     @Input() hideCheckinButton = false;
-    // @Input() checkedPlaces = ['Project name goes here on a single text line'];
     @Output() scanQrCode = new EventEmitter<string>();
-    @Output() nextPlace = new EventEmitter<void>();
-    @Output() previousPlace = new EventEmitter<void>();
 
     user: User;
 
@@ -30,6 +27,8 @@ export class DashboardHeaderComponent implements OnInit {
 
     showCheckedInPlacesList = false;
     selectedPlace: CheckedInDetailItem;
+
+    currentCheckinPlaceIndex = 0;
 
     constructor(
         public navCtrl: NavController,
@@ -40,6 +39,11 @@ export class DashboardHeaderComponent implements OnInit {
     ) {
         this.user = this.accountService.userValue;
         this.checkedPlaces = sharedDataService.checkedInPlaces;
+        this.checkedPlaces.map((place, key) => {
+            if (place.userCheckInDetailID === sharedDataService.currentSelectedCheckinPlace.userCheckInDetailID) {
+                this.currentCheckinPlaceIndex = key;
+            }
+        });
 
         if (this.checkedPlaces && this.checkedPlaces.length > 0) {
             this.checkedIn = true;
@@ -61,6 +65,10 @@ export class DashboardHeaderComponent implements OnInit {
             if (data) {
                 this.getUserCurrentCheckinDetails();
             }
+        });
+
+        this.observablesService.getObservable(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED).subscribe((data) => {
+            this.selectedPlace = this.sharedDataService.currentSelectedCheckinPlace;
         });
     }
 
@@ -104,8 +112,15 @@ export class DashboardHeaderComponent implements OnInit {
         if (!this.isCurrentCheckin) {
             if (this.checkedIn && this.checkedPlaces.length > 1) {
                 this.showCheckedInPlacesList = !this.showCheckedInPlacesList;
+            } else if (this.checkedIn && this.checkedPlaces && this.checkedPlaces.length === 1) {
+                this.placeChoose(this.checkedPlaces[0]);
             }
         }
+    }
+
+    placeChoose(place) {
+        this.placedChange(place);
+        this.navCtrl.navigateRoot('/tabs/current-checkin');
     }
 
     placedChange(place) {
@@ -117,15 +132,9 @@ export class DashboardHeaderComponent implements OnInit {
         } else {
             localStorage.removeItem(EnumService.LocalStorageKeys.CURRENT_SELECTED_CHECKIN_PLACE);
         }
+        this.observablesService.publishSomeData(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED);
     }
 
-    viewCheckinPlace(place) {
-        this.navCtrl.navigateBack(['/tabs/current-checkin'], {
-            queryParams: {
-                place: JSON.stringify(place)
-            }
-        });
-    }
 
     checkoutPlace(place: CheckedInDetailItem, event) {
         event.stopPropagation();
@@ -150,13 +159,27 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     checkInByList() {
-        this.sharedDataService.checkInPostData = {
-            userId: this.user.userId,
-            checkInLatitude: this.sharedDataService.myCurrentGeoLocation?.coords.latitude,
-            checkInLongitude: this.sharedDataService.myCurrentGeoLocation?.coords.longitude,
-            isGuestReturning: false
-        } as CheckInPostData;
         this.navCtrl.navigateForward('/tabs/dashboard/checkin-list');
+    }
+
+    shouldShowNavigationPlaceBtns() {
+        return this.showPlaceNavigationBtns && this.checkedPlaces && this.checkedPlaces.length > 1;
+    }
+
+    previousPlace() {
+        if (this.currentCheckinPlaceIndex > 0) {
+            this.currentCheckinPlaceIndex--;
+            this.sharedDataService.currentSelectedCheckinPlace = this.checkedPlaces[this.currentCheckinPlaceIndex];
+            this.observablesService.publishSomeData(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED);
+        }
+    }
+
+    nextPlace() {
+        if (this.currentCheckinPlaceIndex < this.checkedPlaces.length - 1) {
+            this.currentCheckinPlaceIndex++;
+            this.sharedDataService.currentSelectedCheckinPlace = this.checkedPlaces[this.currentCheckinPlaceIndex];
+            this.observablesService.publishSomeData(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED);
+        }
     }
 
 }

@@ -72,19 +72,7 @@ export class CheckinListPage implements OnInit {
 
     openLocation(location: LocationItem) {
         this.sharedDataService.checkInForLocation = location;
-        this.navCtrl.navigateForward(['/checkinout-confirm'], {
-            queryParams: {
-                headerTitle: 'Check In',
-                title: 'You are checking in',
-                subtitle: location.locationName,
-                buttonTitle: 'Check In Now',
-                nextPageData: JSON.stringify({
-                    locationDetail: JSON.stringify(location)
-                }),
-                nextPagePath: '/checkin-induction',
-                locationCheckType: EnumService.ConfirmForCheckType.CheckIn
-            }
-        });
+        this.sharedDataService.getCheckinDetails(this.user.userId, this.apiService);
     }
 
 }

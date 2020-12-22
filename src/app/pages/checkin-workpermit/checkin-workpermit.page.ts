@@ -3,6 +3,13 @@ import {DemoDataService} from '../../services/demo-data.service';
 import {NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
+import {FormItem} from '../../_models/formItem';
+import {UtilService} from '../../services/util.service';
+import {Response, User} from '../../_models';
+import {SignOffFormDetail} from '../../_models/signOffFormDetail';
+import {ApiService} from '../../services/api.service';
+import {AccountService} from '../../services/account.service';
+import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
 
 @Component({
     selector: 'app-checkin-workpermit',
@@ -10,15 +17,23 @@ import {EnumService} from '../../services/enum.service';
     styleUrls: ['./checkin-workpermit.page.scss'],
 })
 export class CheckinWorkpermitPage implements OnInit {
+    UtilService = UtilService;
+    availableWorkPermits: [FormItem];
+    user: User;
 
-    list: any = DemoDataService.currentCheckinWorkPermits.clone();
-
-    isCheckedIn = true;
+    isCheckedIn = false;
 
     constructor(
         public navController: NavController,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
+        public apiService: ApiService,
+        public navCtrl: NavController,
+        private accountService: AccountService,
     ) {
+        this.isCheckedIn = sharedDataService.checkedInPlaces ? sharedDataService.checkedInPlaces.length > 0 : false;
+        this.user = this.accountService.userValue;
+        this.availableWorkPermits = sharedDataService.availableWorkPermits;
     }
 
     ngOnInit() {
@@ -68,5 +83,20 @@ export class CheckinWorkpermitPage implements OnInit {
                 queryParams: item
             });
         }
+    }
+
+    async openForm(form: FormItem) {
+        const loading = await this.utilService.startLoadingWithOptions();
+        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+        this.apiService.getSignOffFormDetail(this.user.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
+            this.utilService.hideLoadingFor(loading);
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;
+                this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
+                this.navCtrl.navigateForward(['/form-cover']);
+            }
+        }, (error) => {
+            this.utilService.hideLoadingFor(loading);
+        });
     }
 }

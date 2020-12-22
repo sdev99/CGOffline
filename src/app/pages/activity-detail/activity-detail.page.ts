@@ -12,9 +12,9 @@ import {UtilService} from '../../services/util.service';
 import {AttachmentItem} from '../../_models/attachmentItem';
 import {AccountService} from '../../services/account.service';
 import {ObservablesService} from '../../services/observables.service';
-import {ActivitySignOffDocumentDetail} from '../../_models/activitySignOffDocumentDetail';
+import {DocumentDetail} from '../../_models/documentDetail';
 import {SignOffDetailsPostData} from '../../_models/signOffDetailsPostData';
-import {ActivitySignOffFormDetail} from '../../_models/activitySignOffFormDetail';
+import {SignOffFormDetail} from '../../_models/signOffFormDetail';
 
 @Component({
     selector: 'app-activity-detail',
@@ -28,6 +28,7 @@ export class ActivityDetailPage implements OnInit {
     user: User;
 
     errorMessage;
+    documentViewed = false;
 
     constructor(
         public navCtrl: NavController,
@@ -106,11 +107,11 @@ export class ActivityDetailPage implements OnInit {
     async openForm() {
         if (this.activityListItem) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getActivitySignOffFormDetail(this.activityListItem.formID).subscribe((response: Response) => {
+            this.apiService.getActivitySignOffFormDetail(this.user.userId, this.activityListItem?.formID, this.activityListItem?.activityIndividualID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.Activity;
-                    this.sharedDataService.activitySignOffFormDetail = response.Result as ActivitySignOffFormDetail;
+                    this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
                     this.navCtrl.navigateForward(['/form-cover']);
                 }
             }, (error) => {
@@ -125,28 +126,42 @@ export class ActivityDetailPage implements OnInit {
     async openDocument() {
         if (this.activityListItem) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getActivitySignOffDocumentDetail(this.activityListItem.documentID).subscribe((response: Response) => {
+            this.apiService.getActivitySignOffDocumentDetail(this.activityListItem?.documentID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                    const activitySignOffDocumentDetail = response.Result as ActivitySignOffDocumentDetail;
+                    const signOffDocumentDetail = response.Result as DocumentDetail;
                     this.sharedDataService.signOffFor = EnumService.SignOffType.DOCUMENT_ACTIVITY;
-                    this.sharedDataService.activitySignOffDocumentDetail = activitySignOffDocumentDetail;
+                    this.sharedDataService.signOffDocumentDetail = signOffDocumentDetail;
 
-                    this.sharedDataService.signOffDetailsPostData = {
-                        userId: this.user.userId,
-                        activityIndividualID: this.activityListItem.activityIndividualID,
-                        documentVersionID: activitySignOffDocumentDetail.documentVersionID,
-                        formVersionID: 0,
-                        latitude: this.sharedDataService.myCurrentGeoLocation.coords.latitude,
-                        longitude: this.sharedDataService.myCurrentGeoLocation.coords.longitude,
-                    } as SignOffDetailsPostData;
 
-                    if (activitySignOffDocumentDetail.isDigitalSignOff) {
-                        this.navCtrl.navigateForward(['/signoff-digitalink']);
-                    } else if (activitySignOffDocumentDetail.isPhotoSignOff) {
-                        this.navCtrl.navigateForward(['/signoff-photo']);
+                    if (this.documentViewed) {
+                        this.sharedDataService.signOffDetailsPostData = {
+                            userId: this.user.userId,
+                            documentID: this.activityListItem?.documentID,
+                            activityIndividualID: this.activityListItem?.activityIndividualID,
+                            documentVersionID: signOffDocumentDetail?.documentVersionID,
+                            formVersionID: 0,
+                            latitude: this.sharedDataService.myCurrentGeoLocation?.coords.latitude,
+                            longitude: this.sharedDataService.myCurrentGeoLocation?.coords.longitude,
+                            locationID: this.sharedDataService.currentSelectedCheckinPlace?.locationID,
+                            projectID: this.sharedDataService.currentSelectedCheckinPlace?.projectID,
+                            userCheckInDetailID: this.sharedDataService.currentSelectedCheckinPlace?.userCheckInDetailID,
+                            inventoryItemID: this.sharedDataService.currentSelectedCheckinPlace?.inventoryItemID,
+                        } as SignOffDetailsPostData;
+
+
+                        if (signOffDocumentDetail.isDigitalSignOff) {
+                            this.navCtrl.navigateForward(['/signoff-digitalink']);
+                        } else if (signOffDocumentDetail.isPhotoSignOff) {
+                            this.navCtrl.navigateForward(['/signoff-photo']);
+                        } else {
+                            this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                        }
                     } else {
-                        this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                        const fileUri = this.sharedDataService.globalDirectories.documentDirectory + '' + signOffDocumentDetail.documentFileName;
+                        this.filehandlerService.openFile(fileUri).then(() => {
+                            this.documentViewed = true;
+                        });
                     }
                 }
             }, (error) => {

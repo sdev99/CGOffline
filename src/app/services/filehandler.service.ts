@@ -4,6 +4,7 @@ import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx'
 import {File} from '@ionic-native/file/ngx';
 import {UtilService} from './util.service';
 import {HTTP} from '@ionic-native/http/ngx';
+import {StaticDataService} from './static-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +30,8 @@ export class FilehandlerService {
         this.http.downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName).then((response) => {
             this.utilService.hideLoadingFor(loading);
             const url = response.nativeURL;
-            this.fileOpener.showOpenWithDialog(url, 'application/' + extension).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+            const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
+            this.fileOpener.showOpenWithDialog(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
         }).catch((error) => {
             this.utilService.hideLoadingFor(loading);
             console.log('Error download file', error);

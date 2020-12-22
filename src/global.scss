@@ -502,3 +502,18 @@ ion-button {
 }
 
 
+.risk-rating-1, .risk-rating-2, .risk-rating-3 {
+  --background: #72F34A;
+}
+
+.risk-rating-4, .risk-rating-5, .risk-rating-6 {
+  --background: #FEF853;
+}
+
+.risk-rating-8, .risk-rating-9, .risk-rating-10, .risk-rating-12 {
+  --background: #F1973D;
+}
+
+.risk-rating-15, .risk-rating-16, .risk-rating-20, .risk-rating-25 {
+  --background: #EB4033;
+}

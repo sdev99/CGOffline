@@ -1,0 +1,32 @@
+<div class="photo-view-container">
+    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
+
+    <div class="photo-buttons" *ngIf="!image; else addPhotoTemplate;">
+        <ion-button fill="clear" class="left" (click)="addPhotoFromCamera()">
+            <ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
+            Take a Photo
+        </ion-button>
+
+        <span>Or</span>
+
+        <ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
+            <ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
+            Choose Photo
+        </ion-button>
+    </div>
+
+    <ng-template #addPhotoTemplate>
+        <div class="image-view">
+            <div class="close-btn">
+                <ion-button class="edit-btn" fill="clear"
+                            (click)="editPhoto()">
+                    <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" (click)="photoRemoved()">
+                    <ion-icon name="close" slot="icon-only"></ion-icon>
+                </ion-button>
+            </div>
+            <ion-img *ngIf="image" [src]="image"></ion-img>
+        </div>
+    </ng-template>
+</div>

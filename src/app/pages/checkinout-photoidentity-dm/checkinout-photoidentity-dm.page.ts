@@ -121,7 +121,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
                 this.cameraPreview.stopCamera();
             }, (err) => {
                 console.log(err);
-                this.photoCaptured = './assets/images/demo-profile.svg';
+                this.photoCaptured = './assets/images/ProfileNone.png';
             });
 
         }

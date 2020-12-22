@@ -13,11 +13,11 @@
 
         <ion-list-header lines="full" *ngIf="activityOverviewData">
             <ion-label>Activity List</ion-label>
-            <div class="status-badge ion-margin-end">
+            <div class="status-badge ion-margin-end" *ngIf="activityOverviewData.rejectedCount>0">
                 <span>{{activityOverviewData.rejectedCount}}</span>
                 <ion-badge color="light" class="rejected">Rejected</ion-badge>
             </div>
-            <div class="status-badge">
+            <div class="status-badge" *ngIf="activityOverviewData.overDueCount>0">
                 <span>{{activityOverviewData.overDueCount}}</span>
                 <ion-badge color="warning" class="overdue">Overdue</ion-badge>
             </div>

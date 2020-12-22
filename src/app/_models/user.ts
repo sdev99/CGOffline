@@ -1,6 +1,6 @@
 export class User {
     companyFolderName: string;
-    companyID: string;
+    companyID: number;
     firstName: number;
     userId: string;
     userType: string;

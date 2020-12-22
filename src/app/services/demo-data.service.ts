@@ -723,22 +723,6 @@ export class DemoDataService {
         {name: 'Spanish', code: 'es'},
     ];
 
-    static riskRatings = [
-        {name: 'Rating 1', id: 1},
-        {name: 'Rating 2', id: 2},
-        {name: 'Rating 3', id: 3},
-        {name: 'Rating 4', id: 4},
-        {name: 'Rating 5', id: 5},
-    ];
-
-    static residualRiskRatings = [
-        {name: 'Residual Rating 1', id: 1},
-        {name: 'Residual Rating 2', id: 2},
-        {name: 'Residual Rating 3', id: 3},
-        {name: 'Residual Rating 4', id: 4},
-        {name: 'Residual Rating 5', id: 5},
-    ];
-
 
     static locations = [
         {name: 'Demo Location 1', id: 1},

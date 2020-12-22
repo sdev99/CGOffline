@@ -1,0 +1,13 @@
+<ion-item class="question-item date-item" [formGroup]="form">
+    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
+    <div class="date-field" [ngClass]="{'error':isError}">
+        <ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
+        <ion-datetime
+                [placeholder]="placeholder"
+                display-timezone="utc"
+                displayFormat="DD MMM YYYY HH:mm"
+                pickerFormat="DD MMM YYYY HH:mm"
+                [formControlName]="inputName"
+        ></ion-datetime>
+    </div>
+</ion-item>

@@ -1,0 +1,9 @@
+<ion-item class="question-item" [formGroup]="form">
+    <ion-textarea
+            class="picture-additional-text"
+            autoGrow="true"
+            [formControlName]="inputName"
+            [ngClass]="{'error': isError}"
+            cols="3">
+    </ion-textarea>
+</ion-item>

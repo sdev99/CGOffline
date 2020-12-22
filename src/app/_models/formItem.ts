@@ -13,5 +13,11 @@ export class FormItem {
     reviewerId: string;
     isSystemReviewer: boolean;
     isEmailReviewer: boolean;
-    isSmsReviewer: boolean
+    isSmsReviewer: boolean;
+    isRejected: boolean;
+    rejectedBy: string;
+    rejectedDate: string;
+    formattedRejectedDate: string;
+    rejectedReason: string;
+    timeDifference: string;
 }

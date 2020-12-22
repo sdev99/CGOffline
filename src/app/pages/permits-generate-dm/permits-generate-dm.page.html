@@ -16,7 +16,7 @@
 
 
         <ion-list lines="none">
-            <ion-card *ngFor="let item of list" [ngClass]="{error:(submitted&&!isValid(item))}">
+            <ion-card *ngFor="let item of list" [ngClass]="{'error':(submitted&&!isValid(item))}">
 
                 <ion-card-title class="ion-padding-horizontal ion-padding-top">
                     <ion-text *ngIf="item.required">*

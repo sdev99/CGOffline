@@ -67,6 +67,29 @@ ion-header {
       }
     }
   }
+
+  .reject-reason {
+    padding: 5px 0;
+
+    h3 {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    p {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      color: #A1A8CA;
+    }
+  }
 }
 
 
@@ -126,5 +149,6 @@ ion-content {
         color: #4A90E2;
       }
     }
+
   }
 }

@@ -81,7 +81,7 @@ ion-content {
     color: #171538;
   }
 
-  .button-1 {
+  .text-2 {
     margin-top: 18px;
     min-height: 18px;
     font-family: IBM Plex Sans;
@@ -96,7 +96,7 @@ ion-content {
   .agree-checkbox {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     margin: 16px 0;
     flex-direction: row;
 
@@ -110,6 +110,7 @@ ion-content {
     }
 
     ion-checkbox {
+      min-width: 16px;
       --size: 16px;
       --background: #FFFFFF;
       --background-checked: #2A6FDB;

@@ -8,7 +8,7 @@ import {EnumService} from './enum.service';
 import {environment} from '../../environments/environment';
 import {SharedDataService} from './shared-data.service';
 import {Response} from '../_models/response';
-import {Platform} from '@ionic/angular';
+import {NavController, Platform} from '@ionic/angular';
 import {Profile} from '../_models/profile';
 
 declare global {
@@ -32,6 +32,7 @@ export class AccountService {
         private router: Router,
         private sharedDataService: SharedDataService,
         private http: HttpClient,
+        private navController: NavController,
         private platform: Platform,
     ) {
         this.userSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA)));
@@ -56,7 +57,7 @@ export class AccountService {
                 this.userSubject.next(userInfo);
                 return data;
             }
-            return throwError(new Error(data.ResponseException.ExceptionMessage));
+            return throwError(new Error(data?.ResponseException?.ExceptionMessage));
         }));
     }
 
@@ -125,7 +126,7 @@ export class AccountService {
                 this.userSubject.next(userInfo);
                 return data;
             }
-            return throwError(new Error(data.ResponseException.ExceptionMessage));
+            return throwError(new Error(data?.ResponseException?.ExceptionMessage));
         }));
     }
 
@@ -185,14 +186,13 @@ export class AccountService {
                 deviceID: this.sharedDataService.deviceUID
             }
         };
-
         return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(map((data: any) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 // remove user from local storage and set current user to null
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_DATA);
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_PROFILE);
                 this.userSubject.next(null);
-                this.router.navigate(['/login']);
+                this.navController.navigateRoot('/login');
             }
             return data;
         }));

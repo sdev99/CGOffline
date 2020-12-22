@@ -1,0 +1,26 @@
+.drop-down-item {
+  margin-top: 8px;
+
+  ion-select {
+    height: 42px;
+    --padding-start: 44px;
+    --padding-end: 8px;
+    --color: #171538;
+    --placeholder-color: #171538;
+    border: 1px solid #CACEE1;
+    border-radius: 3px;
+    --background: #FFFFFF;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    background-image: url(./../../../assets/icon/arrow-down.svg);
+    background-position: 16px;
+    background-repeat: no-repeat;
+
+    &::part(icon) {
+      display: none !important;
+    }
+  }
+}

@@ -3,16 +3,39 @@
 
     <ion-item lines="none">
         <ion-label>
-            <h6>{{activitySignOffFormDetail?.formData?.formTitle}}</h6>
+            <h6>{{signOffFormDetail?.formData?.formTitle}}</h6>
 
             <div class="form-text-row">
                 <div class="title">Entity</div>
-                <div class="value">{{entityName}}</div>
+                <div class="value"
+                     *ngFor="let entity of signOffFormDetail?.entityList">{{entity.locationName}}</div>
             </div>
 
             <div class="form-text-row">
                 <div class="title">Form Type</div>
-                <div class="value">{{activitySignOffFormDetail?.formData?.formType}}</div>
+                <div class="value">{{signOffFormDetail?.formData?.formType}}</div>
+            </div>
+
+
+            <div class="rejected" *ngIf="signOffFormDetail?.formData.isRejected">
+                <div class="detail">
+                    <ng-container *ngIf="signOffFormDetail?.formData.isRejected">
+                        <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                        <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                    </ng-container>
+                </div>
+
+                <p class="time"
+                   *ngIf="signOffFormDetail?.formData.formattedRejectedDate;">
+                    by
+                    {{signOffFormDetail?.formData?.rejectedBy}}
+                    on
+                    {{signOffFormDetail?.formData.formattedRejectedDate}}</p>
+
+                <div class="reject-reason">
+                    <h3>Rejection Reason</h3>
+                    <p>{{signOffFormDetail?.formData.rejectedReason}}</p>
+                </div>
             </div>
 
         </ion-label>
@@ -23,24 +46,22 @@
 
 <ion-content class="ion-padding-horizontal" fullscreen="true">
 
-    <!--    <ion-item lines="full" class="title-item">-->
-    <!--        <ion-label>-->
-    <!--            Please complete attached site audit form-->
-    <!--        </ion-label>-->
-    <!--    </ion-item>-->
-
-    <ion-item lines="full" class="title-item">
+    <ion-item lines="full" class="title-item"
+              *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions">
         <ion-label class="ion-text-wrap">
-            <ng-container>{{activitySignOffFormDetail?.formData?.formattedDescription}}</ng-container>
+            <p *ngIf="signOffFormDetail?.formData?.formattedDescription"
+               [innerHTML]="signOffFormDetail?.formData?.formattedDescription"></p>
 
-            <h6>Explanation</h6>
-            <p>{{activitySignOffFormDetail?.formData?.formattedInstructions}}</p>
+            <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
+                <h6>Explanation</h6>
+                <p [innerHTML]="signOffFormDetail?.formData?.formattedInstructions"></p>
+            </ng-container>
         </ion-label>
     </ion-item>
 
-    <div class="ion-margin-top" *ngIf="activitySignOffFormDetail && activitySignOffFormDetail.formAttachments">
+    <div class="ion-margin-top" *ngIf="signOffFormDetail && signOffFormDetail.formAttachments">
         <ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)"
-                  *ngFor="let attachmentItem of activitySignOffFormDetail.formAttachments">
+                  *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
             <ion-img slot="start" [src]="attachmentItem.documentFileIconURL"></ion-img>
             <ion-label>{{attachmentItem.documentFileName}}</ion-label>
         </ion-item>

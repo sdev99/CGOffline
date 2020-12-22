@@ -11,7 +11,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 export class CheckinoutIdentityconfirmDmPage implements OnInit {
     @ViewChild('imagePreview', {read: ElementRef}) imagePreview: ElementRef;
 
-    photoCaptured = './assets/images/demo-profile.svg';
+    photoCaptured = './assets/images/ProfileNone.png';
     userName;
     authFor = 'Check In/Out by Name';
 

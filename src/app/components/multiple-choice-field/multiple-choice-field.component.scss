@@ -1,0 +1,30 @@
+@import "./src/theme/variables";
+
+ion-item {
+  --min-height: 18px;
+  --padding-start: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --inner-padding-end: 0;
+  margin: 0 $paddingHorizontal;
+
+  ion-checkbox {
+    --border-color: #A1A8CA;
+    --border-color-checked: #A1A8CA;
+    --checkmark-color: #A1A8CA;
+    --border-width: 1px;
+    --border-style: solid;
+    --border-radius: 2px;
+    --background-checked: transparent;
+    --background: transparent;
+  }
+
+  ion-label {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    color: #171538;
+  }
+}

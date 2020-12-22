@@ -1,6 +1,6 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, FormGroupName, Validators} from '@angular/forms';
 import {DemoDataService} from '../../services/demo-data.service';
 import {StaticDataService} from '../../services/static-data.service';
 import {ExitConfirmationPage} from '../../modals/exit-confirmation/exit-confirmation.page';
@@ -10,6 +10,12 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {ObservablesService} from '../../services/observables.service';
 import {Subscription} from 'rxjs';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {AccountService} from '../../services/account.service';
+import {Response, User} from '../../_models';
+import {UtilService} from '../../services/util.service';
+import {ApiService} from '../../services/api.service';
+import {LocationItem} from '../../_models/locationItem';
+import {ValidatorService} from '../../services/validator.service';
 
 @Component({
     selector: 'app-form-accident-report',
@@ -17,13 +23,17 @@ import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
     styleUrls: ['./form-accident-report.page.scss'],
 })
 export class FormAccidentReportPage {
+    EnumService = EnumService;
+    UtilService = UtilService;
+    user: User;
+
     isSubmitted = false;
     errorMessage = '';
 
     formGroup: FormGroup;
-    locations = DemoDataService.locations.clone();
-    types = StaticDataService.types.clone();
-    classifications = StaticDataService.classifications.clone();
+    locations: Array<LocationItem>;
+    types = [];
+    classifications = [];
     bodyParts = StaticDataService.bodyParts.clone();
     currentBodyPartIndex = 0;
     selectedBodyParts = {};
@@ -42,7 +52,12 @@ export class FormAccidentReportPage {
 
     screenOrientationSubscribe;
     isShowOritationPortrait = false;
-    isOpenImageAnnotation = false;
+
+    formBuilderDetail = JSON.parse('{"formId":112,"title":"Accident Report Form One","description":null,"formVersionId":163,"formVersionNo":1,"isDraft":false,"formTypeID":5,"companyId":27,"defaultLanguageId":0,"sections":[{"sectionId":156,"sectionIsHidden":false,"sectionDisplayOrder":1,"isRiskAssessmentSection":false,"isHAVSection":false,"isAccidentReportSection":true,"sectionTranslations":[{"sectionTranslationId":257,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Accident Report"}],"questions":[{"questionId":310,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":9,"questionDisplayOrder":1,"sectionID":156,"questionTranslations":[{"questionTranslationId":382,"questionTranslationLanguageId":35,"questionTranslationTitle":"Accident Date and Time","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":311,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":12,"questionDisplayOrder":2,"sectionID":156,"questionTranslations":[{"questionTranslationId":383,"questionTranslationLanguageId":35,"questionTranslationTitle":"Accident Location","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":312,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":1,"questionDisplayOrder":3,"sectionID":156,"questionTranslations":[{"questionTranslationId":384,"questionTranslationLanguageId":35,"questionTranslationTitle":"Is RIDDOR Report Needed?","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[{"answerChoiceAttributeId":362,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"white","answerChoiceAttributeScoreOrWeight":0,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":481,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Yes"}]},{"answerChoiceAttributeId":363,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"white","answerChoiceAttributeScoreOrWeight":0,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":482,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"No"}]}],"questionLogics":[],"questionAttachments":[]},{"questionId":313,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":2,"questionDisplayOrder":4,"sectionID":156,"questionTranslations":[{"questionTranslationId":385,"questionTranslationLanguageId":35,"questionTranslationTitle":"About","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[{"answerChoiceAttributeId":364,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"white","answerChoiceAttributeScoreOrWeight":0,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":483,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"People"}]},{"answerChoiceAttributeId":365,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"white","answerChoiceAttributeScoreOrWeight":0,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":484,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Equipment"}]},{"answerChoiceAttributeId":366,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"white","answerChoiceAttributeScoreOrWeight":0,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":485,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Environment"}]}],"questionLogics":[],"questionAttachments":[]},{"questionId":314,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":11,"questionDisplayOrder":5,"sectionID":156,"questionTranslations":[{"questionTranslationId":386,"questionTranslationLanguageId":35,"questionTranslationTitle":"Type","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":315,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":11,"questionDisplayOrder":6,"sectionID":156,"questionTranslations":[{"questionTranslationId":387,"questionTranslationLanguageId":35,"questionTranslationTitle":"Classification","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":316,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":13,"questionDisplayOrder":7,"sectionID":156,"questionTranslations":[{"questionTranslationId":388,"questionTranslationLanguageId":35,"questionTranslationTitle":"Body Part Affected","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":317,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":4,"questionDisplayOrder":8,"sectionID":156,"questionTranslations":[{"questionTranslationId":389,"questionTranslationLanguageId":35,"questionTranslationTitle":"Description","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":318,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":10,"questionDisplayOrder":9,"sectionID":156,"questionTranslations":[{"questionTranslationId":390,"questionTranslationLanguageId":35,"questionTranslationTitle":"Attachment","questionTranslationInstructionOrNote":null,"questionTranslationTextLabel":null}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]}],"tasks":[]}],"selectedLanguage":null,"selectedLanguages":[{"languageId":35,"languageLabel":"English"}],"supportedLanguages":[],"answerTypes":[],"answerChoiceColors":null,"hourFormats":null,"questionActionOnList":null,"questionActionTypes":null,"questionChoiceSetTypes":null,"questionOperatorTypes":null,"userList":null,"groupList":null,"workPermitDetails":{"workPermitId":0,"totalScore":null,"hasExpirationDate":false,"hasExpiresOn":false,"expiresOnDate":null,"hasExpiresAfter":false,"durationValue":null,"hasPermitIssuedNotification":false,"hasPermitNotIssuedNotification":false,"operatorTypeID":null,"durationTypeID":null,"permitIssuedNotificationID":null,"permitNotIssuedNotificationID":null,"formVersionID":0,"permitNotIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]}},"accidentReport":{"accidentReportId":7,"hasAccidentNotification":false,"notificationID":null,"formVersionID":163,"accidentNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]}},"modifiedBy":"00000000-0000-0000-0000-000000000000","folderDocumentList":null,"folderDocumentTreeList":null,"signedUsers":[],"taskTemplates":[]}');
+
+
+    locationIdControlName;
+    bodyPartControlName;
 
     constructor(
         public navCtrl: NavController,
@@ -52,22 +67,60 @@ export class FormAccidentReportPage {
         public observablesService: ObservablesService,
         private screenOrientation: ScreenOrientation,
         private ngZone: NgZone,
+        public accountService: AccountService,
+        public apiService: ApiService,
+        private utilService: UtilService,
+        private validatorService: ValidatorService,
     ) {
-        this.formGroup = new FormGroup({
-            dateTime: new FormControl(new Date().toISOString(), Validators.compose([
-                Validators.required
-            ])),
-            locationId: new FormControl('', Validators.compose([])),
-            placeNotintheList: new FormControl(false, Validators.compose([])),
-            locationName: new FormControl('', Validators.compose([])),
-            reddorReportNeeded: new FormControl('', Validators.compose([Validators.required])),
-            aboutEnvironment: new FormControl(false, Validators.compose([])),
-            aboutEquipment: new FormControl(false, Validators.compose([])),
-            aboutPeople: new FormControl(false, Validators.compose([])),
-            about: new FormControl('', Validators.compose([])),
-            type: new FormControl('', Validators.compose([Validators.required])),
-            classification: new FormControl('', Validators.compose([Validators.required]))
-        });
+        this.user = accountService.userValue;
+
+        if (sharedDataService.formBuilderDetails) {
+            this.formBuilderDetail = sharedDataService.formBuilderDetails;
+        }
+
+        // Add form controls for each type of fields
+        this.formGroup = new FormGroup({});
+
+        const sections = this.formBuilderDetail.sections;
+        if (sections) {
+            sections.map((section) => {
+                if (!section.sectionIsHidden) {
+                    const questions = section.questions;
+
+                    questions.map((question) => {
+                        if (!question.questionIsHidden) {
+                            if (section.isAccidentReportSection) {
+                                if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
+                                    this.bodyPartControlName = UtilService.FCName(question.questionId);
+                                    const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
+                                    this.bodyParts.map((bodyPartGroup) => {
+                                        bodyPartGroup.parts.map((part) => {
+                                            checkboxFormGroup.addControl(UtilService.FCName(part.id), new FormControl(false));
+                                        });
+                                    });
+                                    this.formGroup.addControl(this.bodyPartControlName, checkboxFormGroup);
+                                } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
+                                    this.locationIdControlName = UtilService.FCName(question.questionId);
+                                    this.formGroup.addControl(this.locationIdControlName, new FormControl(''));
+                                    this.formGroup.addControl(EnumService.AccidentCustomLocationControlsName.PlaceNotintheList, new FormControl(false));
+                                    this.formGroup.addControl(EnumService.AccidentCustomLocationControlsName.LocationName, new FormControl(''));
+                                } else {
+                                    this.utilService.addDynamicFormControls(question, this.formGroup);
+                                }
+
+                                if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
+                                    this.setupDynamicChoiceList(question.questionDisplayOrder);
+                                }
+                            } else {
+                                this.utilService.addDynamicFormControls(question, this.formGroup);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        // -- End -- Add form controls for each type of fields
+
 
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -78,63 +131,139 @@ export class FormAccidentReportPage {
             if (!this.activityDetail) {
                 this.activityDetail = sharedDataService.viewFormDetail;
             }
-            if (!this.activityDetail) {
-                this.activityDetail = DemoDataService.dmForms[3];
-            }
+
         });
     }
 
     ionViewDidEnter() {
-        this.isOpenImageAnnotation = false;
+        this.sharedDataService.isOpenImageAnnotation = false;
+        this.getLocationItemList();
+        this.getAccidentTypeList();
+        this.getAccidentClassificationList();
     }
 
     ionViewWillLeave(): void {
 
     }
 
-    handleOrientation = () => {
-        if (this.screenOrientation.type.includes('landscape')) {
-            this.screenOrientation.unlock();
-            this.isShowOritationPortrait = true;
-        } else {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-        }
-
-        this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
-            this.ngZone.run(() => {
-                if (this.screenOrientation.type.includes('portrait')) {
-                    this.isShowOritationPortrait = false;
-                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-                }
-                if (this.screenOrientation.type.includes('landscape')) {
-                    this.isShowOritationPortrait = true;
-                }
-            });
+    getAccidentTypeList = () => {
+        this.apiService.getAccidentTypeList().subscribe((response: Response) => {
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.types = response.Result;
+                this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Type);
+            }
+        }, (error) => {
         });
     };
 
+    getAccidentClassificationList = () => {
+        this.apiService.getAccidentClassificationList().subscribe((response: Response) => {
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.classifications = response.Result;
+                this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Classification);
+            }
+        }, (error) => {
+        });
+    };
+
+    getLocationItemList = () => {
+        this.apiService.getLocationItemList(this.user.companyID).subscribe((res) => {
+            if (res) {
+                this.locations = res;
+                this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.AccidentLocation);
+            }
+        }, (error) => {
+        });
+    };
+
+    // getAccidentBodyPartList = () => {
+    //     this.apiService.getAccidentBodyPartList().subscribe((response: Response) => {
+    //         if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+    //             this.bodyParts = response.Result;
+    //         }
+    //     }, (error) => {
+    //     });
+    // };
+
+    setupDynamicChoiceList = (listType) => {
+        const sections = this.formBuilderDetail.sections;
+        if (sections) {
+            sections.map((section) => {
+                if (!section.sectionIsHidden) {
+                    if (section.isAccidentReportSection) {
+                        const questions = section.questions;
+                        questions.map((question) => {
+                            if (!question.questionIsHidden) {
+                                if (question.questionDisplayOrder === listType) {
+                                    if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Type) {
+                                        question.answerChoiceAttributes = this.types;
+                                        question.listValueKey = 'accidentTypeId';
+                                        question.listLabelKey = 'accidentTypeTitle';
+                                    } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Classification) {
+                                        question.answerChoiceAttributes = this.classifications;
+                                        question.listValueKey = 'accidentClassificationId';
+                                        question.listLabelKey = 'accidentClassificationTitle';
+                                    } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.AccidentLocation) {
+                                        question.answerChoiceAttributes = this.locations;
+                                        question.listValueKey = 'locationName';
+                                        question.listLabelKey = 'locationID';
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    };
+
+
+    handleOrientation = () => {
+        if(this.sharedDataService.dedicatedMode) {
+            if (this.screenOrientation.type.includes('landscape')) {
+                this.screenOrientation.unlock();
+                this.isShowOritationPortrait = true;
+            } else {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+            }
+
+            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+                this.ngZone.run(() => {
+                    if (this.screenOrientation.type.includes('portrait')) {
+                        this.isShowOritationPortrait = false;
+                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                    }
+                    if (this.screenOrientation.type.includes('landscape')) {
+                        this.isShowOritationPortrait = true;
+                    }
+                });
+            });
+        }
+    };
 
     ionViewWillEnter() {
         this.handleOrientation();
     }
 
     ionViewDidLeave(): void {
-        if (!this.isOpenImageAnnotation) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-            this.screenOrientationSubscribe.unsubscribe();
+        if(this.sharedDataService.dedicatedMode) {
+            if (!this.sharedDataService.isOpenImageAnnotation) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                this.screenOrientationSubscribe.unsubscribe();
+            }
         }
     }
 
     placeInTheListChange(event) {
         if (event.detail.value) {
-            this.formGroup.controls.placeNotintheList.setValue(false);
-            this.formGroup.controls.locationName.setValue('');
+            this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.PlaceNotintheList].setValue(false);
+            this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName].setValue('');
         }
     }
 
-    placeNotintheListChange(event) {
+    placeNotintheListChange(event, controlName) {
         if (event.detail.checked) {
-            this.formGroup.controls.locationId.setValue('');
+            this.formGroup.controls[controlName].setValue('');
         }
     }
 
@@ -177,10 +306,14 @@ export class FormAccidentReportPage {
             }
         });
         if (selectedItem) {
+            const checked = (this.selectedBodyParts[type] && this.selectedBodyParts[type].checked) ? false : true;
             this.selectedBodyParts[type] = {
                 ...selectedItem,
-                checked: (this.selectedBodyParts[type] && this.selectedBodyParts[type].checked) ? false : true,
+                checked,
             };
+            const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
+            bodyPartControlGroup.controls[UtilService.FCName(type)].setValue(checked);
+
             const element = document.getElementById(selectedItem.id);
             if (this.selectedBodyParts[type].checked) {
                 element.style.fill = '#E74731';
@@ -191,7 +324,7 @@ export class FormAccidentReportPage {
     }
 
     openImageAnnotation = (photo) => {
-        this.isOpenImageAnnotation = true;
+        this.sharedDataService.isOpenImageAnnotation = true;
         this.sharedDataService.setAnnotationImage(photo);
         this.sharedDataService.onAnnotationImageDone = (image) => {
             this.accidentImage = image;
@@ -209,10 +342,15 @@ export class FormAccidentReportPage {
     }
 
     removeSelectedBodyPart(item) {
+
         this.selectedBodyParts[item.id] = {
             ...item,
             checked: false,
         };
+
+        const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
+        bodyPartControlGroup.controls[UtilService.FCName(item.id)].setValue(false);
+
         const element = document.getElementById(item.id);
         element.style.fill = item.path.fill;
     }
@@ -235,6 +373,10 @@ export class FormAccidentReportPage {
         });
     }
 
+    isError(question) {
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(question.questionId)].valid);
+    }
+
     isBodyPartSelected = () => {
         return Object.keys(this.selectedBodyParts).length > 0;
     };
@@ -244,20 +386,22 @@ export class FormAccidentReportPage {
         this.errorMessage = '';
 
         if (this.formGroup.valid) {
-            if (!this.formGroup.controls.locationId.value && !this.formGroup.controls.locationName.value) {
+            const locationIdControl = this.formGroup.controls[this.locationIdControlName];
+            const locationNameControl = this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName];
+            if (!locationIdControl.value && !locationNameControl.value) {
                 this.errorMessage = 'Select location or enter manual location';
-            } else if (!this.isBodyPartSelected()) {
-                this.errorMessage = 'Fill required fields';
-            } else {
-                this.navCtrl.navigateForward(['/signoff-digitalink'], {
-                    queryParams: {
-                        type: EnumService.SignOffType.ACCIDENT_REPORT,
-                        data: JSON.stringify(this.activityDetail),
-                    }
-                });
             }
-        } else {
-            this.errorMessage = 'Fill required fields';
         }
+
+        if (!this.errorMessage) {
+            this.sharedDataService.saveFormAnswers(this.apiService, this.formGroup, this.formBuilderDetail, this.user, (status, result) => {
+                if (status) {
+
+                } else {
+                    this.errorMessage = result;
+                }
+            });
+        }
+
     }
 }

@@ -20,6 +20,20 @@ import {TopnavigationsSegmentsDmComponent} from './topnavigations-segments-dm/to
 import {SyncWarningMsgComponent} from './sync-warning-msg/sync-warning-msg.component';
 import {PortraitOrientationComponent} from './portrait-orientation/portrait-orientation.component';
 import {ScreenInnerLoadingComponent} from './screen-inner-loading/screen-inner-loading.component';
+import {SingleChoiceFieldComponent} from './single-choice-field/single-choice-field.component';
+import {MultipleChoiceFieldComponent} from './multiple-choice-field/multiple-choice-field.component';
+import {SinglelineTextFieldComponent} from './singleline-text-field/singleline-text-field.component';
+import {MultilineTextFieldComponent} from './multiline-text-field/multiline-text-field.component';
+import {DateFieldComponent} from './date-field/date-field.component';
+import {DateTimeFieldComponent} from './date-time-field/date-time-field.component';
+import {TimeFieldComponent} from './time-field/time-field.component';
+import {NumberIntegerFieldComponent} from './number-integer-field/number-integer-field.component';
+import {NumberDecimalFieldComponent} from './number-decimal-field/number-decimal-field.component';
+import {DropdownFieldComponent} from './dropdown-field/dropdown-field.component';
+import {ExposureComponent} from './exposure/exposure.component';
+import {QuestionListHeaderComponent} from './question-list-header/question-list-header.component';
+import {CustomQuestionsContainerComponent} from './custom-questions-container/custom-questions-container.component';
+import {PhotoFieldComponent} from './photo-field/photo-field.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +55,20 @@ import {ScreenInnerLoadingComponent} from './screen-inner-loading/screen-inner-l
         SyncWarningMsgComponent,
         PortraitOrientationComponent,
         ScreenInnerLoadingComponent,
+        SingleChoiceFieldComponent,
+        MultipleChoiceFieldComponent,
+        SinglelineTextFieldComponent,
+        MultilineTextFieldComponent,
+        DateFieldComponent,
+        DateTimeFieldComponent,
+        TimeFieldComponent,
+        NumberIntegerFieldComponent,
+        NumberDecimalFieldComponent,
+        DropdownFieldComponent,
+        ExposureComponent,
+        QuestionListHeaderComponent,
+        CustomQuestionsContainerComponent,
+        PhotoFieldComponent
     ],
     imports: [
         IonicModule,
@@ -66,7 +94,21 @@ import {ScreenInnerLoadingComponent} from './screen-inner-loading/screen-inner-l
         TopnavigationsSegmentsDmComponent,
         SyncWarningMsgComponent,
         PortraitOrientationComponent,
-        ScreenInnerLoadingComponent
+        ScreenInnerLoadingComponent,
+        SingleChoiceFieldComponent,
+        MultipleChoiceFieldComponent,
+        SinglelineTextFieldComponent,
+        MultilineTextFieldComponent,
+        DateFieldComponent,
+        DateTimeFieldComponent,
+        TimeFieldComponent,
+        NumberIntegerFieldComponent,
+        NumberDecimalFieldComponent,
+        DropdownFieldComponent,
+        ExposureComponent,
+        QuestionListHeaderComponent,
+        CustomQuestionsContainerComponent,
+        PhotoFieldComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

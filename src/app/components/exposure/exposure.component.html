@@ -1,0 +1,8 @@
+<div class="exposure" [ngClass]="containerClassName">
+    <ion-label>
+        {{label}}
+    </ion-label>
+    <div class="points" [ngStyle]="{backgroundColor:getPointColor()}">
+        {{points}} points
+    </div>
+</div>

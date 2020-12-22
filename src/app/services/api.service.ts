@@ -7,6 +7,7 @@ import {Response} from '../_models/response';
 import {SharedDataService} from './shared-data.service';
 import {SignOffDetailsPostData} from '../_models/signOffDetailsPostData';
 import {CheckInPostData} from '../_models/checkInPostData';
+import {CheckedInDetailItem} from '../_models/checkedInDetailItem';
 
 @Injectable({
     providedIn: 'root'
@@ -95,6 +96,18 @@ export class ApiService {
     }
 
     /**
+     * This API will use for uploading a attachment at the time of Form submit.
+     * This Api will return uploaded file name which will be used in savAnswer API’s "
+     * @param file image to be upload
+     * Note: Please crop image before uploading as per design
+     */
+    formPhotoOrVideoUpload(file, fileName = '') {
+        const formData = new FormData();
+        formData.append('file', file, fileName);
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.FormPhotoOrVideoUpload}`, formData);
+    }
+
+    /**
      * This API will use for uploading a user signature at the time of Induction signoff.
      * This Api will return uploaded file name which will be used in InsertCheckInDetails API’s parameter "DigitalInkSignature"
      * @param file image to be upload
@@ -134,11 +147,26 @@ export class ApiService {
 
     /**
      * This API will return activity sign off form details
-     * @param formId formID, we will get this from GetUserActivityList API
+     * @param userId current logged in user
+     * @param formId : formID, we will get this from GetUserActivityList API
+     * @param activityIndividualID : activityIndividualID, we will get this from GetUserActivityList API.
      * Note: If activity type is form sign off and IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed activity signoff steps for form signoff.
      */
-    getActivitySignOffFormDetail(formId) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetActivitySignOffFormDetail}/${formId}`);
+    getActivitySignOffFormDetail(userId, formId, activityIndividualID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetActivitySignOffFormDetail}?id=${userId}&formId=${formId}&activityIndividualID=${activityIndividualID}`);
+    }
+
+    /**
+     * This API will return sign off form details
+     * @param userId current logged in user
+     * @param formId : formID, we will get this from GetUserActivityList API
+     * @param locationID : locationID, we will get this from Entity detail
+     * @param projectID : projectID, we will get this from Entity detail
+     * @param inventoryItemID : inventoryItemID, we will get this from Entity detail
+     * Note: If activity type is form sign off and IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed activity signoff steps for form signoff.
+     */
+    getSignOffFormDetail(userId, formId, locationID = 0, projectID = 0, inventoryItemID = 0) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetSignOffFormDetail}?id=${userId}&formId=${formId}&LocationID=${locationID}&ProjectID=${projectID}&InventoryItemID=${inventoryItemID}`);
     }
 
     /**
@@ -165,7 +193,8 @@ export class ApiService {
      * @param companyID we will get company id at the time of login
      */
     getPersonalModeAvailableForms(userId, companyID) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?CompanyID=${companyID}`);
+        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`);
     }
 
     /**
@@ -174,7 +203,8 @@ export class ApiService {
      * @param companyID we will get company id at the time of login
      */
     getPersonalModeAvailableDocuments(userId, companyID) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}`);
+        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`);
     }
 
     /**
@@ -183,8 +213,19 @@ export class ApiService {
      * @param companyID we will get company id at the time of login
      */
     getPersonalModeAvailableWorkPermits(userId, companyID) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}`);
+        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`);
     }
+
+    /**
+     * This API will return form details
+     * @param formId we will get this from GetPersonalModeAvailableForms api
+     * @param formVersionId we will get this from GetPersonalModeAvailableForms api
+     */
+    getFormBuilderDetails(formId, formVersionId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetFormBuilderDetails}/${formId}?formVersionId=${formVersionId}`);
+    }
+
 
     /**
      * This API will return you the list of current locations which was checked in by current logged in user.
@@ -234,4 +275,93 @@ export class ApiService {
     insertCheckOutDetails(postBody) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails}`, postBody);
     }
+
+    /**
+     *  This API we  call when we want company User list
+     * @param companyId we will get companyID when user logged into the system
+     */
+    getCompanyUserList(companyId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyUserList}/${companyId}`);
+    }
+
+    /**
+     *  This API we  call when we want company Group list
+     * @param companyId we will get companyID when user logged into the system
+     */
+    getCompanyUserGroupList(companyId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyUserGroupList}/${companyId}`);
+    }
+
+    /**
+     *  We will call this API when we want company Manufacturer list.
+     * @param companyId we will get companyID when user logged into the system
+     */
+    getManufacturerList(companyId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetManufacturerList}/${companyId}`);
+    }
+
+    /**
+     *  We will call this API when we want company Type list by Manufacturer.
+     * @param companyId we will get companyID when user logged into the system
+     * @param manufacturerID we will manufacturerID from API GetManufacturerList
+     */
+    getTypeList(companyId, manufacturerId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetTypeList}?companyID=${companyId}&manufacturerID=${manufacturerId}`);
+    }
+
+    /**
+     *  We will call this API when we want company Model list by Type.
+     * @param companyId we will get companyID when user logged into the system
+     * @param typeId we will get typeID from API GetTypeList
+     */
+    getModelList(companyId, typeId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetModelList}?companyID=${companyId}&typeID=${typeId}`);
+    }
+
+
+    /**
+     *  We will call this API when we want User TotalHAVExposure For Today on Hav form.
+     * @param userId current logged in user id
+     */
+    getUserTotalHAVExposureForToday(userId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserTotalHAVExposureForToday}/${userId}`);
+    }
+
+    /**
+     *  This API will use for Save Form Answers
+     * @param postBody answers JSON object
+     */
+    saveFormAnswers(postBody) {
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.SaveFormAnswers}`, postBody);
+    }
+
+    /**
+     *  We will call this API when we want Accident Body Part List.
+     */
+    getAccidentBodyPartList() {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentBodyPartList}`);
+    }
+
+    /**
+     *  We will call this API when we want Accident Classification List.
+     */
+    getAccidentClassificationList() {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentClassificationList}`);
+    }
+
+    /**
+     *  We will call this API when we want Accident Type List.
+     */
+    getAccidentTypeList() {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentTypeList}`);
+    }
+
+    /**
+     *  We will call this API when we want GetRiskRatingOptionList.
+     */
+    getRiskRatingOptionList() {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskRatingOptionList}`);
+    }
+
+
 }

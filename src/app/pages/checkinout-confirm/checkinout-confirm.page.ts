@@ -21,10 +21,10 @@ import {ObservablesService} from '../../services/observables.service';
 export class CheckinoutConfirmPage implements OnInit {
     user: User;
 
-    title = 'You are checking out';
-    subtitle = 'Demo Location 1';
-    buttonTitle = 'Check Out Now';
-    headerTitle = 'Check Out';
+    title = '';
+    subtitle = '';
+    buttonTitle = '';
+    headerTitle = '';
 
     locationCheckType = EnumService.ConfirmForCheckType.CheckIn;
 
@@ -45,7 +45,6 @@ export class CheckinoutConfirmPage implements OnInit {
         public utilService: UtilService,
         private observablesService: ObservablesService,
     ) {
-
 
         this.user = this.accountService.userValue;
         this.activatedRoute.queryParams.subscribe((res) => {
@@ -82,46 +81,21 @@ export class CheckinoutConfirmPage implements OnInit {
 
     ngOnInit() {
         if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckIn) {
+            this.checkinDetail = this.sharedDataService.checkInDetail;
             this.checkInForLocation = this.sharedDataService.checkInForLocation;
-            this.getCheckinDetails();
+            this.sharedDataService.inductionContentItemIndex = 0;
         } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
             this.checkOutForCheckedInDetail = this.sharedDataService.checkOutForCheckedInDetail;
         }
     }
 
     onClose() {
-        this.navCtrl.back();
+        if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckIn) {
+            this.navCtrl.navigateBack('/tabs/dashboard/checkin-list');
+        } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
+            this.navCtrl.navigateBack('/tabs/dashboard');
+        }
     }
-
-    getCheckinDetails = async () => {
-        if (this.user && this.checkInForLocation) {
-            const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getCheckInDetails(this.user.userId, this.checkInForLocation.locationID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
-                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                    this.checkinDetail = response.Result as CheckinDetail;
-                    this.sharedDataService.checkInPostData.projectID = this.checkinDetail.checkInEntityDetail.projectID;
-                    this.sharedDataService.checkInPostData.inventoryItemID = this.checkinDetail.checkInEntityDetail.inventoryItemID;
-                    this.sharedDataService.checkInPostData.locationID = this.checkinDetail.checkInEntityDetail.locationID;
-                }
-            }, (error) => {
-                this.utilService.hideLoadingFor(loading);
-                this.utilService.showAlert(error.message, '', () => {
-                    if (this.checkIfSimultaneousCheckIn(error.message)) {
-                        this.onClose();
-                    }
-                });
-
-            });
-        }
-    };
-
-    checkIfSimultaneousCheckIn = (error) => {
-        if (error.indexOf('SimultaneousCheckIn') !== -1) {
-            return true;
-        }
-        return false;
-    };
 
     async onContinue() {
         if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
@@ -164,10 +138,9 @@ export class CheckinoutConfirmPage implements OnInit {
             });
         } else {
             if (this.checkinDetail.checkInEntityDetail.processInduction && this.checkinDetail.checkInInductionItems && this.checkinDetail.checkInInductionItems.length > 0) {
-                this.sharedDataService.checkInDetail = this.checkinDetail;
                 this.navCtrl.navigateForward(['checkin-induction']);
             } else if (this.checkinDetail.checkInEntityDetail.checkInPersonalPhoto) {
-                this.sharedDataService.checkInDetail = this.checkinDetail;
+                this.sharedDataService.signOffFor = EnumService.SignOffType.INDUCTION;
                 this.navCtrl.navigateForward(['signoff-photo']);
             } else {
                 this.sharedDataService.submitInductionCheckInData(this.apiService);

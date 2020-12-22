@@ -250,11 +250,19 @@ const routes: Routes = [
         path: 'forgot-password-reset',
         loadChildren: () => import('./pages/forgot-password-reset/forgot-password-reset.module').then(m => m.ForgotPasswordResetPageModule)
     },
+    {
+        path: 'form-workpermit',
+        loadChildren: () => import('./pages/form-workpermit/form-workpermit.module').then(m => m.FormWorkpermitPageModule)
+    },
+  {
+    path: 'document-openchoice',
+    loadChildren: () => import('./pages/document-openchoice/document-openchoice.module').then( m => m.DocumentOpenchoicePageModule)
+  },
 ];
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules})
+        RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules, onSameUrlNavigation: 'reload'})
     ],
     exports: [RouterModule]
 })

@@ -2,7 +2,7 @@
                           (close)="isShowOritationPortrait=false"></app-portrait-orientation>
 
 <ng-template #formView>
-    <ion-header mode="ios">
+    <ion-header mode="ios" *ngIf="formBuilderDetail">
         <ng-container *ngIf="sharedDataService.dedicatedMode; else personalMode">
             <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title"
                                  (closeModal)="onClose()"
@@ -10,195 +10,231 @@
         </ng-container>
 
         <ng-template #personalMode>
-            <app-modal-header modalTitle="Form title goes here on a single line of..."
+            <app-modal-header [modalTitle]="formBuilderDetail?.title"
                               (closeModal)="onClose()"></app-modal-header>
 
-            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)" [currentCount]="currentItem"
-                                   [totalCount]="totalItem" (next)="next()"
+            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)"
+                                   [currentCount]="currentQuestionIndex"
+                                   [totalCount]="questionElementIds.length" (next)="next()"
                                    (previous)="previous()"></app-next-prev-toolbar>
         </ng-template>
 
         <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
-
     </ion-header>
 
-    <ion-content mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+
+    <ion-content
+        #content
+        [scrollEvents]="true"
+        (ionScrollEnd)="onScrollEnd($event)"
+        (ionScroll)="onScroll($event)"
+        mode="ios"
+        [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 
         <ion-list lines="none">
-            <div class="list-item-container" *ngFor="let section of list; let idx=index"
-                 [ngClass]="{error:section.error}">
 
-                <ion-list-header lines="full">
-                    <h6>
-                        <ion-note color="danger" *ngIf="section.required">*</ion-note>
-                        {{(idx + 1) + '. ' + section.question}}</h6>
+            <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index">
+                <ng-container *ngIf="!section.sectionIsHidden">
 
-                    <ion-item *ngIf="section.note" lines="none" class="ion-no-margin ion-no-padding note-item">
-                        <ion-label>Note: {{section.note}}</ion-label>
-                    </ion-item>
-
-                    <ion-item lines="none" class="form-item" *ngIf="section.document" (click)="openFile()">
-                        <ion-icon slot="start" src="./assets/icon/attachment1.svg"></ion-icon>
-                        <ion-label>
-                            {{section.document.title}}
-                        </ion-label>
-                    </ion-item>
-                </ion-list-header>
-
-                <div class="risk-assesment-component">
-                    <ion-item lines="full">
-                        <ion-icon slot="start" src="./assets/icon/thunder.svg"></ion-icon>
-                        <ion-label>Hazard name goes here</ion-label>
-                    </ion-item>
-
-                    <ion-item class="drop-down-item" lines="none">
-                        <ion-label position="fixed">
-                            Risk Rating
-                        </ion-label>
-                        <ion-select [(ngModel)]="section.riskRating" placeholder="Choose"
-                                    [interface]="ionSelectInterface">
-                            <ion-select-option *ngFor="let item of riskRatings"
-                                               [value]="item.id">{{item.name}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-
-                    <div class="hr-line" style="margin-top: 8px;"></div>
-
-                    <div class="options">
-                        <ion-item>
-                            <ion-label>First control measure</ion-label>
-                            <ion-checkbox mode="md" slot="start"></ion-checkbox>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>Second control measure</ion-label>
-                            <ion-checkbox mode="md" slot="start"></ion-checkbox>
-                        </ion-item>
-                    </div>
-
-                    <div class="hr-line" style="margin-top: 8px;"></div>
-
-                    <ion-item class="drop-down-item">
-                        <ion-label position="fixed">
-                            Residual Risk Rating
-                        </ion-label>
-                        <ion-select [(ngModel)]="section.residualRiskRating" placeholder="Choose"
-                                    [interface]="ionSelectInterface">
-                            <ion-select-option *ngFor="let item of residualRiskRatings"
-                                               [value]="item.id">{{item.name}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-
-                    <div class="hr-line" style="margin-top: 8px;"></div>
-
-
-                    <div class="radio-input-view">
-                        <h2>Risk Rating</h2>
-
-                        <ion-item>
-                            <ion-label>Members of the Workforce</ion-label>
-                            <ion-checkbox mode="md" slot="start"
-                                          (ionChange)="residualRiskRatingChange($event, section, 'memberOfTheWorkForce')"></ion-checkbox>
+                    <!--  Risk Assessment Section-->
+                    <ng-container *ngIf="section.isRiskAssessmentSection; else customQuestions">
+                        <ion-item class="section-item">
+                            <ion-label>{{UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle}}</ion-label>
                         </ion-item>
 
-                        <ng-container *ngIf="section.memberOfTheWorkForce">
-                            <div class="custom-segment-view">
-                                <ion-button *ngFor="let item of userGroupTypes" mode="ios" fill="clear"
-                                            [ngClass]="{'active':(section.selectedUserGroupType && item.id===section.selectedUserGroupType.id)}"
-                                            (click)="section.selectedUserGroupType=item">
-                                    {{item.name}}
-                                </ion-button>
+                        <div class="list-item-container"
+                             *ngFor="let task of section.tasks; let idx=index"
+                             [ngClass]="{error:!isTaskValid(task)}"
+                             [id]="UtilService.HtmlElementId(section.sectionId, task.taskId)"
+                        >
+                            <app-question-list-header
+                                    [questionTitle]=" UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.currentLanguageId).taskTranslationTitle"
+                                    [note]="UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.currentLanguageId).taskTranslationInstructionOrNote"
+                                    [required]="task.isRequired"
+                                    [attachments]="task.taskAttachments"
+                                    [qNo]="questionElementIds.indexOf(UtilService.HtmlElementId(section.sectionId, task.taskId))+1"
+                            ></app-question-list-header>
+
+
+                            <div class="risk-assesment-component" *ngFor="let hazard of task.hazards">
+                                <ion-item lines="full">
+                                    <ion-icon slot="start" src="./assets/icon/thunder.svg"></ion-icon>
+                                    <ion-label>{{UtilService.findObj(hazard.hazardTranslations, 'hazardTranslationLanguageId', sharedDataService.currentLanguageId).hazardTranslationTitle}}</ion-label>
+                                </ion-item>
+
+                                <ion-item class="drop-down-item" lines="none">
+                                    <ion-label position="fixed">
+                                        Risk Rating
+                                    </ion-label>
+                                    <ion-select [(ngModel)]="hazard.riskRating" placeholder="Choose"
+                                                [ngClass]="{error:!isRiskRatingValid(task, hazard.riskRating)}"
+                                                [interface]="ionSelectInterface">
+                                        <ion-select-option *ngFor="let item of riskRatings"
+                                                           [class]="'risk-rating-'+item.riskRatingOptionId"
+                                                           [value]="item.riskRatingOptionId">{{item.riskRatingOptionTitle}}</ion-select-option>
+                                    </ion-select>
+                                </ion-item>
+
+                                <div class="hr-line" style="margin-top: 8px;"></div>
+
+                                <div class="options" *ngIf="hazard.controlMeasures">
+                                    <ion-item *ngFor="let controlMeasure of hazard.controlMeasures">
+                                        <ion-label>{{UtilService.findObj(controlMeasure.controlMeasureTranslations, 'controlMeasureTranslationLanguageId', sharedDataService.currentLanguageId).controlMeasureTranslationTitle}}</ion-label>
+                                        <ion-checkbox mode="md" slot="start"
+                                                      [(ngModel)]="controlMeasure.isSelected"></ion-checkbox>
+                                    </ion-item>
+                                </div>
+
+                                <div class="hr-line" style="margin-top: 8px;"></div>
+
+                                <ion-item class="drop-down-item">
+                                    <ion-label position="fixed">
+                                        Residual Risk Rating
+                                    </ion-label>
+                                    <ion-select [(ngModel)]="hazard.residualRiskRating" placeholder="Choose"
+                                                [ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRating)}"
+                                                [interface]="ionSelectInterface">
+                                        <ion-select-option *ngFor="let item of residualRiskRatings"
+                                                           [class]="'risk-rating-'+item.riskRatingOptionId"
+                                                           [value]="item.riskRatingOptionId">{{item.riskRatingOptionTitle}}</ion-select-option>
+                                    </ion-select>
+                                </ion-item>
+
+                                <div class="hr-line" style="margin-top: 8px;"></div>
+
+
+                                <div class="radio-input-view">
+                                    <h2>Persons Exposed</h2>
+
+                                    <ion-item>
+                                        <ion-label>Members of the Workforce</ion-label>
+                                        <ion-checkbox mode="md" slot="start"
+                                                      [(ngModel)]="hazard.memberOfTheWorkForce"></ion-checkbox>
+                                    </ion-item>
+
+                                    <ng-container *ngIf="hazard.memberOfTheWorkForce">
+                                        <div class="custom-segment-view">
+                                            <ion-button *ngFor="let item of userGroupTypes" mode="ios" fill="clear"
+                                                        [ngClass]="{'active':(hazard.selectedUserGroupType && item.id===hazard.selectedUserGroupType.id)}"
+                                                        (click)="hazard.selectedUserGroupType=item">
+                                                {{item.name}}
+                                            </ion-button>
+                                        </div>
+
+                                        <ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
+                                            <ng-container
+                                                    *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='users'">
+                                                <ion-select [interface]="ionSelectInterface"
+                                                            placeholder="Choose"
+                                                            [ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
+                                                            [(ngModel)]="hazard.selectedUser">
+                                                    <ion-select-option *ngFor="let item of users"
+                                                                       [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
+                                                </ion-select>
+                                                <ion-button slot="end" size="md" expand="block"
+                                                            (click)="addUser(hazard)">
+                                                    Add
+                                                </ion-button>
+                                            </ng-container>
+
+                                            <ng-container
+                                                    *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='groups'">
+                                                <ion-select [interface]="ionSelectInterface"
+                                                            placeholder="Choose"
+                                                            [ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
+                                                            [(ngModel)]="hazard.selectedGroup">
+                                                    <ion-select-option *ngFor="let item of groups"
+                                                                       [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
+                                                </ion-select>
+                                                <ion-button slot="end" size="md" expand="block"
+                                                            (click)="addGroup(hazard)">
+                                                    Add
+                                                </ion-button>
+                                            </ng-container>
+                                        </ion-item>
+
+                                        <ng-container *ngIf="hazard.addedUsers">
+                                            <ion-item class="user-group-item" lines="inset"
+                                                      *ngFor="let item of hazard.addedUsers | keyvalue">
+                                                <ion-label>
+                                                    {{item.value.firstAndLastName}}
+                                                </ion-label>
+                                                <ion-button slot="end" shape="round"
+                                                            (click)="removeUser(hazard, item.key)">
+                                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                                </ion-button>
+                                            </ion-item>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="hazard.addedGroups">
+                                            <ion-item class="user-group-item" lines="inset"
+                                                      *ngFor="let item of hazard.addedGroups | keyvalue">
+                                                <ion-label>
+                                                    {{item.value.groupName}}
+                                                </ion-label>
+                                                <ion-button slot="end" shape="round"
+                                                            (click)="removeGroup(hazard, item.key)">
+                                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                                </ion-button>
+                                            </ion-item>
+                                        </ng-container>
+
+                                    </ng-container>
+
+                                    <ion-item>
+                                        <ion-label>Members of the Public</ion-label>
+                                        <ion-checkbox mode="md" slot="start"
+                                                      [(ngModel)]="hazard.memberOfThePublic"></ion-checkbox>
+                                    </ion-item>
+
+                                    <ng-container *ngIf="hazard.memberOfThePublic">
+                                        <ion-textarea
+                                                [ngClass]="{error:!isMemberOfThePublicValid(task, hazard)}"
+                                                rows="5"
+                                                [(ngModel)]="hazard.memberOfThePublicDescription"></ion-textarea>
+                                    </ng-container>
+                                </div>
                             </div>
+                        </div>
+                    </ng-container>
 
-                            <ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
-                                <ng-container
-                                        *ngIf="section.selectedUserGroupType && section.selectedUserGroupType.id==='users'">
-                                    <ion-select [interface]="ionSelectInterface"
-                                                placeholder="Choose"
-                                                [(ngModel)]="section.selectedUser">
-                                        <ion-select-option *ngFor="let item of users"
-                                                           [value]="item.id">{{item.name}}</ion-select-option>
-                                    </ion-select>
-                                    <ion-button slot="end" size="md" expand="block" (click)="addUser(section)">Add
-                                    </ion-button>
-                                </ng-container>
+                    <ng-template #customQuestions>
+                        <Form [formGroup]="formGroup" (ngSubmit)="onContinue()">
 
-
-                                <ng-container
-                                        *ngIf="section.selectedUserGroupType && section.selectedUserGroupType.id==='groups'">
-                                    <ion-select [interface]="ionSelectInterface"
-                                                placeholder="Choose"
-                                                [(ngModel)]="section.selectedGroup">
-                                        <ion-select-option *ngFor="let item of groups"
-                                                           [value]="item.id">{{item.name}}</ion-select-option>
-                                    </ion-select>
-                                    <ion-button slot="end" size="md" expand="block" (click)="addGroup(section)">Add
-                                    </ion-button>
-                                </ng-container>
+                            <ion-item class="section-item">
+                                <ion-label>{{UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle}}</ion-label>
                             </ion-item>
 
-                            <ng-container *ngIf="section.addedUsers">
-                                <ion-item class="user-group-item" lines="inset"
-                                          *ngFor="let item of section.addedUsers | keyvalue">
-                                    <ion-label>
-                                        {{item.value.name}}
+                            <app-custom-questions-container
+                                    [sectionId]="section.sectionId"
+                                    [questionElementIds]="questionElementIds"
+                                    [questions]="section.questions"
+                                    [isSubmitted]="isSubmitted"
+                                    [formGroup]="formGroup"
+                            ></app-custom-questions-container>
+
+                            <!--        End of form -->
+                            <ng-container
+                                    *ngIf="!sharedDataService.dedicatedMode">
+                                <div class="hr-line-full ion-margin-top"></div>
+
+                                <ion-item class="text-bottom-msg">
+                                    <ion-label class="ion-text-wrap ion-text-center">
+                                        You've reached the end of the form.
+                                        Please check your answers and sign-off.
                                     </ion-label>
-                                    <ion-button slot="end" shape="round" (click)="removeUser(section, item.key)">
-                                        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
-                                    </ion-button>
+                                </ion-item>
+                                <ion-item class="ion-margin-vertical ion-padding-bottom">
+                                    <ion-button expand="full" class="action-btn" type="submit">Sign-Off</ion-button>
                                 </ion-item>
                             </ng-container>
+                        </Form>
+                    </ng-template>
 
-                            <ng-container *ngIf="section.addedGroups">
-                                <ion-item class="user-group-item" lines="inset"
-                                          *ngFor="let item of section.addedGroups | keyvalue">
-                                    <ion-label>
-                                        {{item.value.name}}
-                                    </ion-label>
-                                    <ion-button slot="end" shape="round" (click)="removeGroup(section, item.key)">
-                                        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
-                                    </ion-button>
-                                </ion-item>
-                            </ng-container>
-
-                        </ng-container>
-
-                        <ion-item>
-                            <ion-label>Members of the Public</ion-label>
-                            <ion-checkbox mode="md" slot="start"
-                                          (ionChange)="residualRiskRatingChange($event, section, 'memberOfThePublic')"></ion-checkbox>
-                        </ion-item>
-
-                        <ng-container *ngIf="section.memberOfThePublic">
-                            <ion-textarea rows="5"></ion-textarea>
-                        </ng-container>
-                    </div>
-
-                </div>
-
-
-                <ion-item class="section-item">
-                    <ion-label>Section name goes here</ion-label>
-                </ion-item>
-            </div>
-
-
-            <!--        End of form -->
-            <ng-container *ngIf="!sharedDataService.dedicatedMode">
-                <div class="hr-line-full ion-margin-top"></div>
-
-                <ion-item class="text-bottom-msg">
-                    <ion-label class="ion-text-wrap ion-text-center">
-                        You've reached the end of the form.
-                        Please check your answers and sign-off.
-                    </ion-label>
-                </ion-item>
-                <ion-item class="ion-margin-vertical ion-padding-bottom">
-                    <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
-                </ion-item>
+                </ng-container>
             </ng-container>
 
         </ion-list>
-
 
         <!--        End of form -->
         <ng-container *ngIf="sharedDataService.dedicatedMode">
@@ -207,9 +243,8 @@
                     You've reached the end of the form.
                     Please check your answers and sign-off.
                 </ion-label>
-                <ion-button  slot="end" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+                <ion-button slot="end" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
             </ion-item>
         </ng-container>
-
     </ion-content>
 </ng-template>

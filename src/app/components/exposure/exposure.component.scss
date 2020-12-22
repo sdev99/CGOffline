@@ -1,0 +1,38 @@
+.exposure {
+  background-color: #F6F8FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  margin: 16px 8px;
+
+  ion-label {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 22px;
+    text-align: center;
+    color: #171538;
+  }
+
+  .points {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    background: #FFBA00;
+    border-radius: 3px;
+    min-width: 125px;
+    height: 38px;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 0 5px;
+  }
+}

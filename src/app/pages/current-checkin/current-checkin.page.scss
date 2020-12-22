@@ -71,7 +71,20 @@ ion-content {
         width: 22px;
         height: 22px;
       }
+
+      ion-img {
+        width: 22px;
+        height: 22px;
+      }
     }
   }
 
+}
+
+.loading-spinner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }

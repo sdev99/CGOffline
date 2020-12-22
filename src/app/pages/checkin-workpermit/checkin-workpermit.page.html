@@ -20,10 +20,10 @@
 
 
 <ion-content>
-    <ion-list *ngIf="list && list.length>0" class="activity-list" lines="full">
-        <ion-item *ngFor="let item of list" (click)="onSelect(item)">
-            <ion-icon slot="start" src="./assets/icon/workpermit.svg"></ion-icon>
-            <ion-label>{{item.title}}</ion-label>
+    <ion-list *ngIf="availableWorkPermits && availableWorkPermits.length>0" class="activity-list" lines="full">
+        <ion-item *ngFor="let item of availableWorkPermits" (click)="openForm(item)">
+            <ion-icon slot="start" [src]="UtilService.FileIcon('form')"></ion-icon>
+            <ion-label>{{item.formTitle}}</ion-label>
         </ion-item>
     </ion-list>
 </ion-content>

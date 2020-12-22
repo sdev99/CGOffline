@@ -1,0 +1,27 @@
+@import "./src/theme/variables";
+
+ion-item {
+  --min-height: 18px;
+  --padding-start: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --inner-padding-end: 0;
+  margin: 0 $paddingHorizontal;
+
+  ion-radio {
+    --border-radius: 12px;
+    --color: #A1A8CA;
+    --color-checked: #A1A8CA;
+    --inner-border-radius: 11px;
+    margin-right: 13px;
+  }
+
+  ion-label {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    color: #171538;
+  }
+}

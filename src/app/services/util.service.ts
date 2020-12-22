@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {AlertController, LoadingController, NavController} from '@ionic/angular';
 import {EnumService} from './enum.service';
 import {SharedDataService} from './shared-data.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ValidatorService} from './validator.service';
 
 declare global {
     interface Array<T> {
@@ -17,6 +19,7 @@ Array.prototype.clone = function() {
     providedIn: 'root'
 })
 export class UtilService {
+
     loading: HTMLIonLoadingElement = null;
     loadingStarting = false;
     loadingStopping = false;
@@ -74,20 +77,40 @@ export class UtilService {
 
 
     static findObj(list, key, value, defaultIndex = 0) {
-        let resultData = list[defaultIndex];
-        list.map((data) => {
-            if (data[key] === value) {
-                resultData = data;
-                return;
-            }
-        });
-        return resultData;
+        if (list && list.length > 0) {
+            let resultData = list[defaultIndex];
+            list.map((data) => {
+                if (data[key] === value) {
+                    resultData = data;
+                    return;
+                }
+            });
+            return resultData;
+        }
+        return null;
     }
 
     static randomBoolean() {
         return Math.round(Math.random());
     }
 
+    /**
+     *  Dynamic FormControlName with section and question id
+     */
+    static FCName(questionId) {
+        return 'FormControl_' + questionId;
+    }
+
+    /**
+     *  Dynamic Html Element id
+     */
+    static HtmlElementId(sectionId, questionId) {
+        return 'Question_' + sectionId + '_' + questionId;
+    }
+
+    static fixTimeString(value) {
+        return value.replace('T', ' ');
+    }
 
     static getQueryStringValue = (url, key) => {
         return decodeURIComponent(url.replace(new RegExp('^(?:.*[&\\?]' + encodeURIComponent(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
@@ -102,6 +125,7 @@ export class UtilService {
     constructor(
         private loadingController: LoadingController,
         private alertController: AlertController,
+        private validatorService: ValidatorService,
         private navCtrl: NavController,
     ) {
     }
@@ -120,8 +144,10 @@ export class UtilService {
     }
 
     async hideLoadingFor(loading: HTMLIonLoadingElement) {
-        loading.dismiss();
-        loading = null;
+        if (loading) {
+            loading.dismiss();
+            loading = null;
+        }
     }
 
     dataUriToFile(url, filename, mimeType) {
@@ -190,5 +216,46 @@ export class UtilService {
     getCurrentDateTIme() {
         return new Date().toISOString().slice(0, 19).replace('T', ' ');
     }
+
+    addDynamicFormControls(question, formGroup: FormGroup) {
+        const validators = [];
+        if (question.questionIsRequired) {
+            validators.push(Validators.required);
+        }
+
+        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
+            const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
+            if (question.answerChoiceAttributes) {
+                question.answerChoiceAttributes.map((choice) => {
+                    checkboxFormGroup.addControl(UtilService.FCName(choice.answerChoiceAttributeId), new FormControl(false));
+                });
+            }
+
+            formGroup.addControl(UtilService.FCName(question.questionId), checkboxFormGroup);
+        } else {
+            formGroup.addControl(UtilService.FCName(question.questionId), new FormControl('', Validators.compose(validators)));
+        }
+    }
+
+    // Extract id from string (eg. L|10)
+    getRelevantEntityId = (entityId) => {
+        const response = {
+            InventoryID: 0,
+            ProjectID: 0,
+            LocationID: 0
+        };
+        const entityIdSplits = entityId.split('|');
+        if (entityIdSplits && entityIdSplits.length >= 2) {
+            if (entityIdSplits[0] === 'I') {
+                response.InventoryID = entityIdSplits[1];
+            } else if (entityIdSplits[0] === 'P') {
+                response.ProjectID = entityIdSplits[1];
+            } else {
+                response.LocationID = entityIdSplits[1];
+            }
+        }
+        return response;
+    };
+
 
 }
