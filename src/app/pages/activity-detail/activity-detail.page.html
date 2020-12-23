@@ -8,7 +8,7 @@
                 <ion-badge *ngIf="activityListItem.isOverDue" color="warning" class="overdue">Overdue</ion-badge>
                 <ng-container *ngIf="activityListItem.isRejected">
                     <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-                    <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                    <ion-badge class="rejected">Rejected</ion-badge>
                 </ng-container>
                 <span class="time"
                       *ngIf="activityListItem.activityTime; else customTime">{{activityListItem.activityTime}}</span>

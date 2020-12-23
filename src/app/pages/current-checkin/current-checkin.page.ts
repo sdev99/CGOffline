@@ -59,6 +59,9 @@ export class CurrentCheckinPage implements OnInit {
             if (!this.sharedDataService.checkedInPlaces || this.sharedDataService.checkedInPlaces.length === 0) {
                 this.isCheckedIn = false;
             }
+            if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces.length > 0) {
+                this.isCheckedIn = true;
+            }
 
             this.getPersonalModeData(false, () => {
                 this.isLoading = false;

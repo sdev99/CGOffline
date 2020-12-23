@@ -7,6 +7,7 @@ import {FormControlName, FormGroup} from '@angular/forms';
   styleUrls: ['./singleline-text-field.component.scss'],
 })
 export class SinglelineTextFieldComponent implements OnInit {
+  @Input() label: string;
   @Input() inputName: string;
   @Input() form: FormGroup;
   @Input() isError: boolean;

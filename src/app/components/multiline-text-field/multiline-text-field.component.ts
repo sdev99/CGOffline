@@ -7,6 +7,7 @@ import {FormControlName, FormGroup} from '@angular/forms';
     styleUrls: ['./multiline-text-field.component.scss'],
 })
 export class MultilineTextFieldComponent implements OnInit {
+    @Input() label: string;
     @Input() inputName: string;
     @Input() form: FormGroup;
     @Input() isError: boolean;

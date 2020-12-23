@@ -2,7 +2,9 @@
     <div class="content">
         <ion-icon src="./assets/icon/CheckSuccess.svg"></ion-icon>
 
+        <div class="title" *ngIf="title">{{title}}</div>
         <div class="title-1">{{message}}</div>
+        <div class="text-2" *ngIf="description">{{description}}</div>
     </div>
 
 </ion-content>

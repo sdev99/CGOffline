@@ -90,6 +90,12 @@ export class FormAccidentReportPage {
                     questions.map((question) => {
                         if (!question.questionIsHidden) {
                             if (section.isAccidentReportSection) {
+                                // Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
+                                if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
+                                    question.questionIsRequired = false;
+                                }
+
+
                                 if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
                                     this.bodyPartControlName = UtilService.FCName(question.questionId);
                                     const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
@@ -219,7 +225,7 @@ export class FormAccidentReportPage {
 
 
     handleOrientation = () => {
-        if(this.sharedDataService.dedicatedMode) {
+        if (this.sharedDataService.dedicatedMode) {
             if (this.screenOrientation.type.includes('landscape')) {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
@@ -246,7 +252,7 @@ export class FormAccidentReportPage {
     }
 
     ionViewDidLeave(): void {
-        if(this.sharedDataService.dedicatedMode) {
+        if (this.sharedDataService.dedicatedMode) {
             if (!this.sharedDataService.isOpenImageAnnotation) {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
                 this.screenOrientationSubscribe.unsubscribe();

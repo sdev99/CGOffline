@@ -11,7 +11,8 @@
 
         <ng-template #personalMode>
             <app-modal-header modalTitle="{{formBuilderDetail?.title}}" (closeModal)="onClose()"></app-modal-header>
-            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)" [currentCount]="currentQuestionIndex"
+            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)"
+                                   [currentCount]="currentQuestionIndex"
                                    [totalCount]="questionElementIds.length" (next)="next()"
                                    (previous)="previous()"></app-next-prev-toolbar>
         </ng-template>
@@ -33,14 +34,15 @@
             <ion-list lines="none" mode="ios">
 
                 <ng-container *ngFor="let section of formBuilderDetail?.sections">
-
-                <app-custom-questions-container
-                        [sectionId]="section.sectionId"
-                        [questionElementIds]="questionElementIds"
-                        [questions]="section.questions"
-                        [isSubmitted]="isSubmitted"
-                        [formGroup]="formGroup"
-                ></app-custom-questions-container>
+                    <ng-container *ngIf="!section.sectionIsHidden">
+                        <app-custom-questions-container
+                                [sectionId]="section.sectionId"
+                                [questionElementIds]="questionElementIds"
+                                [questions]="section.questions"
+                                [isSubmitted]="isSubmitted"
+                                [formGroup]="formGroup"
+                        ></app-custom-questions-container>
+                    </ng-container>
                 </ng-container>
 
                 <!--        Dynamic Custom Form Fields -->

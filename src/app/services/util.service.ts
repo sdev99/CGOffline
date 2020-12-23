@@ -101,6 +101,10 @@ export class UtilService {
         return 'FormControl_' + questionId;
     }
 
+    static FCNameAdditioanlNote(questionId) {
+        return 'FormControlAdditionalNote_' + questionId;
+    }
+
     /**
      *  Dynamic Html Element id
      */
@@ -217,10 +221,17 @@ export class UtilService {
         return new Date().toISOString().slice(0, 19).replace('T', ' ');
     }
 
-    addDynamicFormControls(question, formGroup: FormGroup) {
+    addDynamicFormControls(question, formGroup: FormGroup, onValueChange = null) {
         const validators = [];
         if (question.questionIsRequired) {
             validators.push(Validators.required);
+        }
+
+        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldDecimal) {
+            validators.push(Validators.pattern('\\d+([.]\\d+)?'));
+        }
+        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldInteger) {
+            validators.push(Validators.pattern('[0-9]*'));
         }
 
         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
@@ -230,10 +241,16 @@ export class UtilService {
                     checkboxFormGroup.addControl(UtilService.FCName(choice.answerChoiceAttributeId), new FormControl(false));
                 });
             }
-
+            checkboxFormGroup.valueChanges.subscribe(onValueChange);
             formGroup.addControl(UtilService.FCName(question.questionId), checkboxFormGroup);
         } else {
-            formGroup.addControl(UtilService.FCName(question.questionId), new FormControl('', Validators.compose(validators)));
+            const control = new FormControl('', Validators.compose(validators));
+            control.valueChanges.subscribe(onValueChange);
+            formGroup.addControl(UtilService.FCName(question.questionId), control);
+        }
+
+        if (question.shouldShowOptionalComment) {
+            formGroup.addControl(UtilService.FCNameAdditioanlNote(question.questionId), new FormControl(''));
         }
     }
 
@@ -247,11 +264,11 @@ export class UtilService {
         const entityIdSplits = entityId.split('|');
         if (entityIdSplits && entityIdSplits.length >= 2) {
             if (entityIdSplits[0] === 'I') {
-                response.InventoryID = entityIdSplits[1];
+                response.InventoryID = parseInt(entityIdSplits[1], 0);
             } else if (entityIdSplits[0] === 'P') {
-                response.ProjectID = entityIdSplits[1];
+                response.ProjectID = parseInt(entityIdSplits[1], 0);
             } else {
-                response.LocationID = entityIdSplits[1];
+                response.LocationID = parseInt(entityIdSplits[1], 0);
             }
         }
         return response;

@@ -15,7 +15,7 @@
             <ion-label>Activity List</ion-label>
             <div class="status-badge ion-margin-end" *ngIf="activityOverviewData.rejectedCount>0">
                 <span>{{activityOverviewData.rejectedCount}}</span>
-                <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                <ion-badge  class="rejected">Rejected</ion-badge>
             </div>
             <div class="status-badge" *ngIf="activityOverviewData.overDueCount>0">
                 <span>{{activityOverviewData.overDueCount}}</span>
@@ -33,7 +33,7 @@
                     <ion-badge *ngIf="activity.isOverDue" color="warning" class="overdue">Overdue</ion-badge>
                     <ng-container *ngIf="activity.isRejected">
                         <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-                        <ion-badge color="light" class="rejected">Rejected</ion-badge>
+                        <ion-badge  class="rejected">Rejected</ion-badge>
                     </ng-container>
                     <span class="time" *ngIf="activity.activityTime; else customTime">{{activity.activityTime}}</span>
                     <ng-template #customTime>

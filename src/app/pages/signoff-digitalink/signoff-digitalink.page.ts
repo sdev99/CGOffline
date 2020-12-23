@@ -96,7 +96,7 @@ export class SignoffDigitalinkPage implements OnInit {
             case EnumService.SignOffType.FORM_ACTIVITY:
             case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
             case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
-                this.aggrementTitle = 'I confirm that I\'ve read the above form.';
+                this.aggrementTitle = 'I confirm that I\'ve filled the above form.';
                 if (this.sharedDataService.signOffFormDetail) {
                     this.subTitle = this.sharedDataService.signOffFormDetail.formData.formTitle;
                     if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail.formData.isSignatureSignOff) {
@@ -104,17 +104,6 @@ export class SignoffDigitalinkPage implements OnInit {
                         this.initialiseDrawing();
                     }
                 }
-                break;
-
-
-            case EnumService.SignOffType.HAV:
-            case EnumService.SignOffType.ACCIDENT_REPORT:
-            case EnumService.SignOffType.CUSTOM_FORM:
-            case EnumService.SignOffType.RISK_ASSESSMENT:
-                this.aggrementTitle = 'I confirm that I\'ve filled the above form.';
-                this.subTitle = this.data.name;
-                this.showDigitalInk = true;
-                this.initialiseDrawing();
                 break;
 
             case EnumService.SignOffType.DOCUMENT_DM:

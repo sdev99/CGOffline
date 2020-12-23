@@ -20,19 +20,18 @@ export class EnumService {
     };
 
     static SignOffType = {
-        HAV: 'hav-form',
-        ACCIDENT_REPORT: 'accident-report',
-        CUSTOM_FORM: 'custom-form',
-        RISK_ASSESSMENT: 'risk-assessment',
         INDUCTION: 'induction',
-        WORK_PERMIT: 'work_permit',
+
         DOCUMENT_ACTIVITY: 'document_activity',
         FORM_ACTIVITY: 'form_activity',
-        DOCUMENT_DM: 'document_dedicated_mode',
-        FORMS_DM: 'forms_dedicated_mode',
+
         FORM_CURRENT_CHECKIN: 'form_current_checkin',
         WORKPERMIT_FORM_CURRENT_CHECKIN: 'workpermit_form_current_checkin',
-        DOCUMENT_CURRENT_CHECKIN: 'document_current_checkin'
+        DOCUMENT_CURRENT_CHECKIN: 'document_current_checkin',
+
+        WORK_PERMIT: 'work_permit',
+        DOCUMENT_DM: 'document_dedicated_mode',
+        FORMS_DM: 'forms_dedicated_mode'
     };
 
     static CheckInType = {
@@ -232,6 +231,38 @@ export class EnumService {
         LegsUpperLeft: 29,
         LegsToeRight: 30,
         LegsToeLeft: 31,
+    };
+
+
+    static QuestionLogic = {
+        LogicApplicableForQuestionTypes: [
+            EnumService.CustomAnswerType.SingleChoiceSet,
+            EnumService.CustomAnswerType.MultipleChoiceSet,
+            EnumService.CustomAnswerType.NumberFieldInteger,
+            EnumService.CustomAnswerType.NumberFieldDecimal,
+            EnumService.CustomAnswerType.DateTimeField,
+            EnumService.CustomAnswerType.DateField,
+            EnumService.CustomAnswerType.TimeField,
+        ],
+        ActionType: {
+            Show: 1,
+            Hide: 2,
+            Duplicate: 3,
+            MarkAsFailed: 4, // not used in mobile
+            Notify: 5, // not used in mobile
+        },
+        SingleMultipleChoiceOperationType: {
+            Selected: 1,
+            NotSelected: 2,
+        },
+        OtherValueOperationType: {
+            GreaterThen: '>',
+            GreaterThenEqualTo: '>=',
+            LessThen: '<',
+            LessThenEqualTo: '<=',
+            EqualTo: '=',
+            NotEqualTo: '!=',
+        }
     };
 
     constructor() {

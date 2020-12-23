@@ -161,7 +161,7 @@
                                                 </ion-label>
                                                 <ion-button slot="end" shape="round"
                                                             (click)="removeUser(hazard, item.key)">
-                                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                                    <ion-icon slot="icon-only" name="close"></ion-icon>
                                                 </ion-button>
                                             </ion-item>
                                         </ng-container>
@@ -174,7 +174,7 @@
                                                 </ion-label>
                                                 <ion-button slot="end" shape="round"
                                                             (click)="removeGroup(hazard, item.key)">
-                                                    <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+                                                    <ion-icon slot="icon-only" name="close" ></ion-icon>
                                                 </ion-button>
                                             </ion-item>
                                         </ng-container>
@@ -198,8 +198,9 @@
                         </div>
                     </ng-container>
 
-                    <ng-template #customQuestions>
-                        <Form [formGroup]="formGroup" (ngSubmit)="onContinue()">
+                    <Form [formGroup]="formGroup" (ngSubmit)="onContinue()">
+
+                        <ng-template #customQuestions>
 
                             <ion-item class="section-item">
                                 <ion-label>{{UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle}}</ion-label>
@@ -212,24 +213,24 @@
                                     [isSubmitted]="isSubmitted"
                                     [formGroup]="formGroup"
                             ></app-custom-questions-container>
+                        </ng-template>
 
-                            <!--        End of form -->
-                            <ng-container
-                                    *ngIf="!sharedDataService.dedicatedMode">
-                                <div class="hr-line-full ion-margin-top"></div>
+                        <!--        End of form -->
+                        <ng-container
+                                *ngIf="!sharedDataService.dedicatedMode && sectionIndex === (formBuilderDetail?.sections?.length-1)">
+                            <div class="hr-line-full ion-margin-top"></div>
 
-                                <ion-item class="text-bottom-msg">
-                                    <ion-label class="ion-text-wrap ion-text-center">
-                                        You've reached the end of the form.
-                                        Please check your answers and sign-off.
-                                    </ion-label>
-                                </ion-item>
-                                <ion-item class="ion-margin-vertical ion-padding-bottom">
-                                    <ion-button expand="full" class="action-btn" type="submit">Sign-Off</ion-button>
-                                </ion-item>
-                            </ng-container>
-                        </Form>
-                    </ng-template>
+                            <ion-item class="text-bottom-msg">
+                                <ion-label class="ion-text-wrap ion-text-center">
+                                    You've reached the end of the form.
+                                    Please check your answers and sign-off.
+                                </ion-label>
+                            </ion-item>
+                            <ion-item class="ion-margin-vertical ion-padding-bottom">
+                                <ion-button expand="full" class="action-btn" type="submit">Sign-Off</ion-button>
+                            </ion-item>
+                        </ng-container>
+                    </Form>
 
                 </ng-container>
             </ng-container>

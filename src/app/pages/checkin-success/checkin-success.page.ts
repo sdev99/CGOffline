@@ -12,6 +12,8 @@ export class CheckinSuccessPage implements OnInit {
     message = 'You have now checked-in';
     nextPage = '/tabs/dashboard';
     actionBtnTitle = 'Continue';
+    title = '';
+    description = '';
 
     constructor(
         public navCtrl: NavController,
@@ -24,6 +26,12 @@ export class CheckinSuccessPage implements OnInit {
                 }
                 if (res.actionBtnTitle) {
                     this.actionBtnTitle = res.actionBtnTitle;
+                }
+                if (res.title) {
+                    this.title = res.title;
+                }
+                if (res.description) {
+                    this.description = res.description;
                 }
                 if (res.nextPage) {
                     this.nextPage = res.nextPage;

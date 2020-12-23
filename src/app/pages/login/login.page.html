@@ -40,7 +40,7 @@
     </Form>
 
     <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
-    <ion-button fill="clear" color="light" class="forgot-password-btn" routerLink="/forgot-password">
+    <ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password">
         Forgot password?
     </ion-button>
 
@@ -50,6 +50,6 @@
             <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
         </ion-select>
 
-        <ion-text color="light" class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
+        <ion-text  class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
     </div>
 </ion-content>

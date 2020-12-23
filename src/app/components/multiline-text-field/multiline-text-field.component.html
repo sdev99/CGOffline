@@ -1,6 +1,6 @@
 <ion-item class="question-item" [formGroup]="form">
+    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
     <ion-textarea
-            class="picture-additional-text"
             autoGrow="true"
             [formControlName]="inputName"
             [ngClass]="{'error': isError}"

@@ -17,6 +17,16 @@ ion-content {
       height: 100px;
     }
 
+    .title {
+      margin-top: 48px;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      color: #171538;
+    }
+
     .title-1 {
       margin-top: 24px;
       font-family: Inter;
@@ -25,6 +35,16 @@ ion-content {
       font-size: 20px;
       line-height: 24px;
       color: #19DC76;
+    }
+
+    .text-2 {
+      margin-top: 16px;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #171538;
     }
   }
 

@@ -93,6 +93,15 @@
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
             ></app-photo-field>
 
+            <ng-container *ngIf="question.shouldShowOptionalComment">
+                <div class="hr-line"></div>
+                <app-multiline-text-field
+                        label="Additional Comment"
+                        [form]="formGroup"
+                        [inputName]="UtilService.FCNameAdditioanlNote(question.questionId)"
+                ></app-multiline-text-field>
+            </ng-container>
+
         </div>
     </ng-container>
 </ng-container>

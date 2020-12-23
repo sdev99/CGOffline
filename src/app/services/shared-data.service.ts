@@ -181,59 +181,86 @@ export class SharedDataService {
 
     public getCheckinDetails = async (userId, apiService: ApiService) => {
         if (userId && this.checkInForLocation) {
-            const loading = await this.utilService.startLoadingWithOptions();
-            apiService.getCheckInDetails(userId, this.checkInForLocation.locationID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
-                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                    this.checkInDetail = response.Result as CheckinDetail;
-                    this.checkInPostData = {
-                        userId,
-                        checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-                        checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
-                        isGuestReturning: false,
-                        projectID: this.checkInDetail.checkInEntityDetail.projectID,
-                        inventoryItemID: this.checkInDetail.checkInEntityDetail.inventoryItemID,
-                        locationID: this.checkInDetail.checkInEntityDetail.locationID,
-                    } as CheckInPostData;
+            let ifAlreadyCheckedinPlace;
+            if (this.checkedInPlaces) {
+                this.checkedInPlaces.map((place) => {
+                    const entityIds = this.utilService.getRelevantEntityId(this.checkInForLocation.locationID);
+                    if ((entityIds.InventoryID > 0 && entityIds.InventoryID === place.inventoryItemID) ||
+                        (entityIds.ProjectID > 0 && entityIds.ProjectID === place.projectID) ||
+                        (entityIds.LocationID > 0 && entityIds.LocationID === place.locationID)
+                    ) {
+                        ifAlreadyCheckedinPlace = place;
+                        return;
+                    }
+                });
+            }
 
-                    this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                        queryParams: {
-                            headerTitle: 'Check In',
-                            title: 'You are checking in',
-                            subtitle: this.checkInForLocation.locationName,
-                            buttonTitle: 'Check In Now',
-                            nextPageData: JSON.stringify({
-                                locationDetail: JSON.stringify(this.checkInForLocation)
-                            }),
-                            nextPagePath: '/checkin-induction',
-                            locationCheckType: EnumService.ConfirmForCheckType.CheckIn
-                        }
-                    });
-                }
-            }, (error: any) => {
-                const errorField = error?.error?.ResponseException?.ValidationErrors[0].Field;
+            if (ifAlreadyCheckedinPlace) {
+                this.checkOutForCheckedInDetail = ifAlreadyCheckedinPlace;
+                this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                    queryParams: {
+                        headerTitle: 'Check Out',
+                        title: 'You are checking out',
+                        subtitle: ifAlreadyCheckedinPlace.entityName,
+                        buttonTitle: 'Check Out Now',
+                        locationCheckType: EnumService.ConfirmForCheckType.CheckOut
+                    }
+                });
+            } else {
+                const loading = await this.utilService.startLoadingWithOptions();
+                apiService.getCheckInDetails(userId, this.checkInForLocation.locationID).subscribe((response: Response) => {
+                    this.utilService.hideLoadingFor(loading);
+                    if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                        this.checkInDetail = response.Result as CheckinDetail;
+                        this.checkInPostData = {
+                            userId,
+                            checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
+                            checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+                            isGuestReturning: false,
+                            projectID: this.checkInDetail.checkInEntityDetail.projectID,
+                            inventoryItemID: this.checkInDetail.checkInEntityDetail.inventoryItemID,
+                            locationID: this.checkInDetail.checkInEntityDetail.locationID,
+                        } as CheckInPostData;
 
-                this.utilService.hideLoadingFor(loading);
-                if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
-                    this.navCtrl.navigateForward(['/checkin-fail'], {
-                        queryParams: {
-                            title: 'You cannot check-in',
-                            errorTitle: 'Simultanious Check-In Not Allowed.',
-                            errorMessage: 'You are already checked-in to another place.',
-                            nextPage: '/tabs/dashboard'
-                        }
-                    });
-                } else {
-                    this.navCtrl.navigateForward(['/checkin-fail'], {
-                        queryParams: {
-                            title: 'You cannot check-in',
-                            errorTitle: 'No Qualification',
-                            errorMessage: 'You do not have the required qualifications.',
-                            nextPage: '/tabs/dashboard'
-                        }
-                    });
-                }
-            });
+                        this.navCtrl.navigateForward(['/checkinout-confirm'], {
+                            queryParams: {
+                                headerTitle: 'Check In',
+                                title: 'You are checking in',
+                                subtitle: this.checkInForLocation.locationName,
+                                buttonTitle: 'Check In Now',
+                                nextPageData: JSON.stringify({
+                                    locationDetail: JSON.stringify(this.checkInForLocation)
+                                }),
+                                nextPagePath: '/checkin-induction',
+                                locationCheckType: EnumService.ConfirmForCheckType.CheckIn
+                            }
+                        });
+                    }
+                }, (error: any) => {
+                    const errorField = error?.error?.ResponseException?.ValidationErrors[0].Field;
+
+                    this.utilService.hideLoadingFor(loading);
+                    if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
+                        this.navCtrl.navigateForward(['/checkin-fail'], {
+                            queryParams: {
+                                title: 'You cannot check-in',
+                                errorTitle: 'Simultanious Check-In Not Allowed.',
+                                errorMessage: 'You are already checked-in to another place.',
+                                nextPage: '/tabs/dashboard'
+                            }
+                        });
+                    } else {
+                        this.navCtrl.navigateForward(['/checkin-fail'], {
+                            queryParams: {
+                                title: 'You cannot check-in',
+                                errorTitle: 'No Qualification',
+                                errorMessage: 'You do not have the required qualifications.',
+                                nextPage: '/tabs/dashboard'
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 
@@ -431,7 +458,9 @@ export class SharedDataService {
 
                                     switch (question.questionDisplayOrder) {
                                         case EnumService.HavFormFieldOrder.DateOfUsage:
-                                            answerObject.dateOfUsage = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            if (control.value) {
+                                                answerObject.dateOfUsage = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            }
                                             break;
                                         case EnumService.HavFormFieldOrder.Manufacturer:
                                             answerObject.havManufacturerID = control.value;
@@ -457,17 +486,24 @@ export class SharedDataService {
                                         accidentAnswerSequence: question.questionDisplayOrder,
                                     };
 
+                                    let isValueFilled = false;
+
                                     switch (question.questionDisplayOrder) {
                                         case EnumService.AccidentFormFieldOrder.AccidentDateTime:
-                                            answerObject.accidentDateTime = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentDateTime = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.AccidentLocation:
                                             const placeNotintheList = formGroup.controls.placeNotintheList;
                                             const locationName = formGroup.controls.locationName;
 
                                             if (placeNotintheList.value) {
+                                                isValueFilled = true;
                                                 answerObject.accidentLocationName = locationName.value;
-                                            } else {
+                                            } else if (control.value) {
+                                                isValueFilled = true;
                                                 const entityIds = this.utilService.getRelevantEntityId(control.value);
                                                 answerObject.accidentInventoryID = entityIds.InventoryID;
                                                 answerObject.accidentProjectID = entityIds.ProjectID;
@@ -479,6 +515,7 @@ export class SharedDataService {
                                             answerChoiceAttributes.map((choice) => {
                                                 if (choice.answerChoiceAttributeId === control.value) {
                                                     const choiceTitle = UtilService.findObj(choice.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', defaultLanguageId)?.answerChoiceAttributeHeaderTitle;
+                                                    isValueFilled = true;
                                                     answerObject.accidentIsRIDDORReportNeeded = (choiceTitle === 'Yes') ? true : false;
                                                     return;
                                                 }
@@ -493,13 +530,22 @@ export class SharedDataService {
                                                     multipleChoiceValueIDs.push(choice.answerChoiceAttributeId);
                                                 }
                                             });
-                                            answerObject.accidentAboutIDs = multipleChoiceValueIDs.join(',');
+                                            if (multipleChoiceValueIDs.length > 0) {
+                                                isValueFilled = true;
+                                                answerObject.accidentAboutIDs = multipleChoiceValueIDs.join(',');
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.Type:
-                                            answerObject.accidentTypeID = control.value;
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentTypeID = control.value;
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.Classification:
-                                            answerObject.accidentClassificationID = control.value;
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentClassificationID = control.value;
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.BodyPartEffected:
                                             const bodyPartFormGroups = control.value as FormGroup;
@@ -512,16 +558,28 @@ export class SharedDataService {
                                                     }
                                                 });
                                             });
-                                            answerObject.accidentBodyPartIDs = bodyPartsIDs.join(',');
+                                            if (bodyPartsIDs.length > 0) {
+                                                isValueFilled = true;
+                                                answerObject.accidentBodyPartIDs = bodyPartsIDs.join(',');
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.Description:
-                                            answerObject.accidentDescription = control.value;
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentDescription = control.value;
+                                            }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.Attachment:
-                                            answerObject.accidentAttachmentFileName = attachemtUploaded[question.questionId];
+                                            if (attachemtUploaded[question.questionId]) {
+                                                isValueFilled = true;
+                                                answerObject.accidentAttachmentFileName = attachemtUploaded[question.questionId];
+                                            }
                                             break;
                                     }
-                                    accidentReportQuestionAnswers.push(answerObject);
+
+                                    if (isValueFilled) {
+                                        accidentReportQuestionAnswers.push(answerObject);
+                                    }
                                 } else {
                                     const answerObject: FormAnswerObject = {
                                         questionAnswerId: 0,
@@ -529,7 +587,7 @@ export class SharedDataService {
                                         questionTitle: questionLabel,
                                         formVersionID: formVersionId,
                                         answerTypeID: question.selectedAnswerTypeId,
-                                        multipleChoiceAnswers: []
+                                        multipleChoiceAnswers: [],
                                     };
 
                                     switch (question.selectedAnswerTypeId) {
@@ -561,18 +619,33 @@ export class SharedDataService {
                                             answerObject.decimalValue = control.value;
                                             break;
                                         case EnumService.CustomAnswerType.DateField:
-                                            answerObject.dateValue = moment(control.value).format('YYYY-MM-DD');
+                                            if (control.value) {
+                                                answerObject.dateValue = moment(control.value).format('YYYY-MM-DD');
+                                            }
                                             break;
                                         case EnumService.CustomAnswerType.TimeField:
-                                            answerObject.timeValue = moment(control.value).format('hh:mmA');
+                                            if (control.value) {
+                                                answerObject.timeValue = moment(control.value).format('hh:mmA');
+                                            }
                                             break;
                                         case EnumService.CustomAnswerType.DateTimeField:
-                                            answerObject.dateTimeValue = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            if (control.value) {
+                                                answerObject.dateTimeValue = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                            }
                                             break;
                                         case EnumService.CustomAnswerType.PhotoVideoUpload:
                                             answerObject.imageVideoFileName = attachemtUploaded[question.questionId];
                                             break;
                                     }
+
+                                    // if additional comment
+                                    if (question.shouldShowOptionalComment) {
+                                        const additionalControl = formGroup.controls[UtilService.FCNameAdditioanlNote(question.questionId)];
+                                        if (additionalControl.value) {
+                                            answerObject.questionComment = additionalControl.value;
+                                        }
+                                    }
+
                                     questionAnswers.push(answerObject);
                                 }
                             }
@@ -712,21 +785,35 @@ export class SharedDataService {
                     this.observablesService.publishSomeData(EnumService.ObserverKeys.ACTIVITY_COMPLETED, true);
                 }
 
-                if (this.signOffFor === EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN) {
+                // show work permit issue success/fail for work permit type form filled from current checkin or activity list
+                const isWorkPermitCurrentCheckin = this.signOffFor === EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN;
+                const isworkPermitActivity = (this.signOffFor === EnumService.SignOffType.FORM_ACTIVITY && this.signOffFormDetail?.formData?.formType === EnumService.FormTypes.WORK_PERMIT);
+                if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
+
+                    let nextPage = '/tabs/dashboard';
+                    if (isWorkPermitCurrentCheckin) {
+                        nextPage = '/tabs/current-checkin/checkin-workpermit';
+                    } else if (isworkPermitActivity) {
+                        nextPage = '/tabs/dashboard';
+                    }
+
+
                     if (this.workPermitAnswer.scoreAchieved >= this.workPermitAnswer.totalScore) {
                         this.navCtrl.navigateForward(['/checkin-success'], {
                             queryParams: {
-                                message: 'Permit issued',
-                                nextPage: '/tabs/current-checkin/checkin-workpermit'
+                                title: 'Passed',
+                                message: 'PERMIT ISSUED',
+                                description: 'Your work permit is active',
+                                nextPage
                             }
                         });
                     } else {
                         this.navCtrl.navigateForward(['/checkin-fail'], {
                             queryParams: {
                                 title: 'Not Passed',
-                                errorTitle: 'NOT PERMIT',
+                                errorTitle: 'NO PERMIT',
                                 errorMessage: 'You were found not eligible for a work permit.',
-                                nextPage: '/tabs/current-checkin/checkin-workpermit'
+                                nextPage
                             }
                         });
                     }
