@@ -19,4 +19,5 @@ export class SignOffDetailsPostData {
     approvedRejectedBy: string;
     createdDate: string;
     formContent: string;
+    answerNotificationList: string;
 }

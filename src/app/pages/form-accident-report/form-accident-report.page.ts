@@ -59,6 +59,9 @@ export class FormAccidentReportPage {
     locationIdControlName;
     bodyPartControlName;
 
+
+    questionElementIds = [];
+
     constructor(
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
@@ -83,48 +86,37 @@ export class FormAccidentReportPage {
 
         const sections = this.formBuilderDetail.sections;
         if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
+            sections.map((section, sectionIndex) => {
+                if (section.isAccidentReportSection) {
                     const questions = section.questions;
 
-                    questions.map((question) => {
-                        if (!question.questionIsHidden) {
-                            if (section.isAccidentReportSection) {
-                                // Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
-                                if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
-                                    question.questionIsRequired = false;
-                                }
+                    questions.map((question, questionIndex) => {
+                        if (section.isAccidentReportSection) {
+                            // Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
+                            if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
+                                question.questionIsRequired = false;
+                            }
 
+                            if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
+                                question.bodyParts = this.bodyParts;
+                                this.bodyPartControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                            } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
+                                this.locationIdControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                            }
 
-                                if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
-                                    this.bodyPartControlName = UtilService.FCName(question.questionId);
-                                    const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
-                                    this.bodyParts.map((bodyPartGroup) => {
-                                        bodyPartGroup.parts.map((part) => {
-                                            checkboxFormGroup.addControl(UtilService.FCName(part.id), new FormControl(false));
-                                        });
-                                    });
-                                    this.formGroup.addControl(this.bodyPartControlName, checkboxFormGroup);
-                                } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                                    this.locationIdControlName = UtilService.FCName(question.questionId);
-                                    this.formGroup.addControl(this.locationIdControlName, new FormControl(''));
-                                    this.formGroup.addControl(EnumService.AccidentCustomLocationControlsName.PlaceNotintheList, new FormControl(false));
-                                    this.formGroup.addControl(EnumService.AccidentCustomLocationControlsName.LocationName, new FormControl(''));
-                                } else {
-                                    this.utilService.addDynamicFormControls(question, this.formGroup);
-                                }
-
-                                if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
-                                    this.setupDynamicChoiceList(question.questionDisplayOrder);
-                                }
-                            } else {
-                                this.utilService.addDynamicFormControls(question, this.formGroup);
+                            if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
+                                this.setupDynamicChoiceList(question.questionDisplayOrder);
                             }
                         }
                     });
                 }
             });
         }
+
+        this.utilService.questionElementIdsUpdate = (questionElementIds) => {
+            this.questionElementIds = questionElementIds;
+        };
+        this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
 
 
@@ -174,8 +166,8 @@ export class FormAccidentReportPage {
 
     getLocationItemList = () => {
         this.apiService.getLocationItemList(this.user.companyID).subscribe((res) => {
-            if (res) {
-                this.locations = res;
+            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.locations = res.Result;
                 this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.AccidentLocation);
             }
         }, (error) => {
@@ -195,29 +187,25 @@ export class FormAccidentReportPage {
         const sections = this.formBuilderDetail.sections;
         if (sections) {
             sections.map((section) => {
-                if (!section.sectionIsHidden) {
-                    if (section.isAccidentReportSection) {
-                        const questions = section.questions;
-                        questions.map((question) => {
-                            if (!question.questionIsHidden) {
-                                if (question.questionDisplayOrder === listType) {
-                                    if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Type) {
-                                        question.answerChoiceAttributes = this.types;
-                                        question.listValueKey = 'accidentTypeId';
-                                        question.listLabelKey = 'accidentTypeTitle';
-                                    } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Classification) {
-                                        question.answerChoiceAttributes = this.classifications;
-                                        question.listValueKey = 'accidentClassificationId';
-                                        question.listLabelKey = 'accidentClassificationTitle';
-                                    } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.AccidentLocation) {
-                                        question.answerChoiceAttributes = this.locations;
-                                        question.listValueKey = 'locationName';
-                                        question.listLabelKey = 'locationID';
-                                    }
-                                }
+                if (section.isAccidentReportSection) {
+                    const questions = section.questions;
+                    questions.map((question) => {
+                        if (question.questionDisplayOrder === listType) {
+                            if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Type) {
+                                question.answerChoiceAttributes = this.types;
+                                question.listValueKey = 'accidentTypeId';
+                                question.listLabelKey = 'accidentTypeTitle';
+                            } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Classification) {
+                                question.answerChoiceAttributes = this.classifications;
+                                question.listValueKey = 'accidentClassificationId';
+                                question.listLabelKey = 'accidentClassificationTitle';
+                            } else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.AccidentLocation) {
+                                question.answerChoiceAttributes = this.locations;
+                                question.listValueKey = 'locationName';
+                                question.listLabelKey = 'locationID';
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             });
         }
@@ -318,7 +306,7 @@ export class FormAccidentReportPage {
                 checked,
             };
             const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
-            bodyPartControlGroup.controls[UtilService.FCName(type)].setValue(checked);
+            bodyPartControlGroup.controls[UtilService.FCName(this.bodyPartControlName + '' + type)].setValue(checked);
 
             const element = document.getElementById(selectedItem.id);
             if (this.selectedBodyParts[type].checked) {
@@ -355,7 +343,7 @@ export class FormAccidentReportPage {
         };
 
         const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
-        bodyPartControlGroup.controls[UtilService.FCName(item.id)].setValue(false);
+        bodyPartControlGroup.controls[UtilService.FCName(this.bodyPartControlName + '' + item.id)].setValue(false);
 
         const element = document.getElementById(item.id);
         element.style.fill = item.path.fill;
@@ -374,13 +362,21 @@ export class FormAccidentReportPage {
 
         modal.onWillDismiss().then(({data}) => {
             if (data) {
-                this.navCtrl.back();
+                this.onBack();
             }
         });
     }
 
-    isError(question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(question.questionId)].valid);
+    onBack() {
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
+    }
+
+    isError(sectionIndex, questionIndex, question) {
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)].valid);
     }
 
     isBodyPartSelected = () => {

@@ -10,4 +10,6 @@ export class HavAnswerObject {
     plannedTimeOfUse?: number;
     havSequence?: number;
     formVersionID?: number;
+    markAsFailed?: boolean;
+    isNotify?: boolean;
 }

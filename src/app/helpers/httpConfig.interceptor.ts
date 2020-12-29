@@ -19,7 +19,7 @@ import {Response} from '../_models/response';
 export class HttpConfigInterceptor implements HttpInterceptor {
 
     constructor(
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private accountService: AccountService,
     ) {
     }

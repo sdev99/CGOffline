@@ -13,7 +13,7 @@
             <app-modal-header modalTitle="{{formBuilderDetail?.title}}" (closeModal)="onClose()"></app-modal-header>
             <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)"
                                    [currentCount]="currentQuestionIndex"
-                                   [totalCount]="questionElementIds.length" (next)="next()"
+                                   [totalCount]="questionElementIds?.length" (next)="next()"
                                    (previous)="previous()"></app-next-prev-toolbar>
         </ng-template>
 
@@ -33,9 +33,14 @@
 
             <ion-list lines="none" mode="ios">
 
-                <ng-container *ngFor="let section of formBuilderDetail?.sections">
-                    <ng-container *ngIf="!section.sectionIsHidden">
+                <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index;">
+                    <ng-container *ngIf="utilService.shouldShowSection(section)">
+                        <app-section-title
+                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                        </app-section-title>
+
                         <app-custom-questions-container
+                                [sectionIndex]="sectionIndex"
                                 [sectionId]="section.sectionId"
                                 [questionElementIds]="questionElementIds"
                                 [questions]="section.questions"

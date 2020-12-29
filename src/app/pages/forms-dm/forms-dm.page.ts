@@ -22,7 +22,7 @@ export class FormsDmPage implements OnInit {
     constructor(
         private filehandlerService: FilehandlerService,
         private navController: NavController,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
     ) {
     }
 

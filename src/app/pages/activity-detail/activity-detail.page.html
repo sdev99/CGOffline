@@ -1,5 +1,6 @@
 <ion-header mode="ios">
-    <app-modal-header modalTitle="Activity" (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header  modalTitle="Activity" (closeModal)="onClose()"></app-modal-header>
+
 
     <ion-item lines="none" *ngIf="activityListItem">
         <ion-label>
@@ -7,8 +8,8 @@
             <div class="detail">
                 <ion-badge *ngIf="activityListItem.isOverDue" color="warning" class="overdue">Overdue</ion-badge>
                 <ng-container *ngIf="activityListItem.isRejected">
-                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-                    <ion-badge class="rejected">Rejected</ion-badge>
+                    <!--                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>-->
+                    <ion-badge color="light" class="rejected">Rejected</ion-badge>
                 </ng-container>
                 <span class="time"
                       *ngIf="activityListItem.activityTime; else customTime">{{activityListItem.activityTime}}</span>
@@ -20,10 +21,29 @@
             </div>
 
 
+            <div class="rejected-view" *ngIf="activityListItem?.isRejected">
+                <div class="detail">
+                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                    <ion-label class="rejected">Signature Rejected</ion-label>
+                </div>
 
-            <div class="reject-reason" *ngIf="activityListItem?.rejectedReason">
-                <h3>Rejection Reason</h3>
-                <p>{{activityListItem?.rejectedReason}}</p>
+                <p class="time"
+                   *ngIf="activityListItem?.rejectedBy;">
+                    by
+                    {{activityListItem?.rejectedBy}}
+                    on
+                    <ng-container *ngIf="activityListItem?.formattedApprovedRejectedDate; else approvedRejectedDate">
+                        {{activityListItem?.formattedApprovedRejectedDate}}
+                    </ng-container>
+                    <ng-template #approvedRejectedDate>
+                        {{activityListItem?.approvedRejectedDate | date:'dd MMM yyyy HH:mm'}}
+                    </ng-template>
+                </p>
+
+                <div class="reject-reason" *ngIf="activityListItem?.rejectedReason">
+                    <h3>Rejection Reason</h3>
+                    <p>{{activityListItem?.rejectedReason}}</p>
+                </div>
             </div>
 
         </ion-label>
@@ -38,11 +58,11 @@
               *ngIf="activityListItem && (activityListItem.formattedDescription || activityListItem.formattedExplanation)">
         <ion-label class="ion-text-wrap">
             <p *ngIf="activityListItem.formattedDescription"
-               [innerHTML]="activityListItem.formattedDescription"></p>
+               [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedDescription)"></p>
 
             <ng-container *ngIf="activityListItem.formattedExplanation">
                 <h6>Explanation</h6>
-                <p [innerHTML]="activityListItem.formattedExplanation"></p>
+                <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedExplanation)"></p>
             </ng-container>
         </ion-label>
     </ion-item>

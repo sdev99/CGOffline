@@ -1,0 +1,20 @@
+@import "./src/theme/variables";
+
+ion-item {
+  border-top: 1px solid #E8EAF2 !important;
+  border-bottom: 1px solid #E8EAF2 !important;
+  --padding-start: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --inner-padding-end: 0;
+  padding: 10px $paddingHorizontal;
+
+  ion-label {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 22px;
+    color: #171538;
+  }
+}

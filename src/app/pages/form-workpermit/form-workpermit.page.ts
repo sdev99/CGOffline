@@ -25,6 +25,8 @@ import {EnumService} from '../../services/enum.service';
 })
 export class FormWorkpermitPage {
     @ViewChild(IonContent) content: IonContent;
+    UtilService = UtilService;
+
 
     user: User;
 
@@ -74,19 +76,10 @@ export class FormWorkpermitPage {
         // Add form controls for each type of fields
         this.formGroup = new FormGroup({});
         const sections = this.formBuilderDetail.sections;
-        if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
-                    const questions = section.questions;
-                    questions.map((question) => {
-                        if (!question.questionIsHidden) {
-                            this.utilService.addDynamicFormControls(question, this.formGroup);
-                            this.questionElementIds.push(UtilService.HtmlElementId(section.sectionId, question.questionId));
-                        }
-                    });
-                }
-            });
-        }
+        this.utilService.questionElementIdsUpdate = (questionElementIds) => {
+            this.questionElementIds = questionElementIds;
+        };
+        this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
 
         route.queryParams.subscribe((params: any) => {
@@ -154,11 +147,18 @@ export class FormWorkpermitPage {
 
         modal.onWillDismiss().then(({data}) => {
             if (data) {
-                this.navCtrl.back();
+                this.onBack();
             }
         });
     }
 
+    onBack() {
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
+    }
 
     onSubmit() {
         this.isSubmitted = true;
@@ -171,23 +171,24 @@ export class FormWorkpermitPage {
             let scoreAchieved = 0;
             const sections = this.formBuilderDetail.sections;
             if (sections) {
-                sections.map((section) => {
-                    if (!section.sectionIsHidden) {
+                sections.map((section, sectionIndex) => {
+                    if (this.utilService.shouldShowSection(section)) {
                         const questions = section.questions;
-                        questions.map((question) => {
-                            if (!question.questionIsHidden) {
+                        questions.map((question, questionIndex) => {
+                            if (this.utilService.shouldShowQuestion(question)) {
                                 if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
-                                    const control = this.formGroup.controls[UtilService.FCName(question.questionId)];
+                                    const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
                                     question.answerChoiceAttributes.map((choice) => {
                                         if (choice.answerChoiceAttributeId === control.value) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }
                                     });
                                 } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
-                                    const control = this.formGroup.controls[UtilService.FCName(question.questionId)];
+                                    const multiChoiceControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                                    const control = this.formGroup.controls[multiChoiceControlName];
                                     const formGroups = control.value as FormGroup;
                                     question.answerChoiceAttributes.map((choice) => {
-                                        const choiceControl = formGroups[UtilService.FCName(choice.answerChoiceAttributeId)];
+                                        const choiceControl = formGroups[UtilService.FCName(multiChoiceControlName + '' + choice.answerChoiceAttributeId)];
                                         if (choiceControl) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }

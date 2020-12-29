@@ -9,6 +9,7 @@ import {EnumService} from '../../services/enum.service';
 import {UtilService} from '../../services/util.service';
 import {AccountService} from '../../services/account.service';
 import {User} from '../../_models';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'app-checkin-induction',
@@ -30,6 +31,7 @@ export class CheckinInductionPage implements OnInit {
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
         public accountService: AccountService,
+        public sanitizer: DomSanitizer
     ) {
         this.user = accountService.userValue;
 

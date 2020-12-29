@@ -157,7 +157,11 @@ export class SignoffDigitalinkPage implements OnInit {
     };
 
     onClose() {
-        this.navCtrl.back();
+        if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
     }
 
     urltoFile(url, filename, mimeType) {

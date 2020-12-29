@@ -14,7 +14,7 @@
 </ion-header>
 
 <ion-content fullscreen [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div *ngIf="inductionItem.contentDetails" class="va-content" [innerHTML]="inductionItem.contentDetails"></div>
+    <div *ngIf="inductionItem.contentDetails" class="va-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
 
 
     <div class="action-btn-container" *ngIf="sharedDataService.dedicatedMode">

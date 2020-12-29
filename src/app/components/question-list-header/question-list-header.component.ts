@@ -21,7 +21,7 @@ export class QuestionListHeaderComponent implements OnInit {
     @Input() isError: boolean;
 
     constructor(
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private filehandlerService: FilehandlerService,
     ) {
     }

@@ -37,8 +37,6 @@ export class FormHavPage implements OnInit {
     errorMessage = '';
     activityDetail;
 
-    toolManufacturers: Array<HavManufacturerItem>;
-    toolTypes: Array<HavTypeItem>;
     toolModels: Array<HavModelItem>;
 
     screenOrientationSubscribe;
@@ -49,6 +47,8 @@ export class FormHavPage implements OnInit {
 
     plannedTimeControlName;
     modelControlName;
+
+    questionElementIds = [];
 
     constructor(
         public navCtrl: NavController,
@@ -73,33 +73,27 @@ export class FormHavPage implements OnInit {
 
         const sections = this.formBuilderDetail.sections;
         if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
+            sections.map((section, sectionIndex) => {
+                if (section.isHAVSection) {
                     const questions = section.questions;
+                    questions.map((question, questionIndex) => {
+                        if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
+                            this.modelControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                        }
 
-                    questions.map((question) => {
-                        if (!question.questionIsHidden) {
-                            this.utilService.addDynamicFormControls(question, this.formGroup);
-
-                            if (section.isHAVSection) {
-                                if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
-                                    this.modelControlName = UtilService.FCName(question.questionId);
-                                }
-
-                                if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField) {
-                                    this.plannedTimeControlName = UtilService.FCName(question.questionId);
-                                }
-
-                                if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
-                                    this.setupDynamicChoiceList(question.questionDisplayOrder);
-                                }
-                            }
+                        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField) {
+                            this.plannedTimeControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
                         }
                     });
                 }
             });
         }
+        this.utilService.questionElementIdsUpdate = (questionElementIds) => {
+            this.questionElementIds = questionElementIds;
+        };
+        this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
+
 
         route.queryParams.subscribe((params: any) => {
             if (params) {
@@ -117,10 +111,8 @@ export class FormHavPage implements OnInit {
         const loading = await this.utilService.startLoadingWithOptions();
         this.apiService.getManufacturerList(this.user.companyID).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
-            this.toolManufacturers = response.Result;
-            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Manufacturer);
-            this.toolTypes = [];
-            this.toolModels = [];
+            const toolManufacturers = response.Result;
+            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Manufacturer, toolManufacturers);
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
         });
@@ -131,76 +123,88 @@ export class FormHavPage implements OnInit {
     getUserTotalHAVExposureForToday() {
         this.apiService.getUserTotalHAVExposureForToday(this.user.userId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                this.currentExposure = parseInt(response.Result, 0);
+                this.currentExposure = UtilService.formattedNumberToNumber(response.Result);
             }
         });
     }
 
-    setupDynamicChoiceList = (listType) => {
+    setupDynamicChoiceList = (listType, list) => {
         const sections = this.formBuilderDetail.sections;
         if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
-                    if (section.isHAVSection) {
-                        const questions = section.questions;
-                        questions.map((question) => {
-                            if (!question.questionIsHidden) {
-                                if (question.questionDisplayOrder === listType) {
-                                    if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
-                                        question.answerChoiceAttributes = this.toolManufacturers;
-                                        question.listValueKey = 'havManufacturerID';
-                                        question.listLabelKey = 'havManufacturerName';
-                                    } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
-                                        question.answerChoiceAttributes = this.toolTypes;
-                                        question.listValueKey = 'havTypeID';
-                                        question.listLabelKey = 'havTypeName';
-                                    } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
-                                        question.answerChoiceAttributes = this.toolModels;
-                                        question.listValueKey = 'havModelID';
-                                        question.listLabelKey = 'model';
-                                    }
-                                }
-                            }
-                        });
-                    }
+            sections.map((section, key) => {
+                if (section.isHAVSection) {
+                    this.setupDynamicChoiceListForSection(key, listType, list);
                 }
             });
         }
     };
 
-    async getTypeList(manufacturer) {
-        this.toolTypes = [];
-        this.toolModels = [];
+    setupDynamicChoiceListForSection = (sectionIndex, listType, list) => {
+        const sections = this.formBuilderDetail.sections;
+        if (sections) {
+            const questions = sections[sectionIndex].questions;
+            questions.map((question, questionIndex) => {
+                if (question.questionDisplayOrder === listType) {
+                    if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
+                        question.answerChoiceAttributes = list;
+                        question.listValueKey = 'havManufacturerID';
+                        question.listLabelKey = 'havManufacturerName';
+                    } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
+                        question.answerChoiceAttributes = list;
+                        question.listValueKey = 'havTypeID';
+                        question.listLabelKey = 'havTypeName';
+                    } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
+                        question.answerChoiceAttributes = list;
+                        question.listValueKey = 'havModelID';
+                        question.listLabelKey = 'model';
+                    }
+
+                    const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
+                    control.setValue('');
+                }
+            });
+        }
+    };
+
+    async getTypeList(manufacturer, sectionIndex, questionIndex) {
+        const sections = this.formBuilderDetail.sections;
+        const question = sections[sectionIndex]?.questions[questionIndex];
+        this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Type, []);
+        this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
 
         const loading = await this.utilService.startLoadingWithOptions();
         this.apiService.getTypeList(this.user.companyID, manufacturer).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
-            this.toolTypes = response.Result;
-            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Type);
+            const toolTypes = response.Result;
+            this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Type, toolTypes);
+            this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
-            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Type);
         });
     }
 
-    async getModelList(type) {
+    async getModelList(type, sectionIndex, questionIndex) {
+        const sections = this.formBuilderDetail.sections;
+        const question = sections[sectionIndex]?.questions[questionIndex];
+        this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
+
         const loading = await this.utilService.startLoadingWithOptions();
         this.apiService.getModelList(this.user.companyID, type).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
-            this.toolModels = response.Result;
-            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Model);
+            const toolModels = response.Result;
+            this.toolModels = toolModels;
+            this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, toolModels);
         }, (error) => {
-            this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Model);
             this.utilService.hideLoadingFor(loading);
         });
     }
 
-    dropDownChange(question) {
-        const control = this.formGroup.controls[UtilService.FCName(question.questionId)];
+    dropDownChange(question, sectionIndex, questionIndex) {
+        const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
-            this.getTypeList(control.value);
+            this.getTypeList(control.value, sectionIndex, questionIndex);
         } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
-            this.getModelList(control.value);
+            this.getModelList(control.value, sectionIndex, questionIndex);
         }
     }
 
@@ -238,8 +242,8 @@ export class FormHavPage implements OnInit {
         }
     }
 
-    isError(question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(question.questionId)].valid);
+    isError(sectionIndex, questionIndex, question) {
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)].valid);
     }
 
     calculatePointsPerHour() {
@@ -254,8 +258,8 @@ export class FormHavPage implements OnInit {
                     }
                 });
             }
-            const vibrationValue = model ? parseInt(model.vibrationValue, 0) : 0;
-            const kFactor = model ? parseInt(model.kFactor, 0) : 0;
+            const vibrationValue = model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0;
+            const kFactor = model ? UtilService.formattedNumberToNumber(model.kFactor) : 0;
             const vibrationMagnitude = vibrationValue + kFactor;
             return vibrationMagnitude * (vibrationMagnitude * 2);
         }
@@ -265,12 +269,12 @@ export class FormHavPage implements OnInit {
     calculateExposure(exposure = 0) {
         const plannedTime = this.formGroup.controls[this.plannedTimeControlName];
         if (plannedTime) {
-            const plannedTimeOfUse = plannedTime.value ? parseInt(plannedTime.value, 0) : 0;
+            const plannedTimeOfUse = plannedTime.value ? UtilService.formattedNumberToNumber(plannedTime.value) : 0;
             const pointsPerHour = this.calculatePointsPerHour();
             const calcualtedExposure = (plannedTimeOfUse / 60) * pointsPerHour;
-            return calcualtedExposure + exposure;
+            return Math.ceil(calcualtedExposure + exposure);
         }
-        return exposure;
+        return Math.ceil(exposure);
     }
 
     async onClose() {
@@ -286,9 +290,17 @@ export class FormHavPage implements OnInit {
 
         modal.onWillDismiss().then(({data}) => {
             if (data) {
-                this.navCtrl.back();
+                this.onBack();
             }
         });
+    }
+
+    onBack() {
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
     }
 
     onSubmit() {
@@ -311,10 +323,12 @@ export class FormHavPage implements OnInit {
                 }
 
                 havExposure = {
-                    vibrationMagnitude: model ? parseFloat(model.vibrationValue) : 0,
+                    vibrationMagnitude: model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0,
                     pointsPerHour: this.calculatePointsPerHour(),
                     exposurePoints: this.calculateExposure(),
-                    havExposureId: 0
+                    havExposureId: 0,
+                    initialExposure: this.currentExposure,
+                    totalExposure: 12,
                 };
             }
         }

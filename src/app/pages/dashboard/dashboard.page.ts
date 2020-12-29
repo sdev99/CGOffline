@@ -26,7 +26,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         private apiService: ApiService,
         private utilService: UtilService,
         private accountService: AccountService,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private observablesService: ObservablesService,
     ) {
         this.user = this.accountService.userValue;

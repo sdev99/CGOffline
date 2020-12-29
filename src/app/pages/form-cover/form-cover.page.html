@@ -17,12 +17,10 @@
             </div>
 
 
-            <div class="rejected" *ngIf="signOffFormDetail?.formData.isRejected">
+            <div class="rejected-view" *ngIf="signOffFormDetail?.formData.isRejected">
                 <div class="detail">
-                    <ng-container *ngIf="signOffFormDetail?.formData.isRejected">
-                        <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-                        <ion-badge  class="rejected">Rejected</ion-badge>
-                    </ng-container>
+                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+                    <ion-label class="rejected">Signature Rejected</ion-label>
                 </div>
 
                 <p class="time"
@@ -50,11 +48,11 @@
               *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions">
         <ion-label class="ion-text-wrap">
             <p *ngIf="signOffFormDetail?.formData?.formattedDescription"
-               [innerHTML]="signOffFormDetail?.formData?.formattedDescription"></p>
+               [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"></p>
 
             <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
                 <h6>Explanation</h6>
-                <p [innerHTML]="signOffFormDetail?.formData?.formattedInstructions"></p>
+                <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"></p>
             </ng-container>
         </ion-label>
     </ion-item>

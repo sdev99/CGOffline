@@ -1,1 +1,16 @@
-{}
+{
+  "appId": "com.besafetechnologies.compliancegenie",
+  "appName": "Compliance Genie",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {},
+  "ios": {
+    "backgroundColor": "transparent"
+  }
+}

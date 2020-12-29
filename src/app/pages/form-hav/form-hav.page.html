@@ -22,32 +22,39 @@
 
         <Form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-            <ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections">
-                <ng-container *ngIf="!section.sectionIsHidden">
-                    <ng-container *ngIf="section.isHAVSection; else customQuestions">
-                        <ng-container *ngFor="let question of section.questions">
+            <ion-list lines="none" mode="ios"
+                      *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
+                <ng-container *ngIf="utilService.shouldShowSection(section)">
 
-                            <ng-container *ngIf="!question.questionIsHidden">
+
+                    <app-section-title
+                            [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                    </app-section-title>
+
+                    <ng-container *ngIf="section.isHAVSection; else customQuestions">
+                        <ng-container *ngFor="let question of section.questions;let questionIndex = index">
+
+                            <ng-container *ngIf="utilService.shouldShowQuestion(question)">
 
                                 <app-date-field
                                         *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
                                         [form]="formGroup"
-                                        [inputName]="UtilService.FCName( question.questionId)"
+                                        [inputName]="UtilService.FCNameUq(sectionIndex,questionIndex, question.questionId)"
                                         [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                                        [isError]="isError( question)"
+                                        [isError]="isError(sectionIndex,questionIndex, question)"
                                         placeholder="Choose"
                                 ></app-date-field>
 
                                 <app-dropdown-field
                                         *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                         [form]="formGroup"
-                                        [inputName]="UtilService.FCName(question.questionId)"
+                                        [inputName]="UtilService.FCNameUq(sectionIndex,questionIndex,question.questionId)"
                                         [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                                        [isError]="isError( question)"
+                                        [isError]="isError(sectionIndex,questionIndex, question)"
                                         [list]="question.answerChoiceAttributes"
                                         [listLabelKey]="question.listLabelKey"
                                         [listValueKey]="question.listValueKey"
-                                        (valueChange)="dropDownChange(question)"
+                                        (valueChange)="dropDownChange(question, sectionIndex,questionIndex)"
                                         placeholder="Choose"
                                 ></app-dropdown-field>
 
@@ -55,9 +62,9 @@
                                 <app-number-integer-field
                                         *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
                                         [form]="formGroup"
-                                        [inputName]="UtilService.FCName( question.questionId)"
+                                        [inputName]="UtilService.FCNameUq( sectionIndex,questionIndex,question.questionId)"
                                         [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                                        [isError]="isError(question)"
+                                        [isError]="isError(sectionIndex,questionIndex,question)"
                                 ></app-number-integer-field>
                             </ng-container>
                         </ng-container>
@@ -72,10 +79,12 @@
 
                     <ng-template #customQuestions>
                         <app-custom-questions-container
+                                [sectionIndex]="sectionIndex"
                                 [sectionId]="section.sectionId"
                                 [questions]="section.questions"
                                 [isSubmitted]="isSubmitted"
                                 [formGroup]="formGroup"
+                                [questionElementIds]="questionElementIds"
                         ></app-custom-questions-container>
                     </ng-template>
                 </ng-container>

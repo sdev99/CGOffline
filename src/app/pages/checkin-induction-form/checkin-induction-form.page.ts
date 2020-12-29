@@ -34,11 +34,12 @@ export class CheckinInductionFormPage implements OnInit {
     ) {
         this.user = accountService.userValue;
 
-        if (sharedDataService.checkInDetail
-            && sharedDataService.checkInDetail.checkInInductionItems
-            && sharedDataService.checkInDetail.checkInInductionItems.length > this.sharedDataService.inductionContentItemIndex) {
-            this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.sharedDataService.inductionContentItemIndex];
-        }
+        this.route.queryParams.subscribe((parameters) => {
+            const inductionContentItemIndex = parameters.inductionContentItemIndex;
+            if (this.sharedDataService.checkInDetail?.checkInInductionItems?.length > inductionContentItemIndex) {
+                this.inductionItem = this.sharedDataService.checkInDetail?.checkInInductionItems[inductionContentItemIndex];
+            }
+        });
     }
 
     ngOnInit() {

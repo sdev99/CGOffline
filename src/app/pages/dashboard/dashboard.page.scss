@@ -69,6 +69,8 @@ ion-content {
       }
 
       ion-label {
+        white-space: normal;
+
         h6 {
           font-family: IBM Plex Sans;
           font-style: normal;
@@ -76,6 +78,7 @@ ion-content {
           font-size: 12px;
           line-height: 16px;
           color: #2A6FDB;
+          white-space: normal;
         }
 
         .detail {

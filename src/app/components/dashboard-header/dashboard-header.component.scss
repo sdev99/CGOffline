@@ -1,6 +1,6 @@
 ion-toolbar {
   &.part-1 {
-    height: 65px;
+    min-height: 65px;
     display: flex;
     flex-direction: row;
     justify-content: center;

@@ -42,8 +42,8 @@ export class ChooseLocationPage implements OnInit {
     getLocationItemList = () => {
         if (this.sharedDataService.dedicatedModeDeviceDetailData) {
             this.apiService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res) => {
-                if (res) {
-                    this.locations = res;
+                if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.locations = res.Result;
                 }
             }, (error) => {
             });

@@ -34,6 +34,7 @@ import {ExposureComponent} from './exposure/exposure.component';
 import {QuestionListHeaderComponent} from './question-list-header/question-list-header.component';
 import {CustomQuestionsContainerComponent} from './custom-questions-container/custom-questions-container.component';
 import {PhotoFieldComponent} from './photo-field/photo-field.component';
+import {SectionTitleComponent} from './section-title/section-title.component';
 
 @NgModule({
     declarations: [
@@ -68,7 +69,8 @@ import {PhotoFieldComponent} from './photo-field/photo-field.component';
         ExposureComponent,
         QuestionListHeaderComponent,
         CustomQuestionsContainerComponent,
-        PhotoFieldComponent
+        PhotoFieldComponent,
+        SectionTitleComponent
     ],
     imports: [
         IonicModule,
@@ -108,7 +110,8 @@ import {PhotoFieldComponent} from './photo-field/photo-field.component';
         ExposureComponent,
         QuestionListHeaderComponent,
         CustomQuestionsContainerComponent,
-        PhotoFieldComponent
+        PhotoFieldComponent,
+        SectionTitleComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

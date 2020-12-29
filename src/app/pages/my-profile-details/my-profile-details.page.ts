@@ -22,7 +22,7 @@ export class MyProfileDetailsPage implements OnInit {
 
     constructor(
         public navCtrl: NavController,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private accountService: AccountService,
         private utilService: UtilService,
     ) {

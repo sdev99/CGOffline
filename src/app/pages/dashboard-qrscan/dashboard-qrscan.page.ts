@@ -22,9 +22,10 @@ const {Camera, Permissions} = Plugins;
 export class DashboardQrscanPage implements OnInit {
     user: User;
     scanSub;
-    dedicatedMode = true;
+    dedicatedMode = false;
     isTablet = false;
     authFor = 'Check In/Out via QR';
+    isLoaded = false;
 
     constructor(
         public navCtrl: NavController,
@@ -59,32 +60,39 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ionViewWillLeave() {
-        if (this.scanSub) {
-            this.scanSub.unsubscribe(); // stop scanning
-            this.qrScanner.hide(); // hide camera preview
-        }
-        this.qrScanner.destroy();
+        this.stopScanning();
     }
 
     ionViewDidEnter() {
-        this.scan();
+        setTimeout(() => {
+            this.isLoaded = true;
+            this.scan();
+        }, 1000);
     }
 
+    stopScanning = () => {
+        if (this.scanSub) {
+            this.scanSub.unsubscribe(); // stop scanning
+        }
+        this.qrScanner.hide(); // hide camera preview
+        this.qrScanner.destroy();
+    };
+
     requestCameraPermission = async () => {
-        const locationPermission = await Permissions.query({
+        const cameraPermission = await Permissions.query({
             name: PermissionType.Camera
         });
 
-        if (locationPermission.state !== 'granted') {
-            return await Camera.requestPermissions();
+        if (cameraPermission.state !== 'granted' && Camera && Camera.requestPermissions) {
+            return await Camera.requestPermissions;
         }
         return true;
     };
 
-    scan = async () => {
-        await this.requestCameraPermission();
+    scan = () => {
+        // await this.requestCameraPermission();
 
-// Optionally request the permission early
+        // Optionally request the permission early
         this.qrScanner.prepare()
             .then((status: QRScannerStatus) => {
                 if (status.authorized) {
@@ -93,13 +101,9 @@ export class DashboardQrscanPage implements OnInit {
                     this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
                         console.log('Scanned something', text);
                         if (text) {
-                            this.qrScanner.hide(); // hide camera preview
-                            this.scanSub.unsubscribe(); // stop scanning
-                            this.qrScanner.destroy();
                             this.checkQrCode(text);
                         }
                     });
-
                     this.qrScanner.show();
 
                 } else if (status.denied) {
@@ -121,6 +125,8 @@ export class DashboardQrscanPage implements OnInit {
     };
 
     checkQrCode = async (qrCode) => {
+        this.stopScanning();
+
         const loading = await this.utilService.startLoadingWithOptions();
 
         this.apiService.getEntityByQRCode(qrCode).subscribe((response: Response) => {

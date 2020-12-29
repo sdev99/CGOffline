@@ -30,7 +30,7 @@ export class AccountService {
 
     constructor(
         private router: Router,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private http: HttpClient,
         private navController: NavController,
         private platform: Platform,

@@ -17,4 +17,6 @@ export class ArAnswerObject {
     accidentAttachmentFileName?: string;
     accidentAnswerSequence?: string;
     formVersionID?: number;
+    markAsFailed?: boolean;
+    isNotify?: boolean;
 }

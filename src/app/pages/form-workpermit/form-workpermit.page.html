@@ -32,9 +32,14 @@
         <Form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
             <ion-list lines="none" mode="ios">
-                <ng-container *ngFor="let section of formBuilderDetail?.sections">
-                    <ng-container *ngIf="!section.sectionIsHidden">
+                <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index;">
+                    <ng-container *ngIf="utilService.shouldShowSection(section)">
+                        <app-section-title
+                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                        </app-section-title>
+
                         <app-custom-questions-container
+                                [sectionIndex]="sectionIndex"
                                 [sectionId]="section.sectionId"
                                 [questionElementIds]="questionElementIds"
                                 [questions]="section.questions"

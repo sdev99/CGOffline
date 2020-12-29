@@ -15,4 +15,6 @@ export class CheckInPostData {
     guestPhoto: string;
     digitalInkSignature: string;
     userSignaturePhoto: string;
+    inductionFormContent: string;
+    answerNotificationList: string;
 }

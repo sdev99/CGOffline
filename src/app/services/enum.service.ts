@@ -248,20 +248,27 @@ export class EnumService {
             Show: 1,
             Hide: 2,
             Duplicate: 3,
-            MarkAsFailed: 4, // not used in mobile
-            Notify: 5, // not used in mobile
+            MarkAsFailed: 4,
+            Notify: 5,
+        },
+        ActionTypeForForm: {
+            ShowForLogic: 'showForLogic',
+            HideForLogic: 'hideForLogic',
+            MarkAsFailed: 'isMarkedAsFailed',
+            Duplicate: 'duplicate',
+            Notify: 'isNotify',
         },
         SingleMultipleChoiceOperationType: {
             Selected: 1,
             NotSelected: 2,
         },
         OtherValueOperationType: {
-            GreaterThen: '>',
-            GreaterThenEqualTo: '>=',
-            LessThen: '<',
-            LessThenEqualTo: '<=',
-            EqualTo: '=',
-            NotEqualTo: '!=',
+            GreaterThen: 1,
+            GreaterThenEqualTo: 2,
+            LessThen: 3,
+            LessThenEqualTo: 4,
+            EqualTo: 5,
+            NotEqualTo: 6,
         }
     };
 

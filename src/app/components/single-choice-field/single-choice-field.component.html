@@ -2,6 +2,7 @@
     <ion-radio-group [formControlName]="inputName">
         <ion-item *ngFor="let item of list" class="question-item">
             <ion-label
+                    class="ion-text-wrap"
                     [ngStyle]="{'color':item.answerChoiceAttributeColor==='white'?null:item.answerChoiceAttributeColor}">
                 {{UtilService.findObj(item.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', sharedDataService.currentLanguageId).answerChoiceAttributeHeaderTitle}}
             </ion-label>

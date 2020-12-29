@@ -4,7 +4,7 @@
 
 <ion-content [scrollY]="!loading">
     <app-screen-inner-loading *ngIf="loading"></app-screen-inner-loading>
-    <div class="aggrement-content" [innerHTML]="termsConditionsText"></div>
+    <div class="aggrement-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(termsConditionsText)"></div>
 </ion-content>
 
 <ion-footer mode="ios">

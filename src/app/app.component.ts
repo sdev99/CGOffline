@@ -35,7 +35,7 @@ export class AppComponent {
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
         private uniqueDeviceID: UniqueDeviceID,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private utilService: UtilService,
         private observablesService: ObservablesService,
         private navController: NavController,
@@ -134,8 +134,7 @@ export class AppComponent {
     };
 
     checkDeviceForDedicatedMode = async () => {
-        this.apiService.getTimeZoneList().subscribe(() => {
-        });
+        this.apiService.getTimeZoneList().subscribe(() => {});
 
         const loading = await this.utilService.startLoadingWithOptions();
         this.accountService.getDeviceDetails(this.sharedDataService.deviceUID).subscribe((data) => {
@@ -244,7 +243,7 @@ export class AppComponent {
                 name: PermissionType.Geolocation
             });
 
-            if (locationPermission.state !== 'granted') {
+            if (locationPermission.state !== 'granted' && Geolocation && Geolocation.requestPermissions) {
                 await Geolocation.requestPermissions();
             }
 

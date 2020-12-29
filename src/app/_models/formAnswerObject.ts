@@ -18,5 +18,6 @@ export class FormAnswerObject {
     questionDisplayOrder?: number;
     formVersionID?: number;
     multipleChoiceAnswers?: any;
-
+    markAsFailed?: boolean;
+    isNotify?: boolean;
 }

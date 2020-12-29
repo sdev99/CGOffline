@@ -20,7 +20,7 @@ export class PermitsDmPage implements OnInit {
 
     constructor(
         private filehandlerService: FilehandlerService,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
     ) {
     }
 

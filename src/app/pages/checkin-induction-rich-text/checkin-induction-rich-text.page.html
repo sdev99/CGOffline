@@ -15,7 +15,7 @@
         </h6>
 
         <div class="text-view" *ngIf="inductionItem">
-            <div [innerHTML]="inductionItem.contentDetails"></div>
+            <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
         </div>
 
     </div>

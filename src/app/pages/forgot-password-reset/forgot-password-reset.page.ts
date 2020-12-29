@@ -18,7 +18,6 @@ export class ForgotPasswordResetPage implements OnInit {
     errorMessage = '';
     isSubmitted = false;
     myForm: FormGroup;
-    isConfirm = false;
 
     resetCode;
 

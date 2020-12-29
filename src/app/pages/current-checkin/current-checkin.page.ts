@@ -29,8 +29,8 @@ export class CurrentCheckinPage implements OnInit {
     isCheckedIn = false;
 
     availableWorkPermits;
-    availableDocuments: [DocumentDetail];
-    availableForms: [FormItem];
+    availableDocuments: Array<DocumentDetail>;
+    availableForms: Array<FormItem>;
 
     isLoading = false;
 
@@ -108,7 +108,7 @@ export class CurrentCheckinPage implements OnInit {
             }
             UtilService.fireCallBack(callBack);
         }, error => {
-            this.availableForms = null;
+            this.availableForms = [];
             UtilService.fireCallBack(callBack);
         });
     };
@@ -120,7 +120,7 @@ export class CurrentCheckinPage implements OnInit {
             }
             UtilService.fireCallBack(callBack);
         }, error => {
-            this.availableDocuments = null;
+            this.availableDocuments = [];
             UtilService.fireCallBack(callBack);
         });
     };
@@ -132,7 +132,7 @@ export class CurrentCheckinPage implements OnInit {
             }
             UtilService.fireCallBack(callBack);
         }, error => {
-            this.availableWorkPermits = null;
+            this.availableWorkPermits = [];
             UtilService.fireCallBack(callBack);
         });
     };

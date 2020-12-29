@@ -15,7 +15,7 @@ import {CheckedInDetailItem} from '../_models/checkedInDetailItem';
 export class ApiService {
     constructor(
         private http: HttpClient,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
     ) {
     }
 
@@ -56,9 +56,8 @@ export class ApiService {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const list = data.Result;
                 this.sharedDataService.locationItemList = list;
-                return list;
             }
-            return null;
+            return data;
         }));
     }
 

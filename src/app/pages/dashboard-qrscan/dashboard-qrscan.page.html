@@ -16,11 +16,13 @@
 </ion-header>
 
 <ion-content fullscreen class="ion-justify-content-center ion-align-items-center">
-    <img *ngIf="!isTablet" src="./assets/images/qr-bg.svg" class="content"/>
-    <img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content"/>
+    <ng-container *ngIf="isLoaded">
+        <img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content"/>
+        <img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content"/>
 
-    <div class="title-text">
-        {{dedicatedMode ? 'Please show your QR code to the camera' : 'Scan QR Code'}}
-    </div>
+        <div class="title-text">
+            {{dedicatedMode ? 'Please show your QR code to the camera' : 'Scan QR Code'}}
+        </div>
+    </ng-container>
     <!--        <div class="qr-scan-area"></div>-->
 </ion-content>

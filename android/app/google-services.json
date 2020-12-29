@@ -1,42 +1,41 @@
 {
   "project_info": {
-    "project_number": "134066625113",
-    "project_id": "pushnotificationtest-52274",
-    "storage_bucket": "pushnotificationtest-52274.appspot.com"
+    "project_number": "1005975349422",
+    "project_id": "compliance-genie",
+    "storage_bucket": "compliance-genie.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:134066625113:android:637f93af8dc89bf8e2ef48",
+        "mobilesdk_app_id": "1:1005975349422:android:20e08cc29c0720cb65a53f",
         "android_client_info": {
           "package_name": "com.besafetechnologies.compliancegenie"
         }
       },
       "oauth_client": [
         {
-          "client_id": "134066625113-6mohrik452cfhnc1sb84efto0dl75oqd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.besafetechnologies.compliancegenie",
-            "certificate_hash": "0f8b3875af1548f6aa9322c9b7dfd11322b6c32f"
-          }
-        },
-        {
-          "client_id": "134066625113-u1p8m16ithklmn0c0gk8h5tscjepgdm6.apps.googleusercontent.com",
+          "client_id": "1005975349422-rrhnlctnnordkjdiksbca5ne7d7fn4mj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDzFx-0HSIxpbqoxuLEe78ACFxIqjID9xI"
+          "current_key": "AIzaSyCeOMmo9JUn3i-HjXhYf3wpIp40YaL-k7U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "134066625113-u1p8m16ithklmn0c0gk8h5tscjepgdm6.apps.googleusercontent.com",
+              "client_id": "1005975349422-rrhnlctnnordkjdiksbca5ne7d7fn4mj.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1005975349422-sjgii7dtgdukufl3abo27cqmie4devdv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.be-safetechnologies.compliancegenie"
+              }
             }
           ]
         }

@@ -16,7 +16,7 @@ export class DashboardDmPage implements OnInit {
 
     constructor(
         public navController: NavController,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private apiService: ApiService,
         private accountService: AccountService,
     ) {

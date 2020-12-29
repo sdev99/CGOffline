@@ -11,10 +11,12 @@ export class SubmitAnswersObject {
     formTypeId: number;
     userId: string;
     companyId: number;
+    selectedLanguageID: number;
     questionAnswers?: Array<FormAnswerObject>;
     havQuestionAnswers?: Array<HavAnswerObject>;
     accidentReportQuestionAnswers?: Array<ArAnswerObject>;
     riskAssessmentAnswers?: Array<RiskAssessmentAnswerObject>;
     havExposure?: HavExposure;
     workPermitAnswer?: WorkPermitAnswer;
+    formattedSections?: any;
 }

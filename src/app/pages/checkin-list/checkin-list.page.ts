@@ -9,6 +9,7 @@ import {User} from '../../_models';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
 import {LocationItem} from '../../_models/locationItem';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-checkin-list',
@@ -24,11 +25,12 @@ export class CheckinListPage implements OnInit {
         public navCtrl: NavController,
         public modalController: ModalController,
         public apiService: ApiService,
+        public utilService: UtilService,
         public accountService: AccountService,
         public sharedDataService: SharedDataService,
     ) {
         this.user = this.accountService.userValue;
-        this.locations = sharedDataService.locationItemList;
+        this.filterLocationList(sharedDataService.locationItemList);
     }
 
     ngOnInit() {
@@ -37,13 +39,38 @@ export class CheckinListPage implements OnInit {
 
     getLocationItemList = () => {
         this.apiService.getLocationItemList(this.user.companyID).subscribe((res) => {
-            if (res) {
-                this.locations = res;
+            if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.filterLocationList(res.Result);
             }
         }, (error) => {
         });
     };
 
+
+    filterLocationList = (list) => {
+        if (list) {
+            const locations = [];
+            list.map((item) => {
+                let found = false;
+                const entityIds = this.utilService.getRelevantEntityId(item.locationID);
+                this.sharedDataService.checkedInPlaces.map((checkedInDetailItem) => {
+                    if ((entityIds.LocationID > 0 && entityIds.LocationID === checkedInDetailItem.locationID) ||
+                        (entityIds.ProjectID > 0 && entityIds.ProjectID === checkedInDetailItem.projectID) ||
+                        (entityIds.InventoryID > 0 && entityIds.InventoryID === checkedInDetailItem.inventoryItemID)
+                    ) {
+                        found = true;
+                        return;
+                    }
+                });
+
+                if (!found) {
+                    locations.push(item);
+                }
+            });
+
+            this.locations = locations;
+        }
+    };
 
     onClose() {
         this.navCtrl.back();

@@ -8,6 +8,7 @@ import {UtilService} from '../../services/util.service';
 import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
 import {User} from '../../_models';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'app-checkin-induction-rich-text',
@@ -25,18 +26,21 @@ export class CheckinInductionRichTextPage implements OnInit {
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
         public accountService: AccountService,
+        public sanitizer: DomSanitizer
     ) {
         this.user = accountService.userValue;
 
-        if (sharedDataService.checkInDetail
-            && sharedDataService.checkInDetail.checkInInductionItems
-            && sharedDataService.checkInDetail.checkInInductionItems.length > this.sharedDataService.inductionContentItemIndex) {
-            this.inductionItem = sharedDataService.checkInDetail.checkInInductionItems[this.sharedDataService.inductionContentItemIndex];
-        }
+        this.route.queryParams.subscribe((parameters) => {
+            const inductionContentItemIndex = parameters.inductionContentItemIndex;
+            if (this.sharedDataService.checkInDetail?.checkInInductionItems?.length > inductionContentItemIndex) {
+                this.inductionItem = this.sharedDataService.checkInDetail?.checkInInductionItems[inductionContentItemIndex];
+            }
+        });
     }
 
     ngOnInit() {
     }
+
 
     onBack() {
         this.navCtrl.back();

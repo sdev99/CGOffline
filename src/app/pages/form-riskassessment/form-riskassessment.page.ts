@@ -85,43 +85,38 @@ export class FormRiskassessmentPage implements OnInit {
             this.putRiskRatingInVariable();
         }
 
-        this.formGroup = new FormGroup({});
+
         const sections = this.formBuilderDetail.sections;
         if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
-                    if (section.isRiskAssessmentSection) {
-                        const tasks = section.tasks;
-                        tasks.map((task) => {
-                            const hazards = task.hazards;
-                            hazards.map((hazard) => {
-                                hazard.addedUsers = {};
-                                hazard.addedGroups = {};
-                                hazard.riskRating = null;
-                                hazard.residualRiskRating = null;
-                                hazard.selectedUserGroupType = this.userGroupTypes[0];
-                                hazard.selectedUser = null;
-                                hazard.selectedGroup = null;
-                                hazard.memberOfTheWorkForce = false;
-                                hazard.memberOfThePublic = false;
-                                hazard.memberOfThePublicDescription = '';
-                            });
-
-                            this.questionElementIds.push(UtilService.HtmlElementId(section.sectionId, task.taskId));
-
+            sections.map((section, sectionIndex) => {
+                if (section.isRiskAssessmentSection) {
+                    const tasks = section.tasks;
+                    tasks.map((task) => {
+                        const hazards = task.hazards;
+                        hazards.map((hazard) => {
+                            hazard.addedUsers = {};
+                            hazard.addedGroups = {};
+                            hazard.riskRating = null;
+                            hazard.residualRiskRating = null;
+                            hazard.selectedUserGroupType = this.userGroupTypes[0];
+                            hazard.selectedUser = null;
+                            hazard.selectedGroup = null;
+                            hazard.memberOfTheWorkForce = false;
+                            hazard.memberOfThePublic = false;
+                            hazard.memberOfThePublicDescription = '';
                         });
-                    } else {
-                        const questions = section.questions;
-                        questions.map((question) => {
-                            if (!question.questionIsHidden) {
-                                this.utilService.addDynamicFormControls(question, this.formGroup);
-                                this.questionElementIds.push(UtilService.HtmlElementId(section.sectionId, question.questionId));
-                            }
-                        });
-                    }
+                    });
                 }
             });
         }
+
+        // Add form controls for each type of fields
+        this.formGroup = new FormGroup({});
+        this.utilService.questionElementIdsUpdate = (questionElementIds) => {
+            this.questionElementIds = questionElementIds;
+        };
+        this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
+        // -- End -- Add form controls for each type of fields
 
 
         route.queryParams.subscribe((params: any) => {
@@ -209,7 +204,7 @@ export class FormRiskassessmentPage implements OnInit {
     };
 
     handleOrientation = () => {
-        if(this.sharedDataService.dedicatedMode) {
+        if (this.sharedDataService.dedicatedMode) {
             if (this.screenOrientation.type.includes('landscape')) {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
@@ -264,9 +259,17 @@ export class FormRiskassessmentPage implements OnInit {
 
         modal.onWillDismiss().then(({data}) => {
             if (data) {
-                this.navCtrl.back();
+                this.onBack();
             }
         });
+    }
+
+    onBack() {
+        if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        } else {
+            this.navCtrl.back();
+        }
     }
 
 

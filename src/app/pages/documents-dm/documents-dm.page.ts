@@ -22,7 +22,7 @@ export class DocumentsDmPage implements OnInit {
         private navController: NavController,
         private filehandlerService: FilehandlerService,
         private utilService: UtilService,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
     ) {
     }
 

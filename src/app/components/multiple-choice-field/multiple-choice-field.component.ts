@@ -16,7 +16,7 @@ export class MultipleChoiceFieldComponent implements OnInit {
   @Input() list: Array<any>;
 
   constructor(
-      private sharedDataService: SharedDataService,
+      public sharedDataService: SharedDataService,
   ) { }
 
   ngOnInit() {}

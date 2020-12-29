@@ -1,7 +1,7 @@
 ion-header {
   ::ng-deep app-modal-header {
     ion-toolbar {
-      height: 55px;
+      min-height: 55px;
       align-items: flex-end;
       --border-color: transparent;
       --border-width: 0;
@@ -68,26 +68,62 @@ ion-header {
     }
   }
 
-  .reject-reason {
-    padding: 5px 0;
+  .rejected-view {
+    padding: 8px 0;
 
-    h3 {
-      font-style: normal;
-      font-weight: normal;
-      font-size: 12px;
-      line-height: 16px;
+    .detail {
       display: flex;
+      flex-direction: row;
       align-items: center;
+      margin: 8px 0;
+
+      ion-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 3px;
+      }
+
+      .rejected {
+        padding-left: 08px;
+        font-weight: normal;
+        color: #555;
+        font-size: 16px;
+      }
+
     }
 
-    p {
+    .time {
+      font-family: IBM Plex Sans;
       font-style: normal;
       font-weight: normal;
+      line-height: 13px;
       font-size: 12px;
-      line-height: 16px;
-      display: flex;
-      align-items: center;
-      color: #A1A8CA;
+      color: #555555;
+      white-space: normal;
+    }
+
+    .reject-reason {
+      margin-top: 18px;
+
+      h3 {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      p {
+        margin-top: 4px;
+        font-style: italic;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+        color: #A1A8CA;
+      }
     }
   }
 }

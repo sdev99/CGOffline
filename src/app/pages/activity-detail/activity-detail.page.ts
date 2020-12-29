@@ -15,6 +15,7 @@ import {ObservablesService} from '../../services/observables.service';
 import {DocumentDetail} from '../../_models/documentDetail';
 import {SignOffDetailsPostData} from '../../_models/signOffDetailsPostData';
 import {SignOffFormDetail} from '../../_models/signOffFormDetail';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'app-activity-detail',
@@ -33,13 +34,14 @@ export class ActivityDetailPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private filehandlerService: FilehandlerService,
         private apiService: ApiService,
         private utilService: UtilService,
         public alertController: AlertController,
         private accountService: AccountService,
         private observablesService: ObservablesService,
+        public sanitizer: DomSanitizer
     ) {
         this.user = this.accountService.userValue;
         this.activityListItem = this.sharedDataService.currentActivityOpen;

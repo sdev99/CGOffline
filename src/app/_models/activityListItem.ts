@@ -17,4 +17,7 @@ export class ActivityListItem {
     formattedExplanation: string;
     formID: number;
     documentID: number;
+
+    formattedApprovedRejectedDate: string;
+    rejectedBy: string;
 }

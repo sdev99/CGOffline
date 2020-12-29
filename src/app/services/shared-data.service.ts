@@ -271,9 +271,12 @@ export class SharedDataService {
         let requiredFieldsCount = 0;
         let requiredFieldsValidCount = 0;
 
+        let filledFieldsCount = 0;
+        let filledFieldsValidCount = 0;
+
         if (sections) {
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
+            sections.map((section, sectionIndex) => {
+                if (this.utilService.shouldShowSection(section)) {
                     if (section.isRiskAssessmentSection) {
                         const tasks = section.tasks;
                         tasks.map((task) => {
@@ -305,13 +308,19 @@ export class SharedDataService {
                         });
                     } else {
                         const questions = section.questions;
-                        questions.map((question) => {
-                            if (!question.questionIsHidden) {
-                                const control = formGroup.controls[UtilService.FCName(question.questionId)];
+                        questions.map((question, questionIndex) => {
+                            if (this.utilService.shouldShowQuestion(question)) {
+                                const control = formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
                                 if (question.questionIsRequired) {
                                     requiredFieldsCount++;
                                     if (control && control.valid) {
                                         requiredFieldsValidCount++;
+                                    }
+                                }
+                                if (control.value) {
+                                    filledFieldsCount++;
+                                    if (control.valid) {
+                                        filledFieldsValidCount++;
                                     }
                                 }
                             }
@@ -329,12 +338,12 @@ export class SharedDataService {
 
             let loading;
 
-            sections.map((section) => {
-                if (!section.sectionIsHidden) {
+            sections.map((section, sectionIndex) => {
+                if (this.utilService.shouldShowSection(section)) {
                     const questions = section.questions;
-                    questions.map((question) => {
-                        if (!question.questionIsHidden) {
-                            const control = formGroup.controls[UtilService.FCName(question.questionId)];
+                    questions.map((question, questionIndex) => {
+                        if (this.utilService.shouldShowQuestion(question)) {
+                            const control = formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
                                 if (control && control.value) {
                                     attachmentCount++;
@@ -382,8 +391,13 @@ export class SharedDataService {
             callBack(false, errorMessage);
         } else {
             const missingFieldCount = requiredFieldsCount - requiredFieldsValidCount;
-            const errorMessage = (missingFieldCount) + ' required field' + (missingFieldCount > 1 ? 's' : '') + ' missing';
-            callBack(false, errorMessage);
+            if (missingFieldCount === 0 && filledFieldsCount !== filledFieldsValidCount) {
+                const errorMessage = 'Incorrect data, please recheck your answers.';
+                callBack(false, errorMessage);
+            } else {
+                const errorMessage = (missingFieldCount) + ' required field' + (missingFieldCount > 1 ? 's' : '') + ' missing';
+                callBack(false, errorMessage);
+            }
         }
     }
 
@@ -398,51 +412,75 @@ export class SharedDataService {
         const accidentReportQuestionAnswers = [];
         const riskAssessmentAnswers = [];
 
-        sections.map((section) => {
-            if (!section.sectionIsHidden) {
+
+        const formattedSections = [];
+
+        sections.map((section, sectionIndex) => {
+
+            if (this.utilService.shouldShowSection(section)) {
+                const formattedAnswers = [];
+                const sectionFormattedObject: any = JSON.parse(JSON.stringify(section));
+
                 if (section.isRiskAssessmentSection) {
                     const tasks = section.tasks;
+
                     tasks.map((task) => {
-                        const hazards = task.hazards;
-                        hazards.map((hazard) => {
-                            const answerObject: RiskAssessmentAnswerObject = {
-                                riskAQuestionAnswerId: 0,
-                                hazardID: hazard.hazardId,
-                                formVersionID: formVersionId,
-                                riskRatingID: hazard.riskRating,
-                                residualRiskRatingID: hazard.residualRiskRating,
-                                isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
-                                isMembersOfThePublic: hazard.memberOfThePublic,
-                            };
+                        if (this.utilService.shouldShowQuestion(task)) {
+                            const answerFormattedObject: any = JSON.parse(JSON.stringify(task));
+                            const hazardsAnswers = [];
+                            const hazards = task.hazards;
+                            hazards.map((hazard) => {
+                                const hazardFormattedObject: any = JSON.parse(JSON.stringify(hazard));
 
-                            const controlMeasures = hazard.controlMeasures;
-                            const controlMeasureIDs = [];
-                            if (controlMeasures) {
-                                controlMeasures.map((controlMeasure) => {
-                                    if (controlMeasure.isSelected) {
-                                        controlMeasureIDs.push(controlMeasure.controlMeasureId);
-                                    }
-                                });
-                            }
-                            answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
+                                const answerObject: RiskAssessmentAnswerObject = {
+                                    riskAQuestionAnswerId: 0,
+                                    hazardID: hazard.hazardId,
+                                    formVersionID: formVersionId,
+                                    riskRatingID: hazard.riskRating,
+                                    residualRiskRatingID: hazard.residualRiskRating,
+                                    isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
+                                    isMembersOfThePublic: hazard.memberOfThePublic,
+                                    [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: task[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+                                    [EnumService.QuestionLogic.ActionTypeForForm.Notify]: task[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+                                };
 
-                            if (hazard.memberOfTheWorkForce) {
-                                answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
-                                answerObject.userGroupIDs = Object.keys(hazard.addedGroups).join(',');
-                            }
+                                const controlMeasures = hazard.controlMeasures;
+                                const controlMeasureIDs = [];
+                                if (controlMeasures) {
+                                    controlMeasures.map((controlMeasure) => {
+                                        if (controlMeasure.isSelected) {
+                                            controlMeasureIDs.push(controlMeasure.controlMeasureId);
+                                        }
+                                    });
+                                }
+                                answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
 
-                            if (hazard.memberOfThePublic) {
-                                answerObject.membersOfThePublicDescription = hazard.memberOfThePublicDescription;
-                            }
-                            riskAssessmentAnswers.push(answerObject);
-                        });
+                                if (hazard.memberOfTheWorkForce) {
+                                    answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
+                                    answerObject.userGroupIDs = Object.keys(hazard.addedGroups).join(',');
+                                }
+
+                                if (hazard.memberOfThePublic) {
+                                    answerObject.membersOfThePublicDescription = hazard.memberOfThePublicDescription;
+                                }
+                                riskAssessmentAnswers.push(answerObject);
+
+                                hazardFormattedObject.answerData = answerObject;
+                                hazardsAnswers.push(hazardFormattedObject);
+                            });
+
+                            answerFormattedObject.answerData = hazardsAnswers;
+                            formattedAnswers.push(answerFormattedObject);
+                        }
                     });
                 } else {
                     const questions = section.questions;
 
-                    questions.map((question) => {
-                        if (!question.questionIsHidden) {
-                            const control = formGroup.controls[UtilService.FCName(question.questionId)];
+                    questions.map((question, questionIndex) => {
+                        if (this.utilService.shouldShowQuestion(question)) {
+                            const answerFormattedObject: any = JSON.parse(JSON.stringify(question));
+
+                            const control = formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
                             if (control) {
                                 const questionLabel = UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', this.currentLanguageId).questionTranslationTitle;
 
@@ -454,12 +492,14 @@ export class SharedDataService {
                                         formVersionID: formVersionId,
                                         answerTypeID: question.selectedAnswerTypeId,
                                         havSequence: question.questionDisplayOrder,
+                                        [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+                                        [EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
                                     };
 
                                     switch (question.questionDisplayOrder) {
                                         case EnumService.HavFormFieldOrder.DateOfUsage:
                                             if (control.value) {
-                                                answerObject.dateOfUsage = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                                answerObject.dateOfUsage = moment(control.value).format(StaticDataService.dateTimeFormat);
                                             }
                                             break;
                                         case EnumService.HavFormFieldOrder.Manufacturer:
@@ -476,6 +516,9 @@ export class SharedDataService {
                                             break;
                                     }
                                     havQuestionAnswers.push(answerObject);
+
+                                    answerFormattedObject.answerData = answerObject;
+
                                 } else if (section.isAccidentReportSection) {
                                     const answerObject: ArAnswerObject = {
                                         accidentReportQuestionAnswerId: 0,
@@ -484,6 +527,8 @@ export class SharedDataService {
                                         formVersionID: formVersionId,
                                         answerTypeID: question.selectedAnswerTypeId,
                                         accidentAnswerSequence: question.questionDisplayOrder,
+                                        [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+                                        [EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
                                     };
 
                                     let isValueFilled = false;
@@ -492,7 +537,7 @@ export class SharedDataService {
                                         case EnumService.AccidentFormFieldOrder.AccidentDateTime:
                                             if (control.value) {
                                                 isValueFilled = true;
-                                                answerObject.accidentDateTime = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                                answerObject.accidentDateTime = moment(control.value).format(StaticDataService.dateTimeFormat);
                                             }
                                             break;
                                         case EnumService.AccidentFormFieldOrder.AccidentLocation:
@@ -525,7 +570,7 @@ export class SharedDataService {
                                             const formGroups = control.value as FormGroup;
                                             const multipleChoiceValueIDs = [];
                                             question.answerChoiceAttributes.map((choice) => {
-                                                const choiceControl = formGroups[UtilService.FCName(choice.answerChoiceAttributeId)];
+                                                const choiceControl = formGroups[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId) + '' + UtilService.FCName(choice.answerChoiceAttributeId)];
                                                 if (choiceControl) {
                                                     multipleChoiceValueIDs.push(choice.answerChoiceAttributeId);
                                                 }
@@ -552,7 +597,7 @@ export class SharedDataService {
                                             const bodyPartsIDs = [];
                                             StaticDataService.bodyParts.map((partGroup) => {
                                                 partGroup.parts.map((part) => {
-                                                    const choiceControl = bodyPartFormGroups[UtilService.FCName(part.id)];
+                                                    const choiceControl = bodyPartFormGroups[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId) + '' + UtilService.FCName(part.id)];
                                                     if (choiceControl) {
                                                         bodyPartsIDs.push(part.id);
                                                     }
@@ -580,6 +625,7 @@ export class SharedDataService {
                                     if (isValueFilled) {
                                         accidentReportQuestionAnswers.push(answerObject);
                                     }
+                                    answerFormattedObject.answerData = answerObject;
                                 } else {
                                     const answerObject: FormAnswerObject = {
                                         questionAnswerId: 0,
@@ -588,6 +634,8 @@ export class SharedDataService {
                                         formVersionID: formVersionId,
                                         answerTypeID: question.selectedAnswerTypeId,
                                         multipleChoiceAnswers: [],
+                                        [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+                                        [EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
                                     };
 
                                     switch (question.selectedAnswerTypeId) {
@@ -605,7 +653,7 @@ export class SharedDataService {
                                             const formGroups = control.value as FormGroup;
                                             const multipleChoiceValueIDs = [];
                                             question.answerChoiceAttributes.map((choice) => {
-                                                const choiceControl = formGroups[UtilService.FCName(choice.answerChoiceAttributeId)];
+                                                const choiceControl = formGroups[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId) + '' + UtilService.FCName(choice.answerChoiceAttributeId)];
                                                 if (choiceControl) {
                                                     multipleChoiceValueIDs.push(choice.answerChoiceAttributeId);
                                                 }
@@ -620,17 +668,17 @@ export class SharedDataService {
                                             break;
                                         case EnumService.CustomAnswerType.DateField:
                                             if (control.value) {
-                                                answerObject.dateValue = moment(control.value).format('YYYY-MM-DD');
+                                                answerObject.dateValue = moment(control.value).format(StaticDataService.dateFormat);
                                             }
                                             break;
                                         case EnumService.CustomAnswerType.TimeField:
                                             if (control.value) {
-                                                answerObject.timeValue = moment(control.value).format('hh:mmA');
+                                                answerObject.timeValue = moment(control.value).format(StaticDataService.timeFormat);
                                             }
                                             break;
                                         case EnumService.CustomAnswerType.DateTimeField:
                                             if (control.value) {
-                                                answerObject.dateTimeValue = moment(control.value).format('YYYY-MM-DD HH:mm:ss.SSS');
+                                                answerObject.dateTimeValue = moment(control.value).format(StaticDataService.dateTimeFormat);
                                             }
                                             break;
                                         case EnumService.CustomAnswerType.PhotoVideoUpload:
@@ -640,24 +688,31 @@ export class SharedDataService {
 
                                     // if additional comment
                                     if (question.shouldShowOptionalComment) {
-                                        const additionalControl = formGroup.controls[UtilService.FCNameAdditioanlNote(question.questionId)];
+                                        const additionalControl = formGroup.controls[UtilService.FCNameAdditioanlNoteUq(sectionIndex, questionIndex, question.questionId)];
                                         if (additionalControl.value) {
                                             answerObject.questionComment = additionalControl.value;
                                         }
                                     }
 
                                     questionAnswers.push(answerObject);
+                                    answerFormattedObject.answerData = answerObject;
                                 }
                             }
+
+                            formattedAnswers.push(answerFormattedObject);
                         }
                     });
                 }
+
+                sectionFormattedObject.answerData = formattedAnswers;
+                formattedSections.push(sectionFormattedObject);
             }
         });
 
         const submitAnswersObject: SubmitAnswersObject = {
             formId: formBuilderDetail.formId,
             formVersionId,
+            selectedLanguageID: this.currentLanguageId,
             formTypeId: formBuilderDetail.formTypeID,
             userId: user.userId,
             companyId: user.companyID,
@@ -666,8 +721,11 @@ export class SharedDataService {
             accidentReportQuestionAnswers,
             riskAssessmentAnswers,
             havExposure,
-            workPermitAnswer
+            workPermitAnswer,
+            formattedSections
         };
+
+        console.log('Submit Answers', JSON.stringify(submitAnswersObject));
 
         this.utilService.presentLoadingWithOptions();
         apiService.saveFormAnswers(submitAnswersObject).subscribe((response: Response) => {
@@ -677,8 +735,12 @@ export class SharedDataService {
                 this.viewFormFor === EnumService.ViewFormForType.CurrentCheckinWorkPermit
             ) {
                 this.workPermitAnswer = workPermitAnswer;
-                this.startFormSignOffProcess(user.userId, apiService);
+                this.startFormSignOffProcess(user.userId, apiService, response.Result);
             } else if (this.viewFormFor === EnumService.ViewFormForType.Induction) {
+                if (this.checkInPostData) {
+                    this.checkInPostData.inductionFormContent = response.Result.formAnswerHtmlString;
+                    this.checkInPostData.answerNotificationList = response.Result.answerNotificationList;
+                }
                 this.inductionNavigationProcess(user.userId, this.inductionContentItemIndex);
             }
             callBack(true, response.Result);
@@ -689,7 +751,7 @@ export class SharedDataService {
     };
 
 
-    private startFormSignOffProcess(userId, apiService: ApiService) {
+    private startFormSignOffProcess(userId, apiService: ApiService, saveAnswerResult) {
         const signOffFormDetail = this.signOffFormDetail;
         this.signOffDetailsPostData = {
             userId,
@@ -701,6 +763,8 @@ export class SharedDataService {
             projectID: this.currentSelectedCheckinPlace?.projectID,
             inventoryItemID: this.currentSelectedCheckinPlace?.inventoryItemID,
             userCheckInDetailID: this.currentSelectedCheckinPlace?.userCheckInDetailID,
+            formContent: saveAnswerResult.formAnswerHtmlString,
+            answerNotificationList: saveAnswerResult.answerNotificationList,
         } as SignOffDetailsPostData;
 
         if (this.viewFormFor === EnumService.ViewFormForType.Activity) {
@@ -914,18 +978,29 @@ export class SharedDataService {
                             this.viewFormFor = EnumService.ViewFormForType.Induction;
                             this.signOffFormDetail = response.Result as SignOffFormDetail;
                             this.inductionContentItemIndex = inductionContentItemIndex + 1;
-                            this.router.navigateByUrl(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType));
+                            this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType), {
+                                queryParams: {
+                                    inductionContentItemIndex: this.inductionContentItemIndex
+                                }
+                            });
                         }
                     }, error => {
                         this.utilService.hideLoading();
                     });
                 } else {
                     this.inductionContentItemIndex = inductionContentItemIndex + 1;
-                    this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType));
+                    this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType), {
+                        queryParams: {
+                            inductionContentItemIndex: this.inductionContentItemIndex
+                        }
+                    });
                 }
             } else if (this.checkInDetail.checkInInduction.isDigitalSignOff || this.checkInDetail.checkInInduction.isSignatureSignOff) {
                 this.signOffFor = EnumService.SignOffType.INDUCTION;
                 this.navCtrl.navigateForward(['/signoff-digitalink']);
+            } else if (this.checkInDetail.checkInInduction.isPhotoSignOff) {
+                this.signOffFor = EnumService.SignOffType.INDUCTION;
+                this.navCtrl.navigateForward(['signoff-photo']);
             }
         }
     }

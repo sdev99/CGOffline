@@ -11,7 +11,7 @@
         <div *ngIf="sharedDataService.dedicatedMode" class="page-title">Induction</div>
 
         <div class="ion-text-center ion-padding" *ngIf="checkinDetail; else defaultInductionInfo"
-             [innerHTML]="checkinDetail.checkInInduction.introduction"></div>
+             [innerHTML]="sanitizer.bypassSecurityTrustHtml(checkinDetail?.checkInInduction?.introduction)"></div>
 
         <ng-template #defaultInductionInfo>
             <div class="text-1">

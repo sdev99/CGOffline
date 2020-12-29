@@ -16,50 +16,54 @@
         <Form [formGroup]="formGroup" (ngSubmit)="onContinue()">
             <ion-list lines="none">
 
-                <ng-container *ngFor="let section of formBuilderDetail?.sections">
-                    <ng-container *ngIf="!section.sectionIsHidden">
-                        <ng-container *ngIf="section.isAccidentReportSection; else customQuestions">
-                            <ng-container *ngFor="let question of section.questions">
+                <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index">
+                    <ng-container *ngIf="utilService.shouldShowSection(section)">
+                        <app-section-title
+                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                        </app-section-title>
 
-                                <ng-container *ngIf="!question.questionIsHidden">
+                        <ng-container *ngIf="section.isAccidentReportSection; else customQuestions">
+                            <ng-container *ngFor="let question of section.questions; let questionIndex=index">
+
+                                <ng-container *ngIf="utilService.shouldShowQuestion(question)">
                                     <app-date-time-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
                                             [form]="formGroup"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                                            [inputName]="UtilService.FCName( question.questionId)"
-                                            [isError]="isError( question)"
+                                            [inputName]="UtilService.FCNameUq(sectionIndex,questionIndex, question.questionId)"
+                                            [isError]="isError(sectionIndex, questionIndex, question)"
                                             placeholder="Choose"
                                     ></app-date-time-field>
 
 
                                     <div class="radio-input-view" style="padding-top: 8px;"
                                          *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText || question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-                                         [ngClass]="{'error':isError(question)}">
+                                         [ngClass]="{'error':isError(sectionIndex, questionIndex,question)}">
                                         <h2>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle}} </h2>
 
                                         <app-single-choice-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
                                                 [form]="formGroup"
-                                                [inputName]="UtilService.FCName(question.questionId)"
+                                                [inputName]="UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)"
                                                 [list]="question.answerChoiceAttributes"
                                         ></app-single-choice-field>
 
                                         <app-multiple-choice-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
                                                 [form]="formGroup"
-                                                [inputName]="UtilService.FCName(question.questionId)"
+                                                [inputName]="UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)"
                                                 [list]="question.answerChoiceAttributes"
                                         ></app-multiple-choice-field>
 
                                         <app-multiline-text-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
                                                 [form]="formGroup"
-                                                [inputName]="UtilService.FCName(question.questionId)"
+                                                [inputName]="UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)"
                                         ></app-multiline-text-field>
 
                                         <app-photo-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-                                                [formControlName]="UtilService.FCName(question.questionId)"
+                                                [formControlName]="UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)"
                                         ></app-photo-field>
                                     </div>
 
@@ -68,11 +72,11 @@
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                             [form]="formGroup"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                                            [inputName]="UtilService.FCName( question.questionId)"
+                                            [inputName]="UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)"
                                             [list]="question.answerChoiceAttributes"
                                             [listLabelKey]="question.listLabelKey"
                                             [listValueKey]="question.listValueKey"
-                                            [isError]="isError(question)"
+                                            [isError]="isError(sectionIndex, questionIndex,question)"
                                             placeholder="Choose"
                                     ></app-dropdown-field>
 
@@ -90,7 +94,7 @@
                                             </ion-label>
                                             <ion-select
                                                     [interfaceOptions]="accidentAlertOptions"
-                                                    [formControlName]="UtilService.FCName( question.questionId)"
+                                                    [formControlName]="UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)"
                                                     placeholder="Choose"
                                                     (ionChange)="placeInTheListChange($event)"
                                             >
@@ -102,7 +106,7 @@
                                         <ion-item>
                                             <ion-checkbox slot="start"
                                                           [formControlName]="EnumService.AccidentCustomLocationControlsName.PlaceNotintheList"
-                                                          (ionChange)="placeNotintheListChange($event,UtilService.FCName( question.questionId))"></ion-checkbox>
+                                                          (ionChange)="placeNotintheListChange($event,UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId))"></ion-checkbox>
                                             <ion-label>Place not in the list</ion-label>
                                         </ion-item>
 
@@ -321,11 +325,11 @@
                                                     </ion-toolbar>
 
                                                     <div class="parts-checkboxes"
-                                                         [formGroupName]="UtilService.FCName(question.questionId)">
+                                                         [formGroupName]="UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)">
                                                         <ion-item
                                                                 *ngFor="let item of bodyParts[currentBodyPartIndex].parts">
                                                             <ion-checkbox slot="start"
-                                                                          [formControlName]="UtilService.FCName(item.id)"
+                                                                          [formControlName]="UtilService.FCName(UtilService.FCNameUq(sectionIndex, questionIndex,question.questionId)+''+item.id)"
                                                                           (ionChange)="partSelectChange(item, $event)"></ion-checkbox>
                                                             <ion-label>{{item.name}}</ion-label>
                                                         </ion-item>

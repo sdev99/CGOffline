@@ -6,6 +6,11 @@ import {EnumService} from './enum.service';
 })
 export class StaticDataService {
 
+    static dateTimeFormat = 'YYYY-MM-DD HH:mm:00.000';
+    static dateTimeFormatAMPM = 'YYYY-MM-DD hh:mm A';
+    static dateFormat = 'YYYY-MM-DD';
+    static timeFormat = 'hh:mmA';
+
     static riskRatings = [
         {title: '1 Low', class: 'risk-rating-low', value: 1},
         {title: '2 Low', class: 'risk-rating-low', value: 2},

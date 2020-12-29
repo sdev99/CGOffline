@@ -5,6 +5,7 @@ import {File} from '@ionic-native/file/ngx';
 import {UtilService} from './util.service';
 import {HTTP} from '@ionic-native/http/ngx';
 import {StaticDataService} from './static-data.service';
+import {Platform} from '@ionic/angular';
 
 @Injectable({
     providedIn: 'root'
@@ -14,6 +15,7 @@ export class FilehandlerService {
 
     constructor(
         private fileOpener: FileOpener,
+        private platform: Platform,
         private transfer: FileTransfer,
         private file: File,
         private utilService: UtilService,
@@ -31,7 +33,13 @@ export class FilehandlerService {
             this.utilService.hideLoadingFor(loading);
             const url = response.nativeURL;
             const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
-            this.fileOpener.showOpenWithDialog(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+            if (extension.toLowerCase() === 'pdf') {
+                this.fileOpener.open(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+            } else if (this.platform.is('ios')) {
+                this.fileOpener.open(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+            } else {
+                this.fileOpener.showOpenWithDialog(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
+            }
         }).catch((error) => {
             this.utilService.hideLoadingFor(loading);
             console.log('Error download file', error);

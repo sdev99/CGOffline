@@ -5,6 +5,7 @@ import {ApiService} from '../../services/api.service';
 import {EnumService} from '../../services/enum.service';
 import {Response} from '../../_models/response';
 import {UtilService} from '../../services/util.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'app-terms-conditions',
@@ -22,11 +23,16 @@ export class TermsConditionsPage implements OnInit {
         public navCtrl: NavController,
         public apiService: ApiService,
         public utilService: UtilService,
+        public sanitizer: DomSanitizer
     ) {
-
+        this.getTermsAndConditions();
     }
 
     ngOnInit() {
+
+    }
+
+    getTermsAndConditions = () => {
         this.loading = true;
         this.apiService.getTermsOfServices().subscribe((data: Response) => {
             this.loading = false;
@@ -36,7 +42,7 @@ export class TermsConditionsPage implements OnInit {
         }, error => {
             this.loading = false;
         });
-    }
+    };
 
     onClose() {
         this.navCtrl.back();

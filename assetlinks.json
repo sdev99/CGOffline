@@ -1,5 +1,15 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target" : { "namespace": "android_app", "package_name": "com.compliancegenie.app",
-    "sha256_cert_fingerprints": ["5C:55:96:58:3D:37:62:37:B2:42:A6:EC:29:12:29:0D:D9:DA:A8:1C:3D:44:BC:29:E3:C6:7B:51:49:39:AC:D2"] }
-}]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.besafetechnologies.compliancegenie",
+      "sha256_cert_fingerprints": [
+        "5C:55:96:58:3D:37:62:37:B2:42:A6:EC:29:12:29:0D:D9:DA:A8:1C:3D:44:BC:29:E3:C6:7B:51:49:39:AC:D2",
+        "49:E0:01:6A:10:80:17:C3:2A:DA:E4:ED:BC:3E:DF:D1:A9:C1:3D:8E:0B:1E:4C:AB:2A:73:ED:50:3E:83:CF:BA"
+      ]
+    }
+  }
+]

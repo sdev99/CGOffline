@@ -16,6 +16,7 @@ import {AttachmentItem} from '../../_models/attachmentItem';
 import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
 import {Response} from '../../_models';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
     selector: 'app-form-cover',
@@ -32,6 +33,7 @@ export class FormCoverPage {
         private apiService: ApiService,
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
+        public sanitizer: DomSanitizer
     ) {
 
 

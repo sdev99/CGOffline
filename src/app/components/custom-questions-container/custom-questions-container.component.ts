@@ -13,6 +13,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
     UtilService = UtilService;
     EnumService = EnumService;
 
+    @Input() sectionIndex: number;
     @Input() sectionId: number;
     @Input() formGroup: FormGroup;
     @Input() questions: Array<any>;
@@ -21,6 +22,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
 
     constructor(
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
     }
 
@@ -36,7 +38,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
         // return false;
     }
 
-    isError(question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(question.questionId)].valid);
+    isError(question, questionIndex) {
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(this.sectionIndex, questionIndex, question.questionId)].valid);
     }
 }

@@ -1,7 +1,7 @@
 ion-header {
   ::ng-deep app-modal-header {
     ion-toolbar {
-      height: 55px;
+      min-height: 55px;
       align-items: flex-end;
       --border-color: transparent;
       --border-width: 0;

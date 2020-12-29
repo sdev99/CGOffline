@@ -2,11 +2,13 @@
     <ng-container [formGroupName]="inputName">
         <ion-item *ngFor="let item of list">
             <ion-label
+                    class="ion-text-wrap"
                     [ngStyle]="{'color':item.answerChoiceAttributeColor==='white'?null:item.answerChoiceAttributeColor}">
                 {{UtilService.findObj(item.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', sharedDataService.currentLanguageId).answerChoiceAttributeHeaderTitle}}
             </ion-label>
 
-            <ion-checkbox mode="md" slot="start" [formControlName]="UtilService.FCName(item.answerChoiceAttributeId)"
+            <ion-checkbox mode="md" slot="start"
+                          [formControlName]="UtilService.FCName(inputName+''+item.answerChoiceAttributeId)"
                           [value]="item.answerChoiceAttributeId"></ion-checkbox>
         </ion-item>
     </ng-container>

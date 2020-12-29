@@ -26,7 +26,7 @@ export class MyProfileEditPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         private accountService: AccountService,
-        private sharedDataService: SharedDataService,
+        public sharedDataService: SharedDataService,
         private utilService: UtilService,
     ) {
         this.user = accountService.userValue;
