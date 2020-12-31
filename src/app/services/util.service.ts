@@ -6,6 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ValidatorService} from './validator.service';
 import * as moment from 'moment';
 import {StaticDataService} from './static-data.service';
+import {UserDetail} from '../_models/userDetail';
 
 declare global {
     interface Array<T> {
@@ -29,7 +30,7 @@ export class UtilService {
     questionElementIds: Array<string>;
     questionElementIdsUpdate: any; // callback
 
-    static InductionContentTypeScreenIdentify(contentType) {
+    static InductionContentTypeScreenIdentify(contentType, isDedicatedMode = false) {
         let routeName = '';
         switch (contentType) {
             case EnumService.InductionContentTypes.VIDEO_FILE:
@@ -43,7 +44,7 @@ export class UtilService {
                 break;
             case EnumService.InductionContentTypes.FORM:
                 // routeName = 'checkin-induction-form';
-                routeName = 'form-cover';
+                routeName = isDedicatedMode ? 'form-cover-dm' : 'form-cover';
                 break;
             case EnumService.InductionContentTypes.VISITOR_AGREEMENT:
                 routeName = 'checkin-induction-va';
@@ -51,6 +52,20 @@ export class UtilService {
         }
         return routeName;
     }
+
+    static getFullName = (firstName, middleName, lastName) => {
+        const names = [];
+        if (firstName) {
+            names.push(firstName);
+        }
+        if (middleName) {
+            names.push(middleName);
+        }
+        if (lastName) {
+            names.push(lastName);
+        }
+        return names.join(' ');
+    };
 
     static FileIcon(type) {
         let iconName = '';
@@ -103,15 +118,15 @@ export class UtilService {
         return Number(formattedNumber.replace(/[^0-9.-]+/g, ''));
     }
 
-    static FCNameUq(sectionIndex, questionIndex, questionId) {
+    static FCName(sectionIndex, questionIndex, questionId) {
         return 'FormControl_' + sectionIndex + '_' + questionIndex + '_' + questionId;
     }
 
     /**
-     *  Dynamic FormControlName with section and question id
+     *  Dynamic FormControlName for multiple checkbox
      */
-    static FCName(questionId) {
-        return 'FormControl_' + questionId;
+    static SubFCName(fcName, optionId) {
+        return fcName + '_SubFormControl_' + optionId;
     }
 
     static FCNameAdditioanlNote(questionId) {
@@ -264,13 +279,13 @@ export class UtilService {
         }
 
 
-        const formControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+        const formControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
 
         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
             const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
             if (question.answerChoiceAttributes) {
                 question.answerChoiceAttributes.map((choice) => {
-                    checkboxFormGroup.addControl(UtilService.FCName(formControlName + '' + choice.answerChoiceAttributeId), new FormControl(false));
+                    checkboxFormGroup.addControl(UtilService.SubFCName(formControlName, choice.answerChoiceAttributeId), new FormControl(false));
                 });
             }
             checkboxFormGroup.valueChanges.subscribe(onValueChange);
@@ -278,11 +293,11 @@ export class UtilService {
                 formGroup.addControl(formControlName, checkboxFormGroup);
             }
         } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
-            const controlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+            const controlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
             const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
             question.bodyParts?.map((bodyPartGroup) => {
                 bodyPartGroup.parts.map((part) => {
-                    checkboxFormGroup.addControl(UtilService.FCName(controlName + '' + part.id), new FormControl(false));
+                    checkboxFormGroup.addControl(UtilService.SubFCName(controlName, part.id), new FormControl(false));
                 });
             });
             formGroup.addControl(controlName, checkboxFormGroup);
@@ -330,7 +345,7 @@ export class UtilService {
                         const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
                         if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                            const controlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                            const controlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                             if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
                                 formGroup.addControl(controlName, new FormControl(''));
                                 formGroup.addControl(EnumService.AccidentCustomLocationControlsName.PlaceNotintheList, new FormControl(false));
@@ -359,7 +374,7 @@ export class UtilService {
                                 }
                                 questionElementIds.push(elementId);
                             } else {
-                                this.removeFieldIfAdded(formGroup, UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId));
+                                this.removeFieldIfAdded(formGroup, UtilService.FCName(sectionIndex, questionIndex, question.questionId));
                                 const indexOfElement = questionElementIds.indexOf(elementId);
                                 if (indexOfElement !== -1) {
                                     questionElementIds.splice(indexOfElement, 1);
@@ -614,40 +629,6 @@ export class UtilService {
         }
     }
 
-
-    addDynamicFormControls(question, formGroup: FormGroup, onValueChange = null) {
-        const validators = [];
-        if (question.questionIsRequired) {
-            validators.push(Validators.required);
-        }
-
-        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldDecimal) {
-            validators.push(Validators.pattern('\\d+([.]\\d+)?'));
-        }
-        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldInteger) {
-            validators.push(Validators.pattern('[0-9]*'));
-        }
-
-        if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
-            const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
-            if (question.answerChoiceAttributes) {
-                question.answerChoiceAttributes.map((choice) => {
-                    checkboxFormGroup.addControl(UtilService.FCName(choice.answerChoiceAttributeId), new FormControl(false));
-                });
-            }
-            checkboxFormGroup.valueChanges.subscribe(onValueChange);
-            formGroup.addControl(UtilService.FCName(question.questionId), checkboxFormGroup);
-        } else {
-            const control = new FormControl('', Validators.compose(validators));
-            control.valueChanges.subscribe(onValueChange);
-            formGroup.addControl(UtilService.FCName(question.questionId), control);
-        }
-
-        if (question.shouldShowOptionalComment) {
-            formGroup.addControl(UtilService.FCNameAdditioanlNote(question.questionId), new FormControl(''));
-        }
-    }
-
     // Extract id from string (eg. L|10)
     getRelevantEntityId = (entityId) => {
         const response = {
@@ -667,6 +648,19 @@ export class UtilService {
         }
         return response;
     };
+
+
+    getEntityIdFromId(locationDetails) {
+        let entityId = '';
+        if (locationDetails.locationID > 0) {
+            entityId = 'L|' + locationDetails.locationID;
+        } else if (locationDetails.projectID > 0) {
+            entityId = 'P|' + locationDetails.projectID;
+        } else if (locationDetails.inventoryItemID > 0) {
+            entityId = 'I|' + locationDetails.inventoryItemID;
+        }
+        return entityId;
+    }
 
 
 }

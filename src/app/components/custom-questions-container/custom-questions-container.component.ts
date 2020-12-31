@@ -39,6 +39,6 @@ export class CustomQuestionsContainerComponent implements OnInit {
     }
 
     isError(question, questionIndex) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(this.sectionIndex, questionIndex, question.questionId)].valid);
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(this.sectionIndex, questionIndex, question.questionId)].valid);
     }
 }

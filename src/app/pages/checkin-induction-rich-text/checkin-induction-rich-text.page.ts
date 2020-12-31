@@ -28,7 +28,10 @@ export class CheckinInductionRichTextPage implements OnInit {
         public accountService: AccountService,
         public sanitizer: DomSanitizer
     ) {
-        this.user = accountService.userValue;
+
+        if (!sharedDataService.dedicatedMode) {
+            this.user = accountService.userValue;
+        }
 
         this.route.queryParams.subscribe((parameters) => {
             const inductionContentItemIndex = parameters.inductionContentItemIndex;
@@ -55,6 +58,12 @@ export class CheckinInductionRichTextPage implements OnInit {
     }
 
     onContinue() {
-        this.sharedDataService.inductionNavigationProcess(this.user.userId, this.sharedDataService.inductionContentItemIndex);
+        let userId;
+        if (this.sharedDataService.dedicatedMode) {
+            userId = this.sharedDataService.dedicatedModeUserDetail.userId;
+        } else {
+            userId = this.user.userId;
+        }
+        this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
     }
 }

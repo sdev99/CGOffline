@@ -1,10 +1,8 @@
 ion-header {
-  ::ng-deep app-modal-header {
-    ion-toolbar {
-      --background: #F8F9FB;
-      --border-color: transparent;
-      --border-width: 0;
-    }
+  .model-header-toolbar {
+    --background: #F8F9FB;
+    --border-color: transparent;
+    --border-width: 0;
   }
 }
 

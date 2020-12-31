@@ -6,6 +6,12 @@ import {FilehandlerService} from '../../services/filehandler.service';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
 import {UtilService} from '../../services/util.service';
+import {SignOffFormDetail} from '../../_models/signOffFormDetail';
+import {ApiService} from '../../services/api.service';
+import {DomSanitizer} from '@angular/platform-browser';
+import {AttachmentItem} from '../../_models/attachmentItem';
+import {Response} from '../../_models';
+import {FormItem} from '../../_models/formItem';
 
 @Component({
     selector: 'app-form-cover-dm',
@@ -13,99 +19,85 @@ import {UtilService} from '../../services/util.service';
     styleUrls: ['./form-cover-dm.page.scss'],
 })
 export class FormCoverDmPage implements OnInit {
-
-    formDetail;
-    formType = 'WORK PERMIT';
+    signOffFormDetail: SignOffFormDetail;
 
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
         private filehandlerService: FilehandlerService,
+        private apiService: ApiService,
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
+        public sanitizer: DomSanitizer
     ) {
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activity) {
-                    this.formDetail = JSON.parse(params.activity);
-                }
-            }
 
-            if (!this.formDetail) {
-                this.formDetail = sharedDataService.viewFormDetail;
-            }
-            if (!this.formDetail) {
-                this.formDetail = DemoDataService.dmForms[2];
-            }
-        });
+    }
+
+    ionViewWillEnter() {
+        if (this.sharedDataService.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.Form ||
+            this.sharedDataService.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.WorkPermit ||
+            this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction
+        ) {
+            this.signOffFormDetail = this.sharedDataService.signOffFormDetail;
+        }
     }
 
 
     ngOnInit(): void {
-        switch (this.sharedDataService.signOffFor) {
-            case EnumService.SignOffType.WORK_PERMIT:
-                this.formType = 'WORK PERMIT';
-                break;
-            case EnumService.SignOffType.FORMS_DM:
-                this.formType = this.formDetail.formType.title;
-                break;
-            default:
-                if (this.formDetail.formType) {
-                    this.formType = this.formDetail.formType.title;
-                } else {
-                    this.formType = 'CUSTOM FORM';
-                }
-        }
+
     }
 
-    openFile() {
-        this.filehandlerService.openFile();
+    openFile(attachmentItem: AttachmentItem) {
+        this.filehandlerService.openFile(this.sharedDataService.globalDirectories?.documentDirectory + '' + attachmentItem.documentFileName);
     }
 
     onClose() {
-        this.navCtrl.back();
+        this.navCtrl.navigateBack('/dashboard-dm');
+    }
+
+    async getFormBuilderDetails(callBack) {
+        const formData = this.signOffFormDetail?.formData;
+        const loading = await this.utilService.startLoadingWithOptions();
+        this.apiService.getFormBuilderDetails(formData?.formID, formData?.formVersionID).subscribe((response: Response) => {
+            this.utilService.hideLoadingFor(loading);
+            callBack(response.Result);
+        }, error => {
+            this.utilService.showAlert(error.message || error);
+            this.utilService.hideLoadingFor(loading);
+        });
     }
 
     async onContinue() {
-        if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT) {
-            this.navCtrl.navigateForward(['/permits-generate-dm'], {
-                queryParams: {
-                    formDetail: JSON.stringify(this.formDetail)
-                }
-            });
-        } else if (this.formType === EnumService.SignOffType.FORMS_DM) {
+        if (this.signOffFormDetail) {
 
-            this.navCtrl.navigateForward(['/permits-generate-dm'], {
-                queryParams: {
-                    formDetail: JSON.stringify(this.formDetail)
+            const formData: FormItem = this.signOffFormDetail?.formData;
+
+            this.getFormBuilderDetails((formDetails) => {
+                this.sharedDataService.formBuilderDetails = formDetails;
+
+                switch (formData?.formType) {
+                    case EnumService.FormTypes.HAV:
+                        this.navCtrl.navigateForward(['/form-hav']);
+                        break;
+
+                    case EnumService.FormTypes.RISK_ASSESSMENT:
+                        this.navCtrl.navigateForward(['/form-riskassessment']);
+                        break;
+
+                    case EnumService.FormTypes.CUSTOM:
+                        this.navCtrl.navigateForward(['/form-custom']);
+                        break;
+
+                    case EnumService.FormTypes.ACCIDENT_REPORT:
+                        this.navCtrl.navigateForward(['/form-accident-report']);
+                        break;
+
+                    case EnumService.FormTypes.WORK_PERMIT:
+                        this.navCtrl.navigateForward(['/form-workpermit']);
+                        break;
+                    default:
                 }
             });
-        } else {
-            if (this.formDetail.formType.id === 'hav') {
-                this.navCtrl.navigateForward(['/form-hav'], {
-                    queryParams: {
-                        formDetail: JSON.stringify(this.formDetail)
-                    }
-                });
-            } else if (this.formDetail.formType.id === 'risk_assesstment') {
-                this.navCtrl.navigateForward(['/form-riskassessment'], {
-                    queryParams: {
-                        formDetail: JSON.stringify(this.formDetail)
-                    }
-                });
-            } else if (this.formDetail.formType.id === 'custom') {
-                this.navCtrl.navigateForward(['/form-custom'], {
-                    queryParams: {
-                        formDetail: JSON.stringify(this.formDetail)
-                    }
-                });
-            } else if (this.formDetail.formType.id === 'accident_report') {
-                this.navCtrl.navigateForward(['/form-accident-report'], {
-                    queryParams: {
-                        formDetail: JSON.stringify(this.formDetail)
-                    }
-                });
-            }
         }
     }
 }

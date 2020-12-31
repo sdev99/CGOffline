@@ -10,7 +10,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 })
 export class CheckinoutSuccessDmPage implements OnInit {
 
-
+    pageTitle = 'Check In/Out';
     message = 'You have now checked-in';
     nextPage = 'dashboard-dm';
 
@@ -21,6 +21,9 @@ export class CheckinoutSuccessDmPage implements OnInit {
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
+                if (res.pageTitle) {
+                    this.pageTitle = res.pageTitle;
+                }
                 if (res.message) {
                     this.message = res.message;
                 }

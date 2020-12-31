@@ -1,19 +1,19 @@
 <ion-header>
-    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" [modalSubTitle]="authFor"
+    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" [modalSubTitle]="pageTitle"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
 <ion-content>
-    <app-back-continue-toolbar [disableRightBtn]="!name" (back)="onBack()"
+    <app-back-continue-toolbar [disableRightBtn]="!selectedUser" (back)="onBack()"
                                (continue)="onContinue()"></app-back-continue-toolbar>
 
     <ion-item lines="none" class="search-item">
         <ion-label position="stacked">Enter your name</ion-label>
         <ion-searchbar #itemRef [(ngModel)]="name" (ionFocus)="searchBarFocus()"
                        (ionChange)="searchBarChange()"></ion-searchbar>
-        <ion-list *ngIf="showList && (items | listFilter:name:'').length>0" lines="none">
-            <ion-item *ngFor="let item of items | listFilter:name:''"
-                      (click)="onSelect($event, item)">{{ item }}</ion-item>
+        <ion-list *ngIf="showList && items?.length>0" lines="none">
+            <ion-item *ngFor="let item of items"
+                      (click)="onSelect($event, item)">{{getFullName(item)}}</ion-item>
         </ion-list>
     </ion-item>
 

@@ -30,7 +30,6 @@ export class SignoffDigitalinkPage implements OnInit {
     showDigitalInk = false;
 
     type;
-    data;
 
     constructor(
         public navCtrl: NavController,
@@ -43,17 +42,6 @@ export class SignoffDigitalinkPage implements OnInit {
         private accountService: AccountService,
     ) {
         this.user = this.accountService.userValue;
-
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.type) {
-                    this.type = params.type;
-                }
-                if (params.data) {
-                    this.data = JSON.parse(params.data);
-                }
-            }
-        });
 
         if (sharedDataService.signOffFor) {
             this.type = sharedDataService.signOffFor;
@@ -108,25 +96,35 @@ export class SignoffDigitalinkPage implements OnInit {
 
             case EnumService.SignOffType.DOCUMENT_DM:
                 this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                if (this.sharedDataService.signOffDocumentDetail) {
+                    if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
+                        this.showDigitalInk = true;
+                        this.initialiseDrawing();
+                    }
+                }
                 this.pageTitle = 'Sign-Off';
                 this.title = 'Sign-Off';
                 this.subTitle = '';
-                this.showDigitalInk = true;
-                this.initialiseDrawing();
                 break;
 
-            case EnumService.SignOffType.WORK_PERMIT:
+            case EnumService.SignOffType.FORMS_DM:
+            case EnumService.SignOffType.WORK_PERMIT_DM:
                 this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                if (this.sharedDataService.signOffFormDetail) {
+                    this.subTitle = this.sharedDataService.signOffFormDetail?.formData?.formTitle;
+                    if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isSignatureSignOff) {
+                        this.showDigitalInk = true;
+                        this.initialiseDrawing();
+                    }
+                }
                 this.pageTitle = 'Sign-Off';
                 this.title = 'Sign-Off';
                 this.subTitle = '';
-                this.showDigitalInk = true;
-                this.initialiseDrawing();
                 break;
+
 
             default:
-                this.showDigitalInk = true;
-                this.initialiseDrawing();
+
         }
     }
 
@@ -157,8 +155,18 @@ export class SignoffDigitalinkPage implements OnInit {
     };
 
     onClose() {
-        if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
-            this.navCtrl.navigateBack('/checkinout-confirm');
+        if (this.sharedDataService.signOffFor === EnumService.SignOffType.DOCUMENT_DM) {
+            this.navCtrl.navigateBack('/documents-dm');
+        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.FORMS_DM) {
+            this.navCtrl.navigateBack('/forms-dm');
+        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT_DM) {
+            this.navCtrl.navigateBack('/permits-dm');
+        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
+            if (this.sharedDataService.dedicatedMode) {
+                this.navCtrl.navigateBack('/checkinout-confirm');
+            } else {
+                this.navCtrl.navigateBack('/dashboard-dm');
+            }
         } else {
             this.navCtrl.back();
         }
@@ -223,6 +231,7 @@ export class SignoffDigitalinkPage implements OnInit {
                 }
                 break;
 
+            case EnumService.SignOffType.DOCUMENT_DM:
             case EnumService.SignOffType.DOCUMENT_ACTIVITY:
             case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
                 if (this.showDigitalInk && signatureFileName) {
@@ -237,6 +246,8 @@ export class SignoffDigitalinkPage implements OnInit {
                 break;
 
             case EnumService.SignOffType.FORM_ACTIVITY:
+            case EnumService.SignOffType.FORMS_DM:
+            case EnumService.SignOffType.WORK_PERMIT_DM:
             case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
             case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
                 if (this.showDigitalInk && signatureFileName) {

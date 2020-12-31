@@ -1,21 +1,21 @@
 <ion-header>
-  <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Authentication"
+  <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Authentication"
                        (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
 <ion-content fullscreen="true">
   <div class="content">
     <div class="text-1">We need to verify your identity before launching</div>
-    <div class="text-2" *ngIf="queryParam">
-      {{queryParam.title}}
+    <div class="text-2" *ngIf="authenticationFor">
+      {{authenticationFor}}
     </div>
 
-    <ion-row>
+    <ion-row style="margin-top: 30px">
       <ion-col class="title-1">
         How do you want to authenticate ?
       </ion-col>
     </ion-row>
-    <ion-row style="margin-top: 40px">
+    <ion-row style="margin-top: 20px">
       <ion-col>
         <app-dashboard-button
                 icon="./assets/icon/qrscan-blue.svg"

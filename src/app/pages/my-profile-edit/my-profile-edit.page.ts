@@ -27,7 +27,7 @@ export class MyProfileEditPage implements OnInit {
         public navCtrl: NavController,
         private accountService: AccountService,
         public sharedDataService: SharedDataService,
-        private utilService: UtilService,
+        public utilService: UtilService,
     ) {
         this.user = accountService.userValue;
         this.profile = sharedDataService.userProfile;

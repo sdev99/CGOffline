@@ -29,7 +29,7 @@ export class EnumService {
         WORKPERMIT_FORM_CURRENT_CHECKIN: 'workpermit_form_current_checkin',
         DOCUMENT_CURRENT_CHECKIN: 'document_current_checkin',
 
-        WORK_PERMIT: 'work_permit',
+        WORK_PERMIT_DM: 'work_permit_dedicated_mode',
         DOCUMENT_DM: 'document_dedicated_mode',
         FORMS_DM: 'forms_dedicated_mode'
     };
@@ -45,6 +45,8 @@ export class EnumService {
         Activity: 'activity',
         CurrentCheckin: 'currentCheckin',
         CurrentCheckinWorkPermit: 'currentCheckinWorkPermit',
+        FormDM: 'dedicated_mode_form',
+        WorkPermitDM: 'dedicated_mode_work_permit_form',
     };
 
     static ConfirmForCheckType = {
@@ -77,6 +79,7 @@ export class EnumService {
         API_TOKEN: 'api_token',
         IS_DEDICATED_MODE: 'dedicated_mode',
         DEDICATED_MODE_DEVICE_DETAIL: 'dedicated_mode_device_detail',
+        DEDICATED_MODE_ASSIGNED_ENTITIES: 'dedicated_mode_assigned_entities',
         DEDICATED_MODE_LOCATION_USE: 'dedicated_mode_location_use',
         SYNC_DATE_TIME: 'sync_date_time',
         CHECKED_IN_PLACES: 'checked_in_places',
@@ -117,6 +120,7 @@ export class EnumService {
         ActivityCompleted: 'ActivityCompleted', // POST
         GetActivitySignOffFormDetail: 'GetActivitySignOffFormDetail', // GET
         GetSignOffFormDetail: 'GetSignOffFormDetail', // GET
+        GetDedicatedModeSignOffFormDetail: 'GetDedicatedModeSignOffFormDetail', // GET
         GetActivitySignOffDocumentDetail: 'GetActivitySignOffDocumentDetail', // GET
         GetPersonalModeAvailableDocuments: 'GetPersonalModeAvailableDocuments', // GET
         GetPersonalModeAvailableWorkPermits: 'GetPersonalModeAvailableWorkPermits', // GET
@@ -129,6 +133,7 @@ export class EnumService {
         SynchDevice: 'SynchDevice', // POST
         GetDedicatedModeAssignedItemDetail: 'GetDedicatedModeAssignedItemDetail', // GET
         GetUserByQRCode: 'GetUserByQRCode', // GET
+        GetUserAutoSuggest: 'GetUserAutoSuggest', // GET
         GetGuestUserDetailByPhone: 'GetGuestUserDetailByPhone', // GET
         ChangeAllQRCode: 'ChangeAllQRCode', // GET
         GetFormBuilderDetails: 'GetFormBuilderDetails', // GET
@@ -143,7 +148,15 @@ export class EnumService {
         GetAccidentClassificationList: 'GetAccidentClassificationList', // GET
         GetAccidentTypeList: 'GetAccidentTypeList', // GET
         GetUserTotalHAVExposureForToday: 'GetUserTotalHAVExposureForToday', // GET
-        GetRiskRatingOptionList: 'GetRiskRatingOptionList' // GET
+        GetRiskRatingOptionList: 'GetRiskRatingOptionList', // GET
+        GetDedicatedModeAvailableDocuments: 'GetDedicatedModeAvailableDocuments', // GET
+        GetDedicatedModeArchiveDocuments: 'GetDedicatedModeArchiveDocuments', // GET
+        GetDedicatedModeAvailableForms: 'GetDedicatedModeAvailableForms', // GET
+        GetDedicatedModeArchiveForms: 'GetDedicatedModeArchiveForms', // GET
+        GetEvacuationList: 'GetEvacuationList', // GET
+        GetDedicatedModeLiveWorkPermits: 'GetDedicatedModeLiveWorkPermits', // GET
+        GetDedicatedModeArchiveWorkPermits: 'GetDedicatedModeArchiveWorkPermits', // GET
+        GetDedicatedModeAvailableWorkPermits: 'GetDedicatedModeAvailableWorkPermits' // GET
     };
 
     static ApiResponseCode = {
@@ -271,6 +284,41 @@ export class EnumService {
             NotEqualTo: 6,
         }
     };
+
+
+    static DedicatedModeDocumentListType = {
+        Available: 'Document List',
+        Archive: 'Document Archive',
+    };
+
+    static DedicatedModeFormListType = {
+        Available: 'Form List',
+        Archive: 'Form Archive',
+    };
+
+    static DedicatedModePermitListType = {
+        Live: 'Live Permits',
+        Archive: 'Permit Archive',
+    };
+
+    static DedicatedModeProcessTypes = {
+        CheckinOut: 'CheckinOut',
+        Form: 'Form',
+        Document: 'Document',
+        WorkPermit: 'WorkPermit',
+    };
+
+    static DedicatedModeTempAuthType = {
+        Document: 'Document',
+        Form: 'Form',
+        WorkPermit: 'WorkPermit',
+    };
+
+    static DedicatedModeTempAuthBy = {
+        QRCode: 'QRCode',
+        Name: 'Name'
+    };
+
 
     constructor() {
     }

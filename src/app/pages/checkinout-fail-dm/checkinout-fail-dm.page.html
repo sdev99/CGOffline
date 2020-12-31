@@ -1,14 +1,15 @@
-<app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
+<app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" [modalSubTitle]="pageTitle"
+                     (closeModal)="onClose()"></app-modal-header-dm>
 
 <ion-content fullscreen="true">
-  <div class="content">
-    <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
+    <div class="content">
+        <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
 
-    <div class="text-1">{{failTitle}}</div>
-    <div class="title-1">{{failSubTitle}}</div>
-    <div class="text-2">{{failMessage}}</div>
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Exit</ion-button>
+        <div class="text-1">{{title}}</div>
+        <div class="title-1">{{errorTitle}}</div>
+        <div class="text-2">{{errorMessage}}</div>
+        <ion-button expand="full" class="action-btn" (click)="onContinue()">Exit</ion-button>
 
-  </div>
+    </div>
 
 </ion-content>

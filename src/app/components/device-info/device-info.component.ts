@@ -16,7 +16,6 @@ export class DeviceInfoComponent implements OnInit {
         private menu: MenuController,
         public navController: NavController,
         public sharedDataService: SharedDataService,
-        private utilService: UtilService,
     ) {
     }
 

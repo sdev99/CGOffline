@@ -25,7 +25,7 @@ export class MyProfileDocumentsPage implements OnInit {
         private apiService: ApiService,
         public accountService: AccountService,
         public sharedDataService: SharedDataService,
-        private utilService: UtilService,
+        public utilService: UtilService,
     ) {
         this.user = this.accountService.userValue;
     }

@@ -1,5 +1,5 @@
 <ion-header>
-    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In/Out as Guest"
+    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In/Out as Guest"
                          (closeModal)="onClose()"></app-modal-header-dm>
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>

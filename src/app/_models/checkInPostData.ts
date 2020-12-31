@@ -1,6 +1,7 @@
 export class CheckInPostData {
     userCheckInDetailID: number;
     userId: string;
+    companyID: string;
     userPhoto: string;
     locationID: number;
     projectID: number;

@@ -1,15 +1,3 @@
-ion-header {
-  ::ng-deep app-modal-header {
-    ion-toolbar {
-      min-height: 55px;
-      align-items: flex-end;
-      --border-color: transparent;
-      --border-width: 0;
-    }
-  }
-}
-
-
 ion-content {
   --background: #F6F9FB;
 
@@ -140,7 +128,7 @@ ion-content {
       --padding-top: 0;
       --padding-bottom: 0;
 
-      ion-icon {
+      ion-img {
         width: 17.31px;
         height: 20px;
         margin-right: 12px;

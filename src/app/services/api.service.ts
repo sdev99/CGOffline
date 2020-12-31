@@ -8,6 +8,7 @@ import {SharedDataService} from './shared-data.service';
 import {SignOffDetailsPostData} from '../_models/signOffDetailsPostData';
 import {CheckInPostData} from '../_models/checkInPostData';
 import {CheckedInDetailItem} from '../_models/checkedInDetailItem';
+import {DeviceEntityDetail} from '../_models/deviceEntityDetail';
 
 @Injectable({
     providedIn: 'root'
@@ -178,6 +179,15 @@ export class ApiService {
     }
 
     /**
+     * This API will return activity sign off document details for dedicated mode
+     * @param formId formId, we will get this from induction item
+     * Note: If IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed signoff steps for form signoff.
+     */
+    getDedicatedModeSignOffFormDetail(formId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeSignOffFormDetail}?formID=${formId}`);
+    }
+
+    /**
      * This API will use for downloading a document
      * @param filename we will get filename from related APIs
      * @param companyFolderName we will get company folder name at the time of login
@@ -244,6 +254,15 @@ export class ApiService {
     }
 
     /**
+     *  This API will return all the details that will required for check in settings and induction steps .
+     * @param userId current logged in user id
+     * @param entityId You will get this ID from GetLocationItemList API
+     */
+    getCheckInDetails_Guest(phone, firstName, middleName, lastName, entityId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCheckInDetails_Guest}?phone=${phone}&firstName=${firstName}&middleName=${middleName}&lastName=${lastName}&entityId=${entityId}`);
+    }
+
+    /**
      * This API will return signed documents of current logged in user.
      * @param userId for current logged in user.
      */
@@ -265,6 +284,14 @@ export class ApiService {
      */
     insertCheckInDetails(postBody: CheckInPostData) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckInDetails}`, postBody);
+    }
+
+    /**
+     *  This API will use for inserting the user's check in details
+     * @param postBody SignOffDetailsPostData
+     */
+    insertCheckInDetailsGuest(postBody: CheckInPostData) {
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckInDetails_Guest}`, postBody);
     }
 
     /**
@@ -363,4 +390,108 @@ export class ApiService {
     }
 
 
+    // Dedicated mode api
+
+    /**
+     *  This API will return User details by QR Code.
+     *  @param deviceId unique device id
+     */
+    getDeviceEntityDetails(deviceId) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceEntityDetails}/${deviceId}`);
+    }
+
+    /**
+     *  This API will return User details by QR Code.
+     *  @param qrCode qrCode of the user
+     */
+    getUserByQRCode(qrCode) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserByQRCode}?code=${qrCode}`);
+    }
+
+    /**
+     *  This API will return User details by name.
+     *  @param prefix Auto suggest prefix (more than 1 character required)
+     *  @param companyId: we will get this from GetDeviceEntityDetails API.
+     */
+    getUserAutoSuggest(companyId, prefix) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserAutoSuggest}?companyID=${companyId}&prefix=${prefix}`);
+    }
+
+    /**
+     *  This API will return the value of guest user by phone. If we will get value from this API result then we will pass “isGuestReturning” parameter value of API InsertCheckInDetails to true otherwise false.
+     *  @param phone phonenumber
+     */
+    getGuestUserDetailByPhone(phone) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetGuestUserDetailByPhone}?phone=${phone}`);
+    }
+
+
+    /**
+     * This API will return all archived documents for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeAvailableDocuments(companyID) {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
+
+    /**
+     * This API will return all archived documents for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeArchiveDocuments(companyID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveDocuments}?CompanyID=${companyID}`);
+    }
+
+    /**
+     *  This API will return all available forms for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeAvailableForms(companyID) {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
+
+    /**
+     * This API will return all archived forms for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeArchiveForms(companyID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveForms}?CompanyID=${companyID}`);
+    }
+
+    /**
+     *   This API will return Evacuation user list for current checked in location
+     */
+    getEvacuationList() {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetEvacuationList}?LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
+
+    /**
+     *  This API will return all live work permits for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeLiveWorkPermits(companyID) {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeLiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
+
+    /**
+     *  This API will return all archived work permits for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeArchiveWorkPermits(companyID) {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
+
+    /**
+     *  This API will return all available work permits for dedicated mode
+     * @param companyID we will get this from GetDeviceEntityDetails API.
+     */
+    getDedicatedModeAvailableWorkPermits(companyID) {
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
+    }
 }

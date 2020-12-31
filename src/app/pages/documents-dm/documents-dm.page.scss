@@ -28,7 +28,9 @@ ion-content {
       align-items: center;
       color: #444444;
 
-
+      ion-label {
+        white-space: normal;
+      }
 
       .text-1 {
         font-family: SF Pro Display;

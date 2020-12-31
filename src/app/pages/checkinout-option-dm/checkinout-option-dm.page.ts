@@ -17,6 +17,7 @@ export class CheckinoutOptionDmPage implements OnInit {
     }
 
     ngOnInit() {
+        this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.CheckinOut;
     }
 
     onClose() {
@@ -25,11 +26,7 @@ export class CheckinoutOptionDmPage implements OnInit {
 
     checkInOutName() {
         this.sharedDataService.checkinoutDmAs = EnumService.CheckInType.MY_NAME;
-        this.navController.navigateForward('checkinout-name-dm', {
-            queryParams: {
-                authFor: 'Check In/Out by Name'
-            }
-        });
+        this.navController.navigateForward('checkinout-name-dm');
     }
 
     checkInOutQR() {

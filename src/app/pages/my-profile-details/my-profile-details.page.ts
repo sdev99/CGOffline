@@ -24,7 +24,7 @@ export class MyProfileDetailsPage implements OnInit {
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         private accountService: AccountService,
-        private utilService: UtilService,
+        public utilService: UtilService,
     ) {
         this.user = accountService.userValue;
         this.profile = sharedDataService.userProfile;

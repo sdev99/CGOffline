@@ -70,7 +70,7 @@ export class FormRiskassessmentPage implements OnInit {
         public sharedDataService: SharedDataService,
         private screenOrientation: ScreenOrientation,
         private apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private ngZone: NgZone,
         public accountService: AccountService,
         public photoService: PhotoService,

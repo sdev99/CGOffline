@@ -18,7 +18,7 @@ export class FilehandlerService {
         private platform: Platform,
         private transfer: FileTransfer,
         private file: File,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private http: HTTP
     ) {
     }

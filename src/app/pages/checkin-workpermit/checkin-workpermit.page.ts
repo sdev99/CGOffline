@@ -31,8 +31,10 @@ export class CheckinWorkpermitPage implements OnInit {
         public navCtrl: NavController,
         private accountService: AccountService,
     ) {
-        this.isCheckedIn = sharedDataService.checkedInPlaces ? sharedDataService.checkedInPlaces.length > 0 : false;
-        this.user = this.accountService.userValue;
+        if (sharedDataService.dedicatedMode) {
+            this.isCheckedIn = sharedDataService.checkedInPlaces ? sharedDataService.checkedInPlaces.length > 0 : false;
+            this.user = this.accountService.userValue;
+        }
         this.availableWorkPermits = sharedDataService.availableWorkPermits;
     }
 
@@ -73,11 +75,9 @@ export class CheckinWorkpermitPage implements OnInit {
 
     onSelect(item) {
         if (this.sharedDataService.dedicatedMode) {
-            this.sharedDataService.viewFormDetail = item;
-            this.sharedDataService.signOffFor = EnumService.SignOffType.WORK_PERMIT;
-            this.navController.navigateForward('form-open-auth-dm', {
-                queryParams: item
-            });
+            this.sharedDataService.signOffFormDetail = item;
+            this.sharedDataService.signOffFor = EnumService.SignOffType.WORK_PERMIT_DM;
+            this.navController.navigateForward('form-open-auth-dm');
         } else {
             this.navController.navigateForward('form-cover', {
                 queryParams: item
@@ -85,18 +85,36 @@ export class CheckinWorkpermitPage implements OnInit {
         }
     }
 
+
     async openForm(form: FormItem) {
         const loading = await this.utilService.startLoadingWithOptions();
-        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-        this.apiService.getSignOffFormDetail(this.user.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
-            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;
-                this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
-                this.navCtrl.navigateForward(['/form-cover']);
-            }
-        }, (error) => {
-            this.utilService.hideLoadingFor(loading);
-        });
+
+        if (this.sharedDataService.dedicatedMode) {
+            const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+            this.apiService.getDedicatedModeSignOffFormDetail(form.formID).subscribe((response: Response) => {
+                this.utilService.hideLoadingFor(loading);
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
+                    this.sharedDataService.viewFormFor = EnumService.ViewFormForType.WorkPermitDM;
+                    this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
+                    this.sharedDataService.dedicatedModeTempAuthFor = EnumService.DedicatedModeTempAuthType.WorkPermit;
+                    this.navController.navigateForward('/form-open-auth-dm');
+                }
+            }, (error) => {
+                this.utilService.hideLoadingFor(loading);
+            });
+        } else {
+            const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+            this.apiService.getSignOffFormDetail(this.user.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
+                this.utilService.hideLoadingFor(loading);
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;
+                    this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
+                    this.navCtrl.navigateForward(['/form-cover']);
+                }
+            }, (error) => {
+                this.utilService.hideLoadingFor(loading);
+            });
+        }
     }
 }

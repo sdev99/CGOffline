@@ -33,55 +33,35 @@ export class CheckinInductionPage implements OnInit {
         public accountService: AccountService,
         public sanitizer: DomSanitizer
     ) {
-        this.user = accountService.userValue;
+        if (!this.sharedDataService.dedicatedMode) {
+            this.user = accountService.userValue;
+            this.checkInForLocation = this.sharedDataService.checkInForLocation;
+        }
 
-        this.checkInForLocation = this.sharedDataService.checkInForLocation;
         this.checkinDetail = this.sharedDataService.checkInDetail;
-
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.locationDetail) {
-                    this.locationDetail = JSON.parse(params.locationDetail);
-                }
-            }
-        });
     }
 
     ngOnInit() {
     }
 
-    fileType(type) {
-        let fileType = '';
-        switch (type) {
-            case 'video':
-                fileType = 'Video File';
-                break;
-            case 'image':
-                fileType = 'Image File';
-                break;
-            case 'richtext':
-                fileType = 'Rich Text';
-                break;
-            case 'form':
-                fileType = 'Form';
-                break;
-            case 'va':
-                fileType = 'Visitor Agreement';
-                break;
-            default :
-                fileType = '';
-                break;
-        }
-        return fileType;
-    }
 
     onClose() {
-        this.navCtrl.navigateBack('/checkinout-confirm');
+        if (this.sharedDataService.dedicatedMode) {
+            this.navCtrl.navigateBack('/dashboard-dm');
+        } else {
+            this.navCtrl.navigateBack('/checkinout-confirm');
+        }
     }
 
     onContinue() {
         if (this.checkinDetail) {
-            this.sharedDataService.inductionNavigationProcess(this.user.userId, -1);
+            let userId;
+            if (this.sharedDataService.dedicatedMode) {
+                userId = this.sharedDataService.dedicatedModeUserDetail.userId;
+            } else {
+                userId = this.user.userId;
+            }
+            this.sharedDataService.inductionNavigationProcess(userId, -1);
         }
     }
 }

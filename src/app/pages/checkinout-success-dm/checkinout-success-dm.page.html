@@ -1,4 +1,4 @@
-<app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
+<app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" [modalSubTitle]="pageTitle" (closeModal)="onClose()"></app-modal-header-dm>
 
 <ion-content fullscreen="true">
     <div class="content">

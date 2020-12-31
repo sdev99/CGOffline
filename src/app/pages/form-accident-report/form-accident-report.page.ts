@@ -72,7 +72,7 @@ export class FormAccidentReportPage {
         private ngZone: NgZone,
         public accountService: AccountService,
         public apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private validatorService: ValidatorService,
     ) {
         this.user = accountService.userValue;
@@ -99,9 +99,9 @@ export class FormAccidentReportPage {
 
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
                                 question.bodyParts = this.bodyParts;
-                                this.bodyPartControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                                this.bodyPartControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                             } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                                this.locationIdControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                                this.locationIdControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                             }
 
                             if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
@@ -306,7 +306,7 @@ export class FormAccidentReportPage {
                 checked,
             };
             const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
-            bodyPartControlGroup.controls[UtilService.FCName(this.bodyPartControlName + '' + type)].setValue(checked);
+            bodyPartControlGroup.controls[UtilService.SubFCName(this.bodyPartControlName, type)].setValue(checked);
 
             const element = document.getElementById(selectedItem.id);
             if (this.selectedBodyParts[type].checked) {
@@ -343,7 +343,7 @@ export class FormAccidentReportPage {
         };
 
         const bodyPartControlGroup = this.formGroup.controls[this.bodyPartControlName] as FormGroup;
-        bodyPartControlGroup.controls[UtilService.FCName(this.bodyPartControlName + '' + item.id)].setValue(false);
+        bodyPartControlGroup.controls[UtilService.SubFCName(this.bodyPartControlName, item.id)].setValue(false);
 
         const element = document.getElementById(item.id);
         element.style.fill = item.path.fill;
@@ -376,7 +376,7 @@ export class FormAccidentReportPage {
     }
 
     isError(sectionIndex, questionIndex, question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)].valid);
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)].valid);
     }
 
     isBodyPartSelected = () => {

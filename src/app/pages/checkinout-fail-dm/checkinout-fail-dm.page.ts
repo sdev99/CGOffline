@@ -10,9 +10,10 @@ import {SharedDataService} from '../../services/shared-data.service';
 })
 export class CheckinoutFailDmPage implements OnInit {
 
-    failTitle = '';
-    failSubTitle = '';
-    failMessage = '';
+    pageTitle = '';
+    title = '';
+    errorTitle = '';
+    errorMessage = '';
 
     constructor(
         public sharedDataService: SharedDataService,
@@ -21,15 +22,18 @@ export class CheckinoutFailDmPage implements OnInit {
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
-                if (res.failTitle) {
-                    this.failTitle = res.failTitle;
+                if (res.pageTitle) {
+                    this.pageTitle = res.pageTitle;
                 }
-                if (res.failSubTitle) {
-                    this.failSubTitle = res.failSubTitle;
+                if (res.title) {
+                    this.title = res.title;
+                }
+                if (res.errorTitle) {
+                    this.errorTitle = res.errorTitle;
                 }
 
-                if (res.failMessage) {
-                    this.failMessage = res.failMessage;
+                if (res.errorMessage) {
+                    this.errorMessage = res.errorMessage;
                 }
 
             }

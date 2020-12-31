@@ -1,5 +1,5 @@
 <ion-header>
-    <app-dashboard-header-dm [title]="sharedDataService.dedicatedModeLocationUse.title"></app-dashboard-header-dm>
+    <app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
     <app-topnavigations-btns-dm activeBtn="form"></app-topnavigations-btns-dm>
     <app-topnavigations-segments-dm [active]="listType"
                                     [options]="listTypes"
@@ -10,32 +10,31 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
-        <!--    <ion-list-header lines="none">-->
-        <!--      <ion-label>Forms</ion-label>-->
-        <!--    </ion-list-header>-->
+    <ion-list *ngIf="availableForms?.length>0 || archivedForms?.length>0; else noDocument" class="activity-list"
+              lines="full">
 
 
-        <ng-container *ngIf="listType === 'Form List'">
-            <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openForm(item)">
-                <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
-                <ion-label>{{item.title}}</ion-label>
+        <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
+            <ion-item tappable *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle'"
+                      (click)="openForm(item)">
+                <ion-icon slot="start" [src]="UtilService.FileIcon('form')"></ion-icon>
+                <ion-label>{{item.formTitle}}</ion-label>
             </ion-item>
         </ng-container>
 
-        <ng-container *ngIf="listType === 'Form Archive'">
-            <div tappable *ngFor="let item of list | listFilter:searchQuery:'title'" (click)="openForm(item)">
+        <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive">
+            <div tappable *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle'"
+                 (click)="openArchivedForm(item)">
                 <ion-item tappable>
-                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
-                    <ion-label class="text-1">{{item.title}}</ion-label>
+                    <ion-icon slot="start" [src]="UtilService.FileIcon('document')"></ion-icon>
+                    <ion-label class="text-1">{{item.documentTitle}}</ion-label>
                     <ion-label class="text-2">
-                        Signed by &nbsp;<span class="text-3">{{item.signed_by}}</span>
+                        Signed by &nbsp;<span class="text-3">{{item.signedByName}}</span>
                     </ion-label>
 
 
                     <ion-label class="text-2">
-                        Signed &nbsp;<span class="text-3">30 mins ago ({{item.signed_time | date:'dd MMM yyyy HH:mm'}}
-                        )</span>
+                        Signed &nbsp;<span class="text-3">{{item.formattedCreatedDate}}</span>
                     </ion-label>
                 </ion-item>
             </div>
@@ -46,6 +45,15 @@
         <app-empty-message message="No forms available"></app-empty-message>
     </ng-template>
 
-    <app-empty-message *ngIf="(list | listFilter:searchQuery:'title').length == 0"
-                       message="No Results Found"></app-empty-message>
+
+    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
+
+        <app-empty-message *ngIf="(availableForms | listFilter:searchQuery:'formTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
+
+    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive">
+        <app-empty-message *ngIf="(archivedForms | listFilter:searchQuery:'documentTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
 </ion-content>

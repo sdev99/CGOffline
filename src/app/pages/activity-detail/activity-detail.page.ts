@@ -37,7 +37,7 @@ export class ActivityDetailPage implements OnInit {
         public sharedDataService: SharedDataService,
         private filehandlerService: FilehandlerService,
         private apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         public alertController: AlertController,
         private accountService: AccountService,
         private observablesService: ObservablesService,
@@ -45,13 +45,15 @@ export class ActivityDetailPage implements OnInit {
     ) {
         this.user = this.accountService.userValue;
         this.activityListItem = this.sharedDataService.currentActivityOpen;
+
+        this.utilService.presentLoadingWithOptions();
+        this.getActivityDetail(() => {
+            this.utilService.hideLoading();
+        });
     }
 
     async ngOnInit() {
-        const loading = await this.utilService.startLoadingWithOptions();
-        this.getActivityDetail(() => {
-            this.utilService.hideLoadingFor(loading);
-        });
+
     }
 
     /**

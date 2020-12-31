@@ -8,7 +8,7 @@
             </ion-label>
 
             <ion-checkbox mode="md" slot="start"
-                          [formControlName]="UtilService.FCName(inputName+''+item.answerChoiceAttributeId)"
+                          [formControlName]="UtilService.SubFCName(inputName,item.answerChoiceAttributeId)"
                           [value]="item.answerChoiceAttributeId"></ion-checkbox>
         </ion-item>
     </ng-container>

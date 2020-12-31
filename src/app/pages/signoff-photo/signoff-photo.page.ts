@@ -16,11 +16,8 @@ import {ApiService} from '../../services/api.service';
 })
 export class SignoffPhotoPage implements OnInit {
     errorMessage;
-
     capturedPhoto;
-
     type;
-    data;
 
     constructor(
         public navCtrl: NavController,
@@ -31,17 +28,6 @@ export class SignoffPhotoPage implements OnInit {
         public observablesService: ObservablesService,
         public sharedDataService: SharedDataService,
     ) {
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.type) {
-                    this.type = params.type;
-                }
-                if (params.data) {
-                    this.data = JSON.parse(params.data);
-                }
-            }
-        });
-
         if (sharedDataService.signOffFor) {
             this.type = sharedDataService.signOffFor;
         }
@@ -58,14 +44,18 @@ export class SignoffPhotoPage implements OnInit {
 
     onClose() {
         if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
-            this.navCtrl.navigateBack('/checkinout-confirm');
+            if (this.sharedDataService.dedicatedMode) {
+                this.navCtrl.navigateBack('/checkinout-confirm');
+            } else {
+                this.navCtrl.navigateBack('/dashboard-dm');
+            }
         } else {
             this.navCtrl.back();
         }
     }
 
     continue() {
-        const fileName = 'user' + this.utilService.getCurrentTimeStamp() + '.jpeg';
+        const fileName = 'photo' + this.utilService.getCurrentTimeStamp() + '.jpeg';
         const mimeType = 'image/jpeg';
         this.utilService.dataUriToFile(this.capturedPhoto.dataUrl, fileName, mimeType)
             .then((file) => {
@@ -76,6 +66,9 @@ export class SignoffPhotoPage implements OnInit {
                             this.sharedDataService.submitInductionCheckInData(this.apiService);
                             break;
 
+                        case EnumService.SignOffType.DOCUMENT_DM:
+                        case EnumService.SignOffType.FORMS_DM:
+                        case EnumService.SignOffType.WORK_PERMIT_DM:
                         case EnumService.SignOffType.DOCUMENT_ACTIVITY:
                         case EnumService.SignOffType.FORM_ACTIVITY:
                         case EnumService.SignOffType.FORM_CURRENT_CHECKIN:

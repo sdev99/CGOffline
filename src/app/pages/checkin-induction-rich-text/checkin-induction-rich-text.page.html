@@ -1,8 +1,15 @@
 <ion-header>
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" modalTitle="Induction"
-                      (closeModal)="onClose()"></app-modal-header>
+    <ion-toolbar  *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
+        <ion-title size="large">{{'Induction'}}</ion-title>
+        <ion-buttons slot="end">
+            <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
+        </ion-buttons>
+    </ion-toolbar>
+
+
+
     <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
-                         [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Check In"
+                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 

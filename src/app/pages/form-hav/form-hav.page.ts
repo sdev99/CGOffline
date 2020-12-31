@@ -60,7 +60,7 @@ export class FormHavPage implements OnInit {
         public accountService: AccountService,
         private screenOrientation: ScreenOrientation,
         private ngZone: NgZone,
-        private utilService: UtilService,
+        public utilService: UtilService,
     ) {
         this.user = accountService.userValue;
 
@@ -78,11 +78,11 @@ export class FormHavPage implements OnInit {
                     const questions = section.questions;
                     questions.map((question, questionIndex) => {
                         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
-                            this.modelControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                            this.modelControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                         }
 
                         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField) {
-                            this.plannedTimeControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                            this.plannedTimeControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                         }
                     });
                 }
@@ -159,7 +159,7 @@ export class FormHavPage implements OnInit {
                         question.listLabelKey = 'model';
                     }
 
-                    const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
+                    const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
                     control.setValue('');
                 }
             });
@@ -200,7 +200,7 @@ export class FormHavPage implements OnInit {
     }
 
     dropDownChange(question, sectionIndex, questionIndex) {
-        const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
+        const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
             this.getTypeList(control.value, sectionIndex, questionIndex);
         } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
@@ -243,7 +243,7 @@ export class FormHavPage implements OnInit {
     }
 
     isError(sectionIndex, questionIndex, question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)].valid);
+        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)].valid);
     }
 
     calculatePointsPerHour() {

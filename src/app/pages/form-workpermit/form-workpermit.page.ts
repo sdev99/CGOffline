@@ -63,7 +63,7 @@ export class FormWorkpermitPage {
         private screenOrientation: ScreenOrientation,
         private ngZone: NgZone,
         private apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         public accountService: AccountService,
     ) {
         this.user = accountService.userValue;
@@ -177,18 +177,18 @@ export class FormWorkpermitPage {
                         questions.map((question, questionIndex) => {
                             if (this.utilService.shouldShowQuestion(question)) {
                                 if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
-                                    const control = this.formGroup.controls[UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId)];
+                                    const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
                                     question.answerChoiceAttributes.map((choice) => {
                                         if (choice.answerChoiceAttributeId === control.value) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }
                                     });
                                 } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
-                                    const multiChoiceControlName = UtilService.FCNameUq(sectionIndex, questionIndex, question.questionId);
+                                    const multiChoiceControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
                                     const control = this.formGroup.controls[multiChoiceControlName];
                                     const formGroups = control.value as FormGroup;
                                     question.answerChoiceAttributes.map((choice) => {
-                                        const choiceControl = formGroups[UtilService.FCName(multiChoiceControlName + '' + choice.answerChoiceAttributeId)];
+                                        const choiceControl = formGroups[UtilService.SubFCName(multiChoiceControlName, choice.answerChoiceAttributeId)];
                                         if (choiceControl) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }

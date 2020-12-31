@@ -1,5 +1,5 @@
 <ion-header>
-    <app-dashboard-header-dm [title]="sharedDataService.dedicatedModeLocationUse.title"></app-dashboard-header-dm>
+    <app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
     <app-topnavigations-btns-dm activeBtn="document"></app-topnavigations-btns-dm>
     <app-topnavigations-segments-dm [active]="listType" [options]="listTypes"
                                     [search]="searchQuery"
@@ -9,50 +9,52 @@
 </ion-header>
 
 <ion-content mode="md">
-    <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
-<!--        <ion-list-header lines="none">-->
-<!--            <ion-label>Documents</ion-label>-->
-<!--        </ion-list-header>-->
+    <ion-list *ngIf="availableDocuments?.length>0 || archivedDocuments?.length>0; else noDocument" class="activity-list"
+              lines="full">
 
-        <ng-container *ngIf="listType === 'Document List'">
-            <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title'; last as isLast"
-                      (click)="openFile(item)">
-                <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
-                <ion-label>{{item.title}}</ion-label>
-                <ion-label color="medium">
-                    24 Mar 2020 16:30
-                </ion-label>
+        <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
+            <ion-item tappable
+                      *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
+                      (click)="openAvailableDocument(item)">
+                <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>
+                <ion-label>{{item.documentTitle}}</ion-label>
+                <ion-label color="medium"></ion-label>
             </ion-item>
         </ng-container>
 
-        <ng-container *ngIf="listType === 'Document Archive'">
-            <div tappable *ngFor="let item of list | listFilter:searchQuery:'title';"
-                 (click)="openFile(item)">
-                <ion-item tappable [disabled]="!item.available">
-                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.type)"></ion-icon>
-                    <ion-label class="text-1">{{item.title}}</ion-label>
+        <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive">
+            <div tappable *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
+                 (click)="openArchivedDocument(item)">
+                <ion-item tappable>
+                    <ion-icon slot="start" [src]="UtilService.FileIcon('document')"></ion-icon>
+                    <!--                    <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>-->
+                    <ion-label class="text-1">{{item.documentTitle}}</ion-label>
                     <ion-label class="text-2">
-                        Signed by &nbsp;<span class="text-3">{{item.signed_by}}</span>
+                        Signed by &nbsp;<span class="text-3">{{item.signedByName}}</span>
                     </ion-label>
 
-
                     <ion-label class="text-2">
-                        Signed &nbsp;<span class="text-3">30 mins ago ({{item.signed_time | date:'dd MMM yyyy HH:mm'}}
-                        )</span>
+                        Signed &nbsp;<span class="text-3">{{item.formattedCreatedDate}}</span>
                     </ion-label>
                 </ion-item>
             </div>
         </ng-container>
 
-
     </ion-list>
 
     <ng-template #noDocument>
-        <app-empty-message message="No documents available"></app-empty-message>
+        <app-empty-message messa ge="No documents available"></app-empty-message>
     </ng-template>
 
+    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
 
-    <app-empty-message *ngIf="(list | listFilter:searchQuery:'title').length == 0"
-                       message="No Results Found"></app-empty-message>
+        <app-empty-message *ngIf="(availableDocuments | listFilter:searchQuery:'documentTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
+
+    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive">
+        <app-empty-message *ngIf="(archivedDocuments | listFilter:searchQuery:'documentTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
 </ion-content>
 

@@ -12,7 +12,7 @@
     </ng-container>
 
     <ng-container *ngIf="sharedDataService.dedicatedMode">
-        <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Work Permit"
+        <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Work Permit"
                              (closeModal)="back()"></app-modal-header-dm>
     </ng-container>
 

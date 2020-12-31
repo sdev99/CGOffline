@@ -2,6 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {SharedDataService} from '../../services/shared-data.service';
+import {ApiService} from '../../services/api.service';
+import {Response} from '../../_models';
+import {EnumService} from '../../services/enum.service';
+import {UtilService} from '../../services/util.service';
+import {CheckInPostData} from '../../_models/checkInPostData';
 
 @Component({
     selector: 'app-checkinout-guest-dm',
@@ -15,6 +20,8 @@ export class CheckinoutGuestDmPage implements OnInit {
     constructor(
         public navController: NavController,
         public sharedDataService: SharedDataService,
+        public apiService: ApiService,
+        public utilService: UtilService,
     ) {
         this.formGroup = new FormGroup({
             fname: new FormControl('', Validators.compose([Validators.required])),
@@ -37,8 +44,13 @@ export class CheckinoutGuestDmPage implements OnInit {
     onContinue() {
         this.isSubmitted = true;
         if (this.formGroup.valid) {
-            this.navController.navigateForward('/checkin-induction');
+            if (this.sharedDataService.dedicatedModeGuestDetail) {
+                this.sharedDataService.dedicatedModeGuestDetail.guestFirsName = this.formGroup.controls.fname.value;
+                this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName = this.formGroup.controls.mname.value;
+                this.sharedDataService.dedicatedModeGuestDetail.guestLastName = this.formGroup.controls.lname.value;
+
+                this.sharedDataService.getCheckinDetailsGuest(this.apiService);
+            }
         }
     }
-
 }

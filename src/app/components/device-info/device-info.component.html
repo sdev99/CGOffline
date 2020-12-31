@@ -1,8 +1,15 @@
 <ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()"
           swipeGesture="false">
     <ion-header>
-        <app-modal-header modalTitle="Device Info" (closeModal)="closeInfoMenu()"></app-modal-header>
+        <ion-toolbar mode="ios" class="model-header-toolbar">
+            <ion-title size="large">{{'Device Info'}}</ion-title>
+            <ion-buttons slot="end">
+                <app-model-close-button (closeModal)="closeInfoMenu()"></app-model-close-button>
+            </ion-buttons>
+        </ion-toolbar>
+
     </ion-header>
+
     <ion-content mode="ios">
         <div class="content">
             <ion-list lines="full">

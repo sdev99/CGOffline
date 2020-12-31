@@ -3,7 +3,7 @@
 
 <ng-template #formView>
     <ion-header>
-        <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" modalSubTitle="Work Permit"
+        <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Work Permit"
                              (closeModal)="onClose()"></app-modal-header-dm>
         <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 

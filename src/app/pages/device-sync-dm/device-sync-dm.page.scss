@@ -1,10 +1,8 @@
 ion-header {
-  ::ng-deep app-modal-header {
-    ion-toolbar {
-      --border-color: transparent;
-      --border-width: 0;
-      --background: transparent;
-    }
+  .model-header-toolbar {
+    --border-color: transparent;
+    --border-width: 0;
+    --background: transparent;
   }
 }
 
@@ -88,6 +86,7 @@ ion-content {
       width: 35px;
       height: 35px;
     }
+
     .success-title {
       margin-top: 12px;
       margin-bottom: 12px;
@@ -104,6 +103,7 @@ ion-content {
       width: 35px;
       height: 35px;
     }
+
     .error-title {
       margin-top: 12px;
       margin-bottom: 12px;
@@ -114,6 +114,7 @@ ion-content {
       line-height: 24px;
       text-align: center;
       color: #836A27;
+
       &.failed {
         color: #E74731;
       }

@@ -2,6 +2,12 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
+import {Response} from '../../_models';
+import {EnumService} from '../../services/enum.service';
+import {AccountService} from '../../services/account.service';
+import {ApiService} from '../../services/api.service';
+import {UserDetail} from '../../_models/userDetail';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-checkinout-name-dm',
@@ -9,25 +15,35 @@ import {SharedDataService} from '../../services/shared-data.service';
     styleUrls: ['./checkinout-name-dm.page.scss'],
 })
 export class CheckinoutNameDmPage implements OnInit {
+    UtilService = UtilService;
+
     @ViewChild('itemRef') itemRef: any;
     name;
     showList = false;
-    items = ['Fisher Serenity', 'Alreadycheckin Test', 'Murphy Claire', 'Edwards Priscilla', 'Flores Esther', 'Lane Connie', 'Cooper Regina', 'Mccoy Kristin'];
-    authFor = 'Check In/Out by Name';
+    items: Array<UserDetail>;
+    pageTitle;
+    selectedUser: UserDetail;
 
     constructor(
         public activatedRoute: ActivatedRoute,
         public navController: NavController,
         public sharedDataService: SharedDataService,
+        public accountService: AccountService,
+        public apiService: ApiService,
     ) {
-        this.activatedRoute.queryParams.subscribe((res) => {
-            if (res) {
-                if (res.authFor) {
-                    this.authFor = res.authFor;
-                }
-            }
-        });
+        switch (sharedDataService.dedicatedModeProcessType) {
+            case EnumService.DedicatedModeProcessTypes.CheckinOut:
+                this.pageTitle = 'Check In/Out by Name';
+                break;
+            case EnumService.DedicatedModeProcessTypes.Document:
+            case EnumService.DedicatedModeProcessTypes.Form:
+            case EnumService.DedicatedModeProcessTypes.WorkPermit:
+                this.pageTitle = 'Authentication';
+                break;
+            default:
+        }
     }
+
 
     @HostListener('document:click', ['$event'])
     andClickEvent = (event) => {
@@ -49,17 +65,24 @@ export class CheckinoutNameDmPage implements OnInit {
         this.navController.back();
     }
 
-    onContinue() {
-        if (this.name === 'Alreadycheckin Test') {
-            this.navController.navigateForward('checkinout-alreadycheckin-dm');
-        } else {
-            this.navController.navigateForward('checkinout-identityconfirm-dm', {
-                queryParams: {
-                    name: this.name,
-                    authFor: this.authFor
+    getFullName = (user: UserDetail) => {
+        return UtilService.getFullName(user.firstName, user.middleName, user.lastName);
+    };
+
+    getUserAutoSuggest = () => {
+        if (this.sharedDataService.dedicatedModeDeviceDetailData && this.name) {
+            this.apiService.getUserAutoSuggest(this.sharedDataService.dedicatedModeDeviceDetailData.companyID, this.name).subscribe((res: Response) => {
+                if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    this.items = res.Result;
                 }
+            }, (error) => {
             });
         }
+    };
+
+    onContinue() {
+        this.sharedDataService.dedicatedModeUserDetail = this.selectedUser;
+        this.navController.navigateForward('checkinout-identityconfirm-dm');
     }
 
     searchBarFocus() {
@@ -69,14 +92,18 @@ export class CheckinoutNameDmPage implements OnInit {
 
     searchBarChange() {
         console.log('searchBarChange');
-        this.showList = true;
+        if (!this.selectedUser || this.getFullName(this.selectedUser) !== this.name) {
+            this.showList = true;
+            this.selectedUser = null;
+            this.getUserAutoSuggest();
+        }
     }
 
-    onSelect(event, item) {
+    onSelect(event, item: UserDetail) {
         event.stopPropagation();
         event.stopImmediatePropagation();
-        console.log('Item ' + item);
-        this.name = item;
+        this.name = this.getFullName(item);
+        this.selectedUser = item;
         this.showList = false;
     }
 }

@@ -11,6 +11,7 @@ import {Response, User} from '../../_models';
 import {PermissionType, Plugins} from '@capacitor/core';
 import {LocationItem} from '../../_models/locationItem';
 import {AccountService} from '../../services/account.service';
+import {UserDetail} from '../../_models/userDetail';
 
 const {Camera, Permissions} = Plugins;
 
@@ -22,7 +23,6 @@ const {Camera, Permissions} = Plugins;
 export class DashboardQrscanPage implements OnInit {
     user: User;
     scanSub;
-    dedicatedMode = false;
     isTablet = false;
     authFor = 'Check In/Out via QR';
     isLoaded = false;
@@ -37,9 +37,8 @@ export class DashboardQrscanPage implements OnInit {
         public activatedRoute: ActivatedRoute
     ) {
         this.user = this.accountService.userValue;
-        this.dedicatedMode = sharedDataService.dedicatedMode;
         this.isTablet = sharedDataService.isTablet;
-        if (!this.isTablet && this.dedicatedMode) {
+        if (!this.isTablet && sharedDataService.dedicatedMode) {
             this.isTablet = true;
         }
 
@@ -57,6 +56,7 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ngOnInit() {
+
     }
 
     ionViewWillLeave() {
@@ -129,49 +129,70 @@ export class DashboardQrscanPage implements OnInit {
 
         const loading = await this.utilService.startLoadingWithOptions();
 
-        this.apiService.getEntityByQRCode(qrCode).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
-            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                const locationItem: LocationItem = response.Result as LocationItem;
-                if (locationItem && locationItem.locationID && locationItem.locationName) {
-                    this.openNextScreen(locationItem);
-                } else {
-                    this.utilService.showAlert('Location not found', '', () => {
-                        this.scan();
-                    });
+        if (this.sharedDataService.dedicatedMode) {
+            this.apiService.getUserByQRCode(qrCode).subscribe((response: Response) => {
+                this.utilService.hideLoadingFor(loading);
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    const userDetail: UserDetail = response.Result as UserDetail;
+                    if (userDetail && userDetail.userId) {
+                        this.openNextScreen(userDetail);
+                    } else {
+                        this.utilService.showAlert('User not found', '', () => {
+                            this.scan();
+                        });
+                    }
                 }
-            }
-        }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            }, (error) => {
+                this.utilService.hideLoadingFor(loading);
 
-            this.utilService.showAlert(error.message || error, 'Not found!', () => {
-                this.scan();
+                this.utilService.showAlert(error.message || error, 'Not found!', () => {
+                    this.scan();
+                });
             });
-        });
+        } else {
+            this.apiService.getEntityByQRCode(qrCode).subscribe((response: Response) => {
+                this.utilService.hideLoadingFor(loading);
+                if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                    const locationItem: LocationItem = response.Result as LocationItem;
+                    if (locationItem && locationItem.locationID && locationItem.locationName) {
+                        this.openNextScreen(locationItem);
+                    } else {
+                        this.utilService.showAlert('Location not found', '', () => {
+                            this.scan();
+                        });
+                    }
+                }
+            }, (error) => {
+                this.utilService.hideLoadingFor(loading);
+
+                this.utilService.showAlert(error.message || error, 'Not found!', () => {
+                    this.scan();
+                });
+            });
+        }
+
     };
 
-    openNextScreen = (location) => {
-
-        if (this.dedicatedMode) {
-            if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT) {
-                this.navCtrl.navigateForward('/form-cover-dm');
-            } else {
-                this.navCtrl.navigateForward(['/checkinout-confirm'], {
-                    queryParams: {
-                        headerTitle: 'Check In',
-                        title: 'You are checking in',
-                        subtitle: location.name,
-                        buttonTitle: 'Check In Now',
-                        nextPageData: JSON.stringify({
-                            locationDetail: JSON.stringify(location)
-                        }),
-                        nextPagePath: '/checkin-induction',
-                        locationCheckType: EnumService.ConfirmForCheckType.CheckIn
-                    }
-                });
+    openNextScreen = (detail) => {
+        if (this.sharedDataService.dedicatedMode) {
+            this.sharedDataService.dedicatedModeUserDetail = detail;
+            switch (this.sharedDataService.dedicatedModeProcessType) {
+                case EnumService.DedicatedModeProcessTypes.CheckinOut:
+                    this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService);
+                    break;
+                case EnumService.DedicatedModeProcessTypes.Document:
+                    this.sharedDataService.dedicatedModeDocumentSignOffProcess();
+                    break;
+                case EnumService.DedicatedModeProcessTypes.Form:
+                    this.sharedDataService.dedicatedModeFormSignOffProcess();
+                    break;
+                case EnumService.DedicatedModeProcessTypes.WorkPermit:
+                    this.sharedDataService.dedicatedModeWorkPermitSignOffProcess();
+                    break;
+                default:
             }
         } else {
-            this.sharedDataService.checkInForLocation = location;
+            this.sharedDataService.checkInForLocation = detail;
             this.sharedDataService.getCheckinDetails(this.user.userId, this.apiService);
         }
     };

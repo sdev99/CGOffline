@@ -5,7 +5,7 @@
         <ion-radio-group *ngFor="let item of locations" [(ngModel)]="selectedLocation">
             <ion-item lines="none">
                 <ion-radio slot="start" [value]="item"></ion-radio>
-                <ion-label>{{item.locationName}}</ion-label>
+                <ion-label>{{sharedDataService.getEntityName(item)}}</ion-label>
             </ion-item>
         </ion-radio-group>
 

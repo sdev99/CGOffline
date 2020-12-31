@@ -1,5 +1,5 @@
 <ion-header>
-    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" [modalSubTitle]="authFor"
+    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.locationName" [modalSubTitle]="pageTitle"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 
@@ -20,7 +20,7 @@
                 <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
             </div>
 
-            <ion-button class="action-btn" (click)="thisisNotMe()">
+            <ion-button class="action-btn" (click)="thisIsNotMe()">
                 This is Not Me
             </ion-button>
         </div>

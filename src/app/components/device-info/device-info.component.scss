@@ -1,14 +1,13 @@
 ion-menu {
   --width: 400px;
 
-  ::ng-deep app-modal-header {
-    ion-toolbar {
-      padding-left: 12px;
-      --background: transparent !important;
-      --border-color: transparent;
-      --border-width: 0;
-    }
+  .model-header-toolbar {
+    padding-left: 12px;
+    --background: transparent !important;
+    --border-color: transparent;
+    --border-width: 0;
   }
+
 
   .content {
     width: 100%;

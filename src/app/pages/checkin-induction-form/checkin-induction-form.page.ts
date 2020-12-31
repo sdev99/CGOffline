@@ -80,7 +80,13 @@ export class CheckinInductionFormPage implements OnInit {
         });
 
         if (isValid) {
-            this.sharedDataService.inductionNavigationProcess(this.user.userId, this.sharedDataService.inductionContentItemIndex);
+            let userId;
+            if (this.sharedDataService.dedicatedMode) {
+                userId = this.sharedDataService.dedicatedModeUserDetail.userId;
+            } else {
+                userId = this.user.userId;
+            }
+            this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
         } else {
             this.errorMessage = invalidCount + ' required questions are not answered yet';
         }

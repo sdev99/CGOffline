@@ -24,7 +24,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     constructor(
         public navCtrl: NavController,
         private apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private accountService: AccountService,
         public sharedDataService: SharedDataService,
         private observablesService: ObservablesService,

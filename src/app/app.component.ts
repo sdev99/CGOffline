@@ -21,6 +21,7 @@ import {ApiService} from './services/api.service';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
 import {Capacitor} from '@capacitor/core';
+import {Response} from './_models';
 
 const {Geolocation, PushNotifications, Permissions, App} = Plugins;
 
@@ -36,7 +37,7 @@ export class AppComponent {
         private statusBar: StatusBar,
         private uniqueDeviceID: UniqueDeviceID,
         public sharedDataService: SharedDataService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private observablesService: ObservablesService,
         private navController: NavController,
         private screenOrientation: ScreenOrientation,
@@ -59,6 +60,7 @@ export class AppComponent {
 
             this.uniqueDeviceID.get()
                 .then((uuid: any) => {
+                    console.log('Device UUID ', uuid);
                     this.sharedDataService.deviceUID = uuid;
                     this.checkForAccessKey();
                 })
@@ -134,18 +136,28 @@ export class AppComponent {
     };
 
     checkDeviceForDedicatedMode = async () => {
-        this.apiService.getTimeZoneList().subscribe(() => {});
+        this.apiService.getTimeZoneList().subscribe(() => {
+        });
 
         const loading = await this.utilService.startLoadingWithOptions();
-        this.accountService.getDeviceDetails(this.sharedDataService.deviceUID).subscribe((data) => {
+        this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe((data: Response) => {
 
-            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful && data.Result && data.Result.companyID) {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful && data.Result && data.Result?.deviceDetailData && data.Result?.deviceDetailData?.companyID) {
                 if (this.sharedDataService.isTablet) {
                     localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
-                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(data.Result));
+                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(data.Result?.deviceDetailData));
+                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(data.Result?.deviceEntityData));
+
                     this.sharedDataService.dedicatedMode = true;
-                    this.sharedDataService.dedicatedModeDeviceDetailData = data.Result;
+                    this.sharedDataService.dedicatedModeDeviceDetailData = data.Result?.deviceDetailData;
+                    this.sharedDataService.dedicatedModeAssignedEntities = data.Result?.deviceEntityData;
+                    if (this.sharedDataService.dedicatedModeAssignedEntities && this.sharedDataService.dedicatedModeAssignedEntities.length === 1) {
+                        this.sharedDataService.dedicatedModeLocationUse = this.sharedDataService.dedicatedModeAssignedEntities[0];
+                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify( this.sharedDataService.dedicatedModeAssignedEntities[0]));
+                    }
+
                     this.configureAppForDedicatedMode();
+
                     setTimeout(() => {
                         this.utilService.hideLoadingFor(loading);
                     }, 500);

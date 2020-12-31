@@ -1,5 +1,5 @@
 <ion-header>
-    <app-dashboard-header-dm [title]="sharedDataService.dedicatedModeLocationUse.title"></app-dashboard-header-dm>
+    <app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
     <app-topnavigations-btns-dm activeBtn="permit"></app-topnavigations-btns-dm>
     <app-topnavigations-segments-dm [active]="listType"
                                     [options]="listTypes"
@@ -10,26 +10,58 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngIf="list && list.length>0; else noDocument" class="activity-list" lines="full">
+    <ion-list *ngIf="liveWorkPermits?.length>0 || archivedWorkPermits?.length>0; else noDocument" class="activity-list"
+              lines="full">
 
-        <ion-item tappable *ngFor="let item of list | listFilter:searchQuery:'title' " (click)="openFile(item)">
-            <ion-label class="text-1">{{item.title}}</ion-label>
-            <ion-label class="text-2">
-                issues &nbsp;<span class="text-3">{{item.issued}}</span>
-            </ion-label>
+        <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
+            <ion-item tappable *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'title' "
+                      (click)="openLiveWorkPermit(item)">
+                <ion-label class="text-1">{{item.formTitle}}</ion-label>
+                <ion-label class="text-2">
+                    issues &nbsp;<span
+                        class="text-3">{{item.formattedIssuedDate}}</span>
+                </ion-label>
 
 
-            <ion-label class="text-2">
-                Valid for &nbsp;<span class="text-3">7 days ({{item.validity | date:'dd MMM yyyy HH:mm'}})</span>
-            </ion-label>
-        </ion-item>
+                <ion-label class="text-2">
+                    Valid for &nbsp;<span class="text-3">{{item.formattedExpiryDate}}</span>
+                </ion-label>
+            </ion-item>
+        </ng-container>
+
+
+        <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive">
+            <ion-item tappable *ngFor="let item of archivedWorkPermits | listFilter:searchQuery:'formTitle' "
+                      (click)="openArchivedWorkPermit(item)">
+                <ion-label class="text-1">{{item.formTitle}}</ion-label>
+                <ion-label class="text-2">
+                    issues &nbsp;<span class="text-3">{{item.formattedIssuedDate}}</span>
+                </ion-label>
+
+
+                <ion-label class="text-2">
+                    Valid for &nbsp;<span class="text-3">{{item.formattedExpiryDate}}</span>
+                </ion-label>
+            </ion-item>
+        </ng-container>
+
     </ion-list>
 
     <ng-template #noDocument>
         <app-empty-message message="No permits available"></app-empty-message>
     </ng-template>
 
-    <app-empty-message *ngIf="(list | listFilter:searchQuery:'title').length == 0"
-                       message="No Results Found"></app-empty-message>
+
+    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
+
+        <app-empty-message *ngIf="(liveWorkPermits | listFilter:searchQuery:'formTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
+
+    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive">
+        <app-empty-message *ngIf="(archivedWorkPermits | listFilter:searchQuery:'documentTitle').length == 0"
+                           message="No Results Found"></app-empty-message>
+    </ng-container>
+
 </ion-content>
 

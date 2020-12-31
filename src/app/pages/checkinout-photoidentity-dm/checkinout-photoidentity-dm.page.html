@@ -1,5 +1,5 @@
 <ion-header #headerView>
-    <app-modal-header-dm [modalTitle]="sharedDataService.dedicatedModeLocationUse.title" [modalSubTitle]="authFor"
+    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" [modalSubTitle]="authFor"
                          (closeModal)="onClose()"></app-modal-header-dm>
 </ion-header>
 

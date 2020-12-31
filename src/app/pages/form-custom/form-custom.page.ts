@@ -64,7 +64,7 @@ export class FormCustomPage {
         private screenOrientation: ScreenOrientation,
         private ngZone: NgZone,
         private apiService: ApiService,
-        private utilService: UtilService,
+        public utilService: UtilService,
         public accountService: AccountService,
     ) {
         this.user = accountService.userValue;
@@ -220,93 +220,4 @@ export class FormCustomPage {
 
     // -- End -- Navigate to question
 
-
-    // Unused
-
-    addImage(index) {
-        this.photoService.choosePhotoOption((photo) => {
-            this.openImageAnnotation(index, photo);
-        });
-    }
-
-    openImageAnnotation = (index, photo) => {
-        this.sharedDataService.isOpenImageAnnotation = true;
-        this.sharedDataService.setAnnotationImage(photo);
-        this.sharedDataService.onAnnotationImageDone = (image) => {
-            this.answer[index] = {
-                ...this.answer[index],
-                image
-            };
-        };
-
-        this.navCtrl.navigateForward(['/image-annotation']);
-    };
-
-    addDateNote(index) {
-        this.answer[index] = {
-            ...this.answer[index],
-            addNote: true,
-        };
-    }
-
-    isValid(index, section) {
-        let isValid = true;
-        if (this.isSubmitted && section.required) {
-            isValid = false;
-            const answer = this.answer[index];
-            if (answer) {
-                switch (section.question_type) {
-                    case 'date':
-                        isValid = answer.date;
-                        break;
-                    case 'image_annotation':
-                        isValid = answer.image;
-                        break;
-                    case 'options':
-                        if (section.canMultipleAsnwer) {
-                            section.options.map((item) => {
-                                if (item.checked) {
-                                    isValid = item.checked;
-                                    return;
-                                }
-                            });
-                        } else {
-                            isValid = section.selectedValue;
-                        }
-                        break;
-                    case 'photo':
-                        isValid = answer.image;
-                        break;
-                    case 'time':
-                        isValid = answer.time;
-                        break;
-                    default:
-                        isValid = true;
-                }
-            }
-        }
-        return isValid;
-    }
-
-    photoAdded(index, photo) {
-        this.openImageAnnotation(index, photo);
-    }
-
-    photoRemoved(index) {
-        this.answer[index] = {
-            ...this.answer[index],
-            image: null,
-        };
-    }
-
-    timeSelect(index, time) {
-        this.answer[index] = {
-            ...this.answer[index],
-            timePeriod: time,
-        };
-    }
-
-    openFile() {
-
-    }
 }

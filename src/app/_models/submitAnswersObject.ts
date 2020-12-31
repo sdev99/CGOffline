@@ -19,4 +19,6 @@ export class SubmitAnswersObject {
     havExposure?: HavExposure;
     workPermitAnswer?: WorkPermitAnswer;
     formattedSections?: any;
+    workPermitDetails?: any;
+    accidentReport?: any;
 }

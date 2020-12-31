@@ -1,7 +1,6 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {IonicModule} from '@ionic/angular';
 import {WarningComponentComponent} from './warning-component/warning-component.component';
-import {ModalHeaderComponent} from './modal-header/modal-header.component';
 import {ColorPickerComponent} from './color-picker/color-picker.component';
 import {AuthInputComponent} from './auth-input/auth-input.component';
 import {DashboardHeaderComponent} from './dashboard-header/dashboard-header.component';
@@ -35,11 +34,11 @@ import {QuestionListHeaderComponent} from './question-list-header/question-list-
 import {CustomQuestionsContainerComponent} from './custom-questions-container/custom-questions-container.component';
 import {PhotoFieldComponent} from './photo-field/photo-field.component';
 import {SectionTitleComponent} from './section-title/section-title.component';
+import {ModelCloseButtonComponent} from './model-close-button/model-close-button.component';
 
 @NgModule({
     declarations: [
         WarningComponentComponent,
-        ModalHeaderComponent,
         ColorPickerComponent,
         AuthInputComponent,
         DashboardHeaderComponent,
@@ -70,7 +69,8 @@ import {SectionTitleComponent} from './section-title/section-title.component';
         QuestionListHeaderComponent,
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
-        SectionTitleComponent
+        SectionTitleComponent,
+        ModelCloseButtonComponent
     ],
     imports: [
         IonicModule,
@@ -80,7 +80,6 @@ import {SectionTitleComponent} from './section-title/section-title.component';
     ],
     exports: [
         WarningComponentComponent,
-        ModalHeaderComponent,
         ColorPickerComponent,
         AuthInputComponent,
         DashboardHeaderComponent,
@@ -111,7 +110,8 @@ import {SectionTitleComponent} from './section-title/section-title.component';
         QuestionListHeaderComponent,
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
-        SectionTitleComponent
+        SectionTitleComponent,
+        ModelCloseButtonComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -4,6 +4,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {ObservablesService} from '../../services/observables.service';
 import {EnumService} from '../../services/enum.service';
 import {HomeExitDmPage} from '../../modals/home-exit-dm/home-exit-dm.page';
+import {AccountService} from '../../services/account.service';
 
 @Component({
     selector: 'app-dashboard-header-dm',
@@ -19,6 +20,7 @@ export class DashboardHeaderDmComponent implements OnInit {
         public modalController: ModalController,
         private menu: MenuController,
         public sharedDataService: SharedDataService,
+        public accountService: AccountService,
         public observablesService: ObservablesService,
     ) {
 
@@ -52,6 +54,7 @@ export class DashboardHeaderDmComponent implements OnInit {
 
         modal.onWillDismiss().then(({data}) => {
             if (data) {
+                this.sharedDataService.resetAllSharedVariable();
                 this.navController.navigateRoot('choose-location');
             }
         });

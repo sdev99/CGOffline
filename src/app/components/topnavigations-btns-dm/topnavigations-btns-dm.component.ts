@@ -1,5 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
+import {ApiService} from '../../services/api.service';
+import {UtilService} from '../../services/util.service';
+import {SharedDataService} from '../../services/shared-data.service';
+import {Response} from '../../_models';
+import {EnumService} from '../../services/enum.service';
 
 @Component({
     selector: 'app-topnavigations-btns-dm',
@@ -11,6 +16,9 @@ export class TopnavigationsBtnsDmComponent implements OnInit {
 
     constructor(
         public navController: NavController,
+        public apiService: ApiService,
+        public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
     }
 
@@ -38,7 +46,17 @@ export class TopnavigationsBtnsDmComponent implements OnInit {
     }
 
     generatePermitClick() {
-        this.navController.navigateForward('checkin-workpermit');
+        this.utilService.presentLoadingWithOptions();
+        const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+        this.apiService.getDedicatedModeAvailableWorkPermits(companyID).subscribe((response: Response) => {
+            this.utilService.hideLoading();
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.availableWorkPermits = response.Result;
+                this.navController.navigateForward('checkin-workpermit');
+            }
+        }, (error) => {
+            this.utilService.hideLoading();
+        });
     }
 
 }

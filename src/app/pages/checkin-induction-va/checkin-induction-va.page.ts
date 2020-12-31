@@ -28,7 +28,9 @@ export class CheckinInductionVaPage implements OnInit {
         public accountService: AccountService,
         public sanitizer: DomSanitizer
     ) {
-        this.user = accountService.userValue;
+        if (!sharedDataService.dedicatedMode) {
+            this.user = accountService.userValue;
+        }
 
         this.route.queryParams.subscribe((parameters) => {
             const inductionContentItemIndex = parameters.inductionContentItemIndex;
@@ -54,38 +56,12 @@ export class CheckinInductionVaPage implements OnInit {
     }
 
     onContinue() {
-        this.sharedDataService.inductionNavigationProcess(this.user.userId, this.sharedDataService.inductionContentItemIndex);
-
-        // if (this.files.length > (this.currentIndex + 1)) {
-        //     this.currentIndex++;
-        // } else {
-        //     if (this.sharedDataService.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
-        //         if (UtilService.randomBoolean()) {
-        //             this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-        //                 queryParams: {
-        //                     message: 'You have now checked-in',
-        //                     nextPage: 'dashboard-dm'
-        //                 }
-        //             });
-        //         } else {
-        //             this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-        //                 queryParams: {
-        //                     failTitle: 'No Qualification',
-        //                     failSubTitle: 'Check in Not Allowed',
-        //                     failMessage: 'This check-in requires to have certain \n' +
-        //                         'qualifications which you do not have.',
-        //                     nextPage: 'dashboard-dm'
-        //                 }
-        //             });
-        //         }
-        //     } else {
-        //         this.navCtrl.navigateForward(['/signoff-digitalink'], {
-        //             queryParams: {
-        //                 type: EnumService.SignOffType.INDUCTION,
-        //                 data: JSON.stringify(this.locationDetail),
-        //             }
-        //         });
-        //     }
-        // }
+        let userId;
+        if (this.sharedDataService.dedicatedMode) {
+            userId = this.sharedDataService.dedicatedModeUserDetail.userId;
+        } else {
+            userId = this.user.userId;
+        }
+        this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
     }
 }
