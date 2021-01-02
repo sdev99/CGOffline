@@ -111,7 +111,7 @@ export class ActivityDetailPage implements OnInit {
     async openForm() {
         if (this.activityListItem) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.apiService.getActivitySignOffFormDetail(this.user.userId, this.activityListItem?.formID, this.activityListItem?.activityIndividualID).subscribe((response: Response) => {
+            this.apiService.getActivitySignOffFormDetail(this.user?.userId, this.activityListItem?.formID, this.activityListItem?.activityIndividualID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.Activity;
@@ -140,7 +140,7 @@ export class ActivityDetailPage implements OnInit {
 
                     if (this.documentViewed) {
                         this.sharedDataService.signOffDetailsPostData = {
-                            userId: this.user.userId,
+                            userId: this.user?.userId,
                             documentID: this.activityListItem?.documentID,
                             activityIndividualID: this.activityListItem?.activityIndividualID,
                             documentVersionID: signOffDocumentDetail?.documentVersionID,
@@ -208,7 +208,7 @@ export class ActivityDetailPage implements OnInit {
         if (this.activityListItem && this.activityListItem.activityIndividualID) {
             const loading = await this.utilService.startLoadingWithOptions();
 
-            this.apiService.activityCompleted(this.user.userId, this.activityListItem.activityIndividualID).subscribe(() => {
+            this.apiService.activityCompleted(this.user?.userId, this.activityListItem.activityIndividualID).subscribe(() => {
                 this.utilService.hideLoadingFor(loading);
                 this.navCtrl.back();
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.ACTIVITY_COMPLETED, true);

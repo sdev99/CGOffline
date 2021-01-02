@@ -5,6 +5,7 @@ import {Response} from '../../_models';
 import {EnumService} from '../../services/enum.service';
 import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
     selector: 'app-checkinout-guest-phone-dm',
@@ -12,8 +13,8 @@ import {UtilService} from '../../services/util.service';
     styleUrls: ['./checkinout-guest-phone-dm.page.scss'],
 })
 export class CheckinoutGuestPhoneDmPage implements OnInit {
-    phoneNumber;
     errorMessage = '';
+    formGroup: FormGroup;
 
 
     constructor(
@@ -22,6 +23,9 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
         public apiService: ApiService,
         public utilService: UtilService,
     ) {
+        this.formGroup = new FormGroup({
+            phoneNumber: new FormControl('', Validators.compose([Validators.required])),
+        });
     }
 
 
@@ -30,7 +34,7 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
     }
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm');
+        this.navController.navigateRoot('dashboard-dm',{replaceUrl: true});
     }
 
     onBack() {
@@ -40,10 +44,11 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
 
     onContinue() {
         this.errorMessage = '';
-        if (this.phoneNumber) {
-            if (this.sharedDataService.dedicatedModeDeviceDetailData && this.phoneNumber) {
+        if (this.formGroup.valid) {
+            const phoneNumber = this.formGroup.controls.phoneNumber.value;
+            if (this.sharedDataService.dedicatedModeDeviceDetailData) {
                 this.utilService.presentLoadingWithOptions();
-                this.apiService.getGuestUserDetailByPhone(this.phoneNumber).subscribe((res: Response) => {
+                this.apiService.getGuestUserDetailByPhone(phoneNumber).subscribe((res: Response) => {
                     this.utilService.hideLoading();
                     if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                         if (res.Result?.guestPhone) {
@@ -55,7 +60,7 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
                             });
                         } else {
                             this.sharedDataService.dedicatedModeGuestDetail = {
-                                guestPhone: this.phoneNumber
+                                guestPhone: phoneNumber
                             };
                             this.navController.navigateForward('checkinout-guest-dm');
                         }

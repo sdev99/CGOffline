@@ -70,7 +70,7 @@ export class MyProfileEditPage implements OnInit {
 
 
             this.accountService.updateProfile({
-                userId: this.user.userId,
+                userId: this.user?.userId,
                 mobileAppLanguageID: language.value,
                 languageName: languageData.languageName,
                 timeZoneID: timezone.value,
@@ -85,7 +85,7 @@ export class MyProfileEditPage implements OnInit {
             }).subscribe((data: Response) => {
 
                 // get updated userprofile detail
-                this.accountService.getUserProfile(this.user.userId).subscribe(async (profile) => {
+                this.accountService.getUserProfile(this.user?.userId).subscribe(async (profile) => {
                     this.utilService.hideLoadingFor(loading);
 
                     this.profile = profile;

@@ -53,7 +53,7 @@ export class CheckinInductionFormPage implements OnInit {
     async getFormDetails() {
         const loading = await this.utilService.startLoadingWithOptions();
         const entityIds = this.utilService.getRelevantEntityId(this.sharedDataService.checkInForLocation?.locationID);
-        this.apiService.getSignOffFormDetail(this.user.userId, this.inductionItem.formID, entityIds.LocationID, entityIds.ProjectID, entityIds.InventoryID).subscribe((response) => {
+        this.apiService.getSignOffFormDetail(this.user?.userId, this.inductionItem.formID, entityIds.LocationID, entityIds.ProjectID, entityIds.InventoryID).subscribe((response) => {
             this.utilService.hideLoadingFor(loading);
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
@@ -62,9 +62,9 @@ export class CheckinInductionFormPage implements OnInit {
 
     onClose() {
         if (this.sharedDataService.dedicatedMode) {
-            this.navCtrl.navigateRoot('dashboard-dm');
+            this.navCtrl.navigateRoot('dashboard-dm', {replaceUrl: true});
         } else {
-            this.navCtrl.navigateBack('/checkinout-confirm');
+            this.navCtrl.navigateBack('/checkinout-confirm', {replaceUrl: true});
         }
     }
 
@@ -84,7 +84,7 @@ export class CheckinInductionFormPage implements OnInit {
             if (this.sharedDataService.dedicatedMode) {
                 userId = this.sharedDataService.dedicatedModeUserDetail.userId;
             } else {
-                userId = this.user.userId;
+                userId = this.user?.userId;
             }
             this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
         } else {

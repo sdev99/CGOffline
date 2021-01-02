@@ -26,7 +26,7 @@ export class TopnavigationsBtnsDmComponent implements OnInit {
     }
 
     checkInOutClick() {
-        this.navController.navigateRoot('checkinout-option-dm');
+        this.navController.navigateForward('checkinout-option-dm');
     }
 
     documentsClick() {

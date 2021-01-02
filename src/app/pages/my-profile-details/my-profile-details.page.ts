@@ -37,7 +37,7 @@ export class MyProfileDetailsPage implements OnInit {
     }
 
     ngOnInit() {
-        this.accountService.getUserProfile(this.user.userId).subscribe((profile) => {
+        this.accountService.getUserProfile(this.user?.userId).subscribe((profile) => {
             this.profile = profile;
         }, error => {
         });
@@ -50,7 +50,7 @@ export class MyProfileDetailsPage implements OnInit {
     async logout() {
         const loading = await this.utilService.startLoadingWithOptions();
 
-        this.accountService.logout(this.user.userId).subscribe(() => {
+        this.accountService.logout(this.user?.userId).subscribe(() => {
             Object.keys(EnumService.LocalStorageKeys).map((LocalStorageKey) => {
                 if (
                     LocalStorageKey !== EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES &&

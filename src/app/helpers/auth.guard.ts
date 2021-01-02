@@ -3,6 +3,7 @@ import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Route
 import {Observable} from 'rxjs';
 import {AccountService} from '../services/account.service';
 import {SharedDataService} from '../services/shared-data.service';
+import {NavController} from '@ionic/angular';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,7 @@ import {SharedDataService} from '../services/shared-data.service';
 export class AuthGuard implements CanActivate {
     constructor(
         private router: Router,
+        private navController: NavController,
         private accountService: AccountService,
         public sharedDataService: SharedDataService,
     ) {
@@ -19,7 +21,14 @@ export class AuthGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
         const user = this.accountService.userValue;
-        if (user || (this.sharedDataService.dedicatedMode && this.sharedDataService.dedicatedModeLocationUse)) {
+        if (this.sharedDataService.dedicatedMode) {
+            if (this.sharedDataService.dedicatedModeLocationUse) {
+                return true;
+            } else {
+                this.navController.navigateRoot(['/choose-location'], {replaceUrl: true});
+                return false;
+            }
+        } else if (user) {
             // authorised so return true
             return true;
         }

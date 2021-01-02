@@ -28,7 +28,7 @@ export class DashboardDmPage implements OnInit {
 
 
     ngOnInit() {
-        const companyFolderName = this.dedicatedModeDeviceDetailData.companyFolderName;
+        const companyFolderName = this.dedicatedModeDeviceDetailData?.companyFolderName;
         // const companyFolderName = 'B01F4CF5-C26C-4C8F-BE94-A7C68FEDE752';
         this.apiService.getGlobalDirectories(companyFolderName).subscribe((response) => {
             if (response) {
@@ -37,6 +37,8 @@ export class DashboardDmPage implements OnInit {
             }
         }, (error) => {
 
+        });
+        this.accountService.activateDevice().subscribe(() => {
         });
     }
 

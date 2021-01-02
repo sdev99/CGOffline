@@ -49,7 +49,7 @@ export class DocumentOpenchoicePage implements OnInit {
         this.sharedDataService.signOffDocumentDetail = this.document as DocumentDetail;
 
         this.sharedDataService.signOffDetailsPostData = {
-            userId: this.user.userId,
+            userId: this.user?.userId,
             documentVersionID: this.document.documentVersionID,
             formVersionID: 0,
             latitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,

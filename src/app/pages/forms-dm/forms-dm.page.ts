@@ -38,6 +38,9 @@ export class FormsDmPage implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    ionViewWillEnter() {
         this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.Form;
         this.getDedicatedModeAvailableForms();
         this.getDedicatedModeArchiveForms();
@@ -77,6 +80,11 @@ export class FormsDmPage implements OnInit {
 
     segmentChanged(event) {
         this.listType = event;
+        if (event === EnumService.DedicatedModeFormListType.Available) {
+            this.getDedicatedModeAvailableForms();
+        } else if (event === EnumService.DedicatedModeFormListType.Archive) {
+            this.getDedicatedModeArchiveForms();
+        }
     }
 
     openForm(item: FormItem) {

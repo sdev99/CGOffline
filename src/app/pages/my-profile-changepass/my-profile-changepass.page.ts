@@ -57,7 +57,7 @@ export class MyProfileChangepassPage implements OnInit {
 
 
             this.accountService.changePassword({
-                userId: this.user.userId,
+                userId: this.user?.userId,
                 firstName: this.user.firstName,
                 oldPassword: oldpassword,
                 newPassword: password,

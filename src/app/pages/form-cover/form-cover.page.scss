@@ -8,6 +8,7 @@ ion-header {
 
     ion-label {
       margin: 0;
+      white-space: normal;
 
       h6 {
         font-family: IBM Plex Sans;
@@ -116,6 +117,7 @@ ion-content {
       font-style: normal;
       font-weight: normal;
       font-size: 12px;
+      white-space: normal;
     }
 
     &.title-item {

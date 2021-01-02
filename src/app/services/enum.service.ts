@@ -34,6 +34,11 @@ export class EnumService {
         FORMS_DM: 'forms_dedicated_mode'
     };
 
+    static CheckInLocationByOptions = {
+        QrCode: 'qr_code',
+        List: 'list'
+    };
+
     static CheckInType = {
         QrCode: 'qr_code',
         MY_NAME: 'my_name',
@@ -72,7 +77,6 @@ export class EnumService {
     };
 
     static LocalStorageKeys = {
-        IS_LOGGEDIN: 'isLoggedIn',
         USER_DATA: 'user_data',
         USER_PROFILE: 'user_profile',
         API_ACCESS_KEY: 'api_access_key',

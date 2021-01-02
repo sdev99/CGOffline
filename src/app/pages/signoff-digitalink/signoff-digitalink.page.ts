@@ -163,9 +163,9 @@ export class SignoffDigitalinkPage implements OnInit {
             this.navCtrl.navigateBack('/permits-dm');
         } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
             if (this.sharedDataService.dedicatedMode) {
-                this.navCtrl.navigateBack('/checkinout-confirm');
-            } else {
                 this.navCtrl.navigateBack('/dashboard-dm');
+            } else {
+                this.navCtrl.navigateBack('/checkinout-confirm');
             }
         } else {
             this.navCtrl.back();
@@ -227,7 +227,11 @@ export class SignoffDigitalinkPage implements OnInit {
                 if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
                     this.navCtrl.navigateForward(['/signoff-photo']);
                 } else {
-                    this.sharedDataService.submitInductionCheckInData(this.apiService);
+                    if (this.sharedDataService.checkInPostData.guestPhone) {
+                        this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
+                    } else {
+                        this.sharedDataService.submitInductionCheckInData(this.apiService);
+                    }
                 }
                 break;
 

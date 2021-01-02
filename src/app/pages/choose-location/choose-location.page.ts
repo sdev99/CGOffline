@@ -28,9 +28,13 @@ export class ChooseLocationPage implements OnInit {
     }
 
     ngOnInit() {
-        if (this.locations) {
-            this.getDeviceEntityDetails();
-        }
+
+    }
+
+    ionViewDidEnter() {
+        this.getDeviceEntityDetails();
+        this.accountService.activateDevice().subscribe(() => {
+        });
     }
 
     // getLocationItemList = () => {
@@ -48,12 +52,16 @@ export class ChooseLocationPage implements OnInit {
         if (this.sharedDataService.dedicatedModeDeviceDetailData) {
             this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe((res: Response) => {
                 if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                    this.sharedDataService.dedicatedModeDeviceDetailData = res.Result.deviceDetailData;
-                    this.sharedDataService.dedicatedModeAssignedEntities = res.Result.deviceEntityData;
-                    this.locations = res.Result.deviceEntityData;
+                    if (res.Result.deviceDetailData) {
+                        this.sharedDataService.dedicatedModeDeviceDetailData = res.Result.deviceDetailData;
+                        this.sharedDataService.dedicatedModeAssignedEntities = res.Result.deviceEntityData;
+                        this.locations = res.Result.deviceEntityData;
 
-                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(res.Result?.deviceDetailData));
-                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(res.Result?.deviceEntityData));
+                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(res.Result?.deviceDetailData));
+                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(res.Result?.deviceEntityData));
+                    } else {
+                        this.sharedDataService.dedicatedModeDeviceDeleted();
+                    }
                 }
             }, (error) => {
             });

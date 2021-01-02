@@ -77,21 +77,14 @@ export class EvacuationDmPage implements OnInit {
 
             modal.onWillDismiss().then(({data}) => {
                 if (data) {
-                    this.navController.navigateRoot('dashboard-dm');
+                    this.navController.back();
                 }
             });
         } else {
-            this.navController.navigateRoot('dashboard-dm');
+            this.navController.back();
         }
     }
 
-    onContinue() {
-        this.navController.navigateRoot('dashboard-dm');
-    }
-
-    onBack() {
-        this.navController.back();
-    }
 
     isEvacuatedCompleted() {
         return (!this.evacuationList || this.evacuationList.length === 0) && (this.evacuatedList && this.evacuatedList.length > 0);

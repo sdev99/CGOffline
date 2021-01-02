@@ -91,7 +91,11 @@ export class CheckinoutConfirmPage implements OnInit {
 
     onClose() {
         if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckIn) {
-            this.navCtrl.navigateBack('/tabs/dashboard/checkin-list');
+            if (this.sharedDataService.checkinLocationByOption === EnumService.CheckInLocationByOptions.QrCode) {
+                this.navCtrl.navigateBack('/tabs/dashboard', {replaceUrl: true});
+            } else {
+                this.navCtrl.navigateBack('/tabs/dashboard/checkin-list', {replaceUrl: true});
+            }
         } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
             this.navCtrl.navigateBack('/tabs/dashboard');
         }
@@ -102,7 +106,7 @@ export class CheckinoutConfirmPage implements OnInit {
             const loading = await this.utilService.startLoadingWithOptions();
             this.apiService.insertCheckOutDetails({
                 userCheckInDetailID: this.checkOutForCheckedInDetail.userCheckInDetailID,
-                userId: this.user.userId,
+                userId: this.user?.userId,
                 checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
                 checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
             }).subscribe((response: Response) => {

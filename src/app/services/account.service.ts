@@ -81,6 +81,11 @@ export class AccountService {
         }));
     }
 
+    activateDevice() {
+        const deviceDetailId = this.sharedDataService.dedicatedModeDeviceDetailData.deviceID;
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ActivateDevice}?id=${deviceDetailId}`, {});
+    }
+
     getAccessKey() {
         return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccessKey}`).pipe(map((data: Response) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {

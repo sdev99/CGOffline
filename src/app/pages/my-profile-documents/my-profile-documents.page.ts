@@ -53,7 +53,7 @@ export class MyProfileDocumentsPage implements OnInit {
     }
 
     getMySignedDocuments = async (callBack, resetList = false) => {
-        this.apiService.getMySignedDocuments(this.user.userId).subscribe((response: Response) => {
+        this.apiService.getMySignedDocuments(this.user?.userId).subscribe((response: Response) => {
             let isMoreData = false;
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 if (resetList) {

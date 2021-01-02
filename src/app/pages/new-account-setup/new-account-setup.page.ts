@@ -79,7 +79,7 @@ export class NewAccountSetupPage implements OnInit {
                     confirmPassword
                 }).subscribe((response) => {
                     this.utilService.hideLoadingFor(loading);
-                    this.navCtrl.navigateRoot('/tabs/dashboard');
+                    this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
                 }, (error) => {
                     this.utilService.hideLoadingFor(loading);
                 });

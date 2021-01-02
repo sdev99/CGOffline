@@ -33,24 +33,26 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        this.apiService.getGlobalDirectories(this.user.companyFolderName).subscribe((response) => {
-            if (response) {
-                this.sharedDataService.globalDirectories = response as GlobalDirectory;
-                localStorage.setItem(EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES, JSON.stringify(response));
-            }
-        }, (error) => {
+        if (!this.sharedDataService.dedicatedMode) {
+            this.apiService.getGlobalDirectories(this.user?.companyFolderName).subscribe((response) => {
+                if (response) {
+                    this.sharedDataService.globalDirectories = response as GlobalDirectory;
+                    localStorage.setItem(EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES, JSON.stringify(response));
+                }
+            }, (error) => {
 
-        });
+            });
 
-        const loading = await this.utilService.startLoadingWithOptions();
+            const loading = await this.utilService.startLoadingWithOptions();
 
-        this.getActivityList(() => {
-            this.utilService.hideLoadingFor(loading);
-        });
+            this.getActivityList(() => {
+                this.utilService.hideLoadingFor(loading);
+            });
 
-        this.observablesService.getObservable(EnumService.ObserverKeys.ACTIVITY_COMPLETED).subscribe(() => {
-            this.getActivityList();
-        });
+            this.observablesService.getObservable(EnumService.ObserverKeys.ACTIVITY_COMPLETED).subscribe(() => {
+                this.getActivityList();
+            });
+        }
     }
 
     ngOnDestroy(): void {
@@ -59,7 +61,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
 
     getActivityList = (callBack = null) => {
-        this.apiService.getActivityList(this.user.userId).subscribe((response: Response) => {
+        this.apiService.getActivityList(this.user?.userId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const result = response.Result;
                 if (result) {

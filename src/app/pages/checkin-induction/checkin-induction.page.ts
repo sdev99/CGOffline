@@ -59,7 +59,7 @@ export class CheckinInductionPage implements OnInit {
             if (this.sharedDataService.dedicatedMode) {
                 userId = this.sharedDataService.dedicatedModeUserDetail.userId;
             } else {
-                userId = this.user.userId;
+                userId = this.user?.userId;
             }
             this.sharedDataService.inductionNavigationProcess(userId, -1);
         }

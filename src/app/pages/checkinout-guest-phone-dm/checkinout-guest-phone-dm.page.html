@@ -1,17 +1,20 @@
 <ion-header>
-    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In/Out as Guest"
+    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+                         modalSubTitle="Check In/Out as Guest"
                          (closeModal)="onClose()"></app-modal-header-dm>
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 
 <ion-content>
-    <app-back-continue-toolbar [disableRightBtn]="!phoneNumber" (back)="onBack()"
+    <app-back-continue-toolbar [disableRightBtn]="!formGroup.valid" (back)="onBack()"
                                (continue)="onContinue()"></app-back-continue-toolbar>
 
-    <ion-item lines="none">
-        <ion-label position="stacked">Enter your phone number</ion-label>
-        <ion-input inputmode="numeric" type="text" appPhoneInput [(ngModel)]="phoneNumber"></ion-input>
-    </ion-item>
+    <Form [formGroup]="formGroup">
 
+        <ion-item lines="none">
+            <ion-label position="stacked">Enter your phone number</ion-label>
+            <ion-input inputmode="numeric" type="text" appPhoneInput formControlName="phoneNumber"></ion-input>
+        </ion-item>
+    </Form>
 
 </ion-content>

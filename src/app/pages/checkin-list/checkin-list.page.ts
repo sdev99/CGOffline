@@ -73,7 +73,7 @@ export class CheckinListPage implements OnInit {
     };
 
     onClose() {
-        this.navCtrl.back();
+        this.navCtrl.navigateBack('/tabs/dashboard', {replaceUrl: true});
     }
 
     async presentModal() {
@@ -98,8 +98,9 @@ export class CheckinListPage implements OnInit {
     }
 
     openLocation(location: LocationItem) {
+        this.sharedDataService.checkinLocationByOption = EnumService.CheckInLocationByOptions.List;
         this.sharedDataService.checkInForLocation = location;
-        this.sharedDataService.getCheckinDetails(this.user.userId, this.apiService);
+        this.sharedDataService.getCheckinDetails(this.user?.userId, this.apiService);
     }
 
 }

@@ -1,17 +1,21 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
-  selector: 'app-dashboard-button',
-  templateUrl: './dashboard-button.component.html',
-  styleUrls: ['./dashboard-button.component.scss'],
+    selector: 'app-dashboard-button',
+    templateUrl: './dashboard-button.component.html',
+    styleUrls: ['./dashboard-button.component.scss'],
 })
 export class DashboardButtonComponent implements OnInit {
-  @Input() title = '';
-  @Input() icon = '';
-  @Output() click = new EventEmitter<void>();
+    @Input() title = '';
+    @Input() icon = '';
+    @Input() img = '';
+    @Output() click = new EventEmitter<void>();
 
-  constructor() { }
+    constructor() {
 
-  ngOnInit() {}
+    }
+
+    ngOnInit() {
+    }
 
 }

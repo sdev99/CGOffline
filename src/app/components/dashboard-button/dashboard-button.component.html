@@ -1,6 +1,7 @@
-<ion-button  fill="clear" (click)="click.emit()">
-  <div class="inner">
-    <ion-icon [src]="icon"></ion-icon>
-    <ion-label>{{title}}</ion-label>
-  </div>
+<ion-button fill="clear" (click)="click.emit()">
+    <div class="inner">
+        <ion-icon *ngIf="icon" [src]="icon"></ion-icon>
+        <ion-img *ngIf="img" [src]="img"></ion-img>
+        <ion-label>{{title}}</ion-label>
+    </div>
 </ion-button>

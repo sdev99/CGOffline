@@ -50,18 +50,20 @@ export class PhotoService {
             callBack(data.data);
             subscribe.unsubscribe();
         });
+
         const capturedPhoto = await Plugins.Camera.getPhoto({
             resultType: CameraResultType.DataUrl,
             source: CameraSource.Camera,
             quality: 70,
             width: 500,
+            allowEditing: true,
             height: 500,
+            preserveAspectRatio: true,
             direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear
         });
         try {
             callBack(capturedPhoto);
         } catch (e) {
-
         }
     }
 

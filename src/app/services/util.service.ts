@@ -67,8 +67,10 @@ export class UtilService {
         return names.join(' ');
     };
 
-    static FileIcon(type) {
+    static FileIcon(fileNameOrExtension = '') {
         let iconName = '';
+        const type = fileNameOrExtension?.split('.').pop();
+
         switch (type) {
             case 'document':
                 iconName = 'attachment1';
@@ -89,8 +91,7 @@ export class UtilService {
                 iconName = 'attachment6';
                 break;
             default:
-                iconName = 'attachment1';
-
+                iconName = 'attachment2';
         }
         return './assets/icon/' + iconName + '.svg';
     }
@@ -632,9 +633,11 @@ export class UtilService {
     // Extract id from string (eg. L|10)
     getRelevantEntityId = (entityId) => {
         const response = {
-            InventoryID: 0,
-            ProjectID: 0,
-            LocationID: 0
+            InventoryID: null,
+            ProjectID: null,
+            LocationID: null,
+            DocumentID: null,
+            FormID: null,
         };
         const entityIdSplits = entityId.split('|');
         if (entityIdSplits && entityIdSplits.length >= 2) {
@@ -642,6 +645,12 @@ export class UtilService {
                 response.InventoryID = parseInt(entityIdSplits[1], 0);
             } else if (entityIdSplits[0] === 'P') {
                 response.ProjectID = parseInt(entityIdSplits[1], 0);
+            } else if (entityIdSplits[0] === 'L') {
+                response.LocationID = parseInt(entityIdSplits[1], 0);
+            } else if (entityIdSplits[0] === 'F') {
+                response.FormID = parseInt(entityIdSplits[1], 0);
+            } else if (entityIdSplits[0] === 'D') {
+                response.DocumentID = parseInt(entityIdSplits[1], 0);
             } else {
                 response.LocationID = parseInt(entityIdSplits[1], 0);
             }

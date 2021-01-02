@@ -33,7 +33,7 @@ export class MyProfilePage implements OnInit {
     }
 
     ngOnInit() {
-        this.accountService.getUserProfile(this.user.userId).subscribe((profile) => {
+        this.accountService.getUserProfile(this.user?.userId).subscribe((profile) => {
             this.profile = profile;
         }, error => {
         });

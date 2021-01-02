@@ -1,17 +1,16 @@
+<ion-header mode="ios">
+    <ion-toolbar mode="ios" class="model-header-toolbar">
+        <ion-title size="large">{{'Check In'}}</ion-title>
+        <ion-buttons slot="end">
+            <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
+        </ion-buttons>
+    </ion-toolbar>
+
+    <ion-searchbar (click)="presentModal()" placeholder="Search entities" mode="md"
+                   class="search-field"></ion-searchbar>
+</ion-header>
+
 <ion-content>
-    <ion-header mode="ios">
-        <ion-toolbar mode="ios" class="model-header-toolbar">
-            <ion-title size="large">{{'Check In'}}</ion-title>
-            <ion-buttons slot="end">
-                <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
-            </ion-buttons>
-        </ion-toolbar>
-
-        <ion-searchbar (click)="presentModal()" placeholder="Search entities" mode="md"
-                       class="search-field"></ion-searchbar>
-    </ion-header>
-
-
     <ion-list inset="false" lines="none">
         <ion-item *ngFor="let location of locations" (click)="openLocation(location)">
             <ion-label>{{location.locationName}}</ion-label>

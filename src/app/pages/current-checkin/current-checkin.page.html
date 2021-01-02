@@ -15,15 +15,15 @@
     </div>
 
     <ion-list
-            *ngIf="(availableWorkPermits&&availableWorkPermits.length>0) || (availableDocuments&&availableDocuments.length>0) || (availableForms&&availableForms.length>0)"
+            *ngIf="(availableWorkPermits&&availableWorkPermits?.length>0) || (availableDocuments&&availableDocuments?.length>0) || (availableForms&&availableForms?.length>0)"
             class="activity-list" lines="full">
         <ion-list-header lines="full">
             <ion-label>Available Files</ion-label>
         </ion-list-header>
 
-        <ion-item *ngIf="availableWorkPermits && availableWorkPermits.length>0" (click)="openWorkPermit()">
+        <ion-item *ngIf="availableWorkPermits && availableWorkPermits?.length>0" (click)="openWorkPermit()">
             <ion-icon slot="start" [src]="UtilService.FileIcon('folder')"></ion-icon>
-            <ion-label>Work Permits Forms</ion-label>
+            <ion-label>Work Permit Forms</ion-label>
         </ion-item>
 
         <ng-container *ngIf="availableForms">
@@ -42,7 +42,7 @@
     </ion-list>
 
     <app-empty-message
-            *ngIf="isCheckedIn && ((availableForms.length===0) && (availableDocuments.length===0) && (availableWorkPermits.length===0))"
+            *ngIf="isCheckedIn && ((availableForms?.length===0) && (availableDocuments?.length===0) && (availableWorkPermits?.length===0))"
             icon="./assets/icon/empty-files.svg"
             message="There are no files here."></app-empty-message>
 

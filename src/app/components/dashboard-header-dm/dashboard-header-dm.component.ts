@@ -55,6 +55,7 @@ export class DashboardHeaderDmComponent implements OnInit {
         modal.onWillDismiss().then(({data}) => {
             if (data) {
                 this.sharedDataService.resetAllSharedVariable();
+                localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE);
                 this.navController.navigateRoot('choose-location');
             }
         });

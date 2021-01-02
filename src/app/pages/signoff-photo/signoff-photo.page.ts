@@ -45,9 +45,9 @@ export class SignoffPhotoPage implements OnInit {
     onClose() {
         if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
             if (this.sharedDataService.dedicatedMode) {
-                this.navCtrl.navigateBack('/checkinout-confirm');
-            } else {
                 this.navCtrl.navigateBack('/dashboard-dm');
+            } else {
+                this.navCtrl.navigateBack('/checkinout-confirm');
             }
         } else {
             this.navCtrl.back();
@@ -63,7 +63,11 @@ export class SignoffPhotoPage implements OnInit {
                     switch (this.type) {
                         case EnumService.SignOffType.INDUCTION:
                             this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
-                            this.sharedDataService.submitInductionCheckInData(this.apiService);
+                            if (this.sharedDataService.checkInPostData.guestPhone) {
+                                this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
+                            } else {
+                                this.sharedDataService.submitInductionCheckInData(this.apiService);
+                            }
                             break;
 
                         case EnumService.SignOffType.DOCUMENT_DM:

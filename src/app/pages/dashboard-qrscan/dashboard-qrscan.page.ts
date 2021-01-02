@@ -12,6 +12,10 @@ import {PermissionType, Plugins} from '@capacitor/core';
 import {LocationItem} from '../../_models/locationItem';
 import {AccountService} from '../../services/account.service';
 import {UserDetail} from '../../_models/userDetail';
+import {FormItem} from '../../_models/formItem';
+import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
+import {SignOffFormDetail} from '../../_models/signOffFormDetail';
+import {DocumentDetail} from '../../_models/documentDetail';
 
 const {Camera, Permissions} = Plugins;
 
@@ -56,7 +60,25 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ngOnInit() {
+        // setTimeout(() => {
+            // check document qrcode
+            // this.checkQrCode('0f75e6e3-8215-4186-92bf-ca0971b337b7');
+            // check form qrcode
+            // this.checkQrCode('e37f99b2-cda6-4b19-b3e6-ba37a41ffd60');
+            // this.checkQrCode('6dadd75e-cb62-484d-a9be-deaab282761d');
+            //check for location code
+            // this.checkQrCode('e165d1a3-a0a9-4b95-a543-8049b440c56d');
 
+            // this.openNextScreen({
+            //     locationID: 'F|122',
+            //     locationName: ''
+            // });
+
+            // this.openNextScreen({
+            //     locationID: 'D|125',
+            //     locationName: ''
+            // });
+        // }, 5000);
     }
 
     ionViewWillLeave() {
@@ -192,12 +214,70 @@ export class DashboardQrscanPage implements OnInit {
                 default:
             }
         } else {
-            this.sharedDataService.checkInForLocation = detail;
-            this.sharedDataService.getCheckinDetails(this.user.userId, this.apiService);
+            const locationItem = detail as LocationItem;
+            const getEntityIds = this.utilService.getRelevantEntityId(locationItem.locationID);
+            // if user scan form or document qr code
+            if (getEntityIds.FormID > 0 || getEntityIds.DocumentID > 0) {
+                // if checked in to location already
+                if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces.length > 0) {
+                    if (!this.sharedDataService.currentSelectedCheckinPlace) {
+                        this.sharedDataService.currentSelectedCheckinPlace = this.sharedDataService.checkedInPlaces[0];
+                    }
+                    if (getEntityIds.FormID > 0) {
+                        this.openForm(getEntityIds.FormID);
+                    } else if (getEntityIds.DocumentID > 0) {
+                        this.openDocument(getEntityIds.DocumentID);
+                    }
+                } else {
+                    this.utilService.showAlert('Please check-in first', '', () => {
+                        this.scan();
+                    });
+                }
+            } else {
+                this.sharedDataService.checkInForLocation = detail;
+                this.sharedDataService.checkinLocationByOption = EnumService.CheckInLocationByOptions.QrCode;
+                this.sharedDataService.getCheckinDetails(this.user?.userId, this.apiService);
+            }
         }
     };
 
     onClose() {
         this.navCtrl.back();
+    }
+
+    async openDocument(documentID) {
+        const loading = await this.utilService.startLoadingWithOptions();
+        this.apiService.getActivitySignOffDocumentDetail(documentID).subscribe((response: Response) => {
+            this.utilService.hideLoadingFor(loading);
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                const signOffDocumentDetail = response.Result as DocumentDetail;
+                this.navCtrl.navigateForward(['/document-openchoice'], {
+                    queryParams: {document: JSON.stringify(signOffDocumentDetail)}
+                });
+            }
+        }, (error) => {
+            this.utilService.showAlert(error.message || error, 'Not found!', () => {
+                this.scan();
+            });
+            this.utilService.hideLoadingFor(loading);
+        });
+    }
+
+    async openForm(formID) {
+        const loading = await this.utilService.startLoadingWithOptions();
+        const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
+        this.apiService.getSignOffFormDetail(this.user?.userId, formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
+            this.utilService.hideLoadingFor(loading);
+            if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckin;
+                this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
+                this.navCtrl.navigateForward(['/form-cover']);
+            }
+        }, (error) => {
+            this.utilService.showAlert(error.message || error, 'Not found!', () => {
+                this.scan();
+            });
+            this.utilService.hideLoadingFor(loading);
+        });
     }
 }

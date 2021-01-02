@@ -50,6 +50,9 @@ export class SharedDataService {
 
     // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
+    // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222'; // For test dedicated mode assign one location
+    // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+
     pushToken = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     isTablet = false;
     dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
@@ -93,6 +96,7 @@ export class SharedDataService {
     inductionContentItemIndex = 0;
 
     // Store location data for checkinout
+    checkinLocationByOption; // EnumService.CheckInLocationByOptions
     checkInForLocation: LocationItem;
     checkOutForCheckedInDetail: CheckedInDetailItem;
 
@@ -162,6 +166,16 @@ export class SharedDataService {
 
     getAnnotationImage() {
         return this.annotationImage;
+    }
+
+    dedicatedModeDeviceDeleted() {
+        this.dedicatedModeDeviceDetailData = null;
+        this.dedicatedModeAssignedEntities = null;
+        this.dedicatedMode = false;
+        localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
+        localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL);
+        localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES);
+        this.navCtrl.navigateRoot('/login', {replaceUrl: true});
     }
 
     resetAllSharedVariable() {
@@ -244,7 +258,8 @@ export class SharedDataService {
                         subtitle: ifAlreadyCheckedinPlace.entityName,
                         buttonTitle: 'Check Out Now',
                         locationCheckType: EnumService.ConfirmForCheckType.CheckOut
-                    }
+                    },
+                    replaceUrl: true
                 });
             } else {
                 const loading = await this.utilService.startLoadingWithOptions();
@@ -273,7 +288,8 @@ export class SharedDataService {
                                 }),
                                 nextPagePath: '/checkin-induction',
                                 locationCheckType: EnumService.ConfirmForCheckType.CheckIn
-                            }
+                            },
+                            replaceUrl: true
                         });
                     }
                 }, (error: any) => {
@@ -287,7 +303,8 @@ export class SharedDataService {
                                 errorTitle: 'Simultanious Check-In Not Allowed.',
                                 errorMessage: 'You are already checked-in to another place.',
                                 nextPage: '/tabs/dashboard'
-                            }
+                            },
+                            replaceUrl: true
                         });
                     } else {
                         this.navCtrl.navigateForward(['/checkin-fail'], {
@@ -296,7 +313,8 @@ export class SharedDataService {
                                 errorTitle: 'No Qualification',
                                 errorMessage: 'You do not have the required qualifications.',
                                 nextPage: '/tabs/dashboard'
-                            }
+                            },
+                            replaceUrl: true
                         });
                     }
                 });
@@ -342,7 +360,8 @@ export class SharedDataService {
                             errorTitle: exception.ResponseException.ValidationErrors[0].Field,
                             errorMessage: exception.ResponseException.ValidationErrors[0].Message,
                             nextPage: '/dashboard-dm'
-                        }
+                        },
+                        replaceUrl: true
                     });
                 } else {
                     this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
@@ -351,7 +370,8 @@ export class SharedDataService {
                             errorTitle: 'NOT QUALIFIED',
                             errorMessage: 'You do not have the required qualifications.',
                             nextPage: '/dashboard-dm'
-                        }
+                        },
+                        replaceUrl: true
                     });
                 }
 
@@ -406,7 +426,7 @@ export class SharedDataService {
     processCheckinDetails(apiService, isGuest) {
         if (this.checkInDetail?.checkInEntityDetail?.processInduction && this.checkInDetail?.checkInInductionItems?.length > 0) {
             this.navCtrl.navigateForward(['checkin-induction']);
-        } else if (this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto) {
+        } else if (this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto || this.checkInDetail?.checkInEntityDetail?.checkInPersonalPhoto) {
             this.signOffFor = EnumService.SignOffType.INDUCTION;
             this.navCtrl.navigateForward(['signoff-photo']);
         } else {
@@ -1038,7 +1058,8 @@ export class SharedDataService {
                         message: 'You have now checked-in',
                         nextPage: nextScreen,
                         actionBtnTitle: 'Continue'
-                    }
+                    },
+                    replaceUrl: true
                 });
             }
         }, (error) => {
@@ -1053,7 +1074,8 @@ export class SharedDataService {
                         errorTitle: exception.ResponseException.ValidationErrors[0].Field,
                         errorMessage: exception.ResponseException.ValidationErrors[0].Message,
                         nextPage: nextScreen,
-                    }
+                    },
+                    replaceUrl: true
                 });
             } else {
                 this.navCtrl.navigateForward([failScreen], {
@@ -1062,7 +1084,8 @@ export class SharedDataService {
                         errorTitle: 'NOT QUALIFIED',
                         errorMessage: 'You do not have the required qualifications.',
                         nextPage: nextScreen,
-                    }
+                    },
+                    replaceUrl: true
                 });
             }
         });
@@ -1081,7 +1104,8 @@ export class SharedDataService {
                         message: 'You have now checked-in',
                         nextPage: '/dashboard-dm',
                         actionBtnTitle: 'Continue'
-                    }
+                    },
+                    replaceUrl: true
                 });
             }
         }, (error) => {
@@ -1094,7 +1118,8 @@ export class SharedDataService {
                         errorTitle: exception.ResponseException.ValidationErrors[0].Field,
                         errorMessage: exception.ResponseException.ValidationErrors[0].Message,
                         nextPage: '/dashboard-dm'
-                    }
+                    },
+                    replaceUrl: true
                 });
             } else {
                 this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
@@ -1103,7 +1128,8 @@ export class SharedDataService {
                         errorTitle: 'NOT QUALIFIED',
                         errorMessage: 'You do not have the required qualifications.',
                         nextPage: '/dashboard-dm'
-                    }
+                    },
+                    replaceUrl: true
                 });
             }
         });
@@ -1162,7 +1188,8 @@ export class SharedDataService {
                                 description: 'Your work permit is active',
                                 nextPage,
                                 pageTitle: 'Work Permit'
-                            }
+                            },
+                            replaceUrl: true
                         });
                     } else {
                         this.navCtrl.navigateForward([checkInFailPage], {
@@ -1172,7 +1199,8 @@ export class SharedDataService {
                                 errorMessage: 'You were found not eligible for a work permit.',
                                 nextPage,
                                 pageTitle: 'Work Permit'
-                            }
+                            },
+                            replaceUrl: true
                         });
                     }
                 } else {
@@ -1193,7 +1221,8 @@ export class SharedDataService {
                             errorMessage: 'You were found not eligible for a work permit.',
                             nextPage,
                             pageTitle: 'Work Permit'
-                        }
+                        },
+                        replaceUrl: true
                     });
                 } else {
                     this.navCtrl.navigateForward([checkInFailPage], {
@@ -1203,7 +1232,8 @@ export class SharedDataService {
                             errorMessage: response.Message,
                             nextPage,
                             pageTitle: 'Sign-Off'
-                        }
+                        },
+                        replaceUrl: true
                     });
                 }
 
@@ -1218,7 +1248,8 @@ export class SharedDataService {
                     errorMessage: error.message || error,
                     nextPage,
                     pageTitle: 'Sign-Off'
-                }
+                },
+                replaceUrl: true
             });
         });
     }
@@ -1247,7 +1278,8 @@ export class SharedDataService {
                                 this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType, this.dedicatedMode), {
                                     queryParams: {
                                         inductionContentItemIndex: this.inductionContentItemIndex
-                                    }
+                                    },
+                                    replaceUrl: true
                                 });
                             }
                         }, error => {
@@ -1269,20 +1301,21 @@ export class SharedDataService {
                                 this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType, this.dedicatedMode), {
                                     queryParams: {
                                         inductionContentItemIndex: this.inductionContentItemIndex
-                                    }
+                                    },
+                                    replaceUrl: true
                                 });
                             }
                         }, error => {
                             this.utilService.hideLoading();
                         });
                     }
-
                 } else {
                     this.inductionContentItemIndex = inductionContentItemIndex + 1;
                     this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType, this.dedicatedMode), {
                         queryParams: {
                             inductionContentItemIndex: this.inductionContentItemIndex
-                        }
+                        },
+                        replaceUrl: true
                     });
                 }
             } else if (this.checkInDetail.checkInInduction.isDigitalSignOff || this.checkInDetail.checkInInduction.isSignatureSignOff) {

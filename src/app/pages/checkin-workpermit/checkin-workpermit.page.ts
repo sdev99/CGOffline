@@ -105,7 +105,7 @@ export class CheckinWorkpermitPage implements OnInit {
             });
         } else {
             const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-            this.apiService.getSignOffFormDetail(this.user.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
+            this.apiService.getSignOffFormDetail(this.user?.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;

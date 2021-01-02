@@ -26,6 +26,7 @@ export class LoginPage implements OnInit {
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
     ) {
+
         this.loginForm = new FormGroup({
             email: new FormControl('', Validators.compose([
                 Validators.required,
@@ -39,8 +40,8 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit() {
-        if (localStorage.getItem(EnumService.LocalStorageKeys.IS_LOGGEDIN) === '1') {
-            this.navCtrl.navigateRoot('/tabs/dashboard');
+        if (this.accountService.userValue?.userId) {
+            this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
         }
     }
 
@@ -57,14 +58,7 @@ export class LoginPage implements OnInit {
             this.accountService.login(email, password)
                 .subscribe((data) => {
                     this.utilService.hideLoadingFor(loading);
-
-                    if (password === 'newaccount') {
-                        this.navCtrl.navigateRoot('/new-account-setup');
-                    } else if (password === 'wronglogin') {
-                        this.errorMessage = 'Wrong username or password';
-                    } else {
-                        this.navCtrl.navigateRoot('/tabs/dashboard');
-                    }
+                    this.navCtrl.navigateRoot('/tabs/dashboard');
                 }, ({message}) => {
                     this.utilService.hideLoadingFor(loading);
 

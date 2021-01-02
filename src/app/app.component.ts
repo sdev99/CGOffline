@@ -153,7 +153,7 @@ export class AppComponent {
                     this.sharedDataService.dedicatedModeAssignedEntities = data.Result?.deviceEntityData;
                     if (this.sharedDataService.dedicatedModeAssignedEntities && this.sharedDataService.dedicatedModeAssignedEntities.length === 1) {
                         this.sharedDataService.dedicatedModeLocationUse = this.sharedDataService.dedicatedModeAssignedEntities[0];
-                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify( this.sharedDataService.dedicatedModeAssignedEntities[0]));
+                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify(this.sharedDataService.dedicatedModeAssignedEntities[0]));
                     }
 
                     this.configureAppForDedicatedMode();
@@ -163,44 +163,41 @@ export class AppComponent {
                     }, 500);
                 } else {
                     this.utilService.hideLoadingFor(loading);
-                    localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
-                    this.sharedDataService.dedicatedMode = false;
+                    this.sharedDataService.dedicatedModeDeviceDeleted();
                     this.configureAppForPersonalMode();
                 }
             } else {
                 this.utilService.hideLoadingFor(loading);
-
                 localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
-                this.sharedDataService.dedicatedMode = false;
                 this.configureAppForPersonalMode();
             }
 
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
-
             localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
-            this.sharedDataService.dedicatedMode = false;
             this.configureAppForPersonalMode();
         });
     };
 
     configureAppForDedicatedMode = async () => {
         try {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            if (this.platform.is('ios')) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+            } else {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            }
         } catch (e) {
 
         }
 
         if (this.sharedDataService.dedicatedModeLocationUse) {
-            this.navController.navigateRoot('dashboard-dm');
+            this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
         } else {
             this.navController.navigateRoot('choose-location');
         }
-
     };
 
     configureAppForPersonalMode = async () => {
-
         try {
             this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
         } catch (e) {
@@ -208,7 +205,6 @@ export class AppComponent {
         }
 
         try {
-
             if (Capacitor.isNative) {
                 const notificationPermission = await Permissions.query({
                     name: PermissionType.Notifications

@@ -49,9 +49,9 @@ export class CheckinInductionVaPage implements OnInit {
 
     onClose() {
         if (this.sharedDataService.dedicatedMode) {
-            this.navCtrl.navigateRoot('dashboard-dm');
+            this.navCtrl.navigateRoot('dashboard-dm', {replaceUrl: true});
         } else {
-            this.navCtrl.navigateBack('/checkinout-confirm');
+            this.navCtrl.navigateBack('/checkinout-confirm', {replaceUrl: true});
         }
     }
 
@@ -60,7 +60,7 @@ export class CheckinInductionVaPage implements OnInit {
         if (this.sharedDataService.dedicatedMode) {
             userId = this.sharedDataService.dedicatedModeUserDetail.userId;
         } else {
-            userId = this.user.userId;
+            userId = this.user?.userId;
         }
         this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
     }

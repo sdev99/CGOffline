@@ -73,7 +73,7 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     getUserCurrentCheckinDetails = () => {
-        this.apiService.getUserCurrentCheckingDetails(this.user.userId).subscribe((response: Response) => {
+        this.apiService.getUserCurrentCheckingDetails(this.user?.userId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const checkedInPlaces = response.Result;
                 this.sharedDataService.checkedInPlaces = checkedInPlaces;

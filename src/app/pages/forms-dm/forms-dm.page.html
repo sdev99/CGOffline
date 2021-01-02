@@ -26,7 +26,7 @@
             <div tappable *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle'"
                  (click)="openArchivedForm(item)">
                 <ion-item tappable>
-                    <ion-icon slot="start" [src]="UtilService.FileIcon('document')"></ion-icon>
+                    <ion-icon slot="start" [src]="UtilService.FileIcon('pdf')"></ion-icon>
                     <ion-label class="text-1">{{item.documentTitle}}</ion-label>
                     <ion-label class="text-2">
                         Signed by &nbsp;<span class="text-3">{{item.signedByName}}</span>

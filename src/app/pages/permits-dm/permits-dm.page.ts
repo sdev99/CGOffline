@@ -38,8 +38,10 @@ export class PermitsDmPage implements OnInit {
     }
 
     ngOnInit() {
-        this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.WorkPermit;
+    }
 
+    ionViewDidEnter() {
+        this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.WorkPermit;
         this.getDedicatedModeLiveWorkPermits();
         this.getDedicatedModeArchiveWorkPermits();
     }
@@ -78,6 +80,11 @@ export class PermitsDmPage implements OnInit {
 
     segmentChanged(event) {
         this.listType = event;
+        if (event === EnumService.DedicatedModePermitListType.Live) {
+            this.getDedicatedModeLiveWorkPermits();
+        } else if (event === EnumService.DedicatedModePermitListType.Archive) {
+            this.getDedicatedModeArchiveWorkPermits();
+        }
     }
 
     openLiveWorkPermit(item: WorkPermitDetail) {

@@ -440,7 +440,8 @@ export class ApiService {
      * @param companyID we will get this from GetDeviceEntityDetails API.
      */
     getDedicatedModeArchiveDocuments(companyID) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveDocuments}?CompanyID=${companyID}`);
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
     }
 
     /**
@@ -457,7 +458,8 @@ export class ApiService {
      * @param companyID we will get this from GetDeviceEntityDetails API.
      */
     getDedicatedModeArchiveForms(companyID) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveForms}?CompanyID=${companyID}`);
+        const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`);
     }
 
     /**

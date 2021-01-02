@@ -2,27 +2,32 @@
     <div class="toolbar-container">
         <ion-buttons slot="start">
             <ion-button [ngClass]="{active:activeBtn==='checkinout'}" (click)="checkInOutClick()">
-                <ion-icon slot="start" src="./assets/icon/checkinout.svg"></ion-icon>
+                <ion-img *ngIf="activeBtn === 'checkinout'" slot="start" src="./assets/icon/checkinout-active.png"></ion-img>
+                <ion-img *ngIf="activeBtn !=='checkinout'" slot="start" src="./assets/icon/checkinout-inactive.png"></ion-img>
                 Check In/Out
             </ion-button>
 
             <ion-button [ngClass]="{active:activeBtn==='document'}" (click)="documentsClick()">
-                <ion-icon slot="start" src="./assets/icon/document.svg"></ion-icon>
+                <ion-img *ngIf="activeBtn === 'document'" slot="start" src="./assets/icon/document-active.png"></ion-img>
+                <ion-img *ngIf="activeBtn !=='document'" slot="start" src="./assets/icon/document-inactive.png"></ion-img>
                 Documents
             </ion-button>
 
             <ion-button [ngClass]="{active:activeBtn==='form'}" (click)="formsClick()">
-                <ion-icon slot="start" src="./assets/icon/form.svg"></ion-icon>
+                <ion-img *ngIf="activeBtn === 'form'" slot="start" src="./assets/icon/form-active.png"></ion-img>
+                <ion-img *ngIf="activeBtn !=='form'" slot="start" src="./assets/icon/form-inactive.png"></ion-img>
                 Forms
             </ion-button>
 
             <ion-button [ngClass]="{active:activeBtn==='permit'}" (click)="permitsClick()">
-                <ion-icon slot="start" src="./assets/icon/permits.svg"></ion-icon>
+                <ion-img *ngIf="activeBtn === 'permit'" slot="start" src="./assets/icon/permit-active.png"></ion-img>
+                <ion-img *ngIf="activeBtn !=='permit'" slot="start" src="./assets/icon/permit-inactive.png"></ion-img>
                 Live Permits
             </ion-button>
 
             <ion-button [ngClass]="{active:activeBtn==='evacuation'}" (click)="evacuationClick()">
-                <ion-icon slot="start" src="./assets/icon/evacuation.svg"></ion-icon>
+                <ion-img *ngIf="activeBtn === 'evacuation'" slot="start" src="./assets/icon/evacuation-active.png"></ion-img>
+                <ion-img *ngIf="activeBtn !=='evacuation'" slot="start" src="./assets/icon/evacuation-inactive.png"></ion-img>
                 Evacuation
             </ion-button>
         </ion-buttons>

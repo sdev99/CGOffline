@@ -2,6 +2,7 @@ ion-toolbar {
   --background: #F6F8FA;
   --border-color: transparent;
   --border-width: 0;
+  padding-top: 0 !important;
 
   .toolbar-container {
     padding-top: var(--padding-top);
@@ -35,6 +36,12 @@ ion-toolbar {
 
       ion-icon {
         color: #575568;
+      }
+
+      ion-img {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
       }
 
       &.active {

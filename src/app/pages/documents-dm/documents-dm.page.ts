@@ -38,6 +38,10 @@ export class DocumentsDmPage implements OnInit {
     }
 
     ngOnInit() {
+
+    }
+
+    ionViewWillEnter() {
         this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.Document;
         this.getDedicatedModeAvailableDocuments();
         this.getDedicatedModeArchiveDocuments();
@@ -72,6 +76,11 @@ export class DocumentsDmPage implements OnInit {
 
     segmentChanged(event) {
         this.listType = event;
+        if (event === EnumService.DedicatedModeDocumentListType.Available) {
+            this.getDedicatedModeAvailableDocuments();
+        } else if (event === EnumService.DedicatedModeDocumentListType.Archive) {
+            this.getDedicatedModeArchiveDocuments();
+        }
     }
 
     searchbarShowHide(visible) {

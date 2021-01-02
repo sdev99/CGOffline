@@ -64,7 +64,7 @@ export class PermitsGenerateDmPage implements OnInit {
     }
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm');
+        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
     }
 
     onBack() {

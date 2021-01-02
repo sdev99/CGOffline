@@ -17,8 +17,8 @@
                       *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
                       (click)="openAvailableDocument(item)">
                 <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>
-                <ion-label>{{item.documentTitle}}</ion-label>
-                <ion-label color="medium"></ion-label>
+                <ion-text class="col-title text-style-1">{{item.documentTitle}}</ion-text>
+                <ion-text class="col-date text-style-2">{{item.formattedCreatedDate}}</ion-text>
             </ion-item>
         </ng-container>
 
@@ -26,16 +26,16 @@
             <div tappable *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
                  (click)="openArchivedDocument(item)">
                 <ion-item tappable>
-                    <ion-icon slot="start" [src]="UtilService.FileIcon('document')"></ion-icon>
-                    <!--                    <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>-->
-                    <ion-label class="text-1">{{item.documentTitle}}</ion-label>
-                    <ion-label class="text-2">
-                        Signed by &nbsp;<span class="text-3">{{item.signedByName}}</span>
-                    </ion-label>
+<!--                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.documentFileName)"></ion-icon>-->
+                    <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>
+                    <ion-text class="col-title text-style-1">{{item.documentTitle}}</ion-text>
+                    <ion-text class="col-name text-style-2">
+                        Signed by &nbsp;<span class="highlight">{{item.signedByName}}</span>
+                    </ion-text>
 
-                    <ion-label class="text-2">
-                        Signed &nbsp;<span class="text-3">{{item.formattedCreatedDate}}</span>
-                    </ion-label>
+                    <ion-text class="col-date text-style-2">
+                        Signed &nbsp;<span class="highlight">{{item.formattedCreatedDate}}</span>
+                    </ion-text>
                 </ion-item>
             </div>
         </ng-container>
@@ -43,11 +43,10 @@
     </ion-list>
 
     <ng-template #noDocument>
-        <app-empty-message messa ge="No documents available"></app-empty-message>
+        <app-empty-message message="No documents available"></app-empty-message>
     </ng-template>
 
     <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
-
         <app-empty-message *ngIf="(availableDocuments | listFilter:searchQuery:'documentTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, NgZone} from '@angular/core';
 
 @Component({
     selector: 'app-topnavigations-segments-dm',
@@ -14,7 +14,9 @@ export class TopnavigationsSegmentsDmComponent implements OnInit {
     @Output() searchbarShowHide = new EventEmitter<any>();
     searchBarShow = false;
 
-    constructor() {
+    constructor(
+        public ngZone: NgZone
+    ) {
     }
 
     ngOnInit() {
@@ -26,7 +28,9 @@ export class TopnavigationsSegmentsDmComponent implements OnInit {
     }
 
     showSearchBar() {
-        this.searchBarShow = !this.searchBarShow;
-        this.searchbarShowHide.emit(this.searchBarShow);
+        this.ngZone.run(() => {
+            this.searchBarShow = !this.searchBarShow;
+            this.searchbarShowHide.emit(this.searchBarShow);
+        });
     }
 }

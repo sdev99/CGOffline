@@ -46,7 +46,7 @@ export class CurrentCheckinPage implements OnInit {
         public filehandlerService: FilehandlerService,
     ) {
         this.user = this.accountService.userValue;
-        if (sharedDataService.checkedInPlaces && sharedDataService.checkedInPlaces.length > 0) {
+        if (sharedDataService.checkedInPlaces && sharedDataService.checkedInPlaces?.length > 0) {
             this.isCheckedIn = true;
         }
     }
@@ -56,10 +56,10 @@ export class CurrentCheckinPage implements OnInit {
         this.observablesService.getObservable(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED).subscribe(() => {
             this.isLoading = true;
 
-            if (!this.sharedDataService.checkedInPlaces || this.sharedDataService.checkedInPlaces.length === 0) {
+            if (!this.sharedDataService.checkedInPlaces || this.sharedDataService.checkedInPlaces?.length === 0) {
                 this.isCheckedIn = false;
             }
-            if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces.length > 0) {
+            if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces?.length > 0) {
                 this.isCheckedIn = true;
             }
 
@@ -102,7 +102,7 @@ export class CurrentCheckinPage implements OnInit {
     };
 
     getPersonalModeAvailableForms = async (callBack = null) => {
-        this.apiService.getPersonalModeAvailableForms(this.user.userId, this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getPersonalModeAvailableForms(this.user?.userId, this.user.companyID).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.availableForms = response.Result;
             }
@@ -114,7 +114,7 @@ export class CurrentCheckinPage implements OnInit {
     };
 
     getPersonalModeAvailableDocuments = async (callBack = null) => {
-        this.apiService.getPersonalModeAvailableDocuments(this.user.userId, this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getPersonalModeAvailableDocuments(this.user?.userId, this.user.companyID).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.availableDocuments = response.Result;
             }
@@ -126,7 +126,7 @@ export class CurrentCheckinPage implements OnInit {
     };
 
     getPersonalModeAvailableWorkPermits = async (callBack = null) => {
-        this.apiService.getPersonalModeAvailableWorkPermits(this.user.userId, this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getPersonalModeAvailableWorkPermits(this.user?.userId, this.user.companyID).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.availableWorkPermits = response.Result;
             }
@@ -140,7 +140,7 @@ export class CurrentCheckinPage implements OnInit {
     async openForm(form: FormItem) {
         const loading = await this.utilService.startLoadingWithOptions();
         const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-        this.apiService.getSignOffFormDetail(this.user.userId, form?.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
+        this.apiService.getSignOffFormDetail(this.user?.userId, form?.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckin;

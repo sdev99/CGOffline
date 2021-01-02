@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, NgZone, OnInit, ViewChild} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
@@ -30,6 +30,7 @@ export class CheckinoutNameDmPage implements OnInit {
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
         public apiService: ApiService,
+        public ngZone: NgZone,
     ) {
         switch (sharedDataService.dedicatedModeProcessType) {
             case EnumService.DedicatedModeProcessTypes.CheckinOut:
@@ -44,12 +45,11 @@ export class CheckinoutNameDmPage implements OnInit {
         }
     }
 
-
     @HostListener('document:click', ['$event'])
     andClickEvent = (event) => {
         const item: any = this.itemRef.nativeElement || this.itemRef.el;
         if (!item.contains(event.target)) {
-            this.showList = false;
+            this.showHideList(false);
         }
     };
 
@@ -57,8 +57,14 @@ export class CheckinoutNameDmPage implements OnInit {
 
     }
 
+    showHideList = (showList) => {
+        this.ngZone.run(() => {
+            this.showList = showList;
+        });
+    };
+
     onClose() {
-        this.navController.navigateRoot('dashboard-dm');
+        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
     }
 
     onBack() {
@@ -87,13 +93,13 @@ export class CheckinoutNameDmPage implements OnInit {
 
     searchBarFocus() {
         console.log('searchBarFocus');
-        this.showList = true;
+        this.showHideList(true);
     }
 
     searchBarChange() {
         console.log('searchBarChange');
         if (!this.selectedUser || this.getFullName(this.selectedUser) !== this.name) {
-            this.showList = true;
+            this.showHideList(true);
             this.selectedUser = null;
             this.getUserAutoSuggest();
         }
@@ -104,6 +110,6 @@ export class CheckinoutNameDmPage implements OnInit {
         event.stopImmediatePropagation();
         this.name = this.getFullName(item);
         this.selectedUser = item;
-        this.showList = false;
+        this.showHideList(false);
     }
 }
