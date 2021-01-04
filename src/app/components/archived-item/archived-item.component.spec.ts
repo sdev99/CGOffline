@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { CheckinoutAlreadycheckinDmPage } from './checkinout-alreadycheckin-dm.page';
+import { ArchivedItemComponent } from './archived-item.component';
 
-describe('CheckinoutAlreadycheckinDmPage', () => {
-  let component: CheckinoutAlreadycheckinDmPage;
-  let fixture: ComponentFixture<CheckinoutAlreadycheckinDmPage>;
+describe('ArchivedItemComponent', () => {
+  let component: ArchivedItemComponent;
+  let fixture: ComponentFixture<ArchivedItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CheckinoutAlreadycheckinDmPage ],
+      declarations: [ ArchivedItemComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CheckinoutAlreadycheckinDmPage);
+    fixture = TestBed.createComponent(ArchivedItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

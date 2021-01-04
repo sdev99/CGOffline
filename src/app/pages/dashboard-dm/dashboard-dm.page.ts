@@ -42,6 +42,10 @@ export class DashboardDmPage implements OnInit {
         });
     }
 
+    ionViewWillEnter() {
+        this.accountService.checkForMobileLanguageId();
+    }
+
     checkInOutClick() {
         this.navController.navigateForward('checkinout-option-dm');
     }

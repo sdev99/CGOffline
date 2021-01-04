@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActionSheetController} from '@ionic/angular';
+import {ActionSheetController, Platform} from '@ionic/angular';
 import {CameraDirection, CameraResultType, CameraSource, Plugins} from '@capacitor/core';
 import {ObservablesService} from './observables.service';
 import {EnumService} from './enum.service';
@@ -11,6 +11,7 @@ import {EnumService} from './enum.service';
 export class PhotoService {
 
     constructor(
+        public platform: Platform,
         public actionSheetController: ActionSheetController,
         private observablesService: ObservablesService,
     ) {
@@ -50,13 +51,17 @@ export class PhotoService {
             callBack(data.data);
             subscribe.unsubscribe();
         });
+        let allowEditing = false;
+        if (this.platform.is('ios')) {
+            allowEditing = true;
+        }
 
         const capturedPhoto = await Plugins.Camera.getPhoto({
             resultType: CameraResultType.DataUrl,
             source: CameraSource.Camera,
             quality: 70,
             width: 500,
-            allowEditing: true,
+            allowEditing,
             height: 500,
             preserveAspectRatio: true,
             direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear

@@ -15,29 +15,24 @@
 
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
-            <ion-item tappable *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle'"
-                      (click)="openForm(item)">
-                <ion-icon slot="start" [src]="UtilService.FileIcon('form')"></ion-icon>
-                <ion-label>{{item.formTitle}}</ion-label>
-            </ion-item>
+            <app-archived-item
+                    *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';"
+                    (itemSelect)="openForm(item)"
+                    [colFirst]="item.formTitle"
+            ></app-archived-item>
         </ng-container>
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive">
-            <div tappable *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle'"
-                 (click)="openArchivedForm(item)">
-                <ion-item tappable>
-                    <ion-icon slot="start" [src]="UtilService.FileIcon('pdf')"></ion-icon>
-                    <ion-label class="text-1">{{item.documentTitle}}</ion-label>
-                    <ion-label class="text-2">
-                        Signed by &nbsp;<span class="text-3">{{item.signedByName}}</span>
-                    </ion-label>
-
-
-                    <ion-label class="text-2">
-                        Signed &nbsp;<span class="text-3">{{item.formattedCreatedDate}}</span>
-                    </ion-label>
-                </ion-item>
-            </div>
+            <app-archived-item
+                    *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle';"
+                    (itemSelect)="openArchivedForm(item)"
+                    [icon]="UtilService.FileIcon('pdf')"
+                    [colFirst]="item.documentTitle"
+                    colSecond="Signed by"
+                    [colSecondHighlighted]="item.signedByName"
+                    colThird="Signed"
+                    [colThirdHighlighted]="item.formattedCreatedDate"
+            ></app-archived-item>
         </ng-container>
     </ion-list>
 

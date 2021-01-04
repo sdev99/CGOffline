@@ -116,6 +116,7 @@ export class EnumService {
         GetCheckInDetails_Guest: 'GetCheckInDetails_Guest', // GET
         InsertCheckInDetails_Guest: 'InsertCheckInDetails_Guest', // POST
         InsertCheckOutDetails: 'InsertCheckOutDetails', // POST
+        InsertCheckOutDetails_Guest: 'InsertCheckOutDetails_Guest', // POST
         CheckInPhotoUpload: 'CheckInPhotoUpload', // POST
         InductionPhotoUpload: 'InductionPhotoUpload', // POST
         InductionSignatureUpload: 'InductionSignatureUpload', // POST

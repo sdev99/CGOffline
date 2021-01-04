@@ -36,8 +36,6 @@ export class FormRiskassessmentPage implements OnInit {
     isSubmitted = false;
     formGroup: FormGroup;
 
-    activityDetail;
-
 
     list = DemoDataService.riskAssesmentQuestions.clone();
     riskRatings: [RiskRatingItem];
@@ -60,6 +58,7 @@ export class FormRiskassessmentPage implements OnInit {
     currentQuestionIndex = 0;
     scrollingDetail: any;
 
+    companyId;
 
     constructor(
         public navCtrl: NavController,
@@ -76,6 +75,12 @@ export class FormRiskassessmentPage implements OnInit {
         public photoService: PhotoService,
     ) {
         this.user = accountService.userValue;
+
+        if (this.sharedDataService.dedicatedMode) {
+            this.companyId = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+        } else {
+            this.companyId = this.user?.companyID;
+        }
 
         if (sharedDataService.formBuilderDetails) {
             this.formBuilderDetail = sharedDataService.formBuilderDetails;
@@ -118,21 +123,6 @@ export class FormRiskassessmentPage implements OnInit {
         this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
 
-
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activityDetail) {
-                    this.activityDetail = JSON.parse(params.activityDetail);
-                }
-            }
-            if (!this.activityDetail) {
-                this.activityDetail = sharedDataService.viewFormDetail;
-            }
-            if (!this.activityDetail) {
-                this.activityDetail = DemoDataService.dmForms[1];
-            }
-        });
-
     }
 
     ngOnInit() {
@@ -159,7 +149,7 @@ export class FormRiskassessmentPage implements OnInit {
 
     async getCompanyUserList() {
         const loading = await this.utilService.startLoadingWithOptions();
-        this.apiService.getCompanyUserList(this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getCompanyUserList(this.companyId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.users = response.Result;
             }
@@ -188,7 +178,7 @@ export class FormRiskassessmentPage implements OnInit {
     }
 
     getCompanyUserGroupList(loading) {
-        this.apiService.getCompanyUserGroupList(this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getCompanyUserGroupList(this.companyId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.groups = response.Result;
             }

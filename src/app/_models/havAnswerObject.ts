@@ -1,14 +1,14 @@
 export class HavAnswerObject {
-    havQuestionAnswerId?: number;
+    hAVQuestionAnswerId?: number;
     questionID: number;
     questionTitle: string;
     answerTypeID?: number;
     dateOfUsage?: string;
-    havTypeID?: number;
-    havManufacturerID?: number;
-    havModelID?: number;
+    hAVTypeID?: number;
+    hAVManufacturerID?: number;
+    hAVModelID?: number;
     plannedTimeOfUse?: number;
-    havSequence?: number;
+    hAVSequence?: number;
     formVersionID?: number;
     markAsFailed?: boolean;
     isNotify?: boolean;

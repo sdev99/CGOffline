@@ -36,7 +36,7 @@
 
 
                         <app-section-title
-                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
                         </app-section-title>
 
                         <ng-container *ngIf="section.isHAVSection; else customQuestions">
@@ -48,7 +48,7 @@
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
                                             [form]="formGroup"
                                             [inputName]="UtilService.FCName(sectionIndex,questionIndex, question.questionId)"
-                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(sectionIndex,questionIndex, question)"
                                             placeholder="Choose"
                                     ></app-date-field>
@@ -57,7 +57,7 @@
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                             [form]="formGroup"
                                             [inputName]="UtilService.FCName(sectionIndex,questionIndex,question.questionId)"
-                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(sectionIndex,questionIndex, question)"
                                             [list]="question.answerChoiceAttributes"
                                             [listLabelKey]="question.listLabelKey"
@@ -71,7 +71,7 @@
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
                                             [form]="formGroup"
                                             [inputName]="UtilService.FCName( sectionIndex,questionIndex,question.questionId)"
-                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                                            [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(sectionIndex,questionIndex,question)"
                                     ></app-number-integer-field>
                                 </ng-container>

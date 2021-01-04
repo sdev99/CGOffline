@@ -60,25 +60,34 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ngOnInit() {
-        // setTimeout(() => {
-            // check document qrcode
-            // this.checkQrCode('0f75e6e3-8215-4186-92bf-ca0971b337b7');
-            // check form qrcode
-            // this.checkQrCode('e37f99b2-cda6-4b19-b3e6-ba37a41ffd60');
-            // this.checkQrCode('6dadd75e-cb62-484d-a9be-deaab282761d');
-            //check for location code
-            // this.checkQrCode('e165d1a3-a0a9-4b95-a543-8049b440c56d');
-
-            // this.openNextScreen({
-            //     locationID: 'F|122',
-            //     locationName: ''
-            // });
-
-            // this.openNextScreen({
-            //     locationID: 'D|125',
-            //     locationName: ''
-            // });
-        // }, 5000);
+        const QrCodeTestingInLocalHostFor: any = null;
+        if (QrCodeTestingInLocalHostFor) {
+            setTimeout(() => {
+                switch (QrCodeTestingInLocalHostFor) {
+                    case 'document':
+                        this.checkQrCode('0f75e6e3-8215-4186-92bf-ca0971b337b7');
+                        break;
+                    case 'form':
+                        this.checkQrCode('e37f99b2-cda6-4b19-b3e6-ba37a41ffd60');
+                        break;
+                    case 'form2':
+                        this.checkQrCode('6dadd75e-cb62-484d-a9be-deaab282761d');
+                        break;
+                    case 'location':
+                        this.checkQrCode('e165d1a3-a0a9-4b95-a543-8049b440c56d');
+                        break;
+                    case 'location2':
+                        this.checkQrCode('78312786-35ab-4c9e-969e-6f7673ed7a5e');
+                        break;
+                    case 'location3':
+                        this.checkQrCode('3d663253-09ab-4299-a891-74fb1961d78c');
+                        break;
+                    case 'user':
+                        this.checkQrCode('1b5ee704-21f6-4e91-9544-0f2a6abd7aed');
+                        break;
+                }
+            }, 1000);
+        }
     }
 
     ionViewWillLeave() {
@@ -200,7 +209,13 @@ export class DashboardQrscanPage implements OnInit {
             this.sharedDataService.dedicatedModeUserDetail = detail;
             switch (this.sharedDataService.dedicatedModeProcessType) {
                 case EnumService.DedicatedModeProcessTypes.CheckinOut:
-                    this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService);
+                    this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService, null, (({ischeckInPersonalQRNotAllowed}) => {
+                        if (ischeckInPersonalQRNotAllowed) {
+                            this.utilService.showAlert('You cannot check-in to this location with personal qr code', '', () => {
+                                this.scan();
+                            });
+                        }
+                    }));
                     break;
                 case EnumService.DedicatedModeProcessTypes.Document:
                     this.sharedDataService.dedicatedModeDocumentSignOffProcess();

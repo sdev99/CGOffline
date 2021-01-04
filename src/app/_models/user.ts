@@ -3,5 +3,6 @@ export class User {
     companyID: number;
     firstName: number;
     userId: string;
+    mobileAppLanguageID: number;
     userType: string;
 }

@@ -14,7 +14,7 @@
 
         <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
                              [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" (closeModal)="onClose()"
-                             [modalSubTitle]="activityDetail?activityDetail.title:''"></app-modal-header-dm>
+                             [modalSubTitle]="formBuilderDetail?.title"></app-modal-header-dm>
 
         <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
     </ion-header>
@@ -27,7 +27,7 @@
                     <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index">
                         <ng-container *ngIf="utilService.shouldShowSection(section)">
                             <app-section-title
-                                    [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                                    [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
                             </app-section-title>
 
                             <ng-container *ngIf="section.isAccidentReportSection; else customQuestions">
@@ -37,7 +37,7 @@
                                         <app-date-time-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
                                                 [form]="formGroup"
-                                                [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                                                [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                                 [inputName]="UtilService.FCName(sectionIndex,questionIndex, question.questionId)"
                                                 [isError]="isError(sectionIndex, questionIndex, question)"
                                                 placeholder="Choose"
@@ -47,7 +47,7 @@
                                         <div class="radio-input-view" style="padding-top: 8px;"
                                              *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText || question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
                                              [ngClass]="{'error':isError(sectionIndex, questionIndex,question)}">
-                                            <h2>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle}} </h2>
+                                            <h2>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}} </h2>
 
                                             <app-single-choice-field
                                                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
@@ -79,7 +79,7 @@
                                         <app-dropdown-field
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                                 [form]="formGroup"
-                                                [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
+                                                [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                                 [inputName]="UtilService.FCName(sectionIndex, questionIndex,question.questionId)"
                                                 [list]="question.answerChoiceAttributes"
                                                 [listLabelKey]="question.listLabelKey"
@@ -93,7 +93,7 @@
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection">
                                             <ion-item class="drop-down-item">
                                                 <ion-label position="stacked">
-                                                    <h4>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle}}</h4>
+                                                    <h4>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}</h4>
                                                     <p class="ion-text-wrap">
                                                         Note: if the place is not available in the dropdown above,
                                                         please
@@ -139,7 +139,7 @@
                                                  [ngClass]="{'error':(isSubmitted && !isBodyPartSelected())}">
                                                 <ion-label>
                                                     <h4>
-                                                        {{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle}}
+                                                        {{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
                                                         <br/>
                                                         (tap on the effected area to choose)
                                                     </h4>
@@ -373,6 +373,8 @@
                                         [questions]="section.questions"
                                         [isSubmitted]="isSubmitted"
                                         [formGroup]="formGroup"
+                                        [sectionIndex]="sectionIndex"
+                                        [questionElementIds]="questionElementIds"
                                 ></app-custom-questions-container>
                             </ng-template>
                         </ng-container>

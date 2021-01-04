@@ -296,10 +296,18 @@ export class ApiService {
 
     /**
      *  This API will use at the time of user check out from the location
-     * @param postBody {userCheckInDetailID, userId, checkOutLatitude, checkOutLongitude}
+     * @param postBody user checkout details
      */
-    insertCheckOutDetails(postBody) {
+    insertCheckOutDetails(postBody: { userCheckInDetailID?: number, userId?: string, checkOutLatitude?: number, checkOutLongitude?: number }) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails}`, postBody);
+    }
+
+    /**
+     *  This API will use at the time of user check out from the location
+     * @param postBody guest checkout details
+     */
+    insertCheckOutDetails_Guest(postBody: { userCheckInDetailID?: number, guestPhone?: string, guestFirsName?: string, guestMiddleName: string, guestLastName: string, checkOutLatitude?: number, checkOutLongitude?: number }) {
+        return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails_Guest}`, postBody);
     }
 
     /**

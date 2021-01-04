@@ -35,7 +35,6 @@ export class FormCustomPage {
     isSubmitted = false;
     formGroup: FormGroup;
 
-    activityDetail;
 
     list = DemoDataService.activityCustomForm.clone();
     answer = {};
@@ -83,16 +82,6 @@ export class FormCustomPage {
         this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // --End
 
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activityDetail) {
-                    this.activityDetail = JSON.parse(params.activityDetail);
-                }
-            }
-            if (!this.activityDetail) {
-                this.activityDetail = sharedDataService.viewFormDetail;
-            }
-        });
     }
 
 

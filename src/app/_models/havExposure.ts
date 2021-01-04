@@ -1,5 +1,5 @@
 export class HavExposure {
-    havExposureId: number;
+    hAVExposureId: number;
     vibrationMagnitude: number;
     pointsPerHour: number;
     exposurePoints?: number;

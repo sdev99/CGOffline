@@ -110,11 +110,11 @@ export class AppComponent {
     checkForAccessKey = async () => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_ACCESS_KEY)) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.accountService.getAccessKey().subscribe((data) => {
-                this.utilService.hideLoadingFor(loading);
+            this.accountService.getAccessKey().subscribe(async (data) => {
+                await this.utilService.hideLoadingFor(loading);
                 this.checkForToken();
-            }, error => {
-                this.utilService.hideLoadingFor(loading);
+            }, async (error) => {
+                await this.utilService.hideLoadingFor(loading);
             });
         } else {
             this.checkForToken();
@@ -124,11 +124,11 @@ export class AppComponent {
     checkForToken = async () => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN)) {
             const loading = await this.utilService.startLoadingWithOptions();
-            this.accountService.getToken().subscribe((token) => {
-                this.utilService.hideLoadingFor(loading);
+            this.accountService.getToken().subscribe(async (token) => {
+                await this.utilService.hideLoadingFor(loading);
                 this.checkDeviceForDedicatedMode();
-            }, error => {
-                this.utilService.hideLoadingFor(loading);
+            }, async (error) => {
+                await this.utilService.hideLoadingFor(loading);
             });
         } else {
             this.checkDeviceForDedicatedMode();
@@ -140,7 +140,8 @@ export class AppComponent {
         });
 
         const loading = await this.utilService.startLoadingWithOptions();
-        this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe((data: Response) => {
+        this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe(async (data: Response) => {
+            await this.utilService.hideLoadingFor(loading);
 
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful && data.Result && data.Result?.deviceDetailData && data.Result?.deviceDetailData?.companyID) {
                 if (this.sharedDataService.isTablet) {
@@ -157,23 +158,17 @@ export class AppComponent {
                     }
 
                     this.configureAppForDedicatedMode();
-
-                    setTimeout(() => {
-                        this.utilService.hideLoadingFor(loading);
-                    }, 500);
                 } else {
-                    this.utilService.hideLoadingFor(loading);
                     this.sharedDataService.dedicatedModeDeviceDeleted();
                     this.configureAppForPersonalMode();
                 }
             } else {
-                this.utilService.hideLoadingFor(loading);
                 localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
                 this.configureAppForPersonalMode();
             }
 
-        }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+        }, async (error) => {
+            await this.utilService.hideLoadingFor(loading);
             localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
             this.configureAppForPersonalMode();
         });
@@ -183,6 +178,10 @@ export class AppComponent {
         try {
             if (this.platform.is('ios')) {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+
+                setTimeout(() => {
+                    window.screen.orientation.lock('landscape');
+                }, 5000);
             } else {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
             }

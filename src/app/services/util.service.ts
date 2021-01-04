@@ -186,7 +186,7 @@ export class UtilService {
 
     async hideLoadingFor(loading: HTMLIonLoadingElement) {
         if (loading) {
-            loading.dismiss();
+            await loading.dismiss();
             loading = null;
         }
     }
@@ -399,60 +399,56 @@ export class UtilService {
             // Reset applied logic from this question
             questionLogics.map((logic) => {
                 if (EnumService.QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
-                    const questionActionOnID = logic.questionActionOnID;
-                    const sectionAndQuestionNo = questionActionOnID.split('-');
-                    const sectionIndex = sectionAndQuestionNo[0] - 1;
-                    const questionIndex = sectionAndQuestionNo[1] - 1;
 
-                    let sectionObject;
-                    let questionObject;
-
-                    if (sectionIndex >= 0 && questionIndex >= 0) {
-                        questionObject = sections[sectionIndex].questions[questionIndex];
-                    } else if (sectionIndex >= 0 && questionIndex < 0) {
-                        sectionObject = sections[sectionIndex];
-                    }
-
-
-                    if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
-                        if (sectionObject) {
-                            delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
-                        } else if (questionObject) {
-                            delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
-                        }
-                    } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
-                        if (sectionObject) {
-                            delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
-                        } else if (questionObject) {
-                            delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
-                        }
-                    } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
-                        if (sectionObject) {
-                            delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
-                        } else if (questionObject) {
-                            delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
-                        }
+                    if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
+                        delete question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
                     } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
-                        if (sectionObject) {
-                            delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify];
-                        } else if (questionObject) {
-                            delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify];
+                        delete question[EnumService.QuestionLogic.ActionTypeForForm.Notify];
+                    } else {
+
+                        const questionActionOnID = logic.questionActionOnID;
+                        const sectionAndQuestionNo = questionActionOnID.split('-');
+                        const sectionIndex = sectionAndQuestionNo[0] - 1;
+                        const questionIndex = sectionAndQuestionNo[1] - 1;
+
+                        let sectionObject;
+                        let questionObject;
+
+                        if (sectionIndex >= 0 && questionIndex >= 0) {
+                            questionObject = sections[sectionIndex].questions[questionIndex];
+                        } else if (sectionIndex >= 0 && questionIndex < 0) {
+                            sectionObject = sections[sectionIndex];
                         }
-                    } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
-                        if (sectionObject) {
-                            sections.map((section, key) => {
-                                if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
-                                    sections.splice(key, 1);
-                                    return;
-                                }
-                            });
-                        } else if (questionObject) {
-                            sections[sectionIndex].questions.map((questionInner, key) => {
-                                if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
-                                    sections[sectionIndex].questions.splice(key, 1);
-                                    return;
-                                }
-                            });
+
+
+                        if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
+                            if (sectionObject) {
+                                delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+                            } else if (questionObject) {
+                                delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+                            }
+                        } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
+                            if (sectionObject) {
+                                delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
+                            } else if (questionObject) {
+                                delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
+                            }
+                        } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
+                            if (sectionObject) {
+                                sections.map((section, key) => {
+                                    if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                        sections.splice(key, 1);
+                                        return;
+                                    }
+                                });
+                            } else if (questionObject) {
+                                sections[sectionIndex].questions.map((questionInner, key) => {
+                                    if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                        sections[sectionIndex].questions.splice(key, 1);
+                                        return;
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -469,11 +465,11 @@ export class UtilService {
 
                         const questionChoiceSetSequence = logic.questionChoiceSetSequence - 1;
                         const questionChoiceSetTypeID = logic.questionChoiceSetTypeID;
-                        const valueToBeCompare = question.answerChoiceAttributes[questionChoiceSetSequence];
-
+                        // const valueToBeCompare = question.answerChoiceAttributes[questionChoiceSetSequence];
+                        const checkBoxValueSelected = value[Object.keys(value)[questionChoiceSetSequence]];
                         // Check if condition meet
-                        const isSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.Selected && value === valueToBeCompare.answerChoiceAttributeId);
-                        const isNotSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.NotSelected && value !== valueToBeCompare.answerChoiceAttributeId);
+                        const isSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.Selected && checkBoxValueSelected);
+                        const isNotSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.NotSelected && !checkBoxValueSelected);
 
                         isActionMeet = (isSelectedAndMeet || isNotSelectedAndMeet);
                     } else {
@@ -489,12 +485,12 @@ export class UtilService {
 
                         switch (question.selectedAnswerTypeId) {
                             case EnumService.CustomAnswerType.NumberFieldInteger:
-                                valueToBeCompared = logic.integerValue;
-                                selectedValue = value;
+                                valueToBeCompared = parseInt(logic.integerValue, 0);
+                                selectedValue = parseInt(value, 0);
                                 break;
                             case EnumService.CustomAnswerType.NumberFieldDecimal:
-                                valueToBeCompared = logic.decimalValue;
-                                selectedValue = value;
+                                valueToBeCompared = parseFloat(logic.decimalValue);
+                                selectedValue = parseFloat(value);
                                 break;
                             case EnumService.CustomAnswerType.DateTimeField:
                                 const dtDateValue = logic.dateValue;
@@ -561,7 +557,7 @@ export class UtilService {
 
 
                     if (isActionMeet) {
-                        this.applyLogicOn(logic, sections);
+                        this.applyLogicOn(question, logic, sections);
                     }
                 }
             });
@@ -570,58 +566,65 @@ export class UtilService {
         }
     }
 
-    applyLogicOn(logic, sections) {
+    applyLogicOn(question, logic, sections) {
 
-        const questionActionTypeID = logic.questionActionTypeID;
-        const questionActionOnID = logic.questionActionOnID;
-        const sectionAndQuestionNo = questionActionOnID.split('-');
-        const sectionIndex = sectionAndQuestionNo[0] - 1;
-        const questionIndex = sectionAndQuestionNo[1] - 1;
+        if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
+            question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
+        } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
+            question[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+        } else {
+            const questionActionTypeID = logic.questionActionTypeID;
+            const questionActionOnID = logic.questionActionOnID;
+            const sectionAndQuestionNo = questionActionOnID.split('-');
+            const sectionIndex = sectionAndQuestionNo[0] - 1;
+            const questionIndex = sectionAndQuestionNo[1] - 1;
 
-        let sectionObject;
-        let questionObject;
+            let sectionObject;
+            let questionObject;
 
-        if (sectionIndex >= 0 && questionIndex >= 0) {
-            questionObject = sections[sectionIndex].questions[questionIndex];
-        } else if (sectionIndex >= 0 && questionIndex < 0) {
-            sectionObject = sections[sectionIndex];
+            if (sectionIndex >= 0 && questionIndex >= 0) {
+                questionObject = sections[sectionIndex].questions[questionIndex];
+            } else if (sectionIndex >= 0 && questionIndex < 0) {
+                sectionObject = sections[sectionIndex];
+            }
+
+            if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
+                if (sectionObject) {
+                    sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
+                } else if (questionObject) {
+                    questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
+                }
+            } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
+                if (sectionObject) {
+                    sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
+                } else if (questionObject) {
+                    questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
+                }
+            } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
+                if (sectionObject) {
+                    const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
+                    duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                    sections.push(duplicateSection);
+                } else if (questionObject) {
+                    const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
+                    duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                    sections[sectionIndex].questions.push(duplicateQuestion);
+                }
+            } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
+                if (sectionObject) {
+                    sectionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
+                } else if (questionObject) {
+                    questionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
+                }
+            } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
+                if (sectionObject) {
+                    sectionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+                } else if (questionObject) {
+                    questionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+                }
+            }
         }
 
-        if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
-            if (sectionObject) {
-                sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
-            } else if (questionObject) {
-                questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
-            }
-        } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
-            if (sectionObject) {
-                sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
-            } else if (questionObject) {
-                questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
-            }
-        } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
-            if (sectionObject) {
-                const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-                duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                sections.push(duplicateSection);
-            } else if (questionObject) {
-                const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-                duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                sections[sectionIndex].questions.push(duplicateQuestion);
-            }
-        } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
-            if (sectionObject) {
-                sectionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
-            } else if (questionObject) {
-                questionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
-            }
-        } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
-            if (sectionObject) {
-                sectionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
-            } else if (questionObject) {
-                questionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
-            }
-        }
     }
 
     removeFieldIfAdded(formGroup: FormGroup, formControlName) {

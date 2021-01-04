@@ -6,12 +6,14 @@
 <ion-content>
 
     <div class="content">
-        <div class="text-1">You are already checked in to</div>
+        <div class="text-1">
+            {{isAlreadyCheckedInSameLocation ? 'You are checking out' : 'You are already checked in to'}}
+        </div>
         <div class="text-2">
-            Location name goes here.
+            {{locationName}}
         </div>
 
-        <div class="text-3">
+        <div class="text-3" *ngIf="!isAlreadyCheckedInSameLocation">
             We need to check you out there first so you can be eligible to continue checking in here.
 
             <br/>
@@ -22,7 +24,7 @@
 
 
         <ion-button class="action-btn" (click)="onContinue()">
-            Yes, Check out Now
+            {{isAlreadyCheckedInSameLocation ? 'Check out Now' : 'Yes, Check out Now'}}
         </ion-button>
 
         <ion-button class="cancel-btn" fill="outline" (click)="onBack()">

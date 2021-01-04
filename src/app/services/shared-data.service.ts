@@ -5,7 +5,6 @@ import {Profile} from '../_models/profile';
 import {CheckinDetail} from '../_models/checkinDetail';
 import {LocationItem} from '../_models/locationItem';
 import {GlobalDirectory} from '../_models/globalDirectory';
-import {rejects} from 'assert';
 import {GeolocationPosition} from '@capacitor/core';
 import {ActivityListItem} from '../_models/activityListItem';
 import {DocumentDetail} from '../_models/documentDetail';
@@ -20,10 +19,9 @@ import {SignOffFormDetail} from '../_models/signOffFormDetail';
 import {HavAnswerObject} from '../_models/havAnswerObject';
 import {FormAnswerObject} from '../_models/formAnswerObject';
 import {HavExposure} from '../_models/havExposure';
-import {HavModelItem} from '../_models/havModelItem';
 import {SubmitAnswersObject} from '../_models/submitAnswersObject';
-import {FormControl, FormGroup} from '@angular/forms';
-import {MultipleChoiceAnswerItem} from '../_models/multipleChoiceAnswerItem';
+import {FormGroup} from '@angular/forms';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import * as moment from 'moment/moment';
 import {WorkPermitAnswer} from '../_models/workPermitAnswer';
 import {ArAnswerObject} from '../_models/arAnswerObject';
@@ -49,9 +47,10 @@ export class SharedDataService {
     onAnnotationImageDone;
 
     // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
-    deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
+    // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
     // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222'; // For test dedicated mode assign one location
-    // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+    deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+    // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
 
     pushToken = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     isTablet = false;
@@ -114,7 +113,7 @@ export class SharedDataService {
     workPermitAnswer: WorkPermitAnswer;
 
     //
-    currentLanguageId = 35;
+    currentLanguageId = 0;
 
     constructor(
         private router: Router,
@@ -122,6 +121,7 @@ export class SharedDataService {
         private navCtrl: NavController,
         private observablesService: ObservablesService,
         public utilService: UtilService,
+        private screenOrientation: ScreenOrientation,
     ) {
         this.isTablet = platform.is('tablet');
         this.dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
@@ -158,6 +158,7 @@ export class SharedDataService {
         if (globalDirectories) {
             this.globalDirectories = JSON.parse(globalDirectories) as GlobalDirectory;
         }
+
     }
 
     setAnnotationImage(image) {
@@ -168,6 +169,7 @@ export class SharedDataService {
         return this.annotationImage;
     }
 
+
     dedicatedModeDeviceDeleted() {
         this.dedicatedModeDeviceDetailData = null;
         this.dedicatedModeAssignedEntities = null;
@@ -176,6 +178,7 @@ export class SharedDataService {
         localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL);
         localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES);
         this.navCtrl.navigateRoot('/login', {replaceUrl: true});
+        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     }
 
     resetAllSharedVariable() {
@@ -190,7 +193,6 @@ export class SharedDataService {
         this.currentActivityOpen = null;
         this.signOffFormDetail = null;
         this.signOffDocumentDetail = null;
-        this.viewFormDetail = null;
         this.dedicatedModeLocationUse = null;
         this.checkinoutDmAs = '';
         this.signOffFor = '';
@@ -209,6 +211,15 @@ export class SharedDataService {
     getLoggedInUser() {
         const user: User = JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA));
         return user;
+    }
+
+
+    getLanguageIdForForm() {
+        if (!this.dedicatedMode && this.currentLanguageId) {
+            return this.currentLanguageId;
+        } else {
+            return this.formBuilderDetails?.defaultLanguageId;
+        }
     }
 
     /**
@@ -323,64 +334,54 @@ export class SharedDataService {
     };
 
 
-    public getCheckinDetailsForDedicatedMode = async (userId, apiService: ApiService, userPhoto = null) => {
+    public getCheckinDetailsForDedicatedMode = async (userId, apiService: ApiService, userPhoto = null, callBack = null) => {
         if (userId && this.dedicatedModeLocationUse) {
 
             const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
+            const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
             const loading = await this.utilService.startLoadingWithOptions();
             apiService.getCheckInDetails(userId, entityId).subscribe((response: Response) => {
                 this.utilService.hideLoadingFor(loading);
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                    this.checkInDetail = response.Result as CheckinDetail;
-                    this.checkInPostData = {
-                        userId,
-                        userPhoto,
-                        checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-                        checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
-                        isGuestReturning: false,
-                        projectID: this.dedicatedModeLocationUse.projectID,
-                        inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-                        locationID: this.dedicatedModeLocationUse.locationID,
-                    } as CheckInPostData;
 
-                    this.processCheckinDetails(apiService, false);
+                    let canUserCheckinToLocation = true;
+                    if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut &&
+                        this.checkinoutDmAs === EnumService.CheckInType.QrCode
+                    ) {
+                        const checkinDetail = response.Result as CheckinDetail;
+                        if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
+                            canUserCheckinToLocation = false;
+                            UtilService.fireCallBack(callBack, {ischeckInPersonalQRNotAllowed: true});
+                        }
+                    }
+
+                    if (canUserCheckinToLocation) {
+                        this.checkInDetail = response.Result as CheckinDetail;
+                        this.checkInPostData = {
+                            userId,
+                            userPhoto,
+                            checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
+                            checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+                            isGuestReturning: false,
+                            projectID: this.dedicatedModeLocationUse.projectID,
+                            inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
+                            locationID: this.dedicatedModeLocationUse.locationID,
+                        } as CheckInPostData;
+
+                        this.processCheckinDetails(apiService, false);
+                    }
                 }
             }, (error: any) => {
-                const errorField = error?.error?.ResponseException?.ValidationErrors[0].Field;
-
                 this.utilService.hideLoadingFor(loading);
-
-                const exception = error.error as Response;
-
-                if (exception?.ResponseException?.ValidationErrors?.length > 0 && exception.ResponseException.ValidationErrors[0].Field === 'Location') {
-                    this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-                        queryParams: {
-                            title: 'You cannot check-in',
-                            errorTitle: exception.ResponseException.ValidationErrors[0].Field,
-                            errorMessage: exception.ResponseException.ValidationErrors[0].Message,
-                            nextPage: '/dashboard-dm'
-                        },
-                        replaceUrl: true
-                    });
-                } else {
-                    this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-                        queryParams: {
-                            title: 'You cannot check-in',
-                            errorTitle: 'NOT QUALIFIED',
-                            errorMessage: 'You do not have the required qualifications.',
-                            nextPage: '/dashboard-dm'
-                        },
-                        replaceUrl: true
-                    });
-                }
-
+                this.processCheckInError(error, nextScreen);
             });
         }
     };
 
     public getCheckinDetailsGuest = (apiService: ApiService, isGuestReturning = false) => {
         const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
+        const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
         const dedicatedModeDeviceDetailData = this.dedicatedModeDeviceDetailData;
         const dedicatedModeGuestDetail = this.dedicatedModeGuestDetail;
@@ -418,6 +419,7 @@ export class SharedDataService {
             }
         }, (error) => {
             this.utilService.hideLoading();
+            this.processCheckInError(error, nextScreen);
         });
 
     };
@@ -526,26 +528,30 @@ export class SharedDataService {
                                     const mimeType = 'image/jpeg';
                                     this.utilService.dataUriToFile(control.value, fileName, mimeType).then(async (file) => {
                                         if (!loading) {
-                                            loading = await this.utilService.startLoadingWithOptions();
+                                            this.utilService.presentLoadingWithOptions();
+                                            loading = true;
                                         }
                                         apiService.formPhotoOrVideoUpload(file, fileName).subscribe((response: Response) => {
                                             attachmentUploadedCount++;
                                             attachemtUploaded[question.questionId] = response.Result;
                                             if (attachmentCount === attachmentUploadedCount) {
-                                                this.utilService.hideLoadingFor(loading);
+                                                loading = false;
+                                                this.utilService.hideLoading();
                                                 this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                             }
                                         }, (error) => {
                                             attachmentUploadedCount++;
                                             if (attachmentCount === attachmentUploadedCount) {
-                                                this.utilService.hideLoadingFor(loading);
+                                                loading = false;
+                                                this.utilService.hideLoading();
                                                 this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                             }
                                         });
                                     }).catch(() => {
                                         attachmentUploadedCount++;
                                         if (attachmentCount === attachmentUploadedCount) {
-                                            this.utilService.hideLoadingFor(loading);
+                                            loading = false;
+                                            this.utilService.hideLoading();
                                             this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                         }
                                     });
@@ -580,7 +586,6 @@ export class SharedDataService {
         const sections = formBuilderDetail.sections;
         const workPermitDetails = formBuilderDetail.workPermitDetails;
         const accidentReport = formBuilderDetail.accidentReport;
-        const defaultLanguageId = formBuilderDetail.defaultLanguageId;
         const formVersionId = formBuilderDetail.formVersionId;
 
         const questionAnswers = [];
@@ -588,6 +593,7 @@ export class SharedDataService {
         const accidentReportQuestionAnswers = [];
         const riskAssessmentAnswers = [];
 
+        const selectedLanguageID = this.getLanguageIdForForm();
 
         const formattedSections = [];
 
@@ -616,8 +622,8 @@ export class SharedDataService {
                                     riskAQuestionAnswerId: 0,
                                     hazardID: hazard.hazardId,
                                     formVersionID: formVersionId,
-                                    riskRatingID: hazard.riskRating,
-                                    residualRiskRatingID: hazard.residualRiskRating,
+                                    riskRatingID: hazard.riskRating || 0,
+                                    residualRiskRatingID: hazard.residualRiskRating || 0,
                                     isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
                                     isMembersOfThePublic: hazard.memberOfThePublic,
                                     [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: task[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
@@ -633,7 +639,9 @@ export class SharedDataService {
                                         }
                                     });
                                 }
-                                answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
+                                if (controlMeasureIDs.length > 0) {
+                                    answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
+                                }
 
                                 if (hazard.memberOfTheWorkForce) {
                                     answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
@@ -667,16 +675,16 @@ export class SharedDataService {
                             let isValueFilled = false;
 
                             if (control) {
-                                const questionLabel = UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', this.currentLanguageId).questionTranslationTitle;
+                                const questionLabel = UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', selectedLanguageID).questionTranslationTitle;
 
                                 if (section.isHAVSection) {
                                     const answerObject: HavAnswerObject = {
-                                        havQuestionAnswerId: 0,
+                                        hAVQuestionAnswerId: 0,
                                         questionID: question.questionId,
                                         questionTitle: questionLabel,
                                         formVersionID: formVersionId,
                                         answerTypeID: question.selectedAnswerTypeId,
-                                        havSequence: question.questionDisplayOrder,
+                                        hAVSequence: question.questionDisplayOrder,
                                         [EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
                                         [EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
                                     };
@@ -690,26 +698,26 @@ export class SharedDataService {
                                             break;
                                         case EnumService.HavFormFieldOrder.Manufacturer:
                                             if (control.value) {
-                                                answerObject.havManufacturerID = control.value;
+                                                answerObject.hAVManufacturerID = control.value;
                                                 isValueFilled = true;
                                             }
                                             break;
                                         case EnumService.HavFormFieldOrder.Type:
                                             if (control.value) {
-                                                answerObject.havTypeID = control.value;
+                                                answerObject.hAVTypeID = control.value;
                                                 isValueFilled = true;
                                             }
                                             break;
                                         case EnumService.HavFormFieldOrder.Model:
                                             if (control.value) {
-                                                answerObject.havModelID = control.value;
+                                                answerObject.hAVModelID = control.value;
                                                 isValueFilled = true;
                                             }
                                             break;
                                         case EnumService.HavFormFieldOrder.PlannedTimeOfUsage:
                                             if (control.value) {
                                                 isValueFilled = true;
-                                                answerObject.plannedTimeOfUse = control.value;
+                                                answerObject.plannedTimeOfUse = Number(control.value);
                                             }
                                             break;
                                     }
@@ -756,7 +764,7 @@ export class SharedDataService {
                                             const answerChoiceAttributes = question.answerChoiceAttributes;
                                             answerChoiceAttributes.map((choice) => {
                                                 if (choice.answerChoiceAttributeId === control.value) {
-                                                    const choiceTitle = UtilService.findObj(choice.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', defaultLanguageId)?.answerChoiceAttributeHeaderTitle;
+                                                    const choiceTitle = UtilService.findObj(choice.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', selectedLanguageID)?.answerChoiceAttributeHeaderTitle;
                                                     isValueFilled = true;
                                                     answerObject.accidentIsRIDDORReportNeeded = (choiceTitle === 'Yes') ? true : false;
                                                     return;
@@ -873,13 +881,13 @@ export class SharedDataService {
                                         case EnumService.CustomAnswerType.NumberFieldInteger:
                                             if (control.value) {
                                                 isValueFilled = true;
-                                                answerObject.integerValue = control.value;
+                                                answerObject.integerValue = Number(control.value);
                                             }
                                             break;
                                         case EnumService.CustomAnswerType.NumberFieldDecimal:
                                             if (control.value) {
                                                 isValueFilled = true;
-                                                answerObject.decimalValue = control.value;
+                                                answerObject.decimalValue = Number(control.value);
                                             }
                                             break;
                                         case EnumService.CustomAnswerType.DateField:
@@ -939,15 +947,15 @@ export class SharedDataService {
         const submitAnswersObject: SubmitAnswersObject = {
             formId: formBuilderDetail.formId,
             formVersionId,
-            selectedLanguageID: this.currentLanguageId,
+            selectedLanguageID,
             formTypeId: formBuilderDetail.formTypeID,
             userId,
             companyId,
             questionAnswers,
-            havQuestionAnswers,
+            hAVQuestionAnswers: havQuestionAnswers,
             accidentReportQuestionAnswers,
             riskAssessmentAnswers,
-            havExposure,
+            hAVExposure: havExposure,
             workPermitAnswer,
             formattedSections,
             workPermitDetails,
@@ -1064,36 +1072,14 @@ export class SharedDataService {
             }
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
-            const exception = error.error as Response;
-            const failScreen = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
-
-            if (exception?.ResponseException?.ValidationErrors?.length > 0 && exception.ResponseException.ValidationErrors[0].Field === 'Location') {
-                this.navCtrl.navigateForward([failScreen], {
-                    queryParams: {
-                        title: 'You cannot check-in',
-                        errorTitle: exception.ResponseException.ValidationErrors[0].Field,
-                        errorMessage: exception.ResponseException.ValidationErrors[0].Message,
-                        nextPage: nextScreen,
-                    },
-                    replaceUrl: true
-                });
-            } else {
-                this.navCtrl.navigateForward([failScreen], {
-                    queryParams: {
-                        title: 'You cannot check-in',
-                        errorTitle: 'NOT QUALIFIED',
-                        errorMessage: 'You do not have the required qualifications.',
-                        nextPage: nextScreen,
-                    },
-                    replaceUrl: true
-                });
-            }
+            this.processCheckInError(error, nextScreen);
         });
     }
 
 
     async submitInductionCheckInDataGuest(apiService: ApiService) {
         const loading = await this.utilService.startLoadingWithOptions();
+        const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
         apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
@@ -1102,7 +1088,7 @@ export class SharedDataService {
                 this.navCtrl.navigateForward(['/checkinout-success-dm'], {
                     queryParams: {
                         message: 'You have now checked-in',
-                        nextPage: '/dashboard-dm',
+                        nextPage: nextScreen,
                         actionBtnTitle: 'Continue'
                     },
                     replaceUrl: true
@@ -1110,29 +1096,71 @@ export class SharedDataService {
             }
         }, (error) => {
             this.utilService.hideLoadingFor(loading);
-            const exception = error.error as Response;
-            if (exception?.ResponseException?.ValidationErrors?.length > 0 && exception.ResponseException.ValidationErrors[0].Field === 'Location') {
-                this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+            this.processCheckInError(error, nextScreen);
+        });
+    }
+
+
+    processCheckInError(error, nextScreen) {
+        const exception = error.error as Response;
+        const failScreen = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
+
+        if (exception?.ResponseException?.ValidationErrors?.length > 0) {
+            const fieldsInfo = exception.ResponseException.ValidationErrors[0].Field.split('#');
+            const fieldName = fieldsInfo[0];
+            const message = exception.ResponseException.ValidationErrors[0].Message;
+
+            if (fieldName === 'SimultaneousCheckIn') {
+                const locationName = message.match(/\'(.*)\'/).pop();
+                this.navCtrl.navigateForward(['/checkinout-alreadycheckin-dm'], {
                     queryParams: {
-                        title: 'You cannot check-in',
-                        errorTitle: exception.ResponseException.ValidationErrors[0].Field,
-                        errorMessage: exception.ResponseException.ValidationErrors[0].Message,
-                        nextPage: '/dashboard-dm'
+                        locationName,
+                        locationId: fieldsInfo[1]
                     },
                     replaceUrl: true
                 });
-            } else {
-                this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+            } else if (fieldName === 'Location' && fieldsInfo.length > 1) {
+                const locationName = this.getCurrentCheckedInEntityName();
+                this.navCtrl.navigateForward(['/checkinout-alreadycheckin-dm'], {
+                    queryParams: {
+                        isAlreadyCheckedInSameLocation: 1,
+                        locationName,
+                        locationId: fieldsInfo[1]
+                    },
+                    replaceUrl: true
+                });
+            } else if (fieldName === 'Qualification') {
+                this.navCtrl.navigateForward([failScreen], {
                     queryParams: {
                         title: 'You cannot check-in',
                         errorTitle: 'NOT QUALIFIED',
                         errorMessage: 'You do not have the required qualifications.',
-                        nextPage: '/dashboard-dm'
+                        nextPage: nextScreen,
+                    },
+                    replaceUrl: true
+                });
+            } else {
+                this.navCtrl.navigateForward([failScreen], {
+                    queryParams: {
+                        title: 'You cannot check-in',
+                        errorTitle: fieldName,
+                        errorMessage: message,
+                        nextPage: nextScreen,
                     },
                     replaceUrl: true
                 });
             }
-        });
+        } else {
+            this.navCtrl.navigateForward([failScreen], {
+                queryParams: {
+                    title: 'You cannot check-in',
+                    errorTitle: 'NOT QUALIFIED',
+                    errorMessage: 'You do not have the required qualifications.',
+                    nextPage: nextScreen,
+                },
+                replaceUrl: true
+            });
+        }
     }
 
     /**

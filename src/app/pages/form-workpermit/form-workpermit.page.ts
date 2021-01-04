@@ -35,7 +35,6 @@ export class FormWorkpermitPage {
     isSubmitted = false;
     formGroup: FormGroup;
 
-    activityDetail;
 
     list = DemoDataService.activityCustomForm.clone();
     answer = {};
@@ -82,16 +81,7 @@ export class FormWorkpermitPage {
         this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
 
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activityDetail) {
-                    this.activityDetail = JSON.parse(params.activityDetail);
-                }
-            }
-            if (!this.activityDetail) {
-                this.activityDetail = sharedDataService.viewFormDetail;
-            }
-        });
+
     }
 
     handleOrientation = () => {

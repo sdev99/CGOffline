@@ -35,6 +35,7 @@ import {CustomQuestionsContainerComponent} from './custom-questions-container/cu
 import {PhotoFieldComponent} from './photo-field/photo-field.component';
 import {SectionTitleComponent} from './section-title/section-title.component';
 import {ModelCloseButtonComponent} from './model-close-button/model-close-button.component';
+import {ArchivedItemComponent} from './archived-item/archived-item.component';
 
 @NgModule({
     declarations: [
@@ -70,7 +71,8 @@ import {ModelCloseButtonComponent} from './model-close-button/model-close-button
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
         SectionTitleComponent,
-        ModelCloseButtonComponent
+        ModelCloseButtonComponent,
+        ArchivedItemComponent
     ],
     imports: [
         IonicModule,
@@ -111,7 +113,8 @@ import {ModelCloseButtonComponent} from './model-close-button/model-close-button
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
         SectionTitleComponent,
-        ModelCloseButtonComponent
+        ModelCloseButtonComponent,
+        ArchivedItemComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

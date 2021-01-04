@@ -6,8 +6,8 @@
              [ngClass]="{'error':shouldShowError(question) && isError(question, questionIndex)}">
 
             <app-question-list-header
-                    [questionTitle]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTitle"
-                    [note]="question.allowInstructionOrNote?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationInstructionOrNote:''"
+                    [questionTitle]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
+                    [note]="question.allowInstructionOrNote?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationInstructionOrNote:''"
                     [required]="question.questionIsRequired"
                     [attachments]="question.questionAttachments"
                     [qNo]="(questionElementIds?questionElementIds.indexOf(UtilService.HtmlElementIdUq(sectionIndex,questionIndex, sectionId, question.questionId)):questionIndex)+1"
@@ -49,7 +49,7 @@
                     [form]="formGroup"
                     [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
                     [isError]="isError(question, questionIndex)"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-number-integer-field>
 
             <app-number-decimal-field
@@ -57,7 +57,7 @@
                     [form]="formGroup"
                     [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
                     [isError]="isError(question, questionIndex)"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-number-decimal-field>
 
 
@@ -67,7 +67,7 @@
                     [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
                     [isError]="isError(question, questionIndex)"
                     placeholder="Choose"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-date-field>
 
             <app-time-field
@@ -75,7 +75,7 @@
                     [form]="formGroup"
                     [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
                     [isError]="isError(question, questionIndex)"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-time-field>
 
             <app-date-time-field
@@ -84,13 +84,13 @@
                     [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
                     [isError]="isError(question, questionIndex)"
                     placeholder="Choose"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-date-time-field>
 
             <app-photo-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
                     [formControlName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
-                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.currentLanguageId).questionTranslationTextLabel:''"
+                    [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-photo-field>
 
             <ng-container *ngIf="question.shouldShowOptionalComment">

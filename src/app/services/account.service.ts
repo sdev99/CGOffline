@@ -37,6 +37,20 @@ export class AccountService {
     ) {
         this.userSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA)));
         this.user = this.userSubject.asObservable();
+
+        this.checkForMobileLanguageId();
+    }
+
+    checkForMobileLanguageId() {
+        if (!this.sharedDataService.dedicatedMode) {
+            if (this.userSubject.value?.mobileAppLanguageID) {
+                this.sharedDataService.currentLanguageId = this.userSubject.value?.mobileAppLanguageID;
+            } else if (this.sharedDataService.userProfile && this.sharedDataService.userProfile?.mobileAppLanguageID) {
+                this.sharedDataService.currentLanguageId = this.sharedDataService.userProfile?.mobileAppLanguageID;
+            } else {
+                this.getUserProfile(this.userSubject.value?.userId);
+            }
+        }
     }
 
     public get userValue(): User {
@@ -52,9 +66,13 @@ export class AccountService {
             platformName: this.platform.is('ios') ? 'IOS' : 'Android',
         }).pipe(map((data: Response) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                const userInfo = data.Result;
+                const userInfo: User = data.Result;
                 localStorage.setItem(EnumService.LocalStorageKeys.USER_DATA, JSON.stringify(userInfo));
                 this.userSubject.next(userInfo);
+
+                if (userInfo.mobileAppLanguageID) {
+                    this.sharedDataService.currentLanguageId = userInfo.mobileAppLanguageID;
+                }
                 return data;
             }
             return throwError(new Error(data?.ResponseException?.ExceptionMessage));
@@ -68,6 +86,7 @@ export class AccountService {
                 const userProfile: Profile = data.Result;
                 localStorage.setItem(EnumService.LocalStorageKeys.USER_PROFILE, JSON.stringify(userProfile));
                 this.sharedDataService.userProfile = userProfile;
+                this.sharedDataService.currentLanguageId = userProfile?.mobileAppLanguageID;
                 return userProfile;
             }
 

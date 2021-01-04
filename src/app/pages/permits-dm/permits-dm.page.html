@@ -14,35 +14,28 @@
               lines="full">
 
         <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
-            <ion-item tappable *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'title' "
-                      (click)="openLiveWorkPermit(item)">
-                <ion-label class="text-1">{{item.formTitle}}</ion-label>
-                <ion-label class="text-2">
-                    issued &nbsp;<span
-                        class="text-3">{{item.formattedIssuedDate}}</span>
-                </ion-label>
-
-
-                <ion-label class="text-2">
-                    Valid for &nbsp;<span class="text-3">{{item.formattedExpiryDate}}</span>
-                </ion-label>
-            </ion-item>
+            <app-archived-item
+                    *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'title'"
+                    (itemSelect)="openLiveWorkPermit(item)"
+                    [colFirst]="item.formTitle"
+                    colSecond="issued"
+                    [colSecondHighlighted]="item.formattedIssuedDate"
+                    colThird="Valid for"
+                    [colThirdHighlighted]="item.formattedExpiryDate"
+            ></app-archived-item>
         </ng-container>
 
 
         <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive">
-            <ion-item tappable *ngFor="let item of archivedWorkPermits | listFilter:searchQuery:'formTitle' "
-                      (click)="openArchivedWorkPermit(item)">
-                <ion-label class="text-1">{{item.formTitle}}</ion-label>
-                <ion-label class="text-2">
-                    issued &nbsp;<span class="text-3">{{item.formattedIssuedDate}}</span>
-                </ion-label>
-
-
-                <ion-label class="text-2">
-                    Valid for &nbsp;<span class="text-3">{{item.formattedExpiryDate}}</span>
-                </ion-label>
-            </ion-item>
+            <app-archived-item
+                    *ngFor="let item of archivedWorkPermits | listFilter:searchQuery:'formTitle'"
+                    (itemSelect)="openArchivedWorkPermit(item)"
+                    [colFirst]="item.formTitle"
+                    colSecond="issued"
+                    [colSecondHighlighted]="item.formattedIssuedDate"
+                    colThird="Valid for"
+                    [colThirdHighlighted]="item.formattedExpiryDate"
+            ></app-archived-item>
         </ng-container>
 
     </ion-list>

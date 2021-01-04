@@ -31,7 +31,7 @@ export class CheckinWorkpermitPage implements OnInit {
         public navCtrl: NavController,
         private accountService: AccountService,
     ) {
-        if (sharedDataService.dedicatedMode) {
+        if (!sharedDataService.dedicatedMode) {
             this.isCheckedIn = sharedDataService.checkedInPlaces ? sharedDataService.checkedInPlaces.length > 0 : false;
             this.user = this.accountService.userValue;
         }

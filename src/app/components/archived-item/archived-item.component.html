@@ -1,0 +1,19 @@
+<ion-item tappable (click)="itemSelect.emit()">
+    <!--                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.documentFileName)"></ion-icon>-->
+    <ion-img *ngIf="icon" slot="start" [src]="icon"></ion-img>
+
+    <ion-text *ngIf="colFirst" class="col-one text-style-1">{{colFirst}}</ion-text>
+
+
+    <ion-text *ngIf="colSecondHighlighted" class="col-two text-style-2">
+        <span class="label-for-highlight-text">{{colSecond}}</span>
+        <span class="highlight">{{colSecondHighlighted}}</span>
+    </ion-text>
+
+
+    <ion-text *ngIf="colThirdHighlighted" class="col-three text-style-2">
+        <span class="label-for-highlight-text">{{colThird}}</span>
+        <span class="highlight">{{colThirdHighlighted}}</span>
+    </ion-text>
+
+</ion-item>

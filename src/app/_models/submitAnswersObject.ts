@@ -13,10 +13,10 @@ export class SubmitAnswersObject {
     companyId: number;
     selectedLanguageID: number;
     questionAnswers?: Array<FormAnswerObject>;
-    havQuestionAnswers?: Array<HavAnswerObject>;
+    hAVQuestionAnswers?: Array<HavAnswerObject>;
     accidentReportQuestionAnswers?: Array<ArAnswerObject>;
     riskAssessmentAnswers?: Array<RiskAssessmentAnswerObject>;
-    havExposure?: HavExposure;
+    hAVExposure?: HavExposure;
     workPermitAnswer?: WorkPermitAnswer;
     formattedSections?: any;
     workPermitDetails?: any;

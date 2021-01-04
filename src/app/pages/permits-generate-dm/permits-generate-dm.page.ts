@@ -12,7 +12,7 @@ import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 })
 export class PermitsGenerateDmPage implements OnInit {
 
-    list: any = DemoDataService.dmGeneratePermits.clone();
+    list: any = [];
     errorMessage = '';
     submitted = false;
 

@@ -35,7 +35,6 @@ export class FormHavPage implements OnInit {
     isSubmitted = false;
     formGroup: FormGroup;
     errorMessage = '';
-    activityDetail;
 
     toolModels: Array<HavModelItem>;
 
@@ -49,6 +48,7 @@ export class FormHavPage implements OnInit {
     modelControlName;
 
     questionElementIds = [];
+    companyId;
 
     constructor(
         public navCtrl: NavController,
@@ -66,6 +66,12 @@ export class FormHavPage implements OnInit {
 
         if (sharedDataService.formBuilderDetails) {
             this.formBuilderDetail = sharedDataService.formBuilderDetails;
+        }
+
+        if (this.sharedDataService.dedicatedMode) {
+            this.companyId = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+        } else {
+            this.companyId = this.user?.companyID;
         }
 
         // Add form controls for each type of fields
@@ -94,22 +100,11 @@ export class FormHavPage implements OnInit {
         this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
         // -- End -- Add form controls for each type of fields
 
-
-        route.queryParams.subscribe((params: any) => {
-            if (params) {
-                if (params.activityDetail) {
-                    this.activityDetail = JSON.parse(params.activityDetail);
-                }
-            }
-            if (!this.activityDetail) {
-                this.activityDetail = sharedDataService.viewFormDetail;
-            }
-        });
     }
 
     async ngOnInit() {
         const loading = await this.utilService.startLoadingWithOptions();
-        this.apiService.getManufacturerList(this.user.companyID).subscribe((response: Response) => {
+        this.apiService.getManufacturerList(this.companyId).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
             const toolManufacturers = response.Result;
             this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Manufacturer, toolManufacturers);
@@ -173,7 +168,7 @@ export class FormHavPage implements OnInit {
         this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
 
         const loading = await this.utilService.startLoadingWithOptions();
-        this.apiService.getTypeList(this.user.companyID, manufacturer).subscribe((response: Response) => {
+        this.apiService.getTypeList(this.companyId, manufacturer).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
             const toolTypes = response.Result;
             this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Type, toolTypes);
@@ -189,7 +184,7 @@ export class FormHavPage implements OnInit {
         this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
 
         const loading = await this.utilService.startLoadingWithOptions();
-        this.apiService.getModelList(this.user.companyID, type).subscribe((response: Response) => {
+        this.apiService.getModelList(this.companyId, type).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
             const toolModels = response.Result;
             this.toolModels = toolModels;
@@ -326,9 +321,9 @@ export class FormHavPage implements OnInit {
                     vibrationMagnitude: model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0,
                     pointsPerHour: this.calculatePointsPerHour(),
                     exposurePoints: this.calculateExposure(),
-                    havExposureId: 0,
+                    hAVExposureId: 0,
                     initialExposure: this.currentExposure,
-                    totalExposure: 12,
+                    totalExposure: this.calculateExposure(this.currentExposure),
                 };
             }
         }

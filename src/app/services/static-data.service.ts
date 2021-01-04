@@ -11,54 +11,6 @@ export class StaticDataService {
     static dateFormat = 'YYYY-MM-DD';
     static timeFormat = 'hh:mmA';
 
-    static riskRatings = [
-        {title: '1 Low', class: 'risk-rating-low', value: 1},
-        {title: '2 Low', class: 'risk-rating-low', value: 2},
-        {title: '3 Low', class: 'risk-rating-low', value: 3},
-        {title: '4 Moderate', class: 'risk-rating-moderate', value: 4},
-        {title: '5 Moderate', class: 'risk-rating-moderate', value: 5},
-        {title: '6 Moderate', class: 'risk-rating-moderate', value: 6},
-        {title: '8 High', class: 'risk-rating-high', value: 8},
-        {title: '9 High', class: 'risk-rating-high', value: 9},
-        {title: '10 High', class: 'risk-rating-high', value: 10},
-        {title: '12 High', class: 'risk-rating-high', value: 12},
-        {title: '15 Extreme', class: 'risk-rating-extreme', value: 15},
-        {title: '16 Extreme', class: 'risk-rating-extreme', value: 16},
-        {title: '20 Extreme', class: 'risk-rating-extreme', value: 20},
-        {title: '25 Extreme', class: 'risk-rating-extreme', value: 25},
-    ];
-
-    static types = [
-        {name: 'Struck by', id: 'StruckBy'},
-        {name: 'Falls From Height', id: 'FallsFromHeight'},
-        {name: 'Cuts, Bruises and Bumps', id: 'CutsBruisesAndBumps'},
-        {name: 'Vehicle Movements', id: 'VehicleMovements'},
-        {name: 'Confined Space Entry', id: 'ConfinedSpaceEntry'},
-        {name: 'Medical Incident', id: 'MdeicalIncident'},
-        {name: 'Strains and Pains', id: 'StrainsAndPains'},
-        {name: 'Lifting Pulling and Pushing', id: 'LiftingPullingAndPushing'},
-        {name: 'Injury From Tools', id: 'InjuryFromTools'},
-        {name: 'Dropped Objects', id: 'DroppedObjects'},
-        {name: 'Caught in Between', id: 'CaughtInBetween'},
-        {name: 'Acts of Violence', id: 'ActsofViolence'},
-        {name: 'Contacts With Moving Parts', id: 'ContactsWithMovingParts'}
-    ];
-
-    static classifications = [
-        {name: 'Death to a person', id: 'Fatalities'},
-        {name: 'Lost time injury', id: 'LTI', description: 'Normally 3 days or more'},
-        {name: 'Restricted work case', id: 'RWC', description: 'Restricted duties'},
-        {name: 'Medical treatment case', id: 'MTC', description: 'Medical treatment required, normally from a professional'},
-        {name: 'First aid treatment case', id: 'FATC', description: 'First aid administered, normally by a trained first aider'},
-        {
-            name: 'Loss of containment',
-            id: 'LOC',
-            description: 'Loss of anything that is normally contained - Example, gas, water, chemicals,\n' +
-                'fire, asbestos'
-        },
-        {name: 'Near miss', id: 'NM', description: 'a 10 feet pipe lagging fell narrowly missing employee'},
-    ];
-
     static bodyParts = [
         {
             type: 'Head',
@@ -314,7 +266,6 @@ export class StaticDataService {
             ]
         }
     ];
-
 
     static fileMimeTypes = {
         '3dmf': 'x-world/x-3dmf',

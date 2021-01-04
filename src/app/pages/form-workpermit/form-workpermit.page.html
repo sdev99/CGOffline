@@ -6,7 +6,7 @@
         <ng-container *ngIf="sharedDataService.dedicatedMode; else personalMode">
             <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
                                  (closeModal)="onClose()"
-                                 [modalSubTitle]="activityDetail?activityDetail.title:''"></app-modal-header-dm>
+                                 [modalSubTitle]="formBuilderDetail?.title"></app-modal-header-dm>
         </ng-container>
 
         <ng-template #personalMode>
@@ -45,7 +45,7 @@
                     <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index;">
                         <ng-container *ngIf="utilService.shouldShowSection(section)">
                             <app-section-title
-                                    [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                                    [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
                             </app-section-title>
 
                             <app-custom-questions-container

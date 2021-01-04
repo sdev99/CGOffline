@@ -6,7 +6,7 @@
         <ng-container *ngIf="sharedDataService.dedicatedMode; else personalMode">
             <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
                                  (closeModal)="onClose()"
-                                 [modalSubTitle]="activityDetail?activityDetail.title:''"></app-modal-header-dm>
+                                 [modalSubTitle]="formBuilderDetail?.title"></app-modal-header-dm>
         </ng-container>
 
         <ng-template #personalMode>
@@ -46,7 +46,7 @@
                     <ng-container *ngIf="utilService.shouldShowSection(section)">
 
                         <app-section-title
-                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.currentLanguageId).sectionTranslationTitle">
+                                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
                         </app-section-title>
 
 
@@ -62,8 +62,8 @@
                                      [id]="UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskId)"
                                 >
                                     <app-question-list-header
-                                            [questionTitle]=" UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.currentLanguageId).taskTranslationTitle"
-                                            [note]="UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.currentLanguageId).taskTranslationInstructionOrNote"
+                                            [questionTitle]=" UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.getLanguageIdForForm()).taskTranslationTitle"
+                                            [note]="UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.getLanguageIdForForm()).taskTranslationInstructionOrNote"
                                             [required]="task.isRequired"
                                             [attachments]="task.taskAttachments"
                                             [qNo]="questionElementIds.indexOf(UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskId))+1"
@@ -73,7 +73,7 @@
                                     <div class="risk-assesment-component" *ngFor="let hazard of task.hazards">
                                         <ion-item lines="full">
                                             <ion-icon slot="start" src="./assets/icon/thunder.svg"></ion-icon>
-                                            <ion-label>{{UtilService.findObj(hazard.hazardTranslations, 'hazardTranslationLanguageId', sharedDataService.currentLanguageId).hazardTranslationTitle}}</ion-label>
+                                            <ion-label>{{UtilService.findObj(hazard.hazardTranslations, 'hazardTranslationLanguageId', sharedDataService.getLanguageIdForForm()).hazardTranslationTitle}}</ion-label>
                                         </ion-item>
 
                                         <ion-item class="drop-down-item" lines="none">
@@ -93,7 +93,7 @@
 
                                         <div class="options" *ngIf="hazard.controlMeasures">
                                             <ion-item *ngFor="let controlMeasure of hazard.controlMeasures">
-                                                <ion-label>{{UtilService.findObj(controlMeasure.controlMeasureTranslations, 'controlMeasureTranslationLanguageId', sharedDataService.currentLanguageId).controlMeasureTranslationTitle}}</ion-label>
+                                                <ion-label>{{UtilService.findObj(controlMeasure.controlMeasureTranslations, 'controlMeasureTranslationLanguageId', sharedDataService.getLanguageIdForForm()).controlMeasureTranslationTitle}}</ion-label>
                                                 <ion-checkbox mode="md" slot="start"
                                                               [(ngModel)]="controlMeasure.isSelected"></ion-checkbox>
                                             </ion-item>

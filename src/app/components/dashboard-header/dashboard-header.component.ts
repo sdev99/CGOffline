@@ -169,16 +169,14 @@ export class DashboardHeaderComponent implements OnInit {
     previousPlace() {
         if (this.currentCheckinPlaceIndex > 0) {
             this.currentCheckinPlaceIndex--;
-            this.sharedDataService.currentSelectedCheckinPlace = this.checkedPlaces[this.currentCheckinPlaceIndex];
-            this.observablesService.publishSomeData(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED);
+            this.placedChange(this.checkedPlaces[this.currentCheckinPlaceIndex]);
         }
     }
 
     nextPlace() {
         if (this.currentCheckinPlaceIndex < this.checkedPlaces.length - 1) {
             this.currentCheckinPlaceIndex++;
-            this.sharedDataService.currentSelectedCheckinPlace = this.checkedPlaces[this.currentCheckinPlaceIndex];
-            this.observablesService.publishSomeData(EnumService.ObserverKeys.CURRENT_CHECKED_IN_CHANGED);
+            this.placedChange(this.checkedPlaces[this.currentCheckinPlaceIndex]);
         }
     }
 

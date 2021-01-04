@@ -4,7 +4,7 @@
             <ion-label
                     class="ion-text-wrap"
                     [ngStyle]="{'color':item.answerChoiceAttributeColor==='white'?null:item.answerChoiceAttributeColor}">
-                {{UtilService.findObj(item.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', sharedDataService.currentLanguageId).answerChoiceAttributeHeaderTitle}}
+                {{UtilService.findObj(item.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', sharedDataService.getLanguageIdForForm()).answerChoiceAttributeHeaderTitle}}
             </ion-label>
             <ion-radio mode="md" slot="start" [value]="item.answerChoiceAttributeId"></ion-radio>
         </ion-item>

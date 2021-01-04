@@ -13,31 +13,27 @@
               lines="full">
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
-            <ion-item tappable
-                      *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
-                      (click)="openAvailableDocument(item)">
-                <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>
-                <ion-text class="col-title text-style-1">{{item.documentTitle}}</ion-text>
-                <ion-text class="col-date text-style-2">{{item.formattedCreatedDate}}</ion-text>
-            </ion-item>
+            <app-archived-item
+                    *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
+                    (itemSelect)="openAvailableDocument(item)"
+                    [icon]="item.documentFileIconURL"
+                    [colFirst]="item.documentTitle"
+                    colThird="Signed"
+                    [colThirdHighlighted]="item.formattedCreatedDate"
+            ></app-archived-item>
         </ng-container>
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive">
-            <div tappable *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
-                 (click)="openArchivedDocument(item)">
-                <ion-item tappable>
-<!--                    <ion-icon slot="start" [src]="UtilService.FileIcon(item.documentFileName)"></ion-icon>-->
-                    <ion-img slot="start" [src]="item.documentFileIconURL"></ion-img>
-                    <ion-text class="col-title text-style-1">{{item.documentTitle}}</ion-text>
-                    <ion-text class="col-name text-style-2">
-                        Signed by &nbsp;<span class="highlight">{{item.signedByName}}</span>
-                    </ion-text>
-
-                    <ion-text class="col-date text-style-2">
-                        Signed &nbsp;<span class="highlight">{{item.formattedCreatedDate}}</span>
-                    </ion-text>
-                </ion-item>
-            </div>
+            <app-archived-item
+                    *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
+                    (itemSelect)="openArchivedDocument(item)"
+                    [icon]="item.documentFileIconURL"
+                    [colFirst]="item.documentTitle"
+                    colSecond="Signed by"
+                    [colSecondHighlighted]="item.signedByName"
+                    colThird="Signed"
+                    [colThirdHighlighted]="item.formattedCreatedDate"
+            ></app-archived-item>
         </ng-container>
 
     </ion-list>
