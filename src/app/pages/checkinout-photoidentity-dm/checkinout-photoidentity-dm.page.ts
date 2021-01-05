@@ -92,11 +92,10 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
             (err) => {
                 console.log(err);
             });
-
     };
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm',{replaceUrl: true});
+        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
     }
 
     onBack() {

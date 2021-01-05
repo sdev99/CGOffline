@@ -1,4 +1,5 @@
 export class DeviceEntityDetail {
+    checkInPersonalQR: boolean;
     createdBy: string;
     createdDate: string;
     deviceEntityID: number;

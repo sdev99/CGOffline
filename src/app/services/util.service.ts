@@ -7,6 +7,8 @@ import {ValidatorService} from './validator.service';
 import * as moment from 'moment';
 import {StaticDataService} from './static-data.service';
 import {UserDetail} from '../_models/userDetail';
+import {environment} from '../../environments/environment';
+import {Capacitor} from '@capacitor/core';
 
 declare global {
     interface Array<T> {
@@ -29,6 +31,11 @@ export class UtilService {
 
     questionElementIds: Array<string>;
     questionElementIdsUpdate: any; // callback
+
+
+    static isLocalHost() {
+        return !environment.production && !Capacitor.isNative;
+    }
 
     static InductionContentTypeScreenIdentify(contentType, isDedicatedMode = false) {
         let routeName = '';

@@ -8,7 +8,7 @@ import {EnumService} from '../../services/enum.service';
 import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
 import {Response, User} from '../../_models';
-import {PermissionType, Plugins} from '@capacitor/core';
+import {Capacitor, PermissionType, Plugins} from '@capacitor/core';
 import {LocationItem} from '../../_models/locationItem';
 import {AccountService} from '../../services/account.service';
 import {UserDetail} from '../../_models/userDetail';
@@ -16,6 +16,7 @@ import {FormItem} from '../../_models/formItem';
 import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
 import {SignOffFormDetail} from '../../_models/signOffFormDetail';
 import {DocumentDetail} from '../../_models/documentDetail';
+import {environment} from '../../../environments/environment';
 
 const {Camera, Permissions} = Plugins;
 
@@ -60,8 +61,9 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ngOnInit() {
-        const QrCodeTestingInLocalHostFor: any = null;
-        if (QrCodeTestingInLocalHostFor) {
+        const QrCodeTestingInLocalHostFor: any = '';
+
+        if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
             setTimeout(() => {
                 switch (QrCodeTestingInLocalHostFor) {
                     case 'document':

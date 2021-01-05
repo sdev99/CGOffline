@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-checkinout-option-dm',
@@ -13,6 +14,7 @@ export class CheckinoutOptionDmPage implements OnInit {
     constructor(
         public navController: NavController,
         public sharedDataService: SharedDataService,
+        public utilService: UtilService,
     ) {
     }
 
@@ -30,8 +32,12 @@ export class CheckinoutOptionDmPage implements OnInit {
     }
 
     checkInOutQR() {
-        this.sharedDataService.checkinoutDmAs = EnumService.CheckInType.QrCode;
-        this.navController.navigateForward('dashboard-qrscan');
+        if (this.sharedDataService.dedicatedModeLocationUse.checkInPersonalQR) {
+            this.sharedDataService.checkinoutDmAs = EnumService.CheckInType.QrCode;
+            this.navController.navigateForward('dashboard-qrscan');
+        } else {
+            this.utilService.showAlert('You cannot check-in to this location with personal qr code');
+        }
     }
 
     checkInOutGuest() {

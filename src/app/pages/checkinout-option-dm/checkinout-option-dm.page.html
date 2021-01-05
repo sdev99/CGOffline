@@ -11,7 +11,7 @@
             </ion-col>
         </ion-row>
         <ion-row style="margin-top: 40px">
-            <ion-col>
+            <ion-col *ngIf="sharedDataService.dedicatedModeLocationUse?.checkInPersonalQR">
                 <app-dashboard-button
                         icon="./assets/icon/qrscan-blue.svg"
                         title="with QR code"

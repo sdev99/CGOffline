@@ -25,7 +25,7 @@ export class CheckinoutGuestDmPage implements OnInit {
     ) {
         this.formGroup = new FormGroup({
             fname: new FormControl('', Validators.compose([Validators.required])),
-            mname: new FormControl(false, Validators.compose([])),
+            mname: new FormControl('', Validators.compose([])),
             lname: new FormControl('', Validators.compose([Validators.required])),
         });
     }
@@ -34,7 +34,7 @@ export class CheckinoutGuestDmPage implements OnInit {
     }
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm',{replaceUrl: true});
+        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
     }
 
     onBack() {
