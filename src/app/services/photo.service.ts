@@ -63,6 +63,7 @@ export class PhotoService {
             width: 500,
             allowEditing,
             height: 500,
+            correctOrientation: true,
             preserveAspectRatio: true,
             direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear
         });
@@ -79,6 +80,8 @@ export class PhotoService {
             quality: 70,
             width: 500,
             height: 500,
+            preserveAspectRatio: true,
+            correctOrientation: true,
         });
         try {
             callBack(capturedPhoto);

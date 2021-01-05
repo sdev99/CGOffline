@@ -26,7 +26,6 @@ export class LoginPage implements OnInit {
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
     ) {
-
         this.loginForm = new FormGroup({
             email: new FormControl('', Validators.compose([
                 Validators.required,
@@ -61,7 +60,6 @@ export class LoginPage implements OnInit {
                     this.navCtrl.navigateRoot('/tabs/dashboard');
                 }, ({message}) => {
                     this.utilService.hideLoadingFor(loading);
-
                     this.errorMessage = message;
                 });
         }

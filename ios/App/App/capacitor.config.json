@@ -12,5 +12,9 @@
   "cordova": {},
   "ios": {
     "backgroundColor": "transparent"
+  },
+  "server": {
+    "url": "http://localhost:8101",
+    "cleartext": true
   }
 }
