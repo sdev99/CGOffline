@@ -26,6 +26,7 @@ export class CurrentCheckinPage implements OnInit {
     UtilService = UtilService;
     user: User;
 
+    isRefreshing = false;
     isCheckedIn = false;
 
     availableWorkPermits;
@@ -70,7 +71,9 @@ export class CurrentCheckinPage implements OnInit {
     }
 
     doRefresh(event) {
+        this.isRefreshing = true;
         this.getPersonalModeData(false, () => {
+            this.isRefreshing = false;
             event.target.complete();
         });
     }

@@ -81,6 +81,8 @@ export class EnumService {
         USER_PROFILE: 'user_profile',
         API_ACCESS_KEY: 'api_access_key',
         API_TOKEN: 'api_token',
+        PUSH_TOKEN: 'push_token',
+        PUSH_PERMISSION_ALLOWED: 'push_permission_allowed',
         IS_DEDICATED_MODE: 'dedicated_mode',
         DEDICATED_MODE_DEVICE_DETAIL: 'dedicated_mode_device_detail',
         DEDICATED_MODE_ASSIGNED_ENTITIES: 'dedicated_mode_assigned_entities',

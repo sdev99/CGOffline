@@ -350,6 +350,24 @@ body * {
   }
 }
 
+.ion-infinite-custom-loader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 16px;
+
+  ion-icon {
+    width: 25px;
+    height: 25px;
+
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration: 1.5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+  }
+}
+
 
 .action-btn {
   margin: 4vh;

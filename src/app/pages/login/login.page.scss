@@ -1,4 +1,15 @@
 ion-content {
+  .content-vertically-arrange {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+
+    .vertically-fill-space {
+      display: flex;
+      flex: 1
+    }
+  }
+
   --background: var(--ion-color-app-primary);
   --padding-start: 9.07%;
   --padding-end: 9.07%;
@@ -7,7 +18,6 @@ ion-content {
     font-family: Inter;
     font-style: normal;
     font-weight: bold;
-    margin-top: 16vh;
     font-size: 24px;
     line-height: 29px;
     color: #FFFFFF;
@@ -24,13 +34,16 @@ ion-content {
     color: #FFFFFF;
   }
 
+  .input-form {
+    margin-top: 10px;
+  }
+
   .bottom-view {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-top: 50px;
 
     ion-select {
       --placeholder-color: #fff;
@@ -61,6 +74,7 @@ ion-content {
       font-size: 10px;
       line-height: 12px;
       color: #FFFFFF;
+      text-align: center;
       opacity: 0.5;
     }
   }

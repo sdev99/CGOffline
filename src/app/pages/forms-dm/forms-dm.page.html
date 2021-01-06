@@ -17,6 +17,7 @@
         <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
             <app-archived-item
                     *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';"
+                    [icon]="item.documentFileIconURL"
                     (itemSelect)="openForm(item)"
                     [colFirst]="item.formTitle"
             ></app-archived-item>

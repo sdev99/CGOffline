@@ -1,6 +1,6 @@
 <ion-header mode="ios">
 
-    <ion-toolbar  *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
+    <ion-toolbar *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
         <ion-title size="large">{{pageTitle}}</ion-title>
         <ion-buttons slot="end">
             <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
@@ -31,7 +31,8 @@
         </div>
 
         <ng-container *ngIf="showDigitalInk">
-            <div class="hr-line"></div>
+
+            <div class="hr-line" *ngIf="!sharedDataService.isTablet"></div>
 
             <div class="title-2">Digital Ink Signature</div>
 
@@ -43,14 +44,14 @@
 
         </ng-container>
 
-        <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="onContinue()"
+        <ion-button *ngIf="sharedDataService.isTablet" expand="full" class="action-btn" (click)="onContinue()"
                     [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
             Continue
         </ion-button>
     </div>
 </ion-content>
 
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+<ion-footer mode="ios" *ngIf="!sharedDataService.isTablet">
     <ion-button expand="full" class="action-btn" (click)="onContinue()"
                 [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
         Continue

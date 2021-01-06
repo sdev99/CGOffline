@@ -8,7 +8,6 @@ import {
 } from '@capacitor/core';
 
 import {NavController, Platform} from '@ionic/angular';
-import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
 import {ObservablesService} from './services/observables.service';
@@ -23,7 +22,7 @@ import {Router} from '@angular/router';
 import {Capacitor} from '@capacitor/core';
 import {Response} from './_models';
 
-const {Geolocation, PushNotifications, Permissions, App} = Plugins;
+const {Geolocation, PushNotifications, Permissions, App, SplashScreen} = Plugins;
 
 @Component({
     selector: 'app-root',
@@ -33,7 +32,7 @@ const {Geolocation, PushNotifications, Permissions, App} = Plugins;
 export class AppComponent {
     constructor(
         private platform: Platform,
-        private splashScreen: SplashScreen,
+        private ngZone: NgZone,
         private statusBar: StatusBar,
         private uniqueDeviceID: UniqueDeviceID,
         public sharedDataService: SharedDataService,
@@ -44,30 +43,14 @@ export class AppComponent {
         private accountService: AccountService,
         private apiService: ApiService,
         private router: Router,
-        private zone: NgZone
     ) {
         this.initializeApp();
     }
 
     initializeApp() {
         this.platform.ready().then(async () => {
-
             this.statusBar.styleDefault();
-            this.splashScreen.hide();
             this.sharedDataService.apiServiceRerence = this.apiService;
-
-            this.setupDeepLink();
-
-            this.uniqueDeviceID.get()
-                .then((uuid: any) => {
-                    console.log('Device UUID ', uuid);
-                    this.sharedDataService.deviceUID = uuid;
-                    this.checkForAccessKey();
-                })
-                .catch((error: any) => {
-                    console.log(error);
-                    this.checkForAccessKey();
-                });
 
             Plugins.App.addListener('appRestoredResult', (data: any) => {
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.APP_RESTORED_RESULT, data.data);
@@ -76,15 +59,82 @@ export class AppComponent {
             Plugins.App.addListener('backButton', (data: any) => {
 
             });
+
+            this.setupDeepLink();
+            this.loadAppSettings();
+            setTimeout(() => {
+                this.ngZone.run(() => {
+                    SplashScreen.hide();
+                });
+            }, 1500);
+        });
+
+
+        if (UtilService.isLocalHost()) {
+            setTimeout(() => {
+                this.sharedDataService.updatePushSettingOnServer(false);
+            }, 5000);
+        }
+    }
+
+    appSettingLoaded = (isDeviceAssignedForDedicatedMode, data = null) => {
+        this.ngZone.run(() => {
+            this.utilService.hideLoading();
+
+            if (isDeviceAssignedForDedicatedMode) {
+                this.configureAppForDedicatedMode(data);
+            } else {
+                if (this.sharedDataService.dedicatedMode) {
+                    this.sharedDataService.dedicatedModeDeviceDeleted();
+                }
+                this.configureAppForPersonalMode();
+            }
+        });
+    };
+
+    async loadAppSettings() {
+        this.utilService.presentLoadingWithOptions();
+        this.getDeviceUniqueId(() => {
+            this.checkForAccessKey(() => {
+                this.checkForToken(() => {
+                    this.apiService.getTimeZoneList().subscribe(() => {
+                    });
+
+                    if (this.sharedDataService.isTablet) {
+                        this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
+                            this.appSettingLoaded(isDeviceAssigned, data);
+                        });
+                    } else {
+                        this.appSettingLoaded(false);
+                    }
+                });
+            });
         });
     }
+
+
+    getDeviceUniqueId = (callBack) => {
+        this.uniqueDeviceID.get()
+            .then((uuid: any) => {
+                console.log('Device UUID ', uuid);
+                this.sharedDataService.deviceUID = uuid;
+                UtilService.fireCallBack(callBack);
+            })
+            .catch((error: any) => {
+                console.log(error);
+                UtilService.fireCallBack(callBack);
+            });
+    };
 
     setupDeepLink = () => {
         // reset password url https://cg.utopia-test.com/Login/ResetPassword?code=TTQ4LOM8
         // setup new account https://cg.utopia-test.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
+        //
+        // reset password url https://login.be-safetech.com/Login/ResetPassword?code=TTQ4LOM8
+        // setup new account https://login.be-safetech.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
 
         App.addListener('appUrlOpen', (data: any) => {
-            this.zone.run(() => {
+            this.ngZone.run(() => {
                 // Example url: https://beerswift.app/tabs/tab2
                 // slug = /tabs/tab2
                 const url = data.url;
@@ -107,81 +157,62 @@ export class AppComponent {
         });
     };
 
-    checkForAccessKey = async () => {
+    checkForAccessKey = async (callBack) => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_ACCESS_KEY)) {
-            const loading = await this.utilService.startLoadingWithOptions();
             this.accountService.getAccessKey().subscribe(async (data) => {
-                await this.utilService.hideLoadingFor(loading);
-                this.checkForToken();
+                UtilService.fireCallBack(callBack);
             }, async (error) => {
-                await this.utilService.hideLoadingFor(loading);
+                UtilService.fireCallBack(callBack);
             });
         } else {
-            this.checkForToken();
+            UtilService.fireCallBack(callBack);
         }
     };
 
-    checkForToken = async () => {
+    checkForToken = async (callBack) => {
         if (!localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN)) {
-            const loading = await this.utilService.startLoadingWithOptions();
             this.accountService.getToken().subscribe(async (token) => {
-                await this.utilService.hideLoadingFor(loading);
-                this.checkDeviceForDedicatedMode();
+                UtilService.fireCallBack(callBack);
             }, async (error) => {
-                await this.utilService.hideLoadingFor(loading);
+                UtilService.fireCallBack(callBack);
             });
         } else {
-            this.checkDeviceForDedicatedMode();
+            UtilService.fireCallBack(callBack);
         }
     };
 
-    checkDeviceForDedicatedMode = async () => {
-        this.apiService.getTimeZoneList().subscribe(() => {
-        });
-
-        const loading = await this.utilService.startLoadingWithOptions();
+    checkDeviceForDeticatedMode = async (callBack) => {
         this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe(async (data: Response) => {
-            await this.utilService.hideLoadingFor(loading);
-
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful && data.Result && data.Result?.deviceDetailData && data.Result?.deviceDetailData?.companyID) {
-                if (this.sharedDataService.isTablet) {
-                    localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
-                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(data.Result?.deviceDetailData));
-                    localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(data.Result?.deviceEntityData));
-
-                    this.sharedDataService.dedicatedMode = true;
-                    this.sharedDataService.dedicatedModeDeviceDetailData = data.Result?.deviceDetailData;
-                    this.sharedDataService.dedicatedModeAssignedEntities = data.Result?.deviceEntityData;
-                    if (this.sharedDataService.dedicatedModeAssignedEntities && this.sharedDataService.dedicatedModeAssignedEntities.length === 1) {
-                        this.sharedDataService.dedicatedModeLocationUse = this.sharedDataService.dedicatedModeAssignedEntities[0];
-                        localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify(this.sharedDataService.dedicatedModeAssignedEntities[0]));
-                    }
-
-                    this.configureAppForDedicatedMode();
-                } else {
-                    this.sharedDataService.dedicatedModeDeviceDeleted();
-                    this.configureAppForPersonalMode();
-                }
+                UtilService.fireCallBack(callBack, {isDeviceAssigned: true, data});
             } else {
-                localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
-                this.configureAppForPersonalMode();
+                UtilService.fireCallBack(callBack, {isDeviceAssigned: false});
             }
-
         }, async (error) => {
-            await this.utilService.hideLoadingFor(loading);
-            localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
-            this.configureAppForPersonalMode();
+            UtilService.fireCallBack(callBack, {isDeviceAssigned: this.sharedDataService.dedicatedMode});
         });
     };
 
-    configureAppForDedicatedMode = async () => {
+    configureAppForDedicatedMode = async (data: Response = null) => {
+        localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
+        this.sharedDataService.dedicatedMode = true;
+
+        if (data) {
+            localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(data.Result?.deviceDetailData));
+            localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(data.Result?.deviceEntityData));
+
+            this.sharedDataService.dedicatedModeDeviceDetailData = data.Result?.deviceDetailData;
+            this.sharedDataService.dedicatedModeAssignedEntities = data.Result?.deviceEntityData;
+
+            if (this.sharedDataService.dedicatedModeAssignedEntities && this.sharedDataService.dedicatedModeAssignedEntities.length === 1) {
+                this.sharedDataService.dedicatedModeLocationUse = this.sharedDataService.dedicatedModeAssignedEntities[0];
+                localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE, JSON.stringify(this.sharedDataService.dedicatedModeAssignedEntities[0]));
+            }
+        }
+
         try {
             if (this.platform.is('ios')) {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
-
-                setTimeout(() => {
-                    window.screen.orientation.lock('landscape');
-                }, 5000);
             } else {
                 this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
             }
@@ -194,6 +225,12 @@ export class AppComponent {
         } else {
             this.navController.navigateRoot('choose-location');
         }
+
+        setTimeout(() => {
+            this.configureForLocation();
+        }, 1000);
+
+        this.sharedDataService.updatePushSettingOnServer(false);
     };
 
     configureAppForPersonalMode = async () => {
@@ -203,49 +240,24 @@ export class AppComponent {
 
         }
 
+        if (this.accountService.userValue?.userId) {
+            this.navController.navigateRoot('/tabs/dashboard', {replaceUrl: true});
+        } else {
+            this.navController.navigateRoot('/login');
+        }
+
+        localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
+
+        setTimeout(() => {
+            this.sharedDataService.configureForPushNotification();
+            this.configureForLocation();
+        }, 1000);
+    };
+
+
+
+    configureForLocation = async () => {
         try {
-            if (Capacitor.isNative) {
-                const notificationPermission = await Permissions.query({
-                    name: PermissionType.Notifications
-                });
-                if (notificationPermission.state !== 'granted') {
-                    await PushNotifications.requestPermission().then((result) => {
-                        if (result.granted) {
-                            // Register with Apple / Google to receive push via APNS/FCM
-                            this.registerForPushNotification();
-                        } else {
-                            this.accountService.updatePushNotification({
-                                isPushNotification: false
-                            });
-                        }
-                    });
-                } else {
-                    this.registerForPushNotification();
-                }
-
-                // On success, we should be able to receive notifications
-                PushNotifications.addListener('registration',
-                    (token: PushNotificationToken) => {
-                        this.sharedDataService.pushToken = token.value;
-                        console.log('Push registration success, token: ' + token.value);
-                    }
-                );
-
-                // Show us the notification payload if the app is open on our device
-                PushNotifications.addListener('pushNotificationReceived',
-                    (notification: PushNotification) => {
-                        console.log('Push received: ' + JSON.stringify(notification));
-                    }
-                );
-
-                // Method called when tapping on a notification
-                PushNotifications.addListener('pushNotificationActionPerformed',
-                    (notification: PushNotificationActionPerformed) => {
-                        console.log('Push action performed: ' + JSON.stringify(notification));
-                    }
-                );
-            }
-
             const locationPermission = await Permissions.query({
                 name: PermissionType.Geolocation
             });
@@ -263,27 +275,21 @@ export class AppComponent {
                 console.log('GetCurrentPosition Error ', error);
             });
 
-
-            try {
-                Geolocation.watchPosition({}, (response) => {
-                    if (response) {
-                        this.sharedDataService.myCurrentGeoLocation = response;
-                        console.log('Current Location WP', response);
-                    }
-                });
-            } catch (e) {
-                console.log('WatchPosition Error ', e);
-            }
         } catch (e) {
 
         }
-    };
 
 
-    registerForPushNotification = () => {
-        PushNotifications.register();
-        this.accountService.updatePushNotification({
-            isPushNotification: true
-        });
+        try {
+            Geolocation.watchPosition({}, (response) => {
+                if (response) {
+                    this.sharedDataService.myCurrentGeoLocation = response;
+                    console.log('Current Location WP', response);
+                }
+            });
+        } catch (e) {
+            console.log('WatchPosition Error ', e);
+        }
     };
+
 }

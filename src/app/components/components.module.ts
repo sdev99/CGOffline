@@ -36,6 +36,7 @@ import {PhotoFieldComponent} from './photo-field/photo-field.component';
 import {SectionTitleComponent} from './section-title/section-title.component';
 import {ModelCloseButtonComponent} from './model-close-button/model-close-button.component';
 import {ArchivedItemComponent} from './archived-item/archived-item.component';
+import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custom-ion-refresh-loader.component';
 
 @NgModule({
     declarations: [
@@ -72,7 +73,8 @@ import {ArchivedItemComponent} from './archived-item/archived-item.component';
         PhotoFieldComponent,
         SectionTitleComponent,
         ModelCloseButtonComponent,
-        ArchivedItemComponent
+        ArchivedItemComponent,
+        CustomIonRefreshLoaderComponent
     ],
     imports: [
         IonicModule,
@@ -114,7 +116,8 @@ import {ArchivedItemComponent} from './archived-item/archived-item.component';
         PhotoFieldComponent,
         SectionTitleComponent,
         ModelCloseButtonComponent,
-        ArchivedItemComponent
+        ArchivedItemComponent,
+        CustomIonRefreshLoaderComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

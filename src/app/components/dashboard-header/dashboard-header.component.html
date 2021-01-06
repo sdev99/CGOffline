@@ -1,7 +1,7 @@
 <ion-toolbar mode="ios" class="part-1">
 
     <ion-title size="large">
-        {{isCurrentCheckin?'Current Check-In':'Dashboard'}}
+        {{isCurrentCheckin ? 'Current Check-In' : 'Dashboard'}}
     </ion-title>
 
     <ion-buttons slot="end">
@@ -18,7 +18,7 @@
     <ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="start"
                 class="arrow-button left" size="small" fill="clear"
                 (click)="previousPlace()">
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        <ion-icon *ngIf="shouldShowNavigationPlaceBtns(1)" slot="icon-only" name="chevron-back-outline"></ion-icon>
     </ion-button>
 
 
@@ -49,7 +49,7 @@
     <ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="end"
                 class="arrow-button right" size="small" fill="clear"
                 (click)="nextPlace()">
-        <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+        <ion-icon *ngIf="shouldShowNavigationPlaceBtns(2)" slot="icon-only" name="chevron-forward-outline"></ion-icon>
     </ion-button>
 </ion-item>
 

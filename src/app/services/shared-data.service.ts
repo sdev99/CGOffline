@@ -5,7 +5,15 @@ import {Profile} from '../_models/profile';
 import {CheckinDetail} from '../_models/checkinDetail';
 import {LocationItem} from '../_models/locationItem';
 import {GlobalDirectory} from '../_models/globalDirectory';
-import {GeolocationPosition} from '@capacitor/core';
+import {
+    Capacitor,
+    GeolocationPosition,
+    PermissionType,
+    Plugins,
+    PushNotification,
+    PushNotificationActionPerformed,
+    PushNotificationToken
+} from '@capacitor/core';
 import {ActivityListItem} from '../_models/activityListItem';
 import {DocumentDetail} from '../_models/documentDetail';
 import {CheckInPostData} from '../_models/checkInPostData';
@@ -34,6 +42,8 @@ import {DeviceEntityDetail} from '../_models/deviceEntityDetail';
 import {DedicatedModeGuestDetail} from '../_models/dedicatedModeGuestDetail';
 import {UserDetail} from '../_models/userDetail';
 
+const {PushNotifications, Permissions} = Plugins;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -49,10 +59,11 @@ export class SharedDataService {
     // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
     // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222'; // For test dedicated mode assign one location
-    deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+    // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
     // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
+    deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
 
-    pushToken = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
+    pushToken = '000';
     isTablet = false;
     dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
     // when open form or document , useful for next screens
@@ -149,6 +160,11 @@ export class SharedDataService {
             this.checkedInPlaces = JSON.parse(checkedInPlaces);
         }
 
+        const pushToken = localStorage.getItem(EnumService.LocalStorageKeys.PUSH_TOKEN);
+        if (pushToken) {
+            this.pushToken = pushToken;
+        }
+
         const selectedCheckedInPlace = localStorage.getItem(EnumService.LocalStorageKeys.CURRENT_SELECTED_CHECKIN_PLACE);
         if (selectedCheckedInPlace) {
             this.currentSelectedCheckinPlace = JSON.parse(selectedCheckedInPlace);
@@ -179,6 +195,7 @@ export class SharedDataService {
         localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES);
         this.navCtrl.navigateRoot('/login', {replaceUrl: true});
         this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        this.configureForPushNotification();
     }
 
     resetAllSharedVariable() {
@@ -221,6 +238,79 @@ export class SharedDataService {
             return this.formBuilderDetails?.defaultLanguageId;
         }
     }
+
+
+    configureForPushNotification = async () => {
+        if (Capacitor.isNative) {
+            try {
+                const notificationPermission = await Permissions.query({
+                    name: PermissionType.Notifications
+                });
+
+                if (notificationPermission.state !== 'granted') {
+                    await PushNotifications.requestPermission().then((result) => {
+                        if (result.granted) {
+                            localStorage.setItem(EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED, 'true');
+                            // Register with Apple / Google to receive push via APNS/FCM
+                            this.registerForPushNotification();
+                        } else {
+                            localStorage.setItem(EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED, 'false');
+                            this.updatePushSettingOnServer(false);
+                        }
+                    });
+                } else {
+                    localStorage.setItem(EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED, 'true');
+                    this.registerForPushNotification();
+                }
+
+                // On success, we should be able to receive notifications
+                PushNotifications.addListener('registration',
+                    (token: PushNotificationToken) => {
+                        localStorage.setItem(EnumService.LocalStorageKeys.PUSH_TOKEN, token.value);
+                        this.pushToken = token.value;
+                        console.log('Push registration success, token: ' + token.value);
+                    }
+                );
+
+                // Show us the notification payload if the app is open on our device
+                PushNotifications.addListener('pushNotificationReceived',
+                    (notification: PushNotification) => {
+                        console.log('Push received: ' + JSON.stringify(notification));
+                    }
+                );
+
+                // Method called when tapping on a notification
+                PushNotifications.addListener('pushNotificationActionPerformed',
+                    (notification: PushNotificationActionPerformed) => {
+                        console.log('Push action performed: ' + JSON.stringify(notification));
+                    }
+                );
+            } catch (e) {
+
+            }
+        }
+    };
+
+    registerForPushNotification = () => {
+        PushNotifications.register();
+        this.updatePushSettingOnServer(true);
+    };
+
+    updatePushSettingOnServer = (isEnable) => {
+        if (this.dedicatedMode) {
+            this.apiServiceRerence.updatePushNotification({
+                isPushNotification: isEnable
+            }, this.deviceUID).subscribe(() => {
+            });
+        } else {
+            if (this.getLoggedInUser()?.userId) {
+                this.apiServiceRerence.updatePushNotification({
+                    isPushNotification: isEnable
+                }, this.getLoggedInUser()?.userId).subscribe(() => {
+                });
+            }
+        }
+    };
 
     /**
      * For dedicated mode

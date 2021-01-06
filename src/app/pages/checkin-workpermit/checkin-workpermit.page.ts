@@ -110,7 +110,7 @@ export class CheckinWorkpermitPage implements OnInit {
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;
                     this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
-                    this.navCtrl.navigateForward(['/form-cover']);
+                    this.navCtrl.navigateForward(['/form-cover'], {replaceUrl: true});
                 }
             }, (error) => {
                 this.utilService.hideLoadingFor(loading);

@@ -10,6 +10,7 @@ import {GlobalDirectory} from '../../_models/globalDirectory';
 import {UtilService} from '../../services/util.service';
 import {ActivityListItem} from '../../_models/activityListItem';
 import {ObservablesService} from '../../services/observables.service';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
     selector: 'app-dashboard',
@@ -20,6 +21,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     user: User;
     activityList: Array<ActivityListItem>;
     activityOverviewData;
+    isRefreshing = false;
 
     constructor(
         public navCtrl: NavController,
@@ -32,7 +34,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         this.user = this.accountService.userValue;
     }
 
-    async ngOnInit() {
+    ngOnInit() {
         if (!this.sharedDataService.dedicatedMode) {
             this.apiService.getGlobalDirectories(this.user?.companyFolderName).subscribe((response) => {
                 if (response) {
@@ -43,10 +45,10 @@ export class DashboardPage implements OnInit, OnDestroy {
 
             });
 
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
 
             this.getActivityList(() => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
 
             this.observablesService.getObservable(EnumService.ObserverKeys.ACTIVITY_COMPLETED).subscribe(() => {
@@ -54,6 +56,7 @@ export class DashboardPage implements OnInit, OnDestroy {
             });
         }
         this.sharedDataService.currentLanguageId = this.sharedDataService?.userProfile?.mobileAppLanguageID;
+
     }
 
     ionViewWillEnter() {
@@ -84,7 +87,9 @@ export class DashboardPage implements OnInit, OnDestroy {
 
 
     doRefresh(event) {
+        this.isRefreshing = true;
         this.getActivityList(() => {
+            this.isRefreshing = false;
             event.target.complete();
         });
     }

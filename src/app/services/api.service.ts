@@ -71,6 +71,16 @@ export class ApiService {
         }));
     }
 
+
+    updatePushNotification(body, userId) {
+        return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdatePushNotification}/${userId}`, body).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                return true;
+            }
+            return false;
+        }));
+    }
+
     /**
      * This API will use for uploading a user photo at the time of check in
      * This Api will return uploaded file name which will be used in InsertCheckInDetails API’s parameter "UserPhoto"

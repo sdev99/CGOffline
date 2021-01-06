@@ -94,7 +94,7 @@ export class CheckinoutConfirmPage implements OnInit {
             if (this.sharedDataService.checkinLocationByOption === EnumService.CheckInLocationByOptions.QrCode) {
                 this.navCtrl.navigateBack('/tabs/dashboard', {replaceUrl: true});
             } else {
-                this.navCtrl.navigateBack('/tabs/dashboard/checkin-list', {replaceUrl: true});
+                this.navCtrl.navigateBack('/checkin-list', {replaceUrl: true});
             }
         } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
             this.navCtrl.navigateBack('/tabs/dashboard');

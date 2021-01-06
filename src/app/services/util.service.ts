@@ -211,28 +211,29 @@ export class UtilService {
         });
     }
 
-    presentLoadingWithOptions(message = '') {
-        console.log('Show loading');
+    async presentLoadingWithOptions(message = '') {
         if (!this.loading && !this.loadingStarting) {
+            this.loadingStopping = false;
             this.loadingStarting = true;
-            console.log('Show loading 1');
-            this.loadingController.create({
+            this.loading = await this.loadingController.create({
                 cssClass: 'my-loading-class',
                 spinner: null,
                 message: '<ion-icon src="./assets/icon/Loader.svg"/>',
                 translucent: false,
                 backdropDismiss: false,
                 mode: 'md'
-            }).then((loading) => {
-                this.loading = loading;
-                this.loadingStarting = false;
-                this.loading.present();
             });
+            this.loadingStarting = false;
+            await this.loading.present();
+
+            if (this.loadingStopping) {
+                this.hideLoading();
+            }
         }
     }
 
     hideLoading() {
-        console.log('Hide loading');
+        this.loadingStopping = true;
         if (this.loading) {
             this.loading.dismiss();
             this.loading = null;

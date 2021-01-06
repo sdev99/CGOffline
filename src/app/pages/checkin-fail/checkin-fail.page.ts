@@ -43,6 +43,6 @@ export class CheckinFailPage implements OnInit {
     }
 
     onContinue() {
-        this.navCtrl.navigateBack([this.nextPage]);
+        this.navCtrl.navigateBack([this.nextPage], {replaceUrl: true});
     }
 }

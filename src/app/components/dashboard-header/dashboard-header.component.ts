@@ -159,11 +159,18 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     checkInByList() {
-        this.navCtrl.navigateForward('/tabs/dashboard/checkin-list');
+        this.navCtrl.navigateForward('/checkin-list');
     }
 
-    shouldShowNavigationPlaceBtns() {
-        return this.showPlaceNavigationBtns && this.checkedPlaces && this.checkedPlaces.length > 1;
+    shouldShowNavigationPlaceBtns(btnType = 0) {
+        let shouldShowBtn = true;
+        if (btnType && btnType === 1 && this.currentCheckinPlaceIndex === 0) {
+            shouldShowBtn = false;
+        }
+        if (btnType && btnType === 2 && this.currentCheckinPlaceIndex === (this.checkedPlaces.length - 1)) {
+            shouldShowBtn = false;
+        }
+        return shouldShowBtn && this.showPlaceNavigationBtns && this.checkedPlaces && this.checkedPlaces.length > 1;
     }
 
     previousPlace() {

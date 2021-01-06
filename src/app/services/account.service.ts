@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {User} from '../_models';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterOutlet} from '@angular/router';
 import {catchError, map} from 'rxjs/operators';
 import {EnumService} from './enum.service';
 import {environment} from '../../environments/environment';
@@ -10,6 +10,7 @@ import {SharedDataService} from './shared-data.service';
 import {Response} from '../_models/response';
 import {NavController, Platform} from '@ionic/angular';
 import {Profile} from '../_models/profile';
+import {App} from '@capacitor/core';
 
 declare global {
     interface Array<T> {
@@ -164,14 +165,6 @@ export class AccountService {
         }));
     }
 
-    updatePushNotification(body) {
-        return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdatePushNotification}`, body).pipe(map((data: Response) => {
-            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                return true;
-            }
-            return false;
-        }));
-    }
 
     resetpassword(body) {
         return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ResetPassword}`, {
@@ -210,13 +203,16 @@ export class AccountService {
                 deviceID: this.sharedDataService.deviceUID
             }
         };
+
+
         return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(map((data: any) => {
             if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 // remove user from local storage and set current user to null
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_DATA);
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_PROFILE);
                 this.userSubject.next(null);
-                this.navController.navigateRoot('/login');
+                this.navController.navigateBack(['login'], {replaceUrl: true});
+                window.location.reload();
             }
             return data;
         }));

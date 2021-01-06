@@ -52,14 +52,21 @@ export class LoginPage implements OnInit {
             const email = this.loginForm.controls.email.value;
             const password = this.loginForm.controls.password.value;
 
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
 
             this.accountService.login(email, password)
                 .subscribe((data) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
+
                     this.navCtrl.navigateRoot('/tabs/dashboard');
+
+                    if (localStorage.getItem(EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED) === 'true') {
+                        this.sharedDataService.updatePushSettingOnServer(true);
+                    } else {
+                        this.sharedDataService.updatePushSettingOnServer(false);
+                    }
                 }, ({message}) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                     this.errorMessage = message;
                 });
         }

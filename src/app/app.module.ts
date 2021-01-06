@@ -1,16 +1,14 @@
 import {NgModule, Pipe} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {RouteReuseStrategy} from '@angular/router';
+import {RouteReuseStrategy, RouterOutlet} from '@angular/router';
 
 import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
-import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {ComponentsModule} from './components/components.module';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
-import {NgxQRCodeModule} from '@techiediaries/ngx-qrcode';
 import {SafeurlPipe} from './pipes/safeurl.pipe';
 import {PipesModule} from './pipes/pipes.module';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
@@ -44,14 +42,12 @@ import {FormsModule} from '@angular/forms';
         ComponentsModule,
         CommonModule,
         PipesModule,
-        NgxQRCodeModule,
         DirectivesModule,
         HttpClientModule,
     ],
     providers: [
         QRScanner,
         StatusBar,
-        SplashScreen,
         FileOpener,
         File,
         FileTransfer,
@@ -59,6 +55,7 @@ import {FormsModule} from '@angular/forms';
         CameraPreview,
         ScreenOrientation,
         HTTP,
+        RouterOutlet,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
         {provide: HTTP_INTERCEPTORS, useClass: HttpConfigInterceptor, multi: true},
     ],

@@ -1,7 +1,7 @@
-<ion-tabs (ionTabsDidChange)="tabsDidChange($event)">
+<ion-tabs #tabs (ionTabsDidChange)="tabsDidChange($event)">
 
     <ion-tab-bar slot="bottom">
-        <ion-tab-button *ngFor="let item of tabItems;" [tab]="item.tab">
+        <ion-tab-button *ngFor="let item of tabItems;" [tab]="item.tab" (click)="handleTabClick( $event)">
             <ion-icon
                     [src]="'./assets/icon/tabs/'+(selectedTab===item.tab?item.selectedIcon:item.icon)"></ion-icon>
         </ion-tab-button>

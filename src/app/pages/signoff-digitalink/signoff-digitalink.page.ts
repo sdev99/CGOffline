@@ -124,16 +124,25 @@ export class SignoffDigitalinkPage implements OnInit {
 
 
             default:
-
+                // if ((UtilService.isLocalHost())) {
+                //     this.pageTitle = 'Sign-Off';
+                //     this.title = 'Sign-Off';
+                //     this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                //     this.showDigitalInk = true;
+                //     this.initialiseDrawing();
+                // }
         }
     }
 
     initialiseDrawing() {
         setTimeout(() => {
             this.canvasRef = new fabric.Canvas('digital-signature');
-            if (this.sharedDataService.dedicatedMode) {
-                const ele = document.getElementById('digital-signature');
-                this.canvasRef.setDimensions({width: ele.offsetWidth, height: ele.offsetHeight});
+            if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
+                const ele: any = document.getElementById('digital-signature');
+                this.canvasRef.setDimensions({
+                    width: (window.innerWidth * 80 / 100),
+                    height: (window.innerHeight * 40 / 100)
+                });
             } else {
                 this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
             }

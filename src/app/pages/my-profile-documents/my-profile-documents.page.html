@@ -9,7 +9,7 @@
 
 <ion-content>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
+        <app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
     </ion-refresher>
 
     <ng-container *ngIf="list && list.length>0; else emptyMessage">
@@ -24,12 +24,13 @@
             </ion-item>
         </ion-list>
 
-        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">
-            <ion-infinite-scroll-content
-                    loadingSpinner="bubbles"
-                    loadingText="">
-            </ion-infinite-scroll-content>
-        </ion-infinite-scroll>
+        <!--        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">-->
+        <!--            <ion-infinite-scroll-content [loadingSpinner]="null">-->
+        <!--                <div class="ion-infinite-custom-loader" *ngIf="isLoadingMoreData">-->
+        <!--                    <ion-icon src="./assets/icon/Loader.svg"></ion-icon>-->
+        <!--                </div>-->
+        <!--            </ion-infinite-scroll-content>-->
+        <!--        </ion-infinite-scroll>-->
     </ng-container>
 
     <ng-template #emptyMessage>

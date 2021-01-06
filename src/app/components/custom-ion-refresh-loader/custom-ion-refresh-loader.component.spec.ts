@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MyProfileDetailsPage } from './my-profile-details.page';
+import { CustomIonRefreshLoaderComponent } from './custom-ion-refresh-loader.component';
 
-describe('MyProfileDetailsPage', () => {
-  let component: MyProfileDetailsPage;
-  let fixture: ComponentFixture<MyProfileDetailsPage>;
+describe('CustomIonRefreshLoaderComponent', () => {
+  let component: CustomIonRefreshLoaderComponent;
+  let fixture: ComponentFixture<CustomIonRefreshLoaderComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MyProfileDetailsPage ],
+      declarations: [ CustomIonRefreshLoaderComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MyProfileDetailsPage);
+    fixture = TestBed.createComponent(CustomIonRefreshLoaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

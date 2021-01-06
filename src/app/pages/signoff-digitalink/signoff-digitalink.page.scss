@@ -11,33 +11,9 @@ ion-content {
   --padding-start: 23px;
   --padding-end: 23px;
 
+
   &.dedicated-mode {
-    .content {
-      width: 50%;
-      margin: auto;
-      text-align: center;
 
-      .canvas-container-d-s {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .digital-signature {
-          width: 322px;
-          height: 190px;
-        }
-      }
-
-      .agree-checkbox {
-        justify-content: center;
-      }
-
-      .action-btn {
-        width: 140px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
   }
 
   .hr-line {
@@ -141,4 +117,31 @@ ion-content {
 
 ion-footer {
   background-color: #F8F9FB;
+}
+
+@media only screen and (min-width: 768px) {
+  .content {
+    margin: auto;
+    text-align: center;
+
+    .canvas-container-d-s {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .digital-signature {
+        height: 40vh;
+      }
+    }
+
+    .agree-checkbox {
+      justify-content: center;
+    }
+
+    .action-btn {
+      width: 240px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
 }

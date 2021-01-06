@@ -15,6 +15,9 @@
 <ion-content>
 
     <div class="content">
+
+        <div class="fill-vertical-space"></div>
+
         <ion-img
                 [src]="(profile&&profile.photo&&sharedDataService.globalDirectories)?(sharedDataService.globalDirectories.userDirectory+''+profile.photo):'./assets/images/ProfileNone.png'"
                 class="profile-img"></ion-img>
@@ -24,19 +27,12 @@
                  [src]="'data:image/jpeg;base64,'+ profile.qrCodeImage"
                  class="qr-code"></ion-img>
 
-        <!--        <ng-template #createQrCode>-->
-        <!--            <ngx-qrcode-->
-        <!--                    [elementType]="elementType"-->
-        <!--                    [value]="user.userId"-->
-        <!--                    cssClass="qr-code"-->
-        <!--                    errorCorrectionLevel="L">-->
-        <!--            </ngx-qrcode>-->
-        <!--        </ng-template>-->
-
-
         <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">View / Update Settings</ion-button>
         <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">View My Signed Documents
         </ion-button>
+
+        <div class="fill-vertical-space"></div>
+
     </div>
 
 </ion-content>

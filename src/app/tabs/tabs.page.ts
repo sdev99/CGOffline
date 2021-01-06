@@ -1,11 +1,14 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Router, RouterOutlet, Routes} from '@angular/router';
+import {IonTabs} from '@ionic/angular';
 
 @Component({
     selector: 'app-tabs',
     templateUrl: 'tabs.page.html',
     styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
+export class TabsPage implements OnDestroy {
+    @ViewChild('tabs') tabs: IonTabs;
 
     tabItems = [
         {
@@ -27,8 +30,23 @@ export class TabsPage {
     selectedTab = this.tabItems[0].tab;
 
 
-    constructor() {
+    constructor(private router: Router) {
     }
+
+    ngOnDestroy(): void {
+    }
+
+    handleTabClick = (event: MouseEvent) => {
+        const {tab} = event.composedPath().find((element: any) =>
+            element.tagName === 'ION-TAB-BUTTON') as EventTarget & { tab: string };
+
+        this.tabItems.map((item) => {
+            if (item.tab === tab) {
+                this.router.navigate(['tabs/' + tab]);
+            }
+        });
+
+    };
 
     tabsDidChange(event) {
         this.selectedTab = event.tab;

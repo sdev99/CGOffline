@@ -3,7 +3,6 @@ import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from './helpers/auth.guard';
 
 const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
     {
         path: 'tabs',
         data: {authGuardRedirect: 'login'},
@@ -254,10 +253,14 @@ const routes: Routes = [
         path: 'form-workpermit',
         loadChildren: () => import('./pages/form-workpermit/form-workpermit.module').then(m => m.FormWorkpermitPageModule)
     },
-  {
-    path: 'document-openchoice',
-    loadChildren: () => import('./pages/document-openchoice/document-openchoice.module').then( m => m.DocumentOpenchoicePageModule)
-  },
+    {
+        path: 'document-openchoice',
+        loadChildren: () => import('./pages/document-openchoice/document-openchoice.module').then(m => m.DocumentOpenchoicePageModule)
+    },
+    {
+        path: 'checkin-list',
+        loadChildren: () => import('./pages/checkin-list/checkin-list.module').then(m => m.CheckinListPageModule)
+    },
 ];
 
 @NgModule({

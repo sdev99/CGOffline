@@ -5,7 +5,7 @@
 <ion-content>
 
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
+        <app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
     </ion-refresher>
 
     <ion-list *ngIf="activityList && activityList.length > 0; else emptyMessageComponent" class="activity-list"

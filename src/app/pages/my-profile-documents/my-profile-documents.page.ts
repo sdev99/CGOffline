@@ -18,6 +18,8 @@ import {EnumService} from '../../services/enum.service';
 export class MyProfileDocumentsPage implements OnInit {
     list: Array<MySignedDocumentItem> = [];
     user: User;
+    isLoadingMoreData = false;
+    isRefreshing = false;
 
     constructor(
         public navCtrl: NavController,
@@ -38,16 +40,20 @@ export class MyProfileDocumentsPage implements OnInit {
     }
 
     doRefresh(event) {
+        this.isRefreshing = true;
         this.getMySignedDocuments(() => {
+            this.isRefreshing = false;
             event.target.complete();
         }, true);
     }
 
     loadMoreData(event) {
+        this.isLoadingMoreData = true;
         this.getMySignedDocuments((isMoreData) => {
             event.target.complete();
+            this.isLoadingMoreData = false;
             if (!isMoreData) {
-                event.target.disabled = true;
+                // event.target.disabled = true;
             }
         });
     }

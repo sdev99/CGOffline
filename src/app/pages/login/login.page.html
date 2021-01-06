@@ -1,54 +1,62 @@
 <ion-content fullscreen="true">
-    <h2 class="page-title">Sign In</h2>
-    <p class="page-description">
-        Please enter your credentials to sign in.
-    </p>
 
-    <Form class="input-form" [formGroup]="loginForm">
-        <div class="app-warning-component">
-            <app-warning-component *ngIf="errorMessage && errorMessage.length>0"
-                                   [message]="errorMessage"></app-warning-component>
+    <div class="content-vertically-arrange">
+        <div class="vertically-fill-space"></div>
+
+        <h2 class="page-title">Sign In</h2>
+        <p class="page-description">
+            Please enter your credentials to sign in.
+        </p>
+
+        <Form class="input-form" [formGroup]="loginForm">
+            <div class="app-warning-component">
+                <app-warning-component *ngIf="errorMessage && errorMessage.length>0"
+                                       [message]="errorMessage"></app-warning-component>
+            </div>
+
+            <ion-item class="email-item">
+                <ion-label position="stacked">Email Address</ion-label>
+                <ion-input
+                        formControlName="email"
+                        autocapitalize="off"
+                        autocomplete="email"
+                        inputmode="email"
+                        [ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
+                        placeholder="Enter email address"
+                        type="email"
+                ></ion-input>
+            </ion-item>
+
+
+            <ion-item class="password-item">
+                <ion-label position="stacked">Password</ion-label>
+                <ion-input
+                        formControlName="password"
+                        autocapitalize="off"
+                        [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
+                        placeholder="Enter password"
+                        type="password"
+                ></ion-input>
+            </ion-item>
+
+
+        </Form>
+
+        <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
+        <ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password">
+            Forgot password?
+        </ion-button>
+
+        <div class="vertically-fill-space"></div>
+
+        <div class="bottom-view">
+            <ion-select placeholder="ENGLISH" interface="action-sheet" cancelText="cancel"
+                        [(ngModel)]="selectedLanguage">
+                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
+            </ion-select>
+
+            <ion-text class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
         </div>
 
-        <ion-item class="email-item">
-            <ion-label position="stacked">Email Address</ion-label>
-            <ion-input
-                    formControlName="email"
-                    autocapitalize="off"
-                    autocomplete="email"
-                    inputmode="email"
-                    [ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
-                    placeholder="Enter email address"
-                    type="email"
-            ></ion-input>
-        </ion-item>
-
-
-        <ion-item class="password-item">
-            <ion-label position="stacked">Password</ion-label>
-            <ion-input
-                    formControlName="password"
-                    autocapitalize="off"
-                    [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
-                    placeholder="Enter password"
-                    type="password"
-            ></ion-input>
-        </ion-item>
-
-
-    </Form>
-
-    <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
-    <ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password">
-        Forgot password?
-    </ion-button>
-
-
-    <div class="bottom-view">
-        <ion-select placeholder="ENGLISH" interface="action-sheet" cancelText="cancel" [(ngModel)]="selectedLanguage">
-            <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
-        </ion-select>
-
-        <ion-text  class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
     </div>
 </ion-content>

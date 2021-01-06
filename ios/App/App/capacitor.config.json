@@ -6,15 +6,19 @@
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 500000,
+      "launchAutoHide": false,
+      "backgroundColor": "#ffffffff",
+      "showSpinner": false,
+      "androidSpinnerStyle": "large",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#ffffffff",
+      "splashFullScreen": false,
+      "splashImmersive": false
     }
   },
   "cordova": {},
   "ios": {
     "backgroundColor": "transparent"
-  },
-  "server": {
-    "url": "http://localhost:8101",
-    "cleartext": true
   }
 }
