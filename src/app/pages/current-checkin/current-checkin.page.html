@@ -11,8 +11,9 @@
     </ion-refresher>
 
     <div class="loading-spinner" *ngIf="isLoading">
-        <ion-spinner></ion-spinner>
+        <app-custom-ion-refresh-loader [isRefreshing]="isLoading"></app-custom-ion-refresh-loader>
     </div>
+
 
     <ion-list
             *ngIf="(availableWorkPermits&&availableWorkPermits?.length>0) || (availableDocuments&&availableDocuments?.length>0) || (availableForms&&availableForms?.length>0)"

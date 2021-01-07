@@ -59,9 +59,9 @@ export class SharedDataService {
     // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
     // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
     // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222'; // For test dedicated mode assign one location
-    // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+    deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
     // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
-    deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
+    // deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
 
     pushToken = '000';
     isTablet = false;
@@ -77,6 +77,10 @@ export class SharedDataService {
     // Data from Api
     checkedInPlaces: Array<CheckedInDetailItem> = [];
     currentSelectedCheckinPlace: CheckedInDetailItem;
+
+    // Userful for personal mode dashbord
+    activityList: Array<ActivityListItem>;
+    activityOverviewData;
 
     userProfile: Profile;
     timeZoneList;

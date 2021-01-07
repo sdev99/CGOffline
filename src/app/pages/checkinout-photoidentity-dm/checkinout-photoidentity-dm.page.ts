@@ -7,6 +7,7 @@ import {EnumService} from '../../services/enum.service';
 import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
 import {Response} from '../../_models';
+import {PhotoService} from '../../services/photo.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         public sharedDataService: SharedDataService,
         public apiService: ApiService,
         public utilService: UtilService,
+        public photoService: PhotoService,
     ) {
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {
@@ -65,33 +67,39 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     }
 
     startCamera = () => {
-        const element = this.imagePreview.nativeElement;
-        const header = this.headerView.el;
-        const content = this.content.nativeElement;
-
-        const width = element.offsetWidth;
-        const height = element.offsetHeight;
-        const left = element.offsetLeft;
-        const top = header.offsetHeight + element.offsetTop;
-
-        const cameraPreviewOpts: CameraPreviewOptions = {
-            camera: 'front',
-            width,
-            height,
-            x: left,
-            y: top,
-            // tapPhoto: true,
-            // previewDrag: true,
-            toBack: true,
-            alpha: 1
-        };
-        this.cameraPreview.startCamera(cameraPreviewOpts).then(
-            (res) => {
-                console.log(res);
-            },
-            (err) => {
-                console.log(err);
+        if (UtilService.isLocalHost()) {
+            this.photoService.takePhotoFromCamera((photo) => {
+                this.photoCaptured = photo.dataUrl;
             });
+        } else {
+            const element = this.imagePreview.nativeElement;
+            const header = this.headerView.el;
+            const content = this.content.nativeElement;
+
+            const width = element.offsetWidth;
+            const height = element.offsetHeight;
+            const left = element.offsetLeft;
+            const top = header.offsetHeight + element.offsetTop;
+
+            const cameraPreviewOpts: CameraPreviewOptions = {
+                camera: 'front',
+                width,
+                height,
+                x: left,
+                y: top,
+                // tapPhoto: true,
+                // previewDrag: true,
+                toBack: true,
+                alpha: 1
+            };
+            this.cameraPreview.startCamera(cameraPreviewOpts).then(
+                (res) => {
+                    console.log(res);
+                },
+                (err) => {
+                    console.log(err);
+                });
+        }
     };
 
     onClose() {
@@ -127,7 +135,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     checkInPhotoUpload = async (file, fileName = '', callBack = null) => {
         const loading = await this.utilService.startLoadingWithOptions();
 
-        this.apiService.checkInPhotoUpload(file, fileName).subscribe((res: Response) => {
+        this.apiService.inductionPhotoUpload(file, fileName).subscribe((res: Response) => {
             this.utilService.hideLoadingFor(loading);
             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 UtilService.fireCallBack(callBack, res.Result);

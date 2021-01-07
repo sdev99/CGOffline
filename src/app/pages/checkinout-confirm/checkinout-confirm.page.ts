@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from '@ionic/angular';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ApiService} from '../../services/api.service';
 import {AccountService} from '../../services/account.service';
@@ -37,6 +37,7 @@ export class CheckinoutConfirmPage implements OnInit {
     checkOutForCheckedInDetail: CheckedInDetailItem;
 
     constructor(
+        public router: Router,
         public navCtrl: NavController,
         public activatedRoute: ActivatedRoute,
         public apiService: ApiService,
@@ -94,7 +95,7 @@ export class CheckinoutConfirmPage implements OnInit {
             if (this.sharedDataService.checkinLocationByOption === EnumService.CheckInLocationByOptions.QrCode) {
                 this.navCtrl.navigateBack('/tabs/dashboard', {replaceUrl: true});
             } else {
-                this.navCtrl.navigateBack('/checkin-list', {replaceUrl: true});
+                this.navCtrl.navigateBack('/tabs/dashboard/checkin-list', {replaceUrl: true});
             }
         } else if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
             this.navCtrl.navigateBack('/tabs/dashboard');

@@ -8,6 +8,7 @@ import {ApiService} from '../../services/api.service';
 import {Response, User} from '../../_models';
 import {CheckInPostData} from '../../_models/checkInPostData';
 import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-dashboard-header',
@@ -31,6 +32,7 @@ export class DashboardHeaderComponent implements OnInit {
     currentCheckinPlaceIndex = 0;
 
     constructor(
+        public router: Router,
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         public observablesService: ObservablesService,
@@ -159,7 +161,7 @@ export class DashboardHeaderComponent implements OnInit {
     }
 
     checkInByList() {
-        this.navCtrl.navigateForward('/checkin-list');
+        this.navCtrl.navigateForward('/tabs/dashboard/checkin-list');
     }
 
     shouldShowNavigationPlaceBtns(btnType = 0) {

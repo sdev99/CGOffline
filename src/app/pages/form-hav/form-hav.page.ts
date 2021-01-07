@@ -303,7 +303,14 @@ export class FormHavPage implements OnInit {
         this.errorMessage = '';
 
 
-        let havExposure: HavExposure;
+        const havExposure: HavExposure = {
+            vibrationMagnitude: 0,
+            pointsPerHour: 0,
+            exposurePoints: 0,
+            hAVExposureId: 0,
+            initialExposure: 0,
+            totalExposure: 0,
+        };
         if (this.formGroup.valid) {
             const toolModel = this.formGroup.controls[this.modelControlName];
             if (toolModel) {
@@ -317,14 +324,12 @@ export class FormHavPage implements OnInit {
                     });
                 }
 
-                havExposure = {
-                    vibrationMagnitude: model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0,
-                    pointsPerHour: this.calculatePointsPerHour(),
-                    exposurePoints: this.calculateExposure(),
-                    hAVExposureId: 0,
-                    initialExposure: this.currentExposure,
-                    totalExposure: this.calculateExposure(this.currentExposure),
-                };
+                havExposure.vibrationMagnitude = model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0;
+                havExposure.pointsPerHour = this.calculatePointsPerHour();
+                havExposure.exposurePoints = this.calculateExposure();
+                havExposure.hAVExposureId = 0;
+                havExposure.initialExposure = this.currentExposure;
+                havExposure.totalExposure = this.calculateExposure(this.currentExposure);
             }
         }
 

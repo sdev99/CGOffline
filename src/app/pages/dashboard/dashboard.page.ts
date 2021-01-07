@@ -31,7 +31,23 @@ export class DashboardPage implements OnInit, OnDestroy {
         public sharedDataService: SharedDataService,
         private observablesService: ObservablesService,
     ) {
+        this.activityList = sharedDataService.activityList;
+        this.activityOverviewData = sharedDataService.activityOverviewData;
+
         this.user = this.accountService.userValue;
+
+        if (!this.activityList) {
+            this.utilService.presentLoadingWithOptions();
+        }
+        this.getActivityList(() => {
+            this.utilService.hideLoading();
+        });
+
+        if (UtilService.isLocalHost()) {
+            setTimeout(() => {
+                this.navCtrl.navigateForward('/form-custom');
+            }, 2000);
+        }
     }
 
     ngOnInit() {
@@ -45,12 +61,6 @@ export class DashboardPage implements OnInit, OnDestroy {
 
             });
 
-            this.utilService.presentLoadingWithOptions();
-
-            this.getActivityList(() => {
-                this.utilService.hideLoading();
-            });
-
             this.observablesService.getObservable(EnumService.ObserverKeys.ACTIVITY_COMPLETED).subscribe(() => {
                 this.getActivityList();
             });
@@ -60,6 +70,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
+        console.log('Dashboard ionViewWillEnter');
         this.accountService.checkForMobileLanguageId();
     }
 
@@ -75,12 +86,16 @@ export class DashboardPage implements OnInit, OnDestroy {
                 if (result) {
                     this.activityList = result.activityList;
                     this.activityOverviewData = result.activityOverviewData;
+                    this.sharedDataService.activityList = result.activityList;
+                    this.sharedDataService.activityOverviewData = result.activityOverviewData;
                 }
             }
             UtilService.fireCallBack(callBack);
         }, (error) => {
             this.activityList = null;
             this.activityOverviewData = null;
+            this.sharedDataService.activityList = null;
+            this.sharedDataService.activityOverviewData = null;
             UtilService.fireCallBack(callBack);
         });
     };

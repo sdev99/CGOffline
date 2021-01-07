@@ -469,11 +469,20 @@ export class UtilService {
                 if (EnumService.QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
 
                     let isActionMeet = false;
-                    if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
+                    if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
 
                         const questionChoiceSetSequence = logic.questionChoiceSetSequence - 1;
                         const questionChoiceSetTypeID = logic.questionChoiceSetTypeID;
-                        // const valueToBeCompare = question.answerChoiceAttributes[questionChoiceSetSequence];
+                        const valueToBeCompare = question.answerChoiceAttributes[questionChoiceSetSequence];
+                        // Check if condition meet
+                        const isSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.Selected && value === valueToBeCompare.answerChoiceAttributeId);
+                        const isNotSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.NotSelected && value !== valueToBeCompare.answerChoiceAttributeId);
+
+                        isActionMeet = (isSelectedAndMeet || isNotSelectedAndMeet);
+                    } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
+
+                        const questionChoiceSetSequence = logic.questionChoiceSetSequence - 1;
+                        const questionChoiceSetTypeID = logic.questionChoiceSetTypeID;
                         const checkBoxValueSelected = value[Object.keys(value)[questionChoiceSetSequence]];
                         // Check if condition meet
                         const isSelectedAndMeet = (questionChoiceSetTypeID === EnumService.QuestionLogic.SingleMultipleChoiceOperationType.Selected && checkBoxValueSelected);

@@ -25,6 +25,7 @@ export class ObservablesService {
 
     removeObservable(key): void {
         this.intialiseFirstTime(key).unsubscribe();
+        this.mySubjects[key] = null;
     }
 }
 

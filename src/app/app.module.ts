@@ -24,6 +24,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
 import {SearchLocationPage} from './modals/search-location/search-location.page';
 import {FormsModule} from '@angular/forms';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @NgModule({
     declarations: [
@@ -53,6 +54,7 @@ import {FormsModule} from '@angular/forms';
         FileTransfer,
         UniqueDeviceID,
         CameraPreview,
+        Camera,
         ScreenOrientation,
         HTTP,
         RouterOutlet,

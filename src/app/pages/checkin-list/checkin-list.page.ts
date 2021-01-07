@@ -10,6 +10,7 @@ import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
 import {LocationItem} from '../../_models/locationItem';
 import {UtilService} from '../../services/util.service';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-checkin-list',
@@ -26,6 +27,7 @@ export class CheckinListPage implements OnInit {
         public modalController: ModalController,
         public apiService: ApiService,
         public utilService: UtilService,
+        public router: Router,
         public accountService: AccountService,
         public sharedDataService: SharedDataService,
     ) {
@@ -73,7 +75,7 @@ export class CheckinListPage implements OnInit {
     };
 
     onClose() {
-        this.navCtrl.navigateBack('/tabs/dashboard', {replaceUrl: true});
+        this.navCtrl.navigateBack(['/tabs/dashboard'], {replaceUrl: true});
     }
 
     async presentModal() {

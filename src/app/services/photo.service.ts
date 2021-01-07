@@ -3,6 +3,8 @@ import {ActionSheetController, Platform} from '@ionic/angular';
 import {CameraDirection, CameraResultType, CameraSource, Plugins} from '@capacitor/core';
 import {ObservablesService} from './observables.service';
 import {EnumService} from './enum.service';
+import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
+import {UtilService} from './util.service';
 
 
 @Injectable({
@@ -14,6 +16,7 @@ export class PhotoService {
         public platform: Platform,
         public actionSheetController: ActionSheetController,
         private observablesService: ObservablesService,
+        private camera: Camera
     ) {
     }
 
@@ -73,20 +76,42 @@ export class PhotoService {
         }
     }
 
-    async takePhotoFromGallery(callBack) {
-        const capturedPhoto = await Plugins.Camera.getPhoto({
-            resultType: CameraResultType.DataUrl,
-            source: CameraSource.Photos,
-            quality: 70,
-            width: 500,
-            height: 500,
-            preserveAspectRatio: true,
-            correctOrientation: true,
-        });
-        try {
-            callBack(capturedPhoto);
-        } catch (e) {
+    async takePhotoFromGallery(callBack, isAllMedia = false) {
+        if (UtilService.isLocalHost()) {
+            const capturedPhoto = await Plugins.Camera.getPhoto({
+                resultType: CameraResultType.DataUrl,
+                source: CameraSource.Photos,
+                quality: 70,
+                width: 500,
+                height: 500,
+                preserveAspectRatio: true,
+                correctOrientation: true,
+            });
+            try {
+                callBack(capturedPhoto);
+            } catch (e) {
 
+            }
+        } else {
+            const options: CameraOptions = {
+                quality: 100,
+                destinationType: this.camera.DestinationType.DATA_URL,
+                encodingType: this.camera.EncodingType.JPEG,
+                mediaType: isAllMedia ? this.camera.MediaType.ALLMEDIA : this.camera.MediaType.PICTURE,
+                sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+                correctOrientation: true,
+                targetHeight: 500,
+                targetWidth: 500,
+            };
+
+            this.camera.getPicture(options).then((imageData) => {
+                // imageData is either a base64 encoded string or a file URI
+                // If it's base64 (DATA_URL):
+                const base64Image = 'data:image/jpeg;base64,' + imageData;
+                callBack({dataUrl: base64Image});
+            }, (err) => {
+                // Handle error
+            });
         }
     }
 }

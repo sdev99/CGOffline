@@ -386,7 +386,7 @@ export class FormAccidentReportPage {
         if (this.formGroup.valid) {
             const locationIdControl = this.formGroup.controls[this.locationIdControlName];
             const locationNameControl = this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName];
-            if (!locationIdControl.value && !locationNameControl.value) {
+            if (locationIdControl && locationNameControl && !locationIdControl?.value && !locationNameControl?.value) {
                 this.errorMessage = 'Select location or enter manual location';
             }
         }

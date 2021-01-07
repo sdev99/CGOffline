@@ -69,12 +69,6 @@ export class AppComponent {
             }, 1500);
         });
 
-
-        if (UtilService.isLocalHost()) {
-            setTimeout(() => {
-                this.sharedDataService.updatePushSettingOnServer(false);
-            }, 5000);
-        }
     }
 
     appSettingLoaded = (isDeviceAssignedForDedicatedMode, data = null) => {

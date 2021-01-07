@@ -18,6 +18,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     @Input() label: string;
     image: any;
     private disabled = false;
+    isVideo = false;
     private onChange: any = (image: any) => {
     };
     private onTouch: any = () => {
@@ -52,7 +53,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     addPhotoFromLibrary() {
         this.photoService.takePhotoFromGallery((photo) => {
             this.openImageAnnotation(photo);
-        });
+        }, false);
     }
 
     registerOnChange(fn: any): void {

@@ -8,13 +8,11 @@
     "SplashScreen": {
       "launchShowDuration": 500000,
       "launchAutoHide": false,
-      "backgroundColor": "#ffffffff",
+      "backgroundColor": "#8A25B1",
       "showSpinner": false,
-      "androidSpinnerStyle": "large",
-      "iosSpinnerStyle": "small",
-      "spinnerColor": "#ffffffff",
-      "splashFullScreen": false,
-      "splashImmersive": false
+      "spinnerColor": "#8A25B1",
+      "splashFullScreen": true,
+      "splashImmersive": true
     }
   },
   "cordova": {},
