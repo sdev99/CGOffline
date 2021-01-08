@@ -267,6 +267,8 @@ export class StaticDataService {
         }
     ];
 
+    static videoFormats = ['avi', 'flv', 'mov', 'mpeg', 'mpg', 'mp2', 'mp4', 'qt', 'vob', 'wmv', 'avchd', 'mkv', 'webm'];
+
     static fileMimeTypes = {
         '3dmf': 'x-world/x-3dmf',
         '3dm': 'x-world/x-3dmf',

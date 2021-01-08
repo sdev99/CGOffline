@@ -8,6 +8,7 @@ import {User} from '../../_models';
 import {GlobalDirectory} from '../../_models/globalDirectory';
 import {EnumService} from '../../services/enum.service';
 import {DedicatedModeDeviceDetailData} from '../../_models/dedicatedModeDeviceDetailData';
+import {UtilService} from '../../services/util.service';
 
 @Component({
     selector: 'app-dashboard-dm',

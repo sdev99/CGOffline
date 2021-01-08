@@ -116,7 +116,11 @@ export class FormHavPage implements OnInit {
     }
 
     getUserTotalHAVExposureForToday() {
-        this.apiService.getUserTotalHAVExposureForToday(this.user?.userId).subscribe((response: Response) => {
+        let userId = this.user?.userId;
+        if (this.sharedDataService.dedicatedMode) {
+            userId = this.sharedDataService.dedicatedModeUserDetail?.userId;
+        }
+        this.apiService.getUserTotalHAVExposureForToday(userId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.currentExposure = UtilService.formattedNumberToNumber(response.Result);
             }

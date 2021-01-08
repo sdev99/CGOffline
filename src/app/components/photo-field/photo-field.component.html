@@ -26,7 +26,15 @@
                     <ion-icon name="close" slot="icon-only"></ion-icon>
                 </ion-button>
             </div>
-            <ion-img *ngIf="image" [src]="image"></ion-img>
+
+            <ng-container *ngIf="isVideo">
+                <video controls="controls" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline" class="videoPlayer">
+                    <source [src]="image" [type]="StaticDataService.fileMimeTypes[image.split('.')?.pop()?.toLowerCase()]" />
+                </video>
+            </ng-container>
+            <ng-container *ngIf="!isVideo">
+                <ion-img *ngIf="image" [src]="image"></ion-img>
+            </ng-container>
         </div>
     </ng-template>
 </div>

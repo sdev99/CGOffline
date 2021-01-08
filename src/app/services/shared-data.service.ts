@@ -41,6 +41,7 @@ import {DedicatedModeDeviceDetailData} from '../_models/dedicatedModeDeviceDetai
 import {DeviceEntityDetail} from '../_models/deviceEntityDetail';
 import {DedicatedModeGuestDetail} from '../_models/dedicatedModeGuestDetail';
 import {UserDetail} from '../_models/userDetail';
+import {File} from '@ionic-native/file/ngx';
 
 const {PushNotifications, Permissions} = Plugins;
 
@@ -133,6 +134,7 @@ export class SharedDataService {
     constructor(
         private router: Router,
         private platform: Platform,
+        private file: File,
         private navCtrl: NavController,
         private observablesService: ObservablesService,
         public utilService: UtilService,
@@ -611,15 +613,20 @@ export class SharedDataService {
             sections.map((section, sectionIndex) => {
                 if (this.utilService.shouldShowSection(section)) {
                     const questions = section.questions;
-                    questions.map((question, questionIndex) => {
+                    questions.map(async (question, questionIndex) => {
                         if (this.utilService.shouldShowQuestion(question)) {
                             const control = formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
                                 if (control && control.value) {
                                     attachmentCount++;
 
-                                    const fileName = 'photo' + this.utilService.getCurrentTimeStamp() + '.jpeg';
-                                    const mimeType = 'image/jpeg';
+                                    let fileName = 'photo' + this.utilService.getCurrentTimeStamp() + '.jpeg';
+                                    let mimeType = 'image/jpeg';
+                                    if (StaticDataService.videoFormats.indexOf(control.value.split('.').pop().toLowerCase()) !== -1) {
+                                        fileName = control.value.substr(control.value.lastIndexOf('/') + 1);
+                                        mimeType = StaticDataService.fileMimeTypes[control.value.split('.').pop().toLowerCase()];
+                                    }
+
                                     this.utilService.dataUriToFile(control.value, fileName, mimeType).then(async (file) => {
                                         if (!loading) {
                                             this.utilService.presentLoadingWithOptions();

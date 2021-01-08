@@ -67,6 +67,13 @@
       object-fit: cover;
     }
 
+    .videoPlayer {
+      width: 100%;
+      height: calc(100% - 40px);
+      min-height: 260px;
+      background-color: #E6EFFB;
+    }
+
     .close-btn {
       width: 100%;
       background-color: #D6E5F9;

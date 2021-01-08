@@ -9,6 +9,7 @@ import {StaticDataService} from './static-data.service';
 import {UserDetail} from '../_models/userDetail';
 import {environment} from '../../environments/environment';
 import {Capacitor} from '@capacitor/core';
+import {File} from '@ionic-native/file/ngx';
 
 declare global {
     interface Array<T> {
@@ -172,6 +173,7 @@ export class UtilService {
 
     constructor(
         private loadingController: LoadingController,
+        private file: File,
         private alertController: AlertController,
         private validatorService: ValidatorService,
         private navCtrl: NavController,
@@ -199,15 +201,34 @@ export class UtilService {
     }
 
     dataUriToFile(url, filename, mimeType) {
-        return new Promise((resolve, reject) => {
-            const byteString = window.atob(url.replace(/^data:image\/(png|jpeg|jpg);base64,/, ''));
-            const arrayBuffer = new ArrayBuffer(byteString.length);
-            const int8Array = new Uint8Array(arrayBuffer);
-            for (let i = 0; i < byteString.length; i++) {
-                int8Array[i] = byteString.charCodeAt(i);
+        return new Promise(async (resolve, reject) => {
+            if (StaticDataService.videoFormats.indexOf(url.split('.').pop().toLowerCase()) !== -1) {
+                let dirpath = url.substr(0, url.lastIndexOf('/') + 1);
+                dirpath = dirpath.includes('file://') ? dirpath : 'file://' + dirpath;
+
+                try {
+                    const dirUrl = await this.file.resolveDirectoryUrl(dirpath);
+                    const retrievedFile = await this.file.getFile(dirUrl, filename, {});
+
+                    retrievedFile.file(data => {
+                        // if (data.size > MAX_FILE_SIZE) return this.presentAlert("Error", "You cannot upload more than 5mb.");
+                        // if (data.type !== ALLOWED_MIME_TYPE) return this.presentAlert("Error", "Incorrect file type.");
+                        const selectedVideo = retrievedFile.nativeURL;
+                        resolve(selectedVideo);
+                    });
+                } catch {
+                    reject();
+                }
+            } else {
+                const byteString = window.atob(url.replace(/^data:image\/(png|jpeg|jpg);base64,/, ''));
+                const arrayBuffer = new ArrayBuffer(byteString.length);
+                const int8Array = new Uint8Array(arrayBuffer);
+                for (let i = 0; i < byteString.length; i++) {
+                    int8Array[i] = byteString.charCodeAt(i);
+                }
+                const imageBlob = new Blob([int8Array], {type: mimeType});
+                resolve(imageBlob);
             }
-            const imageBlob = new Blob([int8Array], {type: mimeType});
-            resolve(imageBlob);
         });
     }
 

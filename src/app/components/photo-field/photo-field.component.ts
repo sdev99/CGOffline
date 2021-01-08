@@ -3,6 +3,7 @@ import {PhotoService} from '../../services/photo.service';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {SharedDataService} from '../../services/shared-data.service';
 import {NavController} from '@ionic/angular';
+import {StaticDataService} from '../../services/static-data.service';
 
 @Component({
     selector: 'app-photo-field',
@@ -15,6 +16,8 @@ import {NavController} from '@ionic/angular';
     }]
 })
 export class PhotoFieldComponent implements ControlValueAccessor {
+    StaticDataService = StaticDataService;
+
     @Input() label: string;
     image: any;
     private disabled = false;
@@ -52,8 +55,14 @@ export class PhotoFieldComponent implements ControlValueAccessor {
 
     addPhotoFromLibrary() {
         this.photoService.takePhotoFromGallery((photo) => {
-            this.openImageAnnotation(photo);
-        }, false);
+            if (photo.isVideo) {
+                this.isVideo = true;
+                this.photoAdded(photo.dataUrl);
+            } else {
+                this.isVideo = false;
+                this.openImageAnnotation(photo);
+            }
+        }, true);
     }
 
     registerOnChange(fn: any): void {

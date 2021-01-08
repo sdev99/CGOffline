@@ -5,6 +5,7 @@ import {ObservablesService} from './observables.service';
 import {EnumService} from './enum.service';
 import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
 import {UtilService} from './util.service';
+import {StaticDataService} from './static-data.service';
 
 
 @Injectable({
@@ -107,8 +108,13 @@ export class PhotoService {
             this.camera.getPicture(options).then((imageData) => {
                 // imageData is either a base64 encoded string or a file URI
                 // If it's base64 (DATA_URL):
-                const base64Image = 'data:image/jpeg;base64,' + imageData;
-                callBack({dataUrl: base64Image});
+                if (StaticDataService.videoFormats.indexOf(imageData.split('.').pop().toLowerCase()) !== -1) {
+                    callBack({dataUrl: imageData, isVideo: true});
+                } else {
+                    const base64Image = 'data:image/jpeg;base64,' + imageData;
+                    callBack({dataUrl: base64Image});
+                }
+
             }, (err) => {
                 // Handle error
             });

@@ -42,12 +42,6 @@ export class DashboardPage implements OnInit, OnDestroy {
         this.getActivityList(() => {
             this.utilService.hideLoading();
         });
-
-        if (UtilService.isLocalHost()) {
-            setTimeout(() => {
-                this.navCtrl.navigateForward('/form-custom');
-            }, 2000);
-        }
     }
 
     ngOnInit() {
@@ -66,7 +60,6 @@ export class DashboardPage implements OnInit, OnDestroy {
             });
         }
         this.sharedDataService.currentLanguageId = this.sharedDataService?.userProfile?.mobileAppLanguageID;
-
     }
 
     ionViewWillEnter() {

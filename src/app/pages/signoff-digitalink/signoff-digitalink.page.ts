@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {IonRouterOutlet, NavController} from '@ionic/angular';
 import {fabric} from 'fabric';
 import {ActivatedRoute} from '@angular/router';
@@ -10,6 +10,7 @@ import {ApiService} from '../../services/api.service';
 import {Response, User} from '../../_models';
 import {AccountService} from '../../services/account.service';
 import {FilehandlerService} from '../../services/filehandler.service';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 @Component({
     selector: 'app-signoff-digitalink',
@@ -17,6 +18,7 @@ import {FilehandlerService} from '../../services/filehandler.service';
     styleUrls: ['./signoff-digitalink.page.scss'],
 })
 export class SignoffDigitalinkPage implements OnInit {
+    screenOrientationSubscribe;
     errorMessage;
 
     user: User;
@@ -40,6 +42,8 @@ export class SignoffDigitalinkPage implements OnInit {
         public apiService: ApiService,
         private routerOutlet: IonRouterOutlet,
         private accountService: AccountService,
+        private screenOrientation: ScreenOrientation,
+        private ngZone: NgZone,
     ) {
         this.user = this.accountService.userValue;
 
@@ -124,19 +128,21 @@ export class SignoffDigitalinkPage implements OnInit {
 
 
             default:
-                // if ((UtilService.isLocalHost())) {
-                //     this.pageTitle = 'Sign-Off';
-                //     this.title = 'Sign-Off';
-                //     this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
-                //     this.showDigitalInk = true;
-                //     this.initialiseDrawing();
-                // }
+                if ((UtilService.isLocalHost())) {
+                    this.pageTitle = 'Sign-Off';
+                    this.title = 'Sign-Off';
+                    this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
+                    this.showDigitalInk = true;
+                    this.initialiseDrawing();
+                }
         }
     }
 
     initialiseDrawing() {
         setTimeout(() => {
-            this.canvasRef = new fabric.Canvas('digital-signature');
+            if (!this.canvasRef) {
+                this.canvasRef = new fabric.Canvas('digital-signature');
+            }
             if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
                 const ele: any = document.getElementById('digital-signature');
                 this.canvasRef.setDimensions({
@@ -155,6 +161,34 @@ export class SignoffDigitalinkPage implements OnInit {
             this.canvasRef.isDrawingMode = true;
         }, 200);
     }
+
+    ionViewWillEnter() {
+        this.handleOrientation();
+    }
+
+    ionViewDidLeave(): void {
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            this.screenOrientationSubscribe.unsubscribe();
+        }
+    }
+
+    handleOrientation = () => {
+        if (this.sharedDataService.dedicatedMode) {
+            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+                this.ngZone.run(() => {
+                    if (this.screenOrientation.type.includes('portrait')) {
+
+                    }
+                    if (this.screenOrientation.type.includes('landscape')) {
+                    }
+                    if (this.showDigitalInk) {
+                        this.initialiseDrawing();
+                    }
+                });
+            });
+        }
+    };
 
     isDigitalSignEmpty = () => {
         if (this.canvasRef) {
