@@ -42,6 +42,8 @@ import {DeviceEntityDetail} from '../_models/deviceEntityDetail';
 import {DedicatedModeGuestDetail} from '../_models/dedicatedModeGuestDetail';
 import {UserDetail} from '../_models/userDetail';
 import {File} from '@ionic-native/file/ngx';
+import {FileTransfer, FileUploadOptions} from '@ionic-native/file-transfer/ngx';
+import {environment} from '../../environments/environment';
 
 const {PushNotifications, Permissions} = Plugins;
 
@@ -131,10 +133,13 @@ export class SharedDataService {
     //
     currentLanguageId = 0;
 
+    videoFileUpload;
+
     constructor(
         private router: Router,
         private platform: Platform,
         private file: File,
+        private fileTransfer: FileTransfer,
         private navCtrl: NavController,
         private observablesService: ObservablesService,
         public utilService: UtilService,
@@ -536,6 +541,42 @@ export class SharedDataService {
         }
     }
 
+    uploadVideo(selectedVideo, mimeType, callBack, progress) {
+        const accessID = this.deviceUID;
+        const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
+
+        const url = environment.apiUrl + '/' + EnumService.ApiMethods.FormPhotoOrVideoUpload;
+        const filename = selectedVideo.substr(selectedVideo.lastIndexOf('/') + 1);
+        const options: FileUploadOptions = {
+            fileName: filename,
+            fileKey: 'file',
+            mimeType,
+            headers: {
+                accessID,
+                token
+            }
+        };
+        this.videoFileUpload = this.fileTransfer.create();
+
+        this.videoFileUpload.upload(selectedVideo, url, options)
+            .then((data) => {
+                UtilService.fireCallBack(progress, 0);
+                return JSON.parse(data.response);
+            })
+            .then((data) => {
+                UtilService.fireCallBack(progress, 100);
+                UtilService.fireCallBack(callBack, {status: true, result: data});
+            })
+            .catch((err) => {
+                UtilService.fireCallBack(progress, 0);
+                UtilService.fireCallBack(callBack, {status: false, result: err});
+            });
+        this.videoFileUpload.onProgress((data) => {
+            const uploadPercent = Math.round((data.loaded / data.total) * 100);
+            UtilService.fireCallBack(progress, uploadPercent);
+        });
+    }
+
     public async saveFormAnswers(apiService: ApiService, formGroup: FormGroup, formBuilderDetail, personalModeLoggedUser: User, callBack, havExposure: HavExposure = null, workPermitAnswer: WorkPermitAnswer = null) {
 
         const sections = formBuilderDetail.sections;
@@ -622,7 +663,9 @@ export class SharedDataService {
 
                                     let fileName = 'photo' + this.utilService.getCurrentTimeStamp() + '.jpeg';
                                     let mimeType = 'image/jpeg';
+                                    let isVideo = false;
                                     if (StaticDataService.videoFormats.indexOf(control.value.split('.').pop().toLowerCase()) !== -1) {
+                                        isVideo = true;
                                         fileName = control.value.substr(control.value.lastIndexOf('/') + 1);
                                         mimeType = StaticDataService.fileMimeTypes[control.value.split('.').pop().toLowerCase()];
                                     }
@@ -632,22 +675,41 @@ export class SharedDataService {
                                             this.utilService.presentLoadingWithOptions();
                                             loading = true;
                                         }
-                                        apiService.formPhotoOrVideoUpload(file, fileName).subscribe((response: Response) => {
-                                            attachmentUploadedCount++;
-                                            attachemtUploaded[question.questionId] = response.Result;
-                                            if (attachmentCount === attachmentUploadedCount) {
-                                                loading = false;
-                                                this.utilService.hideLoading();
-                                                this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
-                                            }
-                                        }, (error) => {
-                                            attachmentUploadedCount++;
-                                            if (attachmentCount === attachmentUploadedCount) {
-                                                loading = false;
-                                                this.utilService.hideLoading();
-                                                this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
-                                            }
-                                        });
+
+                                        if (isVideo) {
+                                            this.uploadVideo(file, mimeType, (response) => {
+                                                console.log('Uploaded ' + ' ' + fileName + '' + response);
+                                                debugger;
+                                                if (response.status) {
+                                                    attachemtUploaded[question.questionId] = response.result.Result;
+                                                }
+                                                attachmentUploadedCount++;
+                                                if (attachmentCount === attachmentUploadedCount) {
+                                                    loading = false;
+                                                    this.utilService.hideLoading();
+                                                    this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                }
+                                            }, (progress) => {
+                                                console.log('Progress ' + ' ' + fileName + '' + progress);
+                                            });
+                                        } else {
+                                            apiService.formPhotoOrVideoUpload(file, fileName).subscribe((response: Response) => {
+                                                attachemtUploaded[question.questionId] = response.Result;
+                                                attachmentUploadedCount++;
+                                                if (attachmentCount === attachmentUploadedCount) {
+                                                    loading = false;
+                                                    this.utilService.hideLoading();
+                                                    this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                }
+                                            }, (error) => {
+                                                attachmentUploadedCount++;
+                                                if (attachmentCount === attachmentUploadedCount) {
+                                                    loading = false;
+                                                    this.utilService.hideLoading();
+                                                    this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                }
+                                            });
+                                        }
                                     }).catch(() => {
                                         attachmentUploadedCount++;
                                         if (attachmentCount === attachmentUploadedCount) {
