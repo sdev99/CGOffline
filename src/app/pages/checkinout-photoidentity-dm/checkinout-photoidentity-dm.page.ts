@@ -1,6 +1,11 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController} from '@ionic/angular';
-import {CameraPreview, CameraPreviewPictureOptions, CameraPreviewOptions, CameraPreviewDimensions} from '@ionic-native/camera-preview/ngx';
+import {
+    CameraPreview,
+    CameraPreviewPictureOptions,
+    CameraPreviewOptions,
+    CameraPreviewDimensions
+} from '@ionic-native/camera-preview/ngx';
 import {ActivatedRoute} from '@angular/router';
 import {SharedDataService} from '../../services/shared-data.service';
 import {EnumService} from '../../services/enum.service';
@@ -20,8 +25,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     @ViewChild('headerView') headerView: any;
     @ViewChild('content', {read: ElementRef}) content: ElementRef;
 
-    photoCaptured: any;
     authFor = 'Check In/Out by Name';
+    photoCaptured: any;
     nextPage;
 
     errorMessage;
@@ -35,20 +40,14 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         public utilService: UtilService,
         public photoService: PhotoService,
     ) {
-        this.activatedRoute.queryParams.subscribe((res) => {
-            if (res) {
-                if (res.authFor) {
-                    this.authFor = res.authFor;
-                }
-                if (res.nextPage) {
-                    this.nextPage = res.nextPage;
-                }
-            }
-        });
+        if (sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Auth) {
+            this.authFor = 'Check In/Out by Name';
+        } else if (sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Signoff) {
+            this.authFor = 'Sign-Off';
+        }
     }
 
     ngOnInit() {
-
     }
 
     ionViewDidEnter = () => {
@@ -103,22 +102,53 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     };
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
+        if (this.sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Auth) {
+            this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
+        } else if (this.sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Signoff) {
+            if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
+                this.navController.navigateRoot('/dashboard-dm', {replaceUrl: true});
+            } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.DOCUMENT_DM) {
+                this.navController.navigateRoot('/documents-dm', {replaceUrl: true});
+            } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.FORMS_DM) {
+                this.navController.navigateRoot('/forms-dm', {replaceUrl: true});
+            } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT_DM) {
+                this.navController.navigateRoot('/permits-dm', {replaceUrl: true});
+            }
+        }
     }
 
     onBack() {
         this.navController.back();
     }
 
+    takePhoto() {
+        if (this.photoCaptured) {
+            this.photoCaptured = null;
+            this.startCamera();
+        } else {
+            const pictureOpts: CameraPreviewPictureOptions = {
+                quality: 85
+            };
+            // take a picture
+            this.cameraPreview.takeSnapshot(pictureOpts).then((imageData) => {
+                this.photoCaptured = 'data:image/jpeg;base64,' + imageData;
+                this.cameraPreview.stopCamera();
+            }, (err) => {
+                console.log(err);
+                this.photoCaptured = './assets/images/ProfileNone.png';
+            });
+
+        }
+    }
+
     onContinue() {
         const fileName = 'photo' + this.utilService.getCurrentTimeStamp() + '.jpeg';
         const mimeType = 'image/jpeg';
-        this.utilService.dataUriToFile(this.photoCaptured, fileName, mimeType)
-            .then((file) => {
-                this.checkInPhotoUpload(file, fileName, (photoName) => {
-                    this.processToNextScreen(photoName);
-                });
+        this.utilService.dataUriToFile(this.photoCaptured, fileName, mimeType).then((file) => {
+            this.uploadInductionPhoto(file, fileName, (photoName) => {
+                this.processToNextScreen(photoName);
             });
+        });
 
         // if (this.nextPage) {
         //     this.navController.navigateForward(this.nextPage);
@@ -132,7 +162,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     /**
      * Upload photo for  signoff
      */
-    checkInPhotoUpload = async (file, fileName = '', callBack = null) => {
+    uploadInductionPhoto = async (file, fileName = '', callBack = null) => {
         const loading = await this.utilService.startLoadingWithOptions();
 
         this.apiService.inductionPhotoUpload(file, fileName).subscribe((res: Response) => {
@@ -148,52 +178,52 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         });
     };
 
-    takePhoto() {
-        if (this.photoCaptured) {
-            this.photoCaptured = null;
-            this.startCamera();
-        } else {
-            // picture options
-            const pictureOpts: CameraPreviewPictureOptions = {
-                quality: 85
-            };
-
-// take a picture
-            this.cameraPreview.takeSnapshot(pictureOpts).then((imageData) => {
-                this.photoCaptured = 'data:image/jpeg;base64,' + imageData;
-                this.cameraPreview.stopCamera();
-            }, (err) => {
-                console.log(err);
-                this.photoCaptured = './assets/images/ProfileNone.png';
-            });
-
-        }
-    }
-
     processToNextScreen = (photoName) => {
-        switch (this.sharedDataService.dedicatedModeProcessType) {
-            case EnumService.DedicatedModeProcessTypes.CheckinOut: {
-                switch (this.sharedDataService.checkinoutDmAs) {
-                    case EnumService.CheckInType.AS_GUEST:
-                        this.sharedDataService.dedicatedModeGuestDetail.guestPhoto = photoName;
-                        this.sharedDataService.getCheckinDetailsGuest(this.apiService, true);
-                        break;
-                    case EnumService.CheckInType.MY_NAME:
-                        this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService, photoName);
-                        break;
+        if (this.sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Auth) {
+            switch (this.sharedDataService.dedicatedModeProcessType) {
+                case EnumService.DedicatedModeProcessTypes.CheckinOut: {
+                    switch (this.sharedDataService.checkinoutDmAs) {
+                        case EnumService.CheckInType.AS_GUEST:
+                            this.sharedDataService.dedicatedModeGuestDetail.guestPhoto = photoName;
+                            this.sharedDataService.getCheckinDetailsGuest(this.apiService, true);
+                            break;
+                        case EnumService.CheckInType.MY_NAME:
+                            this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService, photoName);
+                            break;
+                    }
+                    break;
                 }
-                break;
+                case EnumService.DedicatedModeProcessTypes.Document:
+                    this.sharedDataService.dedicatedModeDocumentSignOffProcess(photoName);
+                    break;
+                case EnumService.DedicatedModeProcessTypes.Form:
+                    this.sharedDataService.dedicatedModeFormSignOffProcess(photoName);
+                    break;
+                case EnumService.DedicatedModeProcessTypes.WorkPermit:
+                    this.sharedDataService.dedicatedModeWorkPermitSignOffProcess(photoName);
+                    break;
+                default:
             }
-            case EnumService.DedicatedModeProcessTypes.Document:
-                this.sharedDataService.dedicatedModeDocumentSignOffProcess(photoName);
-                break;
-            case EnumService.DedicatedModeProcessTypes.Form:
-                this.sharedDataService.dedicatedModeFormSignOffProcess(photoName);
-                break;
-            case EnumService.DedicatedModeProcessTypes.WorkPermit:
-                this.sharedDataService.dedicatedModeWorkPermitSignOffProcess(photoName);
-                break;
-            default:
+        } else if (this.sharedDataService.dedicatedModeCapturePhotoFor === EnumService.DedicatedModeCapturePhotoForType.Signoff) {
+            switch (this.sharedDataService.signOffFor) {
+                case EnumService.SignOffType.INDUCTION:
+                    this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+                    if (this.sharedDataService.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
+                        this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
+                    } else {
+                        this.sharedDataService.submitInductionCheckInData(this.apiService);
+                    }
+                    break;
+
+                case EnumService.SignOffType.DOCUMENT_DM:
+                case EnumService.SignOffType.FORMS_DM:
+                case EnumService.SignOffType.WORK_PERMIT_DM:
+                    this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = photoName;
+                    this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                    break;
+
+                default:
+            }
         }
     };
 }

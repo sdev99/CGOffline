@@ -43,9 +43,7 @@ export class DashboardQrscanPage implements OnInit {
     ) {
         this.user = this.accountService.userValue;
         this.isTablet = sharedDataService.isTablet;
-        if (!this.isTablet && sharedDataService.dedicatedMode) {
-            this.isTablet = true;
-        }
+
 
         this.activatedRoute.queryParams.subscribe((res) => {
             if (res) {

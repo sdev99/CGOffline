@@ -39,7 +39,7 @@ export class SignoffPhotoPage implements OnInit {
     takePhoto() {
         this.photoService.takePhotoFromCamera((photo) => {
             this.capturedPhoto = photo;
-        }, true);
+        }, true, true);
     }
 
     onClose() {
@@ -60,30 +60,7 @@ export class SignoffPhotoPage implements OnInit {
         this.utilService.dataUriToFile(this.capturedPhoto.dataUrl, fileName, mimeType)
             .then((file) => {
                 this.uploadInductionPhoto(file, fileName, (photoName) => {
-                    switch (this.type) {
-                        case EnumService.SignOffType.INDUCTION:
-                            this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
-                            if (this.sharedDataService.checkInPostData.guestPhone) {
-                                this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
-                            } else {
-                                this.sharedDataService.submitInductionCheckInData(this.apiService);
-                            }
-                            break;
-
-                        case EnumService.SignOffType.DOCUMENT_DM:
-                        case EnumService.SignOffType.FORMS_DM:
-                        case EnumService.SignOffType.WORK_PERMIT_DM:
-                        case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-                        case EnumService.SignOffType.FORM_ACTIVITY:
-                        case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
-                        case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
-                        case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
-                            this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = photoName;
-                            this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
-                            break;
-
-                        default:
-                    }
+                    this.processToNextScreen(photoName);
                 });
             });
     }
@@ -105,5 +82,25 @@ export class SignoffPhotoPage implements OnInit {
             this.utilService.hideLoadingFor(loading);
             this.errorMessage = error.message ? error.message : error;
         });
+    };
+
+    processToNextScreen = (photoName) => {
+        switch (this.type) {
+            case EnumService.SignOffType.INDUCTION:
+                this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+                this.sharedDataService.submitInductionCheckInData(this.apiService);
+                break;
+
+            case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+            case EnumService.SignOffType.FORM_ACTIVITY:
+            case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+            case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
+            case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
+                this.sharedDataService.signOffDetailsPostData.userSignaturePhoto = photoName;
+                this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+                break;
+
+            default:
+        }
     };
 }

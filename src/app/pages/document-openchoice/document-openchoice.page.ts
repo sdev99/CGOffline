@@ -63,7 +63,12 @@ export class DocumentOpenchoicePage implements OnInit {
         if (this.document.isSignatureSignOff || this.document.isDigitalSignOff) {
             this.navController.navigateForward('/signoff-digitalink');
         } else if (this.document.isPhotoSignOff) {
-            this.navController.navigateForward('/signoff-photo');
+            if (this.sharedDataService.dedicatedMode) {
+                this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                this.navController.navigateForward(['/checkinout-photoidentity-dm']);
+            } else {
+                this.navController.navigateForward(['/signoff-photo']);
+            }
         } else {
             this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
         }

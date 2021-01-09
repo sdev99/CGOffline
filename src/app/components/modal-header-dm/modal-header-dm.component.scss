@@ -42,6 +42,7 @@ ion-toolbar {
   }
 
   &.toolbar-2 {
+    min-height: 50px;
     ion-title {
       font-weight: normal;
       color: #171538;

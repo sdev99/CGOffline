@@ -33,7 +33,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
                         const dedicatedModeGuestDetail = this.sharedDataService.dedicatedModeGuestDetail;
                         this.userName = UtilService.getFullName(dedicatedModeGuestDetail?.guestFirsName, dedicatedModeGuestDetail?.guestMiddleName, dedicatedModeGuestDetail?.guestLastName);
                         if (dedicatedModeGuestDetail?.guestPhoto) {
-                            this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + dedicatedModeGuestDetail.guestPhoto;
+                            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + dedicatedModeGuestDetail.guestPhoto;
                         }
                         break;
                     case EnumService.CheckInType.MY_NAME:
@@ -41,7 +41,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
                         const dedicatedModeUserDetail = this.sharedDataService.dedicatedModeUserDetail;
                         this.userName = UtilService.getFullName(dedicatedModeUserDetail?.firstName, dedicatedModeUserDetail?.middleName, dedicatedModeUserDetail?.lastName);
                         if (dedicatedModeUserDetail?.photo) {
-                            this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + dedicatedModeUserDetail.photo;
+                            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + dedicatedModeUserDetail.photo;
                         }
                         break;
                 }
@@ -70,7 +70,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
     }
 
     onClose() {
-        this.navController.navigateRoot('dashboard-dm',{replaceUrl: true});
+        this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
     }
 
     onBack() {
@@ -104,7 +104,8 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
     }
 
     thisIsNotMe() {
-        this.navController.navigateForward('checkinout-photoidentity-dm');
+        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Auth;
+        this.navController.navigateForward('/checkinout-photoidentity-dm');
     }
 
 }

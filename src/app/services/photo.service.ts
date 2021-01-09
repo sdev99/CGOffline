@@ -50,13 +50,13 @@ export class PhotoService {
         await actionSheet.present();
     }
 
-    async takePhotoFromCamera(callBack, isFrontCamera = false) {
+    async takePhotoFromCamera(callBack, isFrontCamera = false, isSquarePhoto = false) {
         const subscribe = this.observablesService.getObservable(EnumService.ObserverKeys.APP_RESTORED_RESULT).subscribe((data) => {
             callBack(data.data);
             subscribe.unsubscribe();
         });
         let allowEditing = false;
-        if (this.platform.is('ios')) {
+        if (this.platform.is('ios') && isSquarePhoto) {
             allowEditing = true;
         }
 

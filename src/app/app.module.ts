@@ -25,6 +25,7 @@ import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
 import {SearchLocationPage} from './modals/search-location/search-location.page';
 import {FormsModule} from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture/ngx';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
         UniqueDeviceID,
         CameraPreview,
         Camera,
+        MediaCapture,
         ScreenOrientation,
         HTTP,
         RouterOutlet,

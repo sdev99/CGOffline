@@ -2,23 +2,23 @@
     <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
 
     <div class="photo-buttons" *ngIf="!image; else addPhotoTemplate;">
-        <ion-button fill="clear" class="left" (click)="addPhotoFromCamera()">
+        <ion-button fill="clear" class="left" (click)="choosePhotoVideoOption()">
             <ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
-            Take a Photo
+            Take a Photo/Video
         </ion-button>
 
         <span>Or</span>
 
         <ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
             <ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
-            Choose Photo
+            Choose Photo/Video
         </ion-button>
     </div>
 
     <ng-template #addPhotoTemplate>
         <div class="image-view">
             <div class="close-btn">
-                <ion-button class="edit-btn" fill="clear"
+                <ion-button *ngIf="!isVideo" class="edit-btn" fill="clear"
                             (click)="editPhoto()">
                     <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
                 </ion-button>
@@ -28,8 +28,8 @@
             </div>
 
             <ng-container *ngIf="isVideo">
-                <video controls="controls" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline" class="videoPlayer">
-                    <source [src]="image" [type]="StaticDataService.fileMimeTypes[image.split('.')?.pop()?.toLowerCase()]" />
+                <video controls="controls" preload="metadata"  webkit-playsinline="webkit-playsinline" class="videoPlayer">
+                    <source [src]="sanitize(videoUrl)" [type]="StaticDataService.fileMimeTypes[image.split('.')?.pop()?.toLowerCase()]" />
                 </video>
             </ng-container>
             <ng-container *ngIf="!isVideo">

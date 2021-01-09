@@ -12,7 +12,8 @@
     </ng-container>
 
     <ng-container *ngIf="sharedDataService.dedicatedMode">
-        <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Work Permit"
+        <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+                             modalSubTitle="Work Permit"
                              (closeModal)="back()"></app-modal-header-dm>
     </ng-container>
 
@@ -26,4 +27,8 @@
             <ion-label>{{item.formTitle}}</ion-label>
         </ion-item>
     </ion-list>
+
+    <ng-container *ngIf="!availableWorkPermits || availableWorkPermits.length===0">
+        <app-empty-message message="No permits available"></app-empty-message>
+    </ng-container>
 </ion-content>

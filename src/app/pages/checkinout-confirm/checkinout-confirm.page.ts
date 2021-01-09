@@ -146,7 +146,7 @@ export class CheckinoutConfirmPage implements OnInit {
                 this.navCtrl.navigateForward(['checkin-induction']);
             } else if (this.checkinDetail.checkInEntityDetail.checkInPersonalPhoto) {
                 this.sharedDataService.signOffFor = EnumService.SignOffType.INDUCTION;
-                this.navCtrl.navigateForward(['signoff-photo']);
+                this.navCtrl.navigateForward('/signoff-photo');
             } else {
                 this.sharedDataService.submitInductionCheckInData(this.apiService);
             }

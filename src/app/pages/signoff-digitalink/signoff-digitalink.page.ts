@@ -141,14 +141,19 @@ export class SignoffDigitalinkPage implements OnInit {
     initialiseDrawing() {
         setTimeout(() => {
             if (!this.canvasRef) {
-                this.canvasRef = new fabric.Canvas('digital-signature');
+                const canvasRef = new fabric.Canvas('digital-signature');
+                this.canvasRef = canvasRef;
+            } else {
+                const canvasRef = this.canvasRef;
+                debugger;
             }
             if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
                 const ele: any = document.getElementById('digital-signature');
                 this.canvasRef.setDimensions({
-                    width: (window.innerWidth * 80 / 100),
-                    height: (window.innerHeight * 40 / 100)
+                    width: (window.innerHeight * 50 / 100),
+                    height: (window.innerHeight * 25 / 100)
                 });
+
             } else {
                 this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
             }
@@ -183,7 +188,7 @@ export class SignoffDigitalinkPage implements OnInit {
                     if (this.screenOrientation.type.includes('landscape')) {
                     }
                     if (this.showDigitalInk) {
-                        this.initialiseDrawing();
+                        // this.initialiseDrawing();
                     }
                 });
             });
@@ -213,18 +218,6 @@ export class SignoffDigitalinkPage implements OnInit {
         } else {
             this.navCtrl.back();
         }
-    }
-
-    urltoFile(url, filename, mimeType) {
-        mimeType = mimeType || (url.match(/^data:([^;]+);/) || '')[1];
-        return (fetch(url)
-                .then((res) => {
-                    return res.arrayBuffer();
-                })
-                .then((buf) => {
-                    return new File([buf], filename, {type: mimeType});
-                })
-        );
     }
 
     async onContinue() {
@@ -268,7 +261,12 @@ export class SignoffDigitalinkPage implements OnInit {
                 }
 
                 if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
-                    this.navCtrl.navigateForward(['/signoff-photo']);
+                    if (this.sharedDataService.dedicatedMode) {
+                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                    } else {
+                        this.navCtrl.navigateForward(['/signoff-photo']);
+                    }
                 } else {
                     if (this.sharedDataService.checkInPostData.guestPhone) {
                         this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
@@ -286,7 +284,12 @@ export class SignoffDigitalinkPage implements OnInit {
                 }
 
                 if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
-                    this.navCtrl.navigateForward(['/signoff-photo']);
+                    if (this.sharedDataService.dedicatedMode) {
+                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                    } else {
+                        this.navCtrl.navigateForward(['/signoff-photo']);
+                    }
                 } else {
                     this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
                 }
@@ -302,7 +305,12 @@ export class SignoffDigitalinkPage implements OnInit {
                 }
 
                 if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isPhotoSignOff) {
-                    this.navCtrl.navigateForward(['/signoff-photo']);
+                    if (this.sharedDataService.dedicatedMode) {
+                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                    } else {
+                        this.navCtrl.navigateForward(['/signoff-photo']);
+                    }
                 } else {
                     this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
                 }

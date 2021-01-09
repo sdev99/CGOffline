@@ -108,6 +108,7 @@ export class SharedDataService {
     signOffFor = ''; // EnumService.SignOffType
     dedicatedModeTempAuthFor = ''; // EnumService.DedicatedModeTempAuthType
     dedicatedModeTempAuthBy = ''; // EnumService.DedicatedModeTempAuthBy
+    dedicatedModeCapturePhotoFor = ''; // EnumService.DedicatedModeCapturePhotoForType
 
     viewFormFor; // View form for induction process or activity detail
     inductionContentItemIndex = 0;
@@ -491,10 +492,10 @@ export class SharedDataService {
 
         this.utilService.presentLoadingWithOptions();
         apiService.getCheckInDetails_Guest(
-            dedicatedModeGuestDetail.guestPhone,
-            dedicatedModeGuestDetail.guestFirsName,
-            dedicatedModeGuestDetail.guestMiddleName,
-            dedicatedModeGuestDetail.guestLastName,
+            dedicatedModeGuestDetail.guestPhone || '',
+            dedicatedModeGuestDetail.guestFirsName || '',
+            dedicatedModeGuestDetail.guestMiddleName || '',
+            dedicatedModeGuestDetail.guestLastName || '',
             entityId
         ).subscribe((res: Response) => {
             this.utilService.hideLoading();
@@ -531,7 +532,12 @@ export class SharedDataService {
             this.navCtrl.navigateForward(['checkin-induction']);
         } else if (this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto || this.checkInDetail?.checkInEntityDetail?.checkInPersonalPhoto) {
             this.signOffFor = EnumService.SignOffType.INDUCTION;
-            this.navCtrl.navigateForward(['signoff-photo']);
+            if (this.dedicatedMode) {
+                this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+            } else {
+                this.navCtrl.navigateForward(['/signoff-photo']);
+            }
         } else {
             if (isGuest) {
                 this.submitInductionCheckInDataGuest(apiService);
@@ -1207,7 +1213,12 @@ export class SharedDataService {
         if (signOffFormDetail.formData.isDigitalSignOff || signOffFormDetail.formData.isSignatureSignOff) {
             this.navCtrl.navigateForward(['/signoff-digitalink']);
         } else if (signOffFormDetail.formData.isPhotoSignOff) {
-            this.navCtrl.navigateForward(['/signoff-photo']);
+            if (this.dedicatedMode) {
+                this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+            } else {
+                this.navCtrl.navigateForward(['/signoff-photo']);
+            }
         } else {
             this.submitPersonalModeSignoffData(apiService);
         }
@@ -1514,7 +1525,12 @@ export class SharedDataService {
                 this.navCtrl.navigateForward(['/signoff-digitalink']);
             } else if (this.checkInDetail.checkInInduction.isPhotoSignOff) {
                 this.signOffFor = EnumService.SignOffType.INDUCTION;
-                this.navCtrl.navigateForward(['signoff-photo']);
+                if (this.dedicatedMode) {
+                    this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                    this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                } else {
+                    this.navCtrl.navigateForward(['/signoff-photo']);
+                }
             } else {
                 this.submitInductionCheckInData(this.apiServiceRerence);
             }
@@ -1527,7 +1543,8 @@ export class SharedDataService {
         if (this.signOffDocumentDetail.isDigitalSignOff || this.signOffDocumentDetail.isSignatureSignOff) {
             this.navCtrl.navigateForward(['/signoff-digitalink']);
         } else if (this.signOffDocumentDetail.isPhotoSignOff) {
-            this.navCtrl.navigateForward(['/signoff-photo']);
+            this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+            this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
         } else {
             this.submitPersonalModeSignoffData(this.apiServiceRerence);
         }

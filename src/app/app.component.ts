@@ -94,6 +94,12 @@ export class AppComponent {
                     this.apiService.getTimeZoneList().subscribe(() => {
                     });
 
+                    // For test TABLET ui in sukhdev mobile
+                    if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632') {
+                        this.sharedDataService.isTablet = true;
+                    }
+                    // End -- For test TABLET ui in sukhdev mobile
+
                     if (this.sharedDataService.isTablet) {
                         this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
                             this.appSettingLoaded(isDeviceAssigned, data);
@@ -247,7 +253,6 @@ export class AppComponent {
             this.configureForLocation();
         }, 1000);
     };
-
 
 
     configureForLocation = async () => {

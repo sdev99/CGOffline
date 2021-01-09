@@ -326,6 +326,11 @@ export class EnumService {
         Name: 'Name'
     };
 
+    static DedicatedModeCapturePhotoForType = {
+        Auth: 'Auth',
+        Signoff: 'SignOff'
+    };
+
 
     constructor() {
     }
