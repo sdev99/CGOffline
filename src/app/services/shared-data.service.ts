@@ -55,6 +55,8 @@ export class SharedDataService {
 
     myCurrentGeoLocation: GeolocationPosition;
 
+    isNavigationTypeDeepLink = false;
+
     annotationImage;
     annotationColor = '#98C16B';
     onAnnotationImageDone;

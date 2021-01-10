@@ -134,6 +134,7 @@ export class AppComponent {
                 // slug = /tabs/tab2
                 const url = data.url;
                 if (url.indexOf('ResetPassword') !== -1) {
+                    this.sharedDataService.isNavigationTypeDeepLink = true;
                     const code = UtilService.getQueryStringValue(url, 'code');
                     this.router.navigate(['forgot-password-reset'], {
                         queryParams: {
@@ -141,6 +142,7 @@ export class AppComponent {
                         }
                     });
                 } else if (url.indexOf('AccountSetup') !== -1) {
+                    this.sharedDataService.isNavigationTypeDeepLink = true;
                     const userId = url.split('/').pop();
                     this.router.navigate(['new-account-setup'], {
                         queryParams: {
@@ -215,10 +217,13 @@ export class AppComponent {
 
         }
 
-        if (this.sharedDataService.dedicatedModeLocationUse) {
-            this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
-        } else {
-            this.navController.navigateRoot('choose-location');
+
+        if (!this.sharedDataService.isNavigationTypeDeepLink) {
+            if (this.sharedDataService.dedicatedModeLocationUse) {
+                this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});
+            } else {
+                this.navController.navigateRoot('choose-location');
+            }
         }
 
         setTimeout(() => {
@@ -235,10 +240,12 @@ export class AppComponent {
 
         }
 
-        if (this.accountService.userValue?.userId) {
-            this.navController.navigateRoot('/tabs/dashboard', {replaceUrl: true});
-        } else {
-            this.navController.navigateRoot('/login');
+        if (!this.sharedDataService.isNavigationTypeDeepLink) {
+            if (this.accountService.userValue?.userId) {
+                this.navController.navigateRoot('/tabs/dashboard', {replaceUrl: true});
+            } else {
+                this.navController.navigateRoot('/login');
+            }
         }
 
         localStorage.removeItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE);
