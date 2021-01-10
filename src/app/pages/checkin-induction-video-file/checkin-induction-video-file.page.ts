@@ -8,6 +8,7 @@ import {UtilService} from '../../services/util.service';
 import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
 import {User} from '../../_models';
+import {StaticDataService} from '../../services/static-data.service';
 
 @Component({
     selector: 'app-checkin-induction-video-file',
@@ -16,6 +17,7 @@ import {User} from '../../_models';
 })
 export class CheckinInductionVideoFilePage implements OnInit {
     user: User;
+    StaticDataService = StaticDataService;
 
     inductionItem: InductionItem;
 

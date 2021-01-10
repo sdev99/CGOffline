@@ -253,3 +253,20 @@ ion-footer {
 ion-label {
   white-space: normal !important;
 }
+
+//Classess for induction rich text and agreement text , classess are dynamic from api
+.text-tiny {
+  font-size: .7em;
+}
+
+.text-small {
+  font-size: .85em;
+}
+
+.text-big {
+  font-size: 1.4em;
+}
+
+.text-huge {
+  font-size: 1.8em;
+}

@@ -42,12 +42,13 @@
         <app-empty-message message="No documents available"></app-empty-message>
     </ng-template>
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
+    <ng-container
+            *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0">
         <app-empty-message *ngIf="(availableDocuments | listFilter:searchQuery:'documentTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive">
+    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0">
         <app-empty-message *ngIf="(archivedDocuments | listFilter:searchQuery:'documentTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>

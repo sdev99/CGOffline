@@ -8,6 +8,7 @@ import {UtilService} from '../../services/util.service';
 import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
 import {User} from '../../_models';
+import {FilehandlerService} from '../../services/filehandler.service';
 
 @Component({
     selector: 'app-checkin-induction-image-file',
@@ -25,6 +26,7 @@ export class CheckinInductionImageFilePage implements OnInit {
         public sharedDataService: SharedDataService,
         public utilService: UtilService,
         public accountService: AccountService,
+        public filehandlerService: FilehandlerService,
     ) {
         if (!sharedDataService.dedicatedMode) {
             this.user = accountService.userValue;
@@ -61,5 +63,10 @@ export class CheckinInductionImageFilePage implements OnInit {
             userId = this.user?.userId;
         }
         this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
+    }
+
+    fullScreenImg() {
+        const url = this.sharedDataService.globalDirectories.documentDirectory + '' + this.inductionItem.documentFileName;
+        this.filehandlerService.openFile(url, true);
     }
 }

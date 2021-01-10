@@ -9,7 +9,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {ComponentsModule} from './components/components.module';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
-import {SafeurlPipe} from './pipes/safeurl.pipe';
+import {Badge} from '@ionic-native/badge/ngx';
 import {PipesModule} from './pipes/pipes.module';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {File} from '@ionic-native/file/ngx';
@@ -24,8 +24,8 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
 import {SearchLocationPage} from './modals/search-location/search-location.page';
 import {FormsModule} from '@angular/forms';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture/ngx';
+import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
+import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture/ngx';
 
 @NgModule({
     declarations: [
@@ -56,6 +56,7 @@ import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ion
         UniqueDeviceID,
         CameraPreview,
         Camera,
+        Badge,
         MediaCapture,
         ScreenOrientation,
         HTTP,

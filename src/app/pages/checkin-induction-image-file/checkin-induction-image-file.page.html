@@ -1,5 +1,5 @@
 <ion-header>
-    <ion-toolbar  *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
+    <ion-toolbar *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
         <ion-title size="large">{{'Induction'}}</ion-title>
         <ion-buttons slot="end">
             <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
@@ -22,8 +22,12 @@
             </h6>
 
             <div class="image-view" *ngIf="inductionItem">
-                <ion-img [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName">
+                <ion-img [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName"
+                         (click)="fullScreenImg()">
                 </ion-img>
+                <ion-button color="medium" fill="clear" class="full-screen-btn" (click)="fullScreenImg()">
+                    <ion-icon slot="icon-only" name="scan-circle-sharp"></ion-icon>
+                </ion-button>
             </div>
         </div>
     </div>

@@ -15,7 +15,7 @@
 
         <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
             <app-archived-item
-                    *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'title'"
+                    *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'formTitle'"
                     (itemSelect)="openLiveWorkPermit(item)"
                     [colFirst]="item.formTitle"
                     colSecond="issued"
@@ -45,14 +45,14 @@
     </ng-template>
 
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
+    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0">
 
         <app-empty-message *ngIf="(liveWorkPermits | listFilter:searchQuery:'formTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive">
-        <app-empty-message *ngIf="(archivedWorkPermits | listFilter:searchQuery:'documentTitle').length == 0"
+    <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0">
+        <app-empty-message *ngIf="(archivedWorkPermits | listFilter:searchQuery:'formTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>
 

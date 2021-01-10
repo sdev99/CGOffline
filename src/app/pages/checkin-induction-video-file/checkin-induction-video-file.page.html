@@ -1,5 +1,5 @@
 <ion-header>
-    <ion-toolbar  *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
+    <ion-toolbar *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
         <ion-title size="large">{{'Induction'}}</ion-title>
         <ion-buttons slot="end">
             <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
@@ -24,9 +24,11 @@
             </h6>
 
             <div class="video-view" *ngIf="inductionItem">
-                <iframe width="400" height="200"
-                        [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl">
-                </iframe>
+                <video  controls="controls" preload="metadata"
+                       webkit-playsinline="webkit-playsinline" class="videoPlayer">
+                    <source [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl"
+                            [type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]"/>
+                </video>
             </div>
         </div>
     </div>

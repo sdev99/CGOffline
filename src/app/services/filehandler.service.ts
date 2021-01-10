@@ -23,7 +23,7 @@ export class FilehandlerService {
     ) {
     }
 
-    async openFile(fileUrl = 'http://www.africau.edu/images/default/sample.pdf') {
+    async openFile(fileUrl = 'http://www.africau.edu/images/default/sample.pdf', openInDefaultApp = false) {
         const loading = await this.utilService.startLoadingWithOptions('File downloading...');
 
         const fileName = fileUrl.replace(/^.*[\\\/]/, '');
@@ -33,7 +33,7 @@ export class FilehandlerService {
             this.utilService.hideLoadingFor(loading);
             const url = response.nativeURL;
             const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
-            if (extension.toLowerCase() === 'pdf') {
+            if (extension.toLowerCase() === 'pdf' || openInDefaultApp) {
                 this.fileOpener.open(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
             } else if (this.platform.is('ios')) {
                 this.fileOpener.open(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));

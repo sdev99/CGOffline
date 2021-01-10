@@ -19,10 +19,10 @@ import {AccountService} from './services/account.service';
 import {ApiService} from './services/api.service';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
-import {Capacitor} from '@capacitor/core';
 import {Response} from './_models';
+import {Badge} from '@ionic-native/badge/ngx';
 
-const {Geolocation, PushNotifications, Permissions, App, SplashScreen} = Plugins;
+const {Geolocation, Permissions, App, SplashScreen} = Plugins;
 
 @Component({
     selector: 'app-root',
@@ -43,6 +43,7 @@ export class AppComponent {
         private accountService: AccountService,
         private apiService: ApiService,
         private router: Router,
+        private badge: Badge
     ) {
         this.initializeApp();
     }
@@ -65,6 +66,7 @@ export class AppComponent {
             setTimeout(() => {
                 this.ngZone.run(() => {
                     SplashScreen.hide();
+                    this.badge.clear();
                 });
             }, 1500);
         });
@@ -94,12 +96,6 @@ export class AppComponent {
                     this.apiService.getTimeZoneList().subscribe(() => {
                     });
 
-                    // For test TABLET ui in sukhdev mobile
-                    if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632') {
-                        this.sharedDataService.isTablet = true;
-                    }
-                    // End -- For test TABLET ui in sukhdev mobile
-
                     if (this.sharedDataService.isTablet) {
                         this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
                             this.appSettingLoaded(isDeviceAssigned, data);
@@ -111,7 +107,6 @@ export class AppComponent {
             });
         });
     }
-
 
     getDeviceUniqueId = (callBack) => {
         this.uniqueDeviceID.get()

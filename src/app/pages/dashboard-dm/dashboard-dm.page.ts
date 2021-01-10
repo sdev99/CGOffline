@@ -42,11 +42,6 @@ export class DashboardDmPage implements OnInit {
         this.accountService.activateDevice().subscribe(() => {
         });
 
-        if (UtilService.isLocalHost()) {
-            setTimeout(() => {
-                this.navController.navigateForward('signoff-digitalink');
-            }, 3000);
-        }
     }
 
     ionViewWillEnter() {

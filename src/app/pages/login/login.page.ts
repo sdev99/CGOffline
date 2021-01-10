@@ -42,6 +42,12 @@ export class LoginPage implements OnInit {
         if (this.accountService.userValue?.userId) {
             this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
         }
+
+        if (UtilService.isLocalHost()) {
+            // setTimeout(() => {
+            //     this.navCtrl.navigateRoot('/new-account-setup', {replaceUrl: true});
+            // }, 3000);
+        }
     }
 
     async onSubmit() {

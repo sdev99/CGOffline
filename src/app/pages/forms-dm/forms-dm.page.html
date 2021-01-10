@@ -42,13 +42,13 @@
     </ng-template>
 
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
+    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0">
 
         <app-empty-message *ngIf="(availableForms | listFilter:searchQuery:'formTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive">
+    <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0">
         <app-empty-message *ngIf="(archivedForms | listFilter:searchQuery:'documentTitle').length == 0"
                            message="No Results Found"></app-empty-message>
     </ng-container>
