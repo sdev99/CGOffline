@@ -96,6 +96,14 @@ export class AppComponent {
                     this.apiService.getTimeZoneList().subscribe(() => {
                     });
 
+                    // if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632' ||
+                    //     this.sharedDataService.deviceUID === 'f44ab87b-a2d6-8df0-8637-870495265348') {
+                    //     this.sharedDataService.isTablet = true;
+                    //     setTimeout(() => {
+                    //         this.navController.navigateForward('checkinout-photoidentity-dm');
+                    //     }, 7000);
+                    // }
+
                     if (this.sharedDataService.isTablet) {
                         this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
                             this.appSettingLoaded(isDeviceAssigned, data);
