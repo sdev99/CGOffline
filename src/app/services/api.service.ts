@@ -49,7 +49,13 @@ export class ApiService {
     }
 
     getEntityByQRCode(qrCode) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetEntityByQRCode}?code=${qrCode}`);
+        let companyID;
+        if (this.sharedDataService.dedicatedMode) {
+            companyID = this.sharedDataService.dedicatedModeDeviceDetailData.companyID;
+        } else {
+            companyID = this.sharedDataService.getLoggedInUser().companyID;
+        }
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetEntityByQRCode}?code=${qrCode}&companyID=${companyID}`);
     }
 
     getLocationItemList(companyId) {
@@ -423,7 +429,13 @@ export class ApiService {
      *  @param qrCode qrCode of the user
      */
     getUserByQRCode(qrCode) {
-        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserByQRCode}?code=${qrCode}`);
+        let companyID;
+        if (this.sharedDataService.dedicatedMode) {
+            companyID = this.sharedDataService.dedicatedModeDeviceDetailData.companyID;
+        } else {
+            companyID = this.sharedDataService.getLoggedInUser().companyID;
+        }
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserByQRCode}?code=${qrCode}&companyID=${companyID}`);
     }
 
     /**

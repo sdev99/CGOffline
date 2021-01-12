@@ -3,10 +3,8 @@
     <div class="content-vertically-arrange">
         <div class="vertically-fill-space"></div>
 
-        <h2 class="page-title">Sign In</h2>
-        <p class="page-description">
-            Please enter your credentials to sign in.
-        </p>
+        <h2 class="page-title">{{'LOGIN.SIGN_IN' | translate}}</h2>
+        <p class="page-description">{{'LOGIN.PAGE_DESCRIPTION' | translate}}</p>
 
         <Form class="input-form" [formGroup]="loginForm">
             <div class="app-warning-component">
@@ -15,26 +13,26 @@
             </div>
 
             <ion-item class="email-item">
-                <ion-label position="stacked">Email Address</ion-label>
+                <ion-label position="stacked">{{'LOGIN.EMAIL' | translate}}</ion-label>
                 <ion-input
                         formControlName="email"
                         autocapitalize="off"
                         autocomplete="email"
                         inputmode="email"
                         [ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
-                        placeholder="Enter email address"
+                        [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
                         type="email"
                 ></ion-input>
             </ion-item>
 
 
             <ion-item class="password-item">
-                <ion-label position="stacked">Password</ion-label>
+                <ion-label position="stacked">{{'LOGIN.PASSWORD' | translate}}</ion-label>
                 <ion-input
                         formControlName="password"
                         autocapitalize="off"
                         [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
-                        placeholder="Enter password"
+                        [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
                         type="password"
                 ></ion-input>
             </ion-item>
@@ -42,18 +40,25 @@
 
         </Form>
 
-        <ion-button expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
+        <ion-button expand="full" class="signin-btn" (click)="onSubmit()">{{'LOGIN.SIGN_IN' | translate}}</ion-button>
         <ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password">
-            Forgot password?
+            {{'LOGIN.FORGOT_PASSWORD' | translate}}
         </ion-button>
 
         <div class="vertically-fill-space"></div>
 
         <div class="bottom-view">
-            <ion-select placeholder="ENGLISH" interface="action-sheet" cancelText="cancel"
-                        [(ngModel)]="selectedLanguage">
-                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>
-            </ion-select>
+            <!--            <ion-select class="login-language-dropdown" placeholder="ENGLISH" interface="action-sheet"-->
+            <!--                        cancelText="cancel"-->
+            <!--                        [(ngModel)]="selectedLanguage">-->
+            <!--                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>-->
+            <!--            </ion-select>-->
+
+            <ion-button fill="outline" color="light" size="small" class="custom-language-dropdown"
+                        (click)="openLanguages()">
+                <ion-icon name="chevron-down-sharp"></ion-icon>
+                {{selectedLanguage ? UtilService.findObj(languages, 'code', selectedLanguage).name : 'ENGLISH'}}
+            </ion-button>
 
             <ion-text class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
         </div>

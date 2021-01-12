@@ -61,6 +61,9 @@ export class CurrentCheckinPage implements OnInit {
                 this.isCheckedIn = false;
             }
             if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces?.length > 0) {
+                if (!this.sharedDataService.currentSelectedCheckinPlace) {
+                    this.sharedDataService.currentSelectedCheckinPlace = this.sharedDataService.checkedInPlaces[0];
+                }
                 this.isCheckedIn = true;
             }
 

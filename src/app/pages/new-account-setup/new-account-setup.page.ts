@@ -7,6 +7,7 @@ import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
 import {Profile} from '../../_models/profile';
 import {ActivatedRoute} from '@angular/router';
+import {SharedDataService} from '../../services/shared-data.service';
 
 @Component({
     selector: 'app-new-account-setup',
@@ -28,6 +29,7 @@ export class NewAccountSetupPage implements OnInit {
         public navCtrl: NavController,
         public route: ActivatedRoute,
         public accountService: AccountService,
+        public sharedDataService: SharedDataService,
     ) {
 
         route.queryParams.subscribe((params: any) => {
@@ -78,9 +80,11 @@ export class NewAccountSetupPage implements OnInit {
                     password,
                     confirmPassword
                 }).subscribe((response) => {
+                    this.sharedDataService.isLoginAfterAppOpen = true;
                     this.utilService.hideLoadingFor(loading);
                     this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
                 }, (error) => {
+                    this.errorMessage = error?.message || error;
                     this.utilService.hideLoadingFor(loading);
                 });
             } else {

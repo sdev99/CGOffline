@@ -45,14 +45,12 @@
         </ion-button>
     </ng-container>
 
-
     <ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="end"
                 class="arrow-button right" size="small" fill="clear"
                 (click)="nextPlace()">
         <ion-icon *ngIf="shouldShowNavigationPlaceBtns(2)" slot="icon-only" name="chevron-forward-outline"></ion-icon>
     </ion-button>
 </ion-item>
-
 
 <div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList" (click)="showCheckedInPlacesList=false">
     <ion-list class="check-in-places-list" lines="none"

@@ -54,6 +54,7 @@ export class AccountService {
         }
     }
 
+
     public get userValue(): User {
         return this.userSubject.value;
     }
@@ -80,6 +81,21 @@ export class AccountService {
         }));
     }
 
+    checkMobileSessionExpirationSetting(companyID) {
+        return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyMobileSessionDetails}/${companyID}`).pipe(map((data: Response) => {
+            if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                if (data.Result?.isMobileSessionExpiration) {
+                    const user = this.userValue;
+                    user.isMobileSessionExpiration = true;
+                    localStorage.setItem(EnumService.LocalStorageKeys.USER_DATA, JSON.stringify(user));
+                    this.userSubject.next(user);
+                }
+
+                return data;
+            }
+            return throwError(new Error(data?.ResponseException?.ExceptionMessage));
+        }));
+    }
 
     getUserProfile(userId) {
         return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserProfileById}/${userId}`).pipe(map((data: Response) => {
@@ -197,7 +213,7 @@ export class AccountService {
     }
 
 
-    logout(userId) {
+    logout(userId, navigateToLogin = true) {
         const option: any = {
             body: {
                 deviceID: this.sharedDataService.deviceUID
@@ -211,8 +227,10 @@ export class AccountService {
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_DATA);
                 localStorage.removeItem(EnumService.LocalStorageKeys.USER_PROFILE);
                 this.userSubject.next(null);
-                this.navController.navigateBack(['login'], {replaceUrl: true});
-                window.location.reload();
+                if (navigateToLogin) {
+                    this.navController.navigateBack(['login'], {replaceUrl: true});
+                    window.location.reload();
+                }
             }
             return data;
         }));

@@ -3,9 +3,10 @@ import {Validators, FormBuilder, FormGroup, FormControl} from '@angular/forms';
 import {SharedDataService} from '../../services/shared-data.service';
 import {UtilService} from '../../services/util.service';
 import {DemoDataService} from '../../services/demo-data.service';
-import {NavController} from '@ionic/angular';
+import {ActionSheetController, NavController} from '@ionic/angular';
 import {EnumService} from '../../services/enum.service';
 import {AccountService} from '../../services/account.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'app-login',
@@ -13,6 +14,7 @@ import {AccountService} from '../../services/account.service';
     styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+    UtilService = UtilService;
     errorMessage = '';
     isSubmitted = false;
     loginForm: FormGroup;
@@ -23,9 +25,13 @@ export class LoginPage implements OnInit {
     constructor(
         public utilService: UtilService,
         public navCtrl: NavController,
+        public actionSheetController: ActionSheetController,
         public sharedDataService: SharedDataService,
         public accountService: AccountService,
+        private translateService: TranslateService
     ) {
+        this.selectedLanguage = localStorage.getItem(EnumService.LocalStorageKeys.APP_LANGUAGE);
+
         this.loginForm = new FormGroup({
             email: new FormControl('', Validators.compose([
                 Validators.required,
@@ -39,7 +45,7 @@ export class LoginPage implements OnInit {
     }
 
     ngOnInit() {
-        if (this.accountService.userValue?.userId) {
+        if (this.accountService.userValue?.userId && !this.accountService.userValue.isMobileSessionExpiration) {
             this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
         }
 
@@ -48,6 +54,35 @@ export class LoginPage implements OnInit {
             //     this.navCtrl.navigateRoot('/new-account-setup', {replaceUrl: true});
             // }, 3000);
         }
+    }
+
+
+    async openLanguages() {
+        const buttons = [];
+        this.languages.map((item) => {
+            buttons.push({
+                text: item.name,
+                handler: () => {
+                    this.selectedLanguage = item.code;
+                    localStorage.setItem(EnumService.LocalStorageKeys.APP_LANGUAGE, this.selectedLanguage);
+                    this.translateService.use(this.selectedLanguage);
+                }
+            });
+        });
+
+        buttons.push({
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+
+            }
+        });
+
+        const actionSheet = await this.actionSheetController.create({
+            cssClass: 'my-custom-class',
+            buttons
+        });
+        await actionSheet.present();
     }
 
     async onSubmit() {
@@ -63,6 +98,7 @@ export class LoginPage implements OnInit {
             this.accountService.login(email, password)
                 .subscribe((data) => {
                     this.utilService.hideLoading();
+                    this.sharedDataService.isLoginAfterAppOpen = true;
 
                     this.navCtrl.navigateRoot('/tabs/dashboard');
 

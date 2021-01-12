@@ -719,8 +719,7 @@ export class DemoDataService {
 
     static languages = [
         {name: 'English', code: 'en'},
-        {name: 'Dutch', code: 'nl'},
-        {name: 'Spanish', code: 'es'},
+        {name: 'Dutch', code: 'nl'}
     ];
 
 
@@ -736,7 +735,6 @@ export class DemoDataService {
         {name: 'Demo Location 9', id: 9},
         {name: 'Demo Location 10', id: 10},
     ];
-
 
 
     static users = [

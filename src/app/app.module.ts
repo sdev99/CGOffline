@@ -6,7 +6,7 @@ import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
+import {AppComponent, HttpLoaderFactory} from './app.component';
 import {ComponentsModule} from './components/components.module';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {Badge} from '@ionic-native/badge/ngx';
@@ -20,12 +20,13 @@ import {CommonModule} from '@angular/common';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {DirectivesModule} from './directives/directives.module';
 import {HTTP} from '@ionic-native/http/ngx';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {HttpConfigInterceptor} from './helpers/httpConfig.interceptor';
 import {SearchLocationPage} from './modals/search-location/search-location.page';
 import {FormsModule} from '@angular/forms';
 import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
 import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture/ngx';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -39,6 +40,14 @@ import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic
         IonicModule.forRoot({
             hardwareBackButton: false,
             mode: 'ios'
+        }),
+        TranslateModule.forRoot({
+            defaultLanguage: 'en',
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         AppRoutingModule,
         ComponentsModule,

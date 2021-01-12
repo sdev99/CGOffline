@@ -19,10 +19,17 @@ import {AccountService} from './services/account.service';
 import {ApiService} from './services/api.service';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
-import {Response} from './_models';
+import {Response, User} from './_models';
 import {Badge} from '@ionic-native/badge/ngx';
+import {HttpClient} from '@angular/common/http';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {TranslateService} from '@ngx-translate/core';
 
 const {Geolocation, Permissions, App, SplashScreen} = Plugins;
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @Component({
     selector: 'app-root',
@@ -43,7 +50,8 @@ export class AppComponent {
         private accountService: AccountService,
         private apiService: ApiService,
         private router: Router,
-        private badge: Badge
+        private badge: Badge,
+        private translateService: TranslateService
     ) {
         this.initializeApp();
     }
@@ -52,6 +60,11 @@ export class AppComponent {
         this.platform.ready().then(async () => {
             this.statusBar.styleDefault();
             this.sharedDataService.apiServiceRerence = this.apiService;
+
+            const appLang = localStorage.getItem(EnumService.LocalStorageKeys.APP_LANGUAGE);
+            if (appLang) {
+                this.translateService.use(appLang);
+            }
 
             Plugins.App.addListener('appRestoredResult', (data: any) => {
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.APP_RESTORED_RESULT, data.data);
@@ -70,7 +83,6 @@ export class AppComponent {
                 });
             }, 1500);
         });
-
     }
 
     appSettingLoaded = (isDeviceAssignedForDedicatedMode, data = null) => {
@@ -78,8 +90,13 @@ export class AppComponent {
             this.utilService.hideLoading();
 
             if (isDeviceAssignedForDedicatedMode) {
+                // If already personal mode user logged in then logout it
+                if (!this.sharedDataService.dedicatedMode && this.accountService.userValue && this.accountService.userValue?.userId) {
+                    this.accountService.logout(this.accountService.userValue.userId, false);
+                }
                 this.configureAppForDedicatedMode(data);
             } else {
+                // If already dedicated mode then clear dedicated mode data
                 if (this.sharedDataService.dedicatedMode) {
                     this.sharedDataService.dedicatedModeDeviceDeleted();
                 }
@@ -249,8 +266,18 @@ export class AppComponent {
         }
 
         if (!this.sharedDataService.isNavigationTypeDeepLink) {
-            if (this.accountService.userValue?.userId) {
+            const user: User = this.accountService.userValue;
+            if (user?.userId && !user.isMobileSessionExpiration) {
                 this.navController.navigateRoot('/tabs/dashboard', {replaceUrl: true});
+                if (!this.sharedDataService.isLoginAfterAppOpen && user?.companyID) {
+                    this.accountService.checkMobileSessionExpirationSetting(user?.companyID).subscribe((response: Response) => {
+                        if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+                            if (response.Result?.isMobileSessionExpiration) {
+                                this.navController.navigateRoot('/login', {replaceUrl: true});
+                            }
+                        }
+                    });
+                }
             } else {
                 this.navController.navigateRoot('/login');
             }

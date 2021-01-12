@@ -90,7 +90,8 @@ export class EnumService {
         SYNC_DATE_TIME: 'sync_date_time',
         CHECKED_IN_PLACES: 'checked_in_places',
         CURRENT_SELECTED_CHECKIN_PLACE: 'current_selected_checkin_place',
-        GLOBAL_DIRECTORIES: 'global_directories'
+        GLOBAL_DIRECTORIES: 'global_directories',
+        APP_LANGUAGE: 'app_language'
     };
 
     static ApiMethods = {
@@ -102,6 +103,7 @@ export class EnumService {
         GetCompanyLanguageList: 'GetCompanyLanguageList', // GET
         UpdatePushNotification: 'UpdatePushNotification', // PUT
         UserSignIn: 'UserSignIn', // POST
+        GetCompanyMobileSessionDetails: 'GetCompanyMobileSessionDetails', // POST
         ForgotPassword: 'ForgotPassword', // POST
         ResetPassword: 'ResetPassword', // POST
         AccountSetup: 'AccountSetup', // POST

@@ -32,6 +32,10 @@
     <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer"/>
   </feature>
 
+  <feature name="Globalization">
+    <param name="android-package" value="org.apache.cordova.globalization.Globalization"/>
+  </feature>
+
   <feature name="Capture">
     <param name="android-package" value="org.apache.cordova.mediacapture.Capture"/>
   </feature>
