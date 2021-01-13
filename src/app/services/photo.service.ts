@@ -63,10 +63,10 @@ export class PhotoService {
         const capturedPhoto = await Plugins.Camera.getPhoto({
             resultType: CameraResultType.DataUrl,
             source: CameraSource.Camera,
-            quality: 70,
-            width: 500,
+            quality: 85,
+            width: 2500,
             allowEditing,
-            height: 500,
+            height: 2500,
             correctOrientation: true,
             preserveAspectRatio: true,
             direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear
@@ -82,9 +82,9 @@ export class PhotoService {
             const capturedPhoto = await Plugins.Camera.getPhoto({
                 resultType: CameraResultType.DataUrl,
                 source: CameraSource.Photos,
-                quality: 70,
-                width: 500,
-                height: 500,
+                quality: 85,
+                width: 2500,
+                height: 2500,
                 preserveAspectRatio: true,
                 correctOrientation: true,
             });
@@ -95,14 +95,14 @@ export class PhotoService {
             }
         } else {
             const options: CameraOptions = {
-                quality: 100,
+                quality: 85,
                 destinationType: this.camera.DestinationType.DATA_URL,
                 encodingType: this.camera.EncodingType.JPEG,
                 mediaType: isAllMedia ? this.camera.MediaType.ALLMEDIA : this.camera.MediaType.PICTURE,
                 sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
                 correctOrientation: true,
-                targetHeight: 500,
-                targetWidth: 500,
+                targetHeight: 2500,
+                targetWidth: 2500,
             };
 
             this.camera.getPicture(options).then((imageData) => {

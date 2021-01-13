@@ -28,7 +28,8 @@
         </ion-item>
     </ion-list>
 
-    <ng-container *ngIf="!availableWorkPermits || availableWorkPermits.length===0">
+    <ng-container *ngIf="!availableWorkPermits || availableWorkPermits?.length===0">
         <app-empty-message message="No permits available"></app-empty-message>
     </ng-container>
+
 </ion-content>

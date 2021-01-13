@@ -18,7 +18,7 @@ import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
 })
 export class CheckinWorkpermitPage implements OnInit {
     UtilService = UtilService;
-    availableWorkPermits: [FormItem];
+    availableWorkPermits: Array<FormItem>;
     user: User;
 
     isCheckedIn = false;
