@@ -19,6 +19,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
     @Input() questions: Array<any>;
     @Input() questionElementIds: Array<string>;
     @Input() isSubmitted: boolean;
+    @Input() isSectionDuplicate: boolean;
 
     constructor(
         public sharedDataService: SharedDataService,

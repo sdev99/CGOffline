@@ -18,14 +18,14 @@
             <app-single-choice-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [list]="question.answerChoiceAttributes"
             ></app-single-choice-field>
 
             <app-multiple-choice-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [list]="question.answerChoiceAttributes"
             ></app-multiple-choice-field>
 
@@ -34,20 +34,20 @@
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleLineText"
                     [form]="formGroup"
                     [isError]="isError(question, questionIndex)"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
             ></app-singleline-text-field>
 
             <app-multiline-text-field
                     [isError]="isError(question, questionIndex)"
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
             ></app-multiline-text-field>
 
             <app-number-integer-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldInteger"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [isError]="isError(question, questionIndex)"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-number-integer-field>
@@ -55,7 +55,7 @@
             <app-number-decimal-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.NumberFieldDecimal"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [isError]="isError(question, questionIndex)"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-number-decimal-field>
@@ -64,7 +64,7 @@
             <app-date-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [isError]="isError(question, questionIndex)"
                     placeholder="Choose"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
@@ -73,7 +73,7 @@
             <app-time-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId,isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [isError]="isError(question, questionIndex)"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-time-field>
@@ -81,7 +81,7 @@
             <app-date-time-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
                     [form]="formGroup"
-                    [inputName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [inputName]="UtilService.CustomFCName(sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [isError]="isError(question, questionIndex)"
                     placeholder="Choose"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
@@ -89,7 +89,7 @@
 
             <app-photo-field
                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-                    [formControlName]="UtilService.FCName(sectionIndex, questionIndex, question.questionId)"
+                    [formControlName]="UtilService.CustomFCName(sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                     [label]="question.allowTextLabel?UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel:''"
             ></app-photo-field>
 

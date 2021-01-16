@@ -131,6 +131,10 @@ export class UtilService {
         return 'FormControl_' + sectionIndex + '_' + questionIndex + '_' + questionId;
     }
 
+    static CustomFCName(sectionId, questionId, isSectionDuplicate = false, isQuestionDuplicate = false) {
+        return +'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + questionId;
+    }
+
     /**
      *  Dynamic FormControlName for multiple checkbox
      */
