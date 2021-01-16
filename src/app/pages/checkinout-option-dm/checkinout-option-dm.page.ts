@@ -19,6 +19,7 @@ export class CheckinoutOptionDmPage implements OnInit {
     }
 
     ngOnInit() {
+        this.sharedDataService.dedicatedModeCapturedSelfieForCheckinProcess = null;
         this.sharedDataService.dedicatedModeProcessType = EnumService.DedicatedModeProcessTypes.CheckinOut;
     }
 

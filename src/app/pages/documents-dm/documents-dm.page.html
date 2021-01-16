@@ -9,8 +9,10 @@
 </ion-header>
 
 <ion-content mode="md">
-    <ion-list *ngIf="availableDocuments?.length>0 || archivedDocuments?.length>0; else noDocument" class="activity-list"
-              lines="full">
+    <ion-list
+            *ngIf="(listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0) || (listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0); else noDocument"
+            class="activity-list"
+            lines="full">
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
             <app-archived-item

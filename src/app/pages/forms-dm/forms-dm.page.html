@@ -10,8 +10,10 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngIf="availableForms?.length>0 || archivedForms?.length>0; else noDocument" class="activity-list"
-              lines="full">
+    <ion-list
+            *ngIf="(listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0) || (listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0); else noDocument"
+            class="activity-list"
+            lines="full">
 
 
         <ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">

@@ -294,6 +294,12 @@ export class EnumService {
         }
     };
 
+    static NotificationActionType = {
+        NewActivityAssigned: 'New Activity Assigned',
+        SignOffRejected: 'Sign-Off Rejected',
+        ActivityOverdue: 'Activity Overdue',
+    };
+
 
     static DedicatedModeDocumentListType = {
         Available: 'Document List',
@@ -330,6 +336,7 @@ export class EnumService {
 
     static DedicatedModeCapturePhotoForType = {
         Auth: 'Auth',
+        LocationPhoto: 'LocationPhoto',
         Signoff: 'SignOff'
     };
 

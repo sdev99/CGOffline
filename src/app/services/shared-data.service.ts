@@ -112,6 +112,7 @@ export class SharedDataService {
     dedicatedModeTempAuthFor = ''; // EnumService.DedicatedModeTempAuthType
     dedicatedModeTempAuthBy = ''; // EnumService.DedicatedModeTempAuthBy
     dedicatedModeCapturePhotoFor = ''; // EnumService.DedicatedModeCapturePhotoForType
+    dedicatedModeCapturedSelfieForCheckinProcess; // photo name of uploaded captured selfie during checkin process, (For reuse it for signoff)
 
     viewFormFor; // View form for induction process or activity detail
     inductionContentItemIndex = 0;
@@ -200,7 +201,6 @@ export class SharedDataService {
         return this.annotationImage;
     }
 
-
     dedicatedModeDeviceDeleted() {
         this.dedicatedModeDeviceDetailData = null;
         this.dedicatedModeAssignedEntities = null;
@@ -226,6 +226,7 @@ export class SharedDataService {
         this.signOffFormDetail = null;
         this.signOffDocumentDetail = null;
         this.dedicatedModeLocationUse = null;
+        this.dedicatedModeCapturedSelfieForCheckinProcess = null;
         this.checkinoutDmAs = '';
         this.signOffFor = '';
         this.viewFormFor = null;
@@ -297,6 +298,41 @@ export class SharedDataService {
                 // Method called when tapping on a notification
                 PushNotifications.addListener('pushNotificationActionPerformed',
                     (notification: PushNotificationActionPerformed) => {
+                        if (notification.actionId === 'tap') {
+                            const notificationData = notification.notification.data;
+                            switch (notificationData.action) {
+                                case EnumService.NotificationActionType.NewActivityAssigned:
+                                case EnumService.NotificationActionType.SignOffRejected:
+                                case EnumService.NotificationActionType.ActivityOverdue:
+                                    if (!this.dedicatedMode && this.getLoggedInUser() && this.getLoggedInUser().userId) {
+                                        setTimeout(() => {
+                                            const contentlink = notificationData.contentlink;
+                                            const activityId = contentlink.split('_').pop();
+
+                                            const activityList = this.activityList;
+                                            let currentActivityOpen: ActivityListItem;
+                                            if (activityList) {
+                                                activityList.map((item) => {
+                                                    if (item.activityIndividualID === activityId) {
+                                                        currentActivityOpen = item;
+                                                        return;
+                                                    }
+                                                });
+                                            }
+                                            if (!currentActivityOpen) {
+                                                currentActivityOpen = {
+                                                    activityIndividualID: activityId
+                                                } as ActivityListItem;
+                                            }
+
+                                            this.currentActivityOpen = currentActivityOpen;
+                                            this.navCtrl.navigateForward(['/activity-detail']);
+                                        }, 2000);
+                                    }
+                                    break;
+                            }
+                        }
+                        // {"actionId":"tap","notification":{"body":"You have a new Activity Assigned","badge":1,"id":"A50F97EA-2426-4407-B9B6-80E576527CD1","subtitle":"","data":{"google.c.a.e":"1","contentlink":"https://cg.utopia-test.com/Activity/ActivityDetail/0_1339","action":"New Activity Assigned","aps":{"alert":{"title":"ComplianceGenie","body":"You have a new Activity Assigned"},"sound":"default","category":"FCM_PLUGIN_ACTIVITY"},"content":"You have a new Activity Assigned","gcm.message_id":"1610621468120206","google.c.sender.id":"1005975349422"},"title":"ComplianceGenie"}}
                         console.log('Push action performed: ' + JSON.stringify(notification));
                     }
                 );
@@ -439,6 +475,13 @@ export class SharedDataService {
     };
 
 
+    /**
+     * Get Checkin Details for Dedicated mode
+     * @param userId temp auth user id
+     * @param apiService ApiService class refrence
+     * @param userPhoto userPhoto if captured and uploaded to CheckInPhotoUpload api
+     * @param callBack call back to the block where it is called
+     */
     public getCheckinDetailsForDedicatedMode = async (userId, apiService: ApiService, userPhoto = null, callBack = null) => {
         if (userId && this.dedicatedModeLocationUse) {
 
@@ -474,7 +517,7 @@ export class SharedDataService {
                             locationID: this.dedicatedModeLocationUse.locationID,
                         } as CheckInPostData;
 
-                        this.processCheckinDetails(apiService, false);
+                        this.processCheckinDetailsStepInitial(apiService, false);
                     }
                 }
             }, (error: any) => {
@@ -520,33 +563,54 @@ export class SharedDataService {
                     companyID: dedicatedModeDeviceDetailData.companyID,
                 } as unknown as CheckInPostData;
 
-                this.processCheckinDetails(apiService, true);
+                this.processCheckinDetailsStepInitial(apiService, true);
             }
         }, (error) => {
             this.utilService.hideLoading();
             this.processCheckInError(error, nextScreen);
         });
-
     };
 
 
-    processCheckinDetails(apiService, isGuest) {
-        if (this.checkInDetail?.checkInEntityDetail?.processInduction && this.checkInDetail?.checkInInductionItems?.length > 0) {
-            this.navCtrl.navigateForward(['checkin-induction']);
-        } else if (this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto || this.checkInDetail?.checkInEntityDetail?.checkInPersonalPhoto) {
-            this.signOffFor = EnumService.SignOffType.INDUCTION;
-            if (this.dedicatedMode) {
-                this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-                this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+    /**
+     * Process checking for Dedicated mode
+     * @param apiService ApiService Refrence
+     * @param isGuest is CHeckin Type Guest User
+     */
+    processCheckinDetailsStepInitial(apiService, isGuest) {
+        if (
+            (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST && this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto) ||
+            (this.checkinoutDmAs === EnumService.CheckInType.MY_NAME && this.checkInDetail?.checkInEntityDetail?.checkInPersonalPhoto)
+        ) {
+            if (this.dedicatedModeCapturedSelfieForCheckinProcess) {
+                if (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
+                    this.checkInPostData.guestPhoto = this.dedicatedModeCapturedSelfieForCheckinProcess;
+                } else if (this.checkinoutDmAs === EnumService.CheckInType.MY_NAME) {
+                    this.checkInPostData.userPhoto = this.dedicatedModeCapturedSelfieForCheckinProcess;
+                }
+                this.processCheckinDetailsStepInduction(apiService, isGuest);
             } else {
-                this.navCtrl.navigateForward(['/signoff-photo']);
+                this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.LocationPhoto;
+                this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
             }
         } else {
-            if (isGuest) {
-                this.submitInductionCheckInDataGuest(apiService);
-            } else {
-                this.submitInductionCheckInData(apiService);
-            }
+            this.processCheckinDetailsStepInduction(apiService, isGuest);
+        }
+    }
+
+    processCheckinDetailsStepInduction(apiService, isGuest) {
+        if (this.checkInDetail?.checkInEntityDetail?.processInduction && this.checkInDetail?.checkInInductionItems?.length > 0) {
+            this.navCtrl.navigateForward(['checkin-induction']);
+        } else {
+            this.processCheckinDetailsStepSubmit(apiService, isGuest);
+        }
+    }
+
+    processCheckinDetailsStepSubmit(apiService, isGuest) {
+        if (isGuest) {
+            this.submitInductionCheckInDataGuest(apiService);
+        } else {
+            this.submitInductionCheckInData(apiService);
         }
     }
 
@@ -1134,7 +1198,10 @@ export class SharedDataService {
             accidentReport,
         };
 
-        // console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+        if (UtilService.isLocalHost()) {
+            console.log('Submit Answers', JSON.stringify(questionAnswers));
+            return;
+        }
 
         this.utilService.presentLoadingWithOptions();
         apiService.saveFormAnswers(submitAnswersObject).subscribe((response: Response) => {
@@ -1529,8 +1596,17 @@ export class SharedDataService {
             } else if (this.checkInDetail.checkInInduction.isPhotoSignOff) {
                 this.signOffFor = EnumService.SignOffType.INDUCTION;
                 if (this.dedicatedMode) {
-                    this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-                    this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                    if (this.dedicatedModeCapturedSelfieForCheckinProcess) {
+                        this.checkInPostData.userSignaturePhoto = this.dedicatedModeCapturedSelfieForCheckinProcess;
+                        if (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
+                            this.submitInductionCheckInDataGuest(this.apiServiceRerence);
+                        } else {
+                            this.submitInductionCheckInData(this.apiServiceRerence);
+                        }
+                    } else {
+                        this.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+                    }
                 } else {
                     this.navCtrl.navigateForward(['/signoff-photo']);
                 }

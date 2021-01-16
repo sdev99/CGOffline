@@ -43,7 +43,6 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     ) {
     }
 
-
     editPhoto() {
         this.openImageAnnotation(this.image);
     }

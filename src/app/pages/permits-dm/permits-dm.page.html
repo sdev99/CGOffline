@@ -10,8 +10,10 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngIf="liveWorkPermits?.length>0 || archivedWorkPermits?.length>0; else noDocument" class="activity-list"
-              lines="full">
+    <ion-list
+            *ngIf="(listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0) || (listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0); else noDocument"
+            class="activity-list"
+            lines="full">
 
         <ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
             <app-archived-item

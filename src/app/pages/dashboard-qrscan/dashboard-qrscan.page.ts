@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, Platform} from '@ionic/angular';
+import {ActionSheetController, NavController, Platform} from '@ionic/angular';
 import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner/ngx';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
@@ -39,6 +39,7 @@ export class DashboardQrscanPage implements OnInit {
         public apiService: ApiService,
         public utilService: UtilService,
         public sharedDataService: SharedDataService,
+        public actionSheetController: ActionSheetController,
         public activatedRoute: ActivatedRoute
     ) {
         this.user = this.accountService.userValue;
@@ -201,7 +202,6 @@ export class DashboardQrscanPage implements OnInit {
                 });
             });
         }
-
     };
 
     openNextScreen = (detail) => {
@@ -235,14 +235,7 @@ export class DashboardQrscanPage implements OnInit {
             if (getEntityIds.FormID > 0 || getEntityIds.DocumentID > 0) {
                 // if checked in to location already
                 if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces.length > 0) {
-                    if (!this.sharedDataService.currentSelectedCheckinPlace) {
-                        this.sharedDataService.currentSelectedCheckinPlace = this.sharedDataService.checkedInPlaces[0];
-                    }
-                    if (getEntityIds.FormID > 0) {
-                        this.openForm(getEntityIds.FormID);
-                    } else if (getEntityIds.DocumentID > 0) {
-                        this.openDocument(getEntityIds.DocumentID);
-                    }
+                    this.showCheckedInLocations(getEntityIds);
                 } else {
                     this.utilService.showAlert('Please check-in first', '', () => {
                         this.scan();
@@ -255,6 +248,39 @@ export class DashboardQrscanPage implements OnInit {
             }
         }
     };
+
+    async showCheckedInLocations(getEntityIds) {
+        const checkedInPlaces = this.sharedDataService.checkedInPlaces;
+        const buttons = [];
+        checkedInPlaces.map((item) => {
+            buttons.push({
+                text: item.entityName,
+                handler: () => {
+                    this.sharedDataService.currentSelectedCheckinPlace = item;
+                    if (getEntityIds.FormID > 0) {
+                        this.openForm(getEntityIds.FormID);
+                    } else if (getEntityIds.DocumentID > 0) {
+                        this.openDocument(getEntityIds.DocumentID);
+                    }
+                }
+            });
+        });
+
+        buttons.push({
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+                this.scan();
+            }
+        });
+
+        const actionSheet = await this.actionSheetController.create({
+            header: 'Choose Place',
+            cssClass: 'my-custom-class',
+            buttons
+        });
+        await actionSheet.present();
+    }
 
     onClose() {
         this.navCtrl.back();

@@ -114,7 +114,6 @@ export class PhotoService {
                     const base64Image = 'data:image/jpeg;base64,' + imageData;
                     callBack({dataUrl: base64Image});
                 }
-
             }, (err) => {
                 // Handle error
             });

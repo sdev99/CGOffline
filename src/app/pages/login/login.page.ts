@@ -56,7 +56,6 @@ export class LoginPage implements OnInit {
         }
     }
 
-
     async openLanguages() {
         const buttons = [];
         this.languages.map((item) => {

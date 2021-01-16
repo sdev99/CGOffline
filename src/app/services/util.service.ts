@@ -420,7 +420,7 @@ export class UtilService {
     };
 
 
-    checkAndApplyLogic(question, value, formGroup, sections) {
+    checkAndApplyLogic(question, value, formGroup: FormGroup, sections) {
 
         if (question.allowQuestionLogic) {
             const questionLogics = question.questionLogics;
@@ -443,10 +443,38 @@ export class UtilService {
                         let sectionObject;
                         let questionObject;
 
-                        if (sectionIndex >= 0 && questionIndex >= 0) {
-                            questionObject = sections[sectionIndex].questions[questionIndex];
-                        } else if (sectionIndex >= 0 && questionIndex < 0) {
-                            sectionObject = sections[sectionIndex];
+                        // For find current index to insert new duplicate item
+                        let currentIndexOfSection = 0;
+                        let currentIndexOfQuestion = 0;
+
+                        if (sectionIndex >= 0) {
+                            let duplicateSectionCount = 0;
+                            sections.map((sectionItem, sectionKey) => {
+                                if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                    duplicateSectionCount++;
+                                }
+
+                                if (sectionKey === sectionIndex + duplicateSectionCount) {
+                                    if (sectionIndex >= 0 && questionIndex >= 0) {
+                                        let duplicateQuestionCount = 0;
+                                        sectionItem.questions.map((questionItem, questionKey) => {
+                                            if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                                duplicateQuestionCount++;
+                                            }
+                                            if (questionKey === questionIndex + duplicateQuestionCount) {
+                                                questionObject = questionItem;
+                                                currentIndexOfSection = sectionIndex + duplicateSectionCount;
+                                                currentIndexOfQuestion = questionIndex + duplicateQuestionCount;
+                                                return;
+                                            }
+                                        });
+                                    } else if (sectionIndex >= 0 && questionIndex < 0) {
+                                        sectionObject = sectionItem;
+                                        currentIndexOfSection = sectionIndex + duplicateSectionCount;
+                                    }
+                                    return;
+                                }
+                            });
                         }
 
 
@@ -471,9 +499,9 @@ export class UtilService {
                                     }
                                 });
                             } else if (questionObject) {
-                                sections[sectionIndex].questions.map((questionInner, key) => {
+                                sections[currentIndexOfSection].questions.map((questionInner, key) => {
                                     if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
-                                        sections[sectionIndex].questions.splice(key, 1);
+                                        sections[currentIndexOfSection].questions.splice(key, 1);
                                         return;
                                     }
                                 });
@@ -620,11 +648,44 @@ export class UtilService {
             let sectionObject;
             let questionObject;
 
-            if (sectionIndex >= 0 && questionIndex >= 0) {
-                questionObject = sections[sectionIndex].questions[questionIndex];
-            } else if (sectionIndex >= 0 && questionIndex < 0) {
-                sectionObject = sections[sectionIndex];
+
+            // For find current index to insert new duplicate item
+            let currentIndexOfSection = 0;
+            let currentIndexOfQuestion = 0;
+
+
+            // TO find original question/section index except duplicate question/section index
+            if (sectionIndex >= 0) {
+                let duplicateSectionCount = 0;
+                sections.map((sectionItem, sectionKey) => {
+                    if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                        duplicateSectionCount++;
+                    }
+
+                    if (sectionKey === sectionIndex + duplicateSectionCount) {
+                        if (sectionIndex >= 0 && questionIndex >= 0) {
+                            let duplicateQuestionCount = 0;
+                            sectionItem.questions.map((questionItem, questionKey) => {
+                                if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                    duplicateQuestionCount++;
+                                }
+                                if (questionKey === questionIndex + duplicateQuestionCount) {
+
+                                    questionObject = questionItem;
+                                    currentIndexOfSection = sectionKey;
+                                    currentIndexOfQuestion = questionKey;
+                                    return;
+                                }
+                            });
+                        } else if (sectionIndex >= 0 && questionIndex < 0) {
+                            sectionObject = sectionItem;
+                            currentIndexOfSection = sectionKey;
+                        }
+                        return;
+                    }
+                });
             }
+
 
             if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
                 if (sectionObject) {
@@ -642,11 +703,11 @@ export class UtilService {
                 if (sectionObject) {
                     const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
                     duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                    sections.push(duplicateSection);
+                    sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
                 } else if (questionObject) {
                     const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
                     duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                    sections[sectionIndex].questions.push(duplicateQuestion);
+                    sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
                 }
             } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
                 if (sectionObject) {

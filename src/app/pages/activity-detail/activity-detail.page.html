@@ -7,7 +7,7 @@
     </ion-toolbar>
 
 
-    <ion-item lines="none" *ngIf="activityListItem">
+    <ion-item lines="none" *ngIf="activityListItem && activityListItem.activityTitle">
         <ion-label>
             <h6>{{activityListItem.activityTitle}}</h6>
             <div class="detail">
