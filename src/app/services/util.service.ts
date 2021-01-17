@@ -108,10 +108,10 @@ export class UtilService {
     static findObj(list, key, value, defaultIndex = 0) {
         if (list && list.length > 0) {
             let resultData = list[defaultIndex];
-            list.map((data) => {
+            list.some((data) => {
                 if (data[key] === value) {
                     resultData = data;
-                    return;
+                    return true;
                 }
             });
             return resultData;
@@ -132,7 +132,7 @@ export class UtilService {
     }
 
     static CustomFCName(sectionId, questionId, isSectionDuplicate = false, isQuestionDuplicate = false) {
-        return +'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + questionId;
+        return 'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + questionId;
     }
 
     /**
@@ -299,7 +299,7 @@ export class UtilService {
         return question[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] ? true : (question[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] ? false : !question.questionIsHidden);
     }
 
-    addDynamicFormControlsIfNotExist(sectionIndex, questionIndex, question, formGroup: FormGroup, onValueChange = null) {
+    addDynamicFormControlsIfNotExist(section, sectionIndex, questionIndex, question, formGroup: FormGroup, onValueChange = null) {
         const validators = [];
         if (question.questionIsRequired) {
             validators.push(Validators.required);
@@ -312,8 +312,7 @@ export class UtilService {
             validators.push(Validators.pattern('[0-9]*'));
         }
 
-
-        const formControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+        const formControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
 
         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
             const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
@@ -327,14 +326,13 @@ export class UtilService {
                 formGroup.addControl(formControlName, checkboxFormGroup);
             }
         } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
-            const controlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
             const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
             question.bodyParts?.map((bodyPartGroup) => {
                 bodyPartGroup.parts.map((part) => {
-                    checkboxFormGroup.addControl(UtilService.SubFCName(controlName, part.id), new FormControl(false));
+                    checkboxFormGroup.addControl(UtilService.SubFCName(formControlName, part.id), new FormControl(false));
                 });
             });
-            formGroup.addControl(controlName, checkboxFormGroup);
+            formGroup.addControl(formControlName, checkboxFormGroup);
         } else {
             const control = new FormControl('', Validators.compose(validators));
             control.valueChanges.subscribe(onValueChange);
@@ -375,11 +373,12 @@ export class UtilService {
                     });
                 } else {
                     const questions = section.questions;
+                    const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
                     questions.map((question, questionIndex) => {
                         const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
                         if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                            const controlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
                             if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
                                 formGroup.addControl(controlName, new FormControl(''));
                                 formGroup.addControl(EnumService.AccidentCustomLocationControlsName.PlaceNotintheList, new FormControl(false));
@@ -400,7 +399,7 @@ export class UtilService {
                             }
                         } else {
                             if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
-                                this.addDynamicFormControlsIfNotExist(sectionIndex, questionIndex, question, formGroup, (value) => {
+                                this.addDynamicFormControlsIfNotExist(section, sectionIndex, questionIndex, question, formGroup, (value) => {
                                     this.checkAndApplyLogic(question, value, formGroup, sections);
                                 });
                                 if (questionElementIds.indexOf(elementId) !== -1) {
@@ -408,7 +407,8 @@ export class UtilService {
                                 }
                                 questionElementIds.push(elementId);
                             } else {
-                                this.removeFieldIfAdded(formGroup, UtilService.FCName(sectionIndex, questionIndex, question.questionId));
+                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                this.removeFieldIfAdded(formGroup, controlName);
                                 const indexOfElement = questionElementIds.indexOf(elementId);
                                 if (indexOfElement !== -1) {
                                     questionElementIds.splice(indexOfElement, 1);
@@ -461,7 +461,7 @@ export class UtilService {
                                 if (sectionKey === sectionIndex + duplicateSectionCount) {
                                     if (sectionIndex >= 0 && questionIndex >= 0) {
                                         let duplicateQuestionCount = 0;
-                                        sectionItem.questions.map((questionItem, questionKey) => {
+                                        sectionItem.questions.some((questionItem, questionKey) => {
                                             if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
                                                 duplicateQuestionCount++;
                                             }
@@ -469,7 +469,7 @@ export class UtilService {
                                                 questionObject = questionItem;
                                                 currentIndexOfSection = sectionIndex + duplicateSectionCount;
                                                 currentIndexOfQuestion = questionIndex + duplicateQuestionCount;
-                                                return;
+                                                return true;
                                             }
                                         });
                                     } else if (sectionIndex >= 0 && questionIndex < 0) {
@@ -496,17 +496,17 @@ export class UtilService {
                             }
                         } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
                             if (sectionObject) {
-                                sections.map((section, key) => {
+                                sections.some((section, key) => {
                                     if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
                                         sections.splice(key, 1);
-                                        return;
+                                        return true;
                                     }
                                 });
                             } else if (questionObject) {
-                                sections[currentIndexOfSection].questions.map((questionInner, key) => {
+                                sections[currentIndexOfSection].questions.some((questionInner, key) => {
                                     if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
                                         sections[currentIndexOfSection].questions.splice(key, 1);
-                                        return;
+                                        return true;
                                     }
                                 });
                             }
@@ -661,7 +661,7 @@ export class UtilService {
             // TO find original question/section index except duplicate question/section index
             if (sectionIndex >= 0) {
                 let duplicateSectionCount = 0;
-                sections.map((sectionItem, sectionKey) => {
+                sections.some((sectionItem, sectionKey) => {
                     if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
                         duplicateSectionCount++;
                     }
@@ -669,7 +669,7 @@ export class UtilService {
                     if (sectionKey === sectionIndex + duplicateSectionCount) {
                         if (sectionIndex >= 0 && questionIndex >= 0) {
                             let duplicateQuestionCount = 0;
-                            sectionItem.questions.map((questionItem, questionKey) => {
+                            sectionItem.questions.some((questionItem, questionKey) => {
                                 if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
                                     duplicateQuestionCount++;
                                 }
@@ -678,14 +678,14 @@ export class UtilService {
                                     questionObject = questionItem;
                                     currentIndexOfSection = sectionKey;
                                     currentIndexOfQuestion = questionKey;
-                                    return;
+                                    return true;
                                 }
                             });
                         } else if (sectionIndex >= 0 && questionIndex < 0) {
                             sectionObject = sectionItem;
                             currentIndexOfSection = sectionKey;
                         }
-                        return;
+                        return true;
                     }
                 });
             }
@@ -705,13 +705,39 @@ export class UtilService {
                 }
             } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
                 if (sectionObject) {
-                    const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-                    duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                    sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
+                    let canSectionBeDuplicate = true;
+
+                    // check if already this section is duplicated
+                    if (sections.length > currentIndexOfSection + 1) {
+                        const sectionToBeShift = sections[currentIndexOfSection + 1];
+                        if (sectionToBeShift[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && sectionToBeShift.sectionId === sectionObject.sectionId) {
+                            console.log('This Section is Already Duplicated');
+                            canSectionBeDuplicate = false;
+                        }
+                    }
+
+                    if (canSectionBeDuplicate) {
+                        const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
+                        duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                        sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
+                    }
                 } else if (questionObject) {
-                    const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-                    duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                    sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
+                    let canQuestionBeDuplicate = true;
+
+                    // check if already this question is duplicated
+                    if (sections[currentIndexOfSection].questions.length > currentIndexOfQuestion + 1) {
+                        const questionToBeShift = sections[currentIndexOfSection].questions[currentIndexOfQuestion + 1];
+                        if (questionToBeShift[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && questionToBeShift.questionId === questionObject.questionId) {
+                            console.log('This Question is Already Duplicated');
+                            canQuestionBeDuplicate = false;
+                        }
+                    }
+
+                    if (canQuestionBeDuplicate) {
+                        const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
+                        duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                        sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
+                    }
                 }
             } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
                 if (sectionObject) {

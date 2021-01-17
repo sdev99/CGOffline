@@ -84,11 +84,11 @@ export class FormHavPage implements OnInit {
                     const questions = section.questions;
                     questions.map((question, questionIndex) => {
                         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
-                            this.modelControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+                            this.modelControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
                         }
 
                         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField) {
-                            this.plannedTimeControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+                            this.plannedTimeControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
                         }
                     });
                 }
@@ -141,7 +141,10 @@ export class FormHavPage implements OnInit {
     setupDynamicChoiceListForSection = (sectionIndex, listType, list) => {
         const sections = this.formBuilderDetail.sections;
         if (sections) {
-            const questions = sections[sectionIndex].questions;
+            const section = sections[sectionIndex];
+            const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+
+            const questions = section.questions;
             questions.map((question, questionIndex) => {
                 if (question.questionDisplayOrder === listType) {
                     if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
@@ -157,8 +160,8 @@ export class FormHavPage implements OnInit {
                         question.listValueKey = 'havModelID';
                         question.listLabelKey = 'model';
                     }
-
-                    const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
+                    const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                    const control = this.formGroup.controls[controlName];
                     control.setValue('');
                 }
             });
@@ -198,8 +201,9 @@ export class FormHavPage implements OnInit {
         });
     }
 
-    dropDownChange(question, sectionIndex, questionIndex) {
-        const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
+    dropDownChange(section, question, sectionIndex, questionIndex) {
+        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const control = this.formGroup.controls[controlName];
         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
             this.getTypeList(control.value, sectionIndex, questionIndex);
         } else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
@@ -241,8 +245,9 @@ export class FormHavPage implements OnInit {
         }
     }
 
-    isError(sectionIndex, questionIndex, question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)].valid);
+    isError(section, question) {
+        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 
     calculatePointsPerHour() {

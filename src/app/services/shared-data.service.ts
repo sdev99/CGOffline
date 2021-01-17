@@ -662,6 +662,8 @@ export class SharedDataService {
 
         if (sections) {
             sections.map((section, sectionIndex) => {
+                const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+
                 if (this.utilService.shouldShowSection(section)) {
                     if (section.isRiskAssessmentSection) {
                         const tasks = section.tasks;
@@ -696,7 +698,8 @@ export class SharedDataService {
                         const questions = section.questions;
                         questions.map((question, questionIndex) => {
                             if (this.utilService.shouldShowQuestion(question)) {
-                                const control = formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
+                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                const control = formGroup.controls[controlName];
                                 if (question.questionIsRequired) {
                                     requiredFieldsCount++;
                                     if (control && control.valid) {
@@ -726,10 +729,13 @@ export class SharedDataService {
 
             sections.map((section, sectionIndex) => {
                 if (this.utilService.shouldShowSection(section)) {
+                    const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
                     const questions = section.questions;
                     questions.map(async (question, questionIndex) => {
                         if (this.utilService.shouldShowQuestion(question)) {
-                            const control = formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
+                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            const control = formGroup.controls[controlName];
+
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
                                 if (control && control.value) {
                                     attachmentCount++;
@@ -836,8 +842,8 @@ export class SharedDataService {
         const userId = this.dedicatedMode ? this.dedicatedModeUserDetail.userId : personalModeLoggedUser.userId;
         const companyId = this.dedicatedMode ? this.dedicatedModeDeviceDetailData.companyID : personalModeLoggedUser.companyID;
 
-
         sections.map((section, sectionIndex) => {
+            const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 
             if (this.utilService.shouldShowSection(section)) {
                 const formattedAnswers = [];
@@ -905,9 +911,8 @@ export class SharedDataService {
                     questions.map((question, questionIndex) => {
                         if (this.utilService.shouldShowQuestion(question)) {
                             const answerFormattedObject: any = JSON.parse(JSON.stringify(question));
-
-                            const controlId = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
-                            const control = formGroup.controls[controlId];
+                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            const control = formGroup.controls[controlName];
                             let isValueFilled = false;
 
                             if (control) {
@@ -1011,7 +1016,7 @@ export class SharedDataService {
                                             const formGroups = control.value as FormGroup;
                                             const multipleChoiceValueIDs = [];
                                             question.answerChoiceAttributes.map((choice) => {
-                                                const choiceControl = formGroups[UtilService.SubFCName(controlId, choice.answerChoiceAttributeId)];
+                                                const choiceControl = formGroups[UtilService.SubFCName(controlName, choice.answerChoiceAttributeId)];
                                                 if (choiceControl) {
                                                     multipleChoiceValueIDs.push(choice.answerChoiceAttributeId);
                                                 }
@@ -1038,7 +1043,7 @@ export class SharedDataService {
                                             const bodyPartsIDs = [];
                                             StaticDataService.bodyParts.map((partGroup) => {
                                                 partGroup.parts.map((part) => {
-                                                    const choiceControl = bodyPartFormGroups[UtilService.SubFCName(controlId, part.id)];
+                                                    const choiceControl = bodyPartFormGroups[UtilService.SubFCName(controlName, part.id)];
                                                     if (choiceControl) {
                                                         bodyPartsIDs.push(part.id);
                                                     }
@@ -1104,7 +1109,7 @@ export class SharedDataService {
                                             const formGroups = control.value as FormGroup;
                                             const multipleChoiceValueIDs = [];
                                             question.answerChoiceAttributes.map((choice) => {
-                                                const choiceControl = formGroups[UtilService.SubFCName(controlId, choice.answerChoiceAttributeId)];
+                                                const choiceControl = formGroups[UtilService.SubFCName(controlName, choice.answerChoiceAttributeId)];
                                                 if (choiceControl) {
                                                     multipleChoiceValueIDs.push(choice.answerChoiceAttributeId);
                                                 }
@@ -1198,10 +1203,10 @@ export class SharedDataService {
             accidentReport,
         };
 
-        if (UtilService.isLocalHost()) {
-            console.log('Submit Answers', JSON.stringify(questionAnswers));
-            return;
-        }
+        // if (UtilService.isLocalHost()) {
+        //     console.log('Submit Answers', JSON.stringify(questionAnswers));
+        //     return;
+        // }
 
         this.utilService.presentLoadingWithOptions();
         apiService.saveFormAnswers(submitAnswersObject).subscribe((response: Response) => {
@@ -1440,7 +1445,6 @@ export class SharedDataService {
             }
         }
 
-
         apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe((response: Response) => {
             this.utilService.hideLoadingFor(loading);
 
@@ -1508,7 +1512,6 @@ export class SharedDataService {
                         replaceUrl: true
                     });
                 }
-
             }
         }, (error) => {
             this.utilService.hideLoadingFor(loading);

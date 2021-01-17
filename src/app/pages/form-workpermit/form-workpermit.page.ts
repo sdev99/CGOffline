@@ -26,6 +26,7 @@ import {EnumService} from '../../services/enum.service';
 export class FormWorkpermitPage {
     @ViewChild(IonContent) content: IonContent;
     UtilService = UtilService;
+    EnumService = EnumService;
 
 
     user: User;
@@ -163,22 +164,25 @@ export class FormWorkpermitPage {
             if (sections) {
                 sections.map((section, sectionIndex) => {
                     if (this.utilService.shouldShowSection(section)) {
+                        const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+
                         const questions = section.questions;
                         questions.map((question, questionIndex) => {
                             if (this.utilService.shouldShowQuestion(question)) {
+                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+
                                 if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
-                                    const control = this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)];
+                                    const control = this.formGroup.controls[controlName];
                                     question.answerChoiceAttributes.map((choice) => {
                                         if (choice.answerChoiceAttributeId === control.value) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }
                                     });
                                 } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
-                                    const multiChoiceControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
-                                    const control = this.formGroup.controls[multiChoiceControlName];
+                                    const control = this.formGroup.controls[controlName];
                                     const formGroups = control.value as FormGroup;
                                     question.answerChoiceAttributes.map((choice) => {
-                                        const choiceControl = formGroups[UtilService.SubFCName(multiChoiceControlName, choice.answerChoiceAttributeId)];
+                                        const choiceControl = formGroups[UtilService.SubFCName(controlName, choice.answerChoiceAttributeId)];
                                         if (choiceControl) {
                                             scoreAchieved = scoreAchieved + choice.answerChoiceAttributeScoreOrWeight;
                                         }

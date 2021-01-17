@@ -47,22 +47,22 @@
                                     <app-date-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.FCName(sectionIndex,questionIndex, question.questionId)"
+                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-                                            [isError]="isError(sectionIndex,questionIndex, question)"
+                                            [isError]="isError(section, question)"
                                             placeholder="Choose"
                                     ></app-date-field>
 
                                     <app-dropdown-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.FCName(sectionIndex,questionIndex,question.questionId)"
+                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-                                            [isError]="isError(sectionIndex,questionIndex, question)"
+                                            [isError]="isError(section, question)"
                                             [list]="question.answerChoiceAttributes"
                                             [listLabelKey]="question.listLabelKey"
                                             [listValueKey]="question.listValueKey"
-                                            (valueChange)="dropDownChange(question, sectionIndex,questionIndex)"
+                                            (valueChange)="dropDownChange(section, question, sectionIndex,questionIndex)"
                                             placeholder="Choose"
                                     ></app-dropdown-field>
 
@@ -70,9 +70,9 @@
                                     <app-number-integer-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.FCName( sectionIndex,questionIndex,question.questionId)"
+                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-                                            [isError]="isError(sectionIndex,questionIndex,question)"
+                                            [isError]="isError(section,question)"
                                     ></app-number-integer-field>
                                 </ng-container>
                             </ng-container>
@@ -93,6 +93,7 @@
                                     [isSubmitted]="isSubmitted"
                                     [formGroup]="formGroup"
                                     [questionElementIds]="questionElementIds"
+                                    [isSectionDuplicate]="section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]"
                             ></app-custom-questions-container>
                         </ng-template>
                     </ng-container>

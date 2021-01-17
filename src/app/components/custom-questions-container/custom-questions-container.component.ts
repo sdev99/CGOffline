@@ -40,6 +40,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
     }
 
     isError(question, questionIndex) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(this.sectionIndex, questionIndex, question.questionId)].valid);
+        const controlName = UtilService.CustomFCName(this.sectionId, question.questionId, this.isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 }

@@ -39,8 +39,6 @@ export class FormAccidentReportPage {
     selectedBodyParts = {};
     accidentImage;
 
-    placeNotintheList = false;
-
     accidentAlertOptions: any = {
         header: 'Where the accident happened ?',
     };
@@ -99,6 +97,8 @@ export class FormAccidentReportPage {
 
                     questions.map((question, questionIndex) => {
                         if (section.isAccidentReportSection) {
+                            const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+
                             // Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
                                 question.questionIsRequired = false;
@@ -106,9 +106,9 @@ export class FormAccidentReportPage {
 
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
                                 question.bodyParts = this.bodyParts;
-                                this.bodyPartControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+                                this.bodyPartControlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
                             } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                                this.locationIdControlName = UtilService.FCName(sectionIndex, questionIndex, question.questionId);
+                                this.locationIdControlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
                             }
 
                             if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
@@ -254,6 +254,8 @@ export class FormAccidentReportPage {
     placeNotintheListChange(event, controlName) {
         if (event.detail.checked) {
             this.formGroup.controls[controlName].setValue('');
+        } else {
+            this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName].setValue('');
         }
     }
 
@@ -371,24 +373,32 @@ export class FormAccidentReportPage {
         }
     }
 
-    isError(sectionIndex, questionIndex, question) {
-        return (this.isSubmitted && !this.formGroup.controls[UtilService.FCName(sectionIndex, questionIndex, question.questionId)].valid);
+    isError(section, question) {
+        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 
     isBodyPartSelected = () => {
         return Object.keys(this.selectedBodyParts).length > 0;
     };
 
+
+    // If location not selected or not entered manually
+    isLocationSelected() {
+        const locationIdControl = this.formGroup.controls[this.locationIdControlName];
+        const locationNameControl = this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName];
+        if (locationIdControl && locationNameControl && !locationIdControl?.value && !locationNameControl?.value) {
+            return false;
+        }
+        return true;
+    }
+
     onContinue() {
         this.isSubmitted = true;
         this.errorMessage = '';
 
-        if (this.formGroup.valid) {
-            const locationIdControl = this.formGroup.controls[this.locationIdControlName];
-            const locationNameControl = this.formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName];
-            if (locationIdControl && locationNameControl && !locationIdControl?.value && !locationNameControl?.value) {
-                this.errorMessage = 'Select location or enter manual location';
-            }
+        if (this.formGroup.valid && !this.isLocationSelected()) {
+            this.errorMessage = 'Select location or enter manual location';
         }
 
         if (!this.errorMessage) {
