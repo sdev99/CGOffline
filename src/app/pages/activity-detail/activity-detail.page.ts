@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {AlertController, NavController} from '@ionic/angular';
 import {DemoDataService} from '../../services/demo-data.service';
 import {ActivatedRoute} from '@angular/router';
@@ -34,6 +34,7 @@ export class ActivityDetailPage implements OnInit {
     constructor(
         public navCtrl: NavController,
         public route: ActivatedRoute,
+        public ngZone: NgZone,
         public sharedDataService: SharedDataService,
         private filehandlerService: FilehandlerService,
         private apiService: ApiService,
@@ -79,8 +80,10 @@ export class ActivityDetailPage implements OnInit {
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     const result = response.Result;
                     if (result) {
-                        this.activityListItem = result.activityData;
-                        this.activityAttachments = result.activityAttachments;
+                        this.ngZone.run(() => {
+                            this.activityListItem = result.activityData;
+                            this.activityAttachments = result.activityAttachments;
+                        });
                     }
                 }
                 finished();

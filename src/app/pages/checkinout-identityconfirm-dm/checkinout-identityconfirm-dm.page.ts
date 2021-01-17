@@ -41,7 +41,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
                         const dedicatedModeUserDetail = this.sharedDataService.dedicatedModeUserDetail;
                         this.userName = UtilService.getFullName(dedicatedModeUserDetail?.firstName, dedicatedModeUserDetail?.middleName, dedicatedModeUserDetail?.lastName);
                         if (dedicatedModeUserDetail?.photo) {
-                            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + dedicatedModeUserDetail.photo;
+                            this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + dedicatedModeUserDetail.photo;
                         }
                         break;
                 }

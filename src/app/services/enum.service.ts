@@ -298,6 +298,8 @@ export class EnumService {
         NewActivityAssigned: 'New Activity Assigned',
         SignOffRejected: 'Sign-Off Rejected',
         ActivityOverdue: 'Activity Overdue',
+        UserQualificationExpired: 'User Qualification Expired',
+        UserQualificationIsDueToExpireSoon: 'User Qualification is Due to Expire Soon',
     };
 
 

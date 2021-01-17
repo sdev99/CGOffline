@@ -116,7 +116,9 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
             this.startCamera();
         } else {
             const pictureOpts: CameraPreviewPictureOptions = {
-                quality: 85
+                quality: 100,
+                width: 3000,
+                height: 3000,
             };
             // take a picture
             this.cameraPreview.takeSnapshot(pictureOpts).then((imageData) => {

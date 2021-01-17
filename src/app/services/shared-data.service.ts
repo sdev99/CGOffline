@@ -326,8 +326,9 @@ export class SharedDataService {
                                             }
 
                                             this.currentActivityOpen = currentActivityOpen;
+                                            console.log('Push currentActivityOpen', currentActivityOpen);
                                             this.navCtrl.navigateForward(['/activity-detail']);
-                                        }, 2000);
+                                        }, 100);
                                     }
                                     break;
                             }
