@@ -1,7 +1,7 @@
 $paddingHorizontal: 23px;
 
 ion-header {
-  .model-header-toolbar {
+  ::ng-deep app-modal-header {
     ion-title {
       font-family: IBM Plex Sans !important;
       font-style: normal !important;

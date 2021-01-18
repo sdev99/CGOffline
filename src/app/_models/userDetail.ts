@@ -1,7 +1,8 @@
 export class UserDetail {
     firstName: string;
-    lastName: number;
+    lastName?: number;
     middleName: number;
-    photo: string;
+    photo?: string;
+    userPhoto?: string;
     userId: string;
 }

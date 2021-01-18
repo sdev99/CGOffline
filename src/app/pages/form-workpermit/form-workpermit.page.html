@@ -10,12 +10,7 @@
         </ng-container>
 
         <ng-template #personalMode>
-            <ion-toolbar mode="ios" class="model-header-toolbar">
-                <ion-title size="large">{{formBuilderDetail?.title}}</ion-title>
-                <ion-buttons slot="end">
-                    <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
-                </ion-buttons>
-            </ion-toolbar>
+            <app-modal-header [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
 
             <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)"
                                    [currentCount]="currentQuestionIndex"

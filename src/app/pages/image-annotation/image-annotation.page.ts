@@ -426,7 +426,6 @@ export class ImageAnnotationPage implements OnInit {
         this.addObjectAndActiveIt(shape);
     }
 
-
     addLine() {
         this.rangeValue = this.defaultThickness;
         this.isColorThicknessViewOpen = true;
@@ -502,7 +501,7 @@ export class ImageAnnotationPage implements OnInit {
     onContinue() {
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
-        const downlaodImg = this.canvasRef.toDataURL('jpeg');
+        const downlaodImg = this.canvasRef.toDataURL('jpeg', 1);
         if (this.sharedDataService.onAnnotationImageDone) {
             this.sharedDataService.onAnnotationImageDone(downlaodImg);
         }

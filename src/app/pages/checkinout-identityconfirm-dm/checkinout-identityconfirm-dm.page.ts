@@ -29,20 +29,11 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
             case EnumService.DedicatedModeProcessTypes.CheckinOut: {
                 switch (this.sharedDataService.checkinoutDmAs) {
                     case EnumService.CheckInType.AS_GUEST:
-                        this.pageTitle = 'Check In/Out as Guest';
-                        const dedicatedModeGuestDetail = this.sharedDataService.dedicatedModeGuestDetail;
-                        this.userName = UtilService.getFullName(dedicatedModeGuestDetail?.guestFirsName, dedicatedModeGuestDetail?.guestMiddleName, dedicatedModeGuestDetail?.guestLastName);
-                        if (dedicatedModeGuestDetail?.guestPhoto) {
-                            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + dedicatedModeGuestDetail.guestPhoto;
-                        }
+                        this.setGuestProfileData('Check In/Out as Guest');
                         break;
                     case EnumService.CheckInType.MY_NAME:
-                        this.pageTitle = 'Check In/Out by Name';
-                        const dedicatedModeUserDetail = this.sharedDataService.dedicatedModeUserDetail;
-                        this.userName = UtilService.getFullName(dedicatedModeUserDetail?.firstName, dedicatedModeUserDetail?.middleName, dedicatedModeUserDetail?.lastName);
-                        if (dedicatedModeUserDetail?.photo) {
-                            this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + dedicatedModeUserDetail.photo;
-                        }
+                        this.setUserProfileData('Check In/Out by Name');
+
                         break;
                 }
                 break;
@@ -50,12 +41,7 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
             case EnumService.DedicatedModeProcessTypes.Document:
             case EnumService.DedicatedModeProcessTypes.Form:
             case EnumService.DedicatedModeProcessTypes.WorkPermit:
-                const userDetail = this.sharedDataService.dedicatedModeUserDetail;
-                this.userName = UtilService.getFullName(userDetail?.firstName, userDetail?.middleName, userDetail?.lastName);
-                if (userDetail?.photo) {
-                    this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + userDetail.photo;
-                }
-                this.pageTitle = 'Authentication';
+                this.setUserProfileData('Authentication');
                 break;
             default:
         }
@@ -68,6 +54,26 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
         const element = this.imagePreview.nativeElement;
         element.style.width = element.offsetHeight + 'px';
     }
+
+    setGuestProfileData = (pageTitle) => {
+        this.pageTitle = pageTitle;
+        const dedicatedModeGuestDetail = this.sharedDataService.dedicatedModeGuestDetail;
+        this.userName = UtilService.getFullName(dedicatedModeGuestDetail?.guestFirsName, dedicatedModeGuestDetail?.guestMiddleName, dedicatedModeGuestDetail?.guestLastName);
+        if (dedicatedModeGuestDetail?.guestPhoto) {
+            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + dedicatedModeGuestDetail.guestPhoto;
+        }
+    };
+
+    setUserProfileData = (pageTitle) => {
+        this.pageTitle = pageTitle;
+        const userDetail = this.sharedDataService.dedicatedModeUserDetail;
+        this.userName = UtilService.getFullName(userDetail?.firstName, userDetail?.middleName, userDetail?.lastName);
+        if (userDetail?.userPhoto) {
+            this.photoCaptured = this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + userDetail.userPhoto;
+        } else if (userDetail?.photo) {
+            this.photoCaptured = this.sharedDataService.globalDirectories?.userDirectory + '' + userDetail.photo;
+        }
+    };
 
     onClose() {
         this.navController.navigateRoot('dashboard-dm', {replaceUrl: true});

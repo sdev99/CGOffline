@@ -1,11 +1,6 @@
 <ion-header mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
     <ng-container *ngIf="!sharedDataService.dedicatedMode">
-        <ion-toolbar mode="ios" class="model-header-toolbar">
-            <ion-title size="large">{{'Induction'}}</ion-title>
-            <ion-buttons slot="end">
-                <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
-            </ion-buttons>
-        </ion-toolbar>
+        <app-modal-header [modalTitle]="'Induction'" (closeModal)="onClose()"></app-modal-header>
 
         <app-next-prev-toolbar totalCount="42" currentCount="4" (previous)="previous()"
                                (next)="next()"></app-next-prev-toolbar>

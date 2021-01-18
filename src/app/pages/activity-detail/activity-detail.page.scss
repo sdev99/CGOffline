@@ -1,4 +1,10 @@
 ion-header {
+  ::ng-deep app-modal-header {
+    ion-toolbar {
+      --border-color: #F8F9FB;
+    }
+  }
+
   ion-item {
     --border-color: #DCE7EF;
     --border-width: 0 0 1px 0;

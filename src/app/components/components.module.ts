@@ -34,9 +34,9 @@ import {QuestionListHeaderComponent} from './question-list-header/question-list-
 import {CustomQuestionsContainerComponent} from './custom-questions-container/custom-questions-container.component';
 import {PhotoFieldComponent} from './photo-field/photo-field.component';
 import {SectionTitleComponent} from './section-title/section-title.component';
-import {ModelCloseButtonComponent} from './model-close-button/model-close-button.component';
 import {ArchivedItemComponent} from './archived-item/archived-item.component';
 import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custom-ion-refresh-loader.component';
+import {ModalHeaderComponent} from './modal-header/modal-header.component';
 
 @NgModule({
     declarations: [
@@ -51,6 +51,7 @@ import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custo
         DashboardButtonComponent,
         DeviceInfoComponent,
         ModalHeaderDmComponent,
+        ModalHeaderComponent,
         BackContinueToolbarComponent,
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
@@ -72,7 +73,6 @@ import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custo
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
         SectionTitleComponent,
-        ModelCloseButtonComponent,
         ArchivedItemComponent,
         CustomIonRefreshLoaderComponent
     ],
@@ -94,6 +94,7 @@ import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custo
         DashboardButtonComponent,
         DeviceInfoComponent,
         ModalHeaderDmComponent,
+        ModalHeaderComponent,
         BackContinueToolbarComponent,
         TopnavigationsBtnsDmComponent,
         TopnavigationsSegmentsDmComponent,
@@ -115,7 +116,6 @@ import {CustomIonRefreshLoaderComponent} from './custom-ion-refresh-loader/custo
         CustomQuestionsContainerComponent,
         PhotoFieldComponent,
         SectionTitleComponent,
-        ModelCloseButtonComponent,
         ArchivedItemComponent,
         CustomIonRefreshLoaderComponent
     ],

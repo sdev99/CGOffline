@@ -42,7 +42,7 @@ export class TopnavigationsBtnsDmComponent implements OnInit {
     }
 
     evacuationClick() {
-        this.navController.navigateRoot('evacuation-dm');
+        this.navController.navigateForward('evacuation-dm');
     }
 
     generatePermitClick() {

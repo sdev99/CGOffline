@@ -1,10 +1,5 @@
 <ion-header mode="ios">
-    <ion-toolbar *ngIf="!sharedDataService.dedicatedMode" mode="ios" class="model-header-toolbar">
-        <ion-title size="large">{{''}}</ion-title>
-        <ion-buttons slot="end">
-            <app-model-close-button (closeModal)="onClose()"></app-model-close-button>
-        </ion-buttons>
-    </ion-toolbar>
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" (closeModal)="onClose()"></app-modal-header>
 
     <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
                          [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Sign-Off"
