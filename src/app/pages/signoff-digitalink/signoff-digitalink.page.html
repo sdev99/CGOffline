@@ -9,45 +9,47 @@
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+    <div class="content-container">
 
-    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+        <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
-    <div class="content">
-        <div class="title-1">{{title}}</div>
+        <div class="content">
+            <div class="title-1">{{title}}</div>
 
-        <div class="ion-text-center text-2" *ngIf="subTitle">
-            {{subTitle}}
-        </div>
-
-        <div class="agree-checkbox">
-            <ion-checkbox mode="md" [(ngModel)]="isConfirm"></ion-checkbox>
-            <ion-label (click)="isConfirm=!isConfirm">{{aggrementTitle}}</ion-label>
-        </div>
-
-        <ng-container *ngIf="showDigitalInk">
-
-            <div class="hr-line" *ngIf="!sharedDataService.isTablet"></div>
-
-            <div class="title-2">Digital Ink Signature</div>
-
-            <div class="text-1">Use a stylus or finger to draw your signature</div>
-
-            <div class="canvas-container-d-s" id="canvas-container">
-                <canvas id="digital-signature" class="digital-signature"></canvas>
+            <div class="ion-text-center text-2" *ngIf="subTitle">
+                {{subTitle}}
             </div>
 
-        </ng-container>
+            <div class="agree-checkbox">
+                <ion-checkbox mode="md" [(ngModel)]="isConfirm"></ion-checkbox>
+                <ion-label (click)="isConfirm=!isConfirm">{{aggrementTitle}}</ion-label>
+            </div>
 
-        <ion-button *ngIf="sharedDataService.isTablet" expand="full" class="action-btn" (click)="onContinue()"
-                    [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
-            Continue
-        </ion-button>
+            <ng-container *ngIf="showDigitalInk">
+
+                <div class="hr-line" *ngIf="!sharedDataService.isTablet"></div>
+
+                <div class="title-2">Digital Ink Signature</div>
+
+                <div class="text-1">Use a stylus or finger to draw your signature</div>
+
+                <div class="canvas-container-d-s" id="canvas-container">
+                    <canvas id="digital-signature" class="digital-signature"></canvas>
+                </div>
+
+            </ng-container>
+
+            <ion-button *ngIf="sharedDataService.isTablet" expand="full" class="action-btn" (click)="onContinue()"
+                        [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
+                Continue
+            </ion-button>
+        </div>
+
+        <ion-footer mode="ios" *ngIf="!sharedDataService.isTablet">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()"
+                        [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
+                Continue
+            </ion-button>
+        </ion-footer>
     </div>
 </ion-content>
-
-<ion-footer mode="ios" *ngIf="!sharedDataService.isTablet">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()"
-                [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
-        Continue
-    </ion-button>
-</ion-footer>

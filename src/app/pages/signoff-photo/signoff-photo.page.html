@@ -7,45 +7,48 @@
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+    <div class="content-container">
+        <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
-    <div class="content">
-        <div *ngIf="sharedDataService.dedicatedMode" class="heading-1">Sign-Off</div>
+        <div class="content">
+            <div *ngIf="sharedDataService.dedicatedMode" class="heading-1">Sign-Off</div>
 
-        <ng-container *ngIf="capturedPhoto; else needPhtoView">
-            <ion-img [src]="capturedPhoto.dataUrl"></ion-img>
-            <ion-button fill="clear" class="retake-btn" (click)="takePhoto()">Take a new photo?</ion-button>
+            <ng-container *ngIf="capturedPhoto; else needPhtoView">
+                <ion-img [src]="capturedPhoto.dataUrl"></ion-img>
+                <ion-button fill="clear" class="retake-btn" (click)="takePhoto()">Take a new photo?</ion-button>
 
-            <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="continue()">
-                Continue
-            </ion-button>
-        </ng-container>
+                <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn"
+                            (click)="continue()">
+                    Continue
+                </ion-button>
+            </ng-container>
 
-        <ng-template #needPhtoView>
-            <div class="title-1">We need your photo</div>
-            <div class="text-1">
-                To finish the sign-off, you need to take a selfie of your self, using your device camera.
-            </div>
-            <ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn"
-                        (click)="takePhoto()">
+            <ng-template #needPhtoView>
+                <div class="title-1">We need your photo</div>
+                <div class="text-1">
+                    To finish the sign-off, you need to take a selfie of your self, using your device camera.
+                </div>
+                <ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn"
+                            (click)="takePhoto()">
+                    <ion-icon name="camera-outline" slot="start"></ion-icon>
+                    Take a Photo
+                </ion-button>
+            </ng-template>
+
+
+        </div>
+
+
+        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+            <ion-button *ngIf="!capturedPhoto" expand="full" class="action-btn" (click)="takePhoto()">
                 <ion-icon name="camera-outline" slot="start"></ion-icon>
                 Take a Photo
             </ion-button>
-        </ng-template>
 
+            <ion-button *ngIf="capturedPhoto" expand="full" class="action-btn" (click)="continue()">
+                Continue
+            </ion-button>
+        </ion-footer>
 
     </div>
-
 </ion-content>
-
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-    <ion-button *ngIf="!capturedPhoto" expand="full" class="action-btn" (click)="takePhoto()">
-        <ion-icon name="camera-outline" slot="start"></ion-icon>
-        Take a Photo
-    </ion-button>
-
-    <ion-button *ngIf="capturedPhoto" expand="full" class="action-btn" (click)="continue()">
-        Continue
-    </ion-button>
-</ion-footer>
-

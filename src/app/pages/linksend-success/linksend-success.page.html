@@ -1,17 +1,17 @@
 <ion-content fullscreen="true">
-    <div class="content">
-        <ion-icon src="./assets/icon/Mail.svg"></ion-icon>
+    <div class="content-container">
+        <div class="content">
+            <ion-icon src="./assets/icon/Mail.svg"></ion-icon>
 
-        <div class="title-1">Link Sent</div>
-        <div class="text-1">Please check your inbox. We have sent a password reset link to your registered email
-            address.
+            <div class="title-1">Link Sent</div>
+            <div class="text-1">Please check your inbox. We have sent a password reset link to your registered email
+                address.
+            </div>
         </div>
+
+        <ion-footer mode="ios">
+            <div class="text-2 ion-text-center ion-padding">Remembered your password?</div>
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Go to Sign in</ion-button>
+        </ion-footer>
     </div>
-
 </ion-content>
-
-<ion-footer mode="ios">
-    <div class="text-2 ion-text-center ion-padding">Remembered your password?</div>
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Go to Sign in</ion-button>
-</ion-footer>
-

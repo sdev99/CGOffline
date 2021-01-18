@@ -5,6 +5,11 @@ ion-content {
     --background: #F6F9FB;
   }
 
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
 
   .text-title-1 {
     font-family: IBM Plex Sans;

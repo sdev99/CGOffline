@@ -41,6 +41,7 @@ export class DashboardHeaderComponent implements OnInit {
     ) {
         this.user = this.accountService.userValue;
         this.checkedPlaces = sharedDataService.checkedInPlaces;
+
         this.checkedPlaces.map((place, key) => {
             if (place.userCheckInDetailID === sharedDataService.currentSelectedCheckinPlace.userCheckInDetailID) {
                 this.currentCheckinPlaceIndex = key;

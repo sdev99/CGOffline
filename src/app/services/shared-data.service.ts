@@ -68,6 +68,7 @@ export class SharedDataService {
     deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
     // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
     // deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
+    // deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632'; // SdevIphone
 
     pushToken = '000';
     isTablet = false;
@@ -245,7 +246,6 @@ export class SharedDataService {
         const user: User = JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA));
         return user;
     }
-
 
     getLanguageIdForForm() {
         if (!this.dedicatedMode && this.currentLanguageId) {

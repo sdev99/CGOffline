@@ -1,5 +1,6 @@
 <ion-header>
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Induction'" (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Induction'"
+                      (closeModal)="onClose()"></app-modal-header>
 
     <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
                          [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
@@ -19,18 +20,20 @@
             </h6>
 
             <div class="video-view" *ngIf="inductionItem">
-                <video  controls="controls" preload="metadata"
+                <video controls="controls" preload="metadata"
                        webkit-playsinline="webkit-playsinline" class="videoPlayer">
                     <source [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl"
                             [type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]"/>
                 </video>
             </div>
         </div>
-    </div>
-</ion-content>
 
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
-</ion-footer>
+        <ion-footer  mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
+        </ion-footer>
+    </div>
+
+
+</ion-content>
 
 

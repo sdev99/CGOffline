@@ -53,18 +53,20 @@
 </ion-item>
 
 <div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList" (click)="showCheckedInPlacesList=false">
-    <ion-list class="check-in-places-list" lines="none"
-              (click)="$event.stopImmediatePropagation();$event.stopPropagation()">
-        <ion-item *ngFor="let place of checkedPlaces"
-                  [ngClass]="{'selected':(selectedPlace&&selectedPlace.userCheckInDetailID === place.userCheckInDetailID)}"
-                  (click)="placeChoose(place)">
-            <ion-label>{{place.entityName}}</ion-label>
-            <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn"
-                        (click)="checkoutPlace(place, $event)">
-                <ion-icon slot="icon-only" src="./assets/icon/checkout-dark.svg"></ion-icon>
-            </ion-button>
-        </ion-item>
-    </ion-list>
+   <div class="list-container">
+       <ion-list class="check-in-places-list" lines="none"
+                 (click)="$event.stopImmediatePropagation();$event.stopPropagation()">
+           <ion-item *ngFor="let place of checkedPlaces"
+                     [ngClass]="{'selected':(selectedPlace&&selectedPlace.userCheckInDetailID === place.userCheckInDetailID)}"
+                     (click)="placeChoose(place)">
+               <ion-label>{{place.entityName}}</ion-label>
+               <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn"
+                           (click)="checkoutPlace(place, $event)">
+                   <ion-icon slot="icon-only" src="./assets/icon/checkout-dark.svg"></ion-icon>
+               </ion-button>
+           </ion-item>
+       </ion-list>
+   </div>
 </div>
 
 

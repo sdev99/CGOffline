@@ -113,8 +113,9 @@ export class AppComponent {
                     this.apiService.getTimeZoneList().subscribe(() => {
                     });
 
+                    // For test dedicated mode in mobile
                     // if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632' ||
-                    //     this.sharedDataService.deviceUID === 'f44ab87b-a2d6-8df0-8637-870495265348') {
+                    //     this.sharedDataService.deviceUID === 'd99fe84c-5538-25ce-8637-870495265348') {
                     //     this.sharedDataService.isTablet = true;
                     //     setTimeout(() => {
                     //         this.navController.navigateForward('checkinout-photoidentity-dm');

@@ -1,8 +1,10 @@
 <ion-header mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Visitor Agreement'" (closeModal)="onClose()"></app-modal-header>
+    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Visitor Agreement'"
+                      (closeModal)="onClose()"></app-modal-header>
 
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
+                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
                          (closeModal)="onClose()"></app-modal-header-dm>
 
     <app-back-continue-toolbar
@@ -15,14 +17,21 @@
 </ion-header>
 
 <ion-content fullscreen [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div *ngIf="inductionItem.contentDetails" class="va-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
+    <div class="content-container">
+        <div *ngIf="inductionItem.contentDetails" class="va-content"
+             [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
 
 
-    <div class="action-btn-container" *ngIf="sharedDataService.dedicatedMode">
-        <ion-button expand="full" class="action-btn" (click)="onContinue()">I Agree</ion-button>
+        <div class="action-btn-container" *ngIf="sharedDataService.dedicatedMode">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">I Agree</ion-button>
+        </div>
+
+        <div class="fill-vertical-space"></div>
+
+        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
+        </ion-footer>
     </div>
 </ion-content>
 
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
-</ion-footer>
+

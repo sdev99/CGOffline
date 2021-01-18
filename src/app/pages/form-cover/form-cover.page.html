@@ -41,30 +41,34 @@
 </ion-header>
 
 <ion-content class="ion-padding-horizontal" fullscreen="true">
+    <div class="content-container">
+        <ion-item lines="full" class="title-item"
+                  *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions">
+            <ion-label class="ion-text-wrap">
+                <p *ngIf="signOffFormDetail?.formData?.formattedDescription"
+                   [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"></p>
 
-    <ion-item lines="full" class="title-item"
-              *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions">
-        <ion-label class="ion-text-wrap">
-            <p *ngIf="signOffFormDetail?.formData?.formattedDescription"
-               [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"></p>
-
-            <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
-                <h6>Explanation</h6>
-                <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"></p>
-            </ng-container>
-        </ion-label>
-    </ion-item>
-
-    <div class="ion-margin-top" *ngIf="signOffFormDetail && signOffFormDetail.formAttachments">
-        <ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)"
-                  *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
-            <ion-img slot="start" [src]="attachmentItem.documentFileIconURL"></ion-img>
-            <ion-label>{{attachmentItem.documentFileName}}</ion-label>
+                <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
+                    <h6>Explanation</h6>
+                    <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"></p>
+                </ng-container>
+            </ion-label>
         </ion-item>
-    </div>
 
+        <div class="ion-margin-top" *ngIf="signOffFormDetail && signOffFormDetail.formAttachments">
+            <ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)"
+                      *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
+                <ion-img slot="start" [src]="attachmentItem.documentFileIconURL"></ion-img>
+                <ion-label>{{attachmentItem.documentFileName}}</ion-label>
+            </ion-item>
+        </div>
+
+        <div class="fill-vertical-space"></div>
+
+        <ion-footer mode="ios">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
+        </ion-footer>
+    </div>
 </ion-content>
 
-<ion-footer mode="ios">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
-</ion-footer>
+

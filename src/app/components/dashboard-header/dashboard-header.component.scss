@@ -115,11 +115,17 @@ ion-item.checked-in-status-view {
 }
 
 .check-in-places-list-container {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.35);
-  height: 100vh;
   z-index: 10;
   width: 100%;
+
+  .list-container {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.35);
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    padding-bottom: 200px;
+  }
 
   .check-in-places-list {
     ion-item {

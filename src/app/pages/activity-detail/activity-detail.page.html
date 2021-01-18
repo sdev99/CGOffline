@@ -52,42 +52,47 @@
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 </ion-header>
 <ion-content class="ion-padding-horizontal" fullscreen="true">
+    <div class="content-container">
 
-    <ion-item lines="full" class="title-item"
-              *ngIf="activityListItem && (activityListItem.formattedDescription || activityListItem.formattedExplanation)">
-        <ion-label class="ion-text-wrap">
-            <p *ngIf="activityListItem.formattedDescription"
-               [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedDescription)"></p>
+        <ion-item lines="full" class="title-item"
+                  *ngIf="activityListItem && (activityListItem.formattedDescription || activityListItem.formattedExplanation)">
+            <ion-label class="ion-text-wrap">
+                <p *ngIf="activityListItem.formattedDescription"
+                   [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedDescription)"></p>
 
-            <ng-container *ngIf="activityListItem.formattedExplanation">
-                <h6>Explanation</h6>
-                <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedExplanation)"></p>
-            </ng-container>
-        </ion-label>
-    </ion-item>
-
-    <div class="ion-margin-top" *ngIf="activityAttachments">
-        <ion-item lines="none" class="form-item" (click)="openFile(attachment)"
-                  *ngFor="let attachment of activityAttachments">
-            <ion-img slot="start" [src]="attachment.documentFileIconURL"></ion-img>
-            <ion-label>
-                {{attachment.documentFileName}}
+                <ng-container *ngIf="activityListItem.formattedExplanation">
+                    <h6>Explanation</h6>
+                    <p [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedExplanation)"></p>
+                </ng-container>
             </ion-label>
         </ion-item>
-    </div>
 
+        <div class="ion-margin-top" *ngIf="activityAttachments">
+            <ion-item lines="none" class="form-item" (click)="openFile(attachment)"
+                      *ngFor="let attachment of activityAttachments">
+                <ion-img slot="start" [src]="attachment.documentFileIconURL"></ion-img>
+                <ion-label>
+                    {{attachment.documentFileName}}
+                </ion-label>
+            </ion-item>
+        </div>
+
+        <div class="fill-vertical-space"></div>
+
+        <ion-footer mode="ios" *ngIf="activityListItem">
+            <ion-button expand="full"
+                        *ngIf="activityListItem.activityType === EnumService.ActivityType.FORM_SIGNOFF_ACTIVITY"
+                        class="action-btn" (click)="openForm()">Open
+            </ion-button>
+            <ion-button expand="full"
+                        *ngIf="activityListItem.activityType === EnumService.ActivityType.DOCUMENT_SIGNOFF_ACTIVITY"
+                        class="action-btn" (click)="openDocument()">
+                {{documentViewed ? 'Sign-Off' : 'Open'}}
+            </ion-button>
+            <ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.CUSTOM_ACTIVITY"
+                        class="action-btn" (click)="markAsCompleted()">Mark as Completed
+            </ion-button>
+        </ion-footer>
+    </div>
 </ion-content>
 
-<ion-footer mode="ios" *ngIf="activityListItem">
-    <ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.FORM_SIGNOFF_ACTIVITY"
-                class="action-btn" (click)="openForm()">Open
-    </ion-button>
-    <ion-button expand="full"
-                *ngIf="activityListItem.activityType === EnumService.ActivityType.DOCUMENT_SIGNOFF_ACTIVITY"
-                class="action-btn" (click)="openDocument()">
-        {{documentViewed ? 'Sign-Off' : 'Open'}}
-    </ion-button>
-    <ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.CUSTOM_ACTIVITY"
-                class="action-btn" (click)="markAsCompleted()">Mark as Completed
-    </ion-button>
-</ion-footer>

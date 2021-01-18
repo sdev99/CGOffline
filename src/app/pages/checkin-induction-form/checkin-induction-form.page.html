@@ -6,7 +6,8 @@
                                (next)="next()"></app-next-prev-toolbar>
     </ng-container>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode" [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
+    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
+                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
                          (closeModal)="onClose()"></app-modal-header-dm>
 
     <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
@@ -19,27 +20,32 @@
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 
-    <ion-list lines="none" mode="ios">
-        <div class="list-item-container" *ngFor="let section of list;let idx=index"
-             [ngClass]="{error:!isValid(idx, section)}">
-            <ion-radio-group [(ngModel)]="section.answer">
-                <ion-list-header lines="full">
-                    <h6>
-                        <ion-note color="danger" *ngIf="section.required">*</ion-note>
-                        {{(idx + 1) + '. ' + section.question}}
-                    </h6>
-                    <p *ngIf="section.note">Note: {{section.note}}</p>
-                </ion-list-header>
-                <div class="hr-line"></div>
-                <ion-item *ngFor="let item of section.options">
-                    <ion-label>{{item.title}}</ion-label>
-                    <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
-                </ion-item>
-            </ion-radio-group>
-        </div>
-    </ion-list>
-</ion-content>
+    <div class="content-container">
+        <ion-list lines="none" mode="ios">
+            <div class="list-item-container" *ngFor="let section of list;let idx=index"
+                 [ngClass]="{error:!isValid(idx, section)}">
+                <ion-radio-group [(ngModel)]="section.answer">
+                    <ion-list-header lines="full">
+                        <h6>
+                            <ion-note color="danger" *ngIf="section.required">*</ion-note>
+                            {{(idx + 1) + '. ' + section.question}}
+                        </h6>
+                        <p *ngIf="section.note">Note: {{section.note}}</p>
+                    </ion-list-header>
+                    <div class="hr-line"></div>
+                    <ion-item *ngFor="let item of section.options">
+                        <ion-label>{{item.title}}</ion-label>
+                        <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
+                    </ion-item>
+                </ion-radio-group>
+            </div>
+        </ion-list>
 
-<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-    <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
-</ion-footer>
+        <div class="fill-vertical-space"></div>
+
+        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+            <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+        </ion-footer>
+    </div>
+
+</ion-content>

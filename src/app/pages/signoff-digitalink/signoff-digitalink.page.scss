@@ -13,6 +13,11 @@ ion-content {
   --padding-start: 23px;
   --padding-end: 23px;
 
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
 
   &.dedicated-mode {
 

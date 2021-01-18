@@ -1,6 +1,6 @@
 <ion-header mode="ios">
-
-    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" *ngIf="sharedDataService.dedicatedMode; else personalMode"
+    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+                         *ngIf="sharedDataService.dedicatedMode; else personalMode"
                          [modalSubTitle]="authFor" (closeModal)="onClose()"></app-modal-header-dm>
 
     <ng-template #personalMode>
@@ -15,7 +15,7 @@
     </ng-template>
 </ion-header>
 
-<ion-content fullscreen class="ion-justify-content-center ion-align-items-center">
+<ion-content fullscreen class="ion-justify-content-center ion-align-items-center" [ngClass]="{'transparent':isLoaded}">
     <ng-container *ngIf="isLoaded">
         <img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content"/>
         <img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content"/>

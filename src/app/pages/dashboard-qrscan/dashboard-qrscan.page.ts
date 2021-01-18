@@ -92,14 +92,16 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     ionViewWillLeave() {
+        console.log('ionViewWillLeave');
         this.stopScanning();
     }
 
     ionViewDidEnter() {
+        console.log('ionViewDidEnter');
         setTimeout(() => {
             this.isLoaded = true;
             this.scan();
-        }, 1000);
+        }, 100);
     }
 
     stopScanning = () => {

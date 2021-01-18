@@ -3,10 +3,13 @@
 </ion-header>
 
 <ion-content [scrollY]="!loading">
-    <app-screen-inner-loading *ngIf="loading"></app-screen-inner-loading>
-    <div class="aggrement-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(termsConditionsText)"></div>
-</ion-content>
+    <div class="content-container">
+        <app-screen-inner-loading *ngIf="loading"></app-screen-inner-loading>
+        <div class="aggrement-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(termsConditionsText)"></div>
 
-<ion-footer mode="ios">
-    <ion-button expand="full" class="action-btn" (click)="onClose()">Continue</ion-button>
-</ion-footer>
+        <div class="fill-vertical-space"></div>
+        <ion-footer mode="ios">
+            <ion-button expand="full" class="action-btn" (click)="onClose()">Continue</ion-button>
+        </ion-footer>
+    </div>
+</ion-content>
