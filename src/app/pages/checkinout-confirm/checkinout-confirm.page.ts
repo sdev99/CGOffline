@@ -104,14 +104,15 @@ export class CheckinoutConfirmPage implements OnInit {
 
     async onContinue() {
         if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
+
             this.apiService.insertCheckOutDetails({
                 userCheckInDetailID: this.checkOutForCheckedInDetail.userCheckInDetailID,
                 userId: this.user?.userId,
                 checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
                 checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
             }).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, true);
 
@@ -132,7 +133,7 @@ export class CheckinoutConfirmPage implements OnInit {
                     });
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 this.navCtrl.navigateForward(['/checkin-fail'], {
                     queryParams: {
                         title: 'You cannot check out',

@@ -59,7 +59,6 @@ export class DashboardPage implements OnInit, OnDestroy {
                 this.getActivityList();
             });
         }
-        this.sharedDataService.currentLanguageId = this.sharedDataService?.userProfile?.mobileAppLanguageID;
     }
 
     ionViewWillEnter() {

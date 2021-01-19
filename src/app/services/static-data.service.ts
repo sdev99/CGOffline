@@ -10,6 +10,8 @@ export class StaticDataService {
     static dateTimeFormatAMPM = 'YYYY-MM-DD hh:mm A';
     static dateFormat = 'YYYY-MM-DD';
     static timeFormat = 'hh:mmA';
+    static photoQuality = 85;
+    static photoMaxHeight = 2500;
 
     static bodyParts = [
         {

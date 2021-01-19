@@ -61,18 +61,18 @@ export class ForgotPasswordResetPage implements OnInit {
             const confirmPassword = this.myForm.controls.passwordConfirm.value;
 
             if (password === confirmPassword) {
-                const loading = await this.utilService.startLoadingWithOptions();
+                this.utilService.presentLoadingWithOptions();
 
                 this.accountService.resetpassword({
                     password,
                     confirmPassword,
                     shortCode: this.resetCode,
                 }).subscribe((response) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
 
                     this.navCtrl.navigateRoot('/login');
                 }, (error) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
 
                 });
             } else {

@@ -29,6 +29,7 @@ export class UtilService {
     loading: HTMLIonLoadingElement = null;
     loadingStarting = false;
     loadingStopping = false;
+    isLoadingRequestedInitiated = false;
 
     questionElementIds: Array<string>;
     questionElementIdsUpdate: any; // callback
@@ -184,26 +185,6 @@ export class UtilService {
     ) {
     }
 
-    async startLoadingWithOptions(message = ''): Promise<HTMLIonLoadingElement> {
-        const loading = await this.loadingController.create({
-            cssClass: 'my-loading-class',
-            spinner: null,
-            message: '<ion-icon src="./assets/icon/Loader.svg"/>',
-            translucent: false,
-            backdropDismiss: false,
-            mode: 'md'
-        });
-        await loading.present();
-        return loading;
-    }
-
-    async hideLoadingFor(loading: HTMLIonLoadingElement) {
-        if (loading) {
-            await loading.dismiss();
-            loading = null;
-        }
-    }
-
     dataUriToFile(url, filename, mimeType) {
         return new Promise(async (resolve, reject) => {
             if (StaticDataService.videoFormats.indexOf(url.split('.').pop().toLowerCase()) !== -1) {
@@ -237,6 +218,8 @@ export class UtilService {
     }
 
     async presentLoadingWithOptions(message = '') {
+        this.isLoadingRequestedInitiated = true;
+
         if (!this.loading && !this.loadingStarting) {
             this.loadingStopping = false;
             this.loadingStarting = true;
@@ -258,11 +241,17 @@ export class UtilService {
     }
 
     hideLoading() {
-        this.loadingStopping = true;
-        if (this.loading) {
-            this.loading.dismiss();
-            this.loading = null;
-        }
+        this.isLoadingRequestedInitiated = false;
+
+        setTimeout(() => {
+            if (!this.isLoadingRequestedInitiated) {
+                this.loadingStopping = true;
+                if (this.loading) {
+                    this.loading.dismiss();
+                    this.loading = null;
+                }
+            }
+        }, 500);
     }
 
     async showAlert(message = '', title = '', callBack = null) {

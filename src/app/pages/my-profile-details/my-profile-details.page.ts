@@ -48,7 +48,7 @@ export class MyProfileDetailsPage implements OnInit {
     }
 
     async logout() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         this.accountService.logout(this.user?.userId).subscribe(() => {
             Object.keys(EnumService.LocalStorageKeys).map((LocalStorageKey) => {
@@ -62,9 +62,9 @@ export class MyProfileDetailsPage implements OnInit {
             });
             this.sharedDataService.resetAllSharedVariable();
 
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         }, error => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 }

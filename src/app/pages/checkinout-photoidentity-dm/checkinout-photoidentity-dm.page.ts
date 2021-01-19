@@ -13,6 +13,7 @@ import {ApiService} from '../../services/api.service';
 import {UtilService} from '../../services/util.service';
 import {Response} from '../../_models';
 import {PhotoService} from '../../services/photo.service';
+import {StaticDataService} from '../../services/static-data.service';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     nextPage;
 
     errorMessage;
+
+    viewLoaded = false;
 
     constructor(
         public navController: NavController,
@@ -56,8 +59,9 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
 
     ionViewDidEnter = () => {
         setTimeout(() => {
+            this.viewLoaded = true;
             this.startCamera();
-        }, 500);
+        }, 100);
     };
 
     ionViewWillLeave = () => {
@@ -116,9 +120,9 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
             this.startCamera();
         } else {
             const pictureOpts: CameraPreviewPictureOptions = {
-                quality: 100,
-                width: 3000,
-                height: 3000,
+                quality: StaticDataService.photoQuality,
+                width: StaticDataService.photoMaxHeight,
+                height: StaticDataService.photoMaxHeight,
             };
             // take a picture
             this.cameraPreview.takeSnapshot(pictureOpts).then((imageData) => {
@@ -160,35 +164,34 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     /**
      * Upload photo for  signoff
      */
-    uploadInductionPhoto = async (file, fileName = '', callBack = null) => {
-        const loading = await this.utilService.startLoadingWithOptions();
-
+    uploadInductionPhoto = (file, fileName = '', callBack = null) => {
+        this.utilService.presentLoadingWithOptions();
         this.apiService.inductionPhotoUpload(file, fileName).subscribe((res: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 UtilService.fireCallBack(callBack, res.Result);
             } else {
                 this.errorMessage = res.Message;
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             this.errorMessage = error.message ? error.message : error;
         });
     };
 
 
     checkInPhotoUpload = async (file, fileName = '', callBack = null) => {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         this.apiService.checkInPhotoUpload(file, fileName).subscribe((res: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 UtilService.fireCallBack(callBack, res.Result);
             } else {
                 this.errorMessage = res.Message;
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             this.errorMessage = error.message ? error.message : error;
         });
     };

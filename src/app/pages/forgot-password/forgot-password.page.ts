@@ -37,14 +37,14 @@ export class ForgotPasswordPage {
 
         if (this.myForm.valid) {
             const email = this.myForm.controls.email.value;
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
 
             this.accountService.forgotpassword(email).subscribe((res) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 this.navCtrl.navigateRoot('/linksend-success');
             }, ({message}) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 this.errorMsg = message;
             });

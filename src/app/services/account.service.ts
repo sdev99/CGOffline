@@ -54,7 +54,6 @@ export class AccountService {
         }
     }
 
-
     public get userValue(): User {
         return this.userSubject.value;
     }

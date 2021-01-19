@@ -53,8 +53,7 @@ export class MyProfileChangepassPage implements OnInit {
             const password = this.profileForm.controls.newpassword.value;
             const passwordConfirm = this.profileForm.controls.confirmnewpassword.value;
 
-            const loading = await this.utilService.startLoadingWithOptions();
-
+            this.utilService.presentLoadingWithOptions();
 
             this.accountService.changePassword({
                 userId: this.user?.userId,
@@ -63,7 +62,7 @@ export class MyProfileChangepassPage implements OnInit {
                 newPassword: password,
                 confirmPassword: passwordConfirm,
             }).subscribe(() => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 if (password === passwordConfirm) {
                     this.navCtrl.navigateRoot(['checkin-success'], {
@@ -76,7 +75,7 @@ export class MyProfileChangepassPage implements OnInit {
                     this.errorMsg = 'New (and confirmed) password must be identical';
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 this.errorMsg = error.message;
             });

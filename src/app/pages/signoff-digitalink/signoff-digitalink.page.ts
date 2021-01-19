@@ -231,21 +231,21 @@ export class SignoffDigitalinkPage implements OnInit {
 
                 const fileName = 'signature' + this.utilService.getCurrentTimeStamp() + '.jpeg';
                 const mimeType = 'image/jpeg';
-                const loading = await this.utilService.startLoadingWithOptions();
+                this.utilService.presentLoadingWithOptions();
                 this.utilService.dataUriToFile(downlaodImg, fileName, mimeType).then((file) => {
                     this.apiService.inductionSignatureUpload(file, fileName).subscribe((res: Response) => {
-                        this.utilService.hideLoadingFor(loading);
+                        this.utilService.hideLoading();
                         if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                             this.nextStep(res.Result);
                         } else {
                             this.errorMessage = res.Message;
                         }
                     }, (error) => {
-                        this.utilService.hideLoadingFor(loading);
+                        this.utilService.hideLoading();
                         this.errorMessage = error.message ? error.message : error;
                     });
                 }, error => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                 });
             } else {
                 this.nextStep();

@@ -66,8 +66,7 @@ export class MyProfileEditPage implements OnInit {
         if (this.profileForm.valid) {
             const timezoneData = UtilService.findObj(this.sharedDataService.timeZoneList, 'timeZoneID', timezone.value);
             const languageData = UtilService.findObj(this.sharedDataService.companyLanguageList, 'code', language.value);
-            const loading = await this.utilService.startLoadingWithOptions();
-
+            this.utilService.presentLoadingWithOptions();
 
             this.accountService.updateProfile({
                 userId: this.user?.userId,
@@ -86,7 +85,7 @@ export class MyProfileEditPage implements OnInit {
 
                 // get updated userprofile detail
                 this.accountService.getUserProfile(this.user?.userId).subscribe(async (profile) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
 
                     this.profile = profile;
 
@@ -97,13 +96,11 @@ export class MyProfileEditPage implements OnInit {
                         }
                     });
                 }, error => {
-                    this.utilService.hideLoadingFor(loading);
-
+                    this.utilService.hideLoading();
                 });
             }, (error) => {
                 this.errorMsg = error.message;
-                this.utilService.hideLoadingFor(loading);
-
+                this.utilService.hideLoading();
             });
         } else {
             this.errorMsg = 'All fileds are required to be filled.';

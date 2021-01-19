@@ -161,11 +161,11 @@ export class DashboardQrscanPage implements OnInit {
     checkQrCode = async (qrCode) => {
         this.stopScanning();
 
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         if (this.sharedDataService.dedicatedMode) {
             this.apiService.getUserByQRCode(qrCode).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     const userDetail: UserDetail = response.Result as UserDetail;
                     if (userDetail && userDetail.userId) {
@@ -177,7 +177,7 @@ export class DashboardQrscanPage implements OnInit {
                     }
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 this.utilService.showAlert(error.message || error, 'Not found!', () => {
                     this.scan();
@@ -185,7 +185,7 @@ export class DashboardQrscanPage implements OnInit {
             });
         } else {
             this.apiService.getEntityByQRCode(qrCode).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     const locationItem: LocationItem = response.Result as LocationItem;
                     if (locationItem && locationItem.locationID && locationItem.locationName) {
@@ -197,7 +197,7 @@ export class DashboardQrscanPage implements OnInit {
                     }
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
 
                 this.utilService.showAlert(error.message || error, 'Not found!', () => {
                     this.scan();
@@ -289,9 +289,10 @@ export class DashboardQrscanPage implements OnInit {
     }
 
     async openDocument(documentID) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getActivitySignOffDocumentDetail(documentID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const signOffDocumentDetail = response.Result as DocumentDetail;
                 this.navCtrl.navigateForward(['/document-openchoice'], {
@@ -302,15 +303,16 @@ export class DashboardQrscanPage implements OnInit {
             this.utilService.showAlert(error.message || error, 'Not found!', () => {
                 this.scan();
             });
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 
     async openForm(formID) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
         this.apiService.getSignOffFormDetail(this.user?.userId, formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckin;
                 this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
@@ -320,7 +322,7 @@ export class DashboardQrscanPage implements OnInit {
             this.utilService.showAlert(error.message || error, 'Not found!', () => {
                 this.scan();
             });
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 }

@@ -63,13 +63,14 @@ export class FormCoverPage {
 
     async getFormBuilderDetails(callBack) {
         const formData = this.signOffFormDetail?.formData;
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getFormBuilderDetails(formData?.formID, formData?.formVersionID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             callBack(response.Result);
         }, error => {
             this.utilService.showAlert(error.message || error);
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

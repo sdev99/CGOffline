@@ -51,12 +51,13 @@ export class CheckinInductionFormPage implements OnInit {
     }
 
     async getFormDetails() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         const entityIds = this.utilService.getRelevantEntityId(this.sharedDataService.checkInForLocation?.locationID);
         this.apiService.getSignOffFormDetail(this.user?.userId, this.inductionItem.formID, entityIds.LocationID, entityIds.ProjectID, entityIds.InventoryID).subscribe((response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

@@ -33,9 +33,9 @@ export class MyProfileDocumentsPage implements OnInit {
     }
 
     async ngOnInit() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
         this.getMySignedDocuments(() => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         }, true);
     }
 

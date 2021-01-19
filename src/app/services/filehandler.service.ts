@@ -24,13 +24,14 @@ export class FilehandlerService {
     }
 
     async openFile(fileUrl = 'http://www.africau.edu/images/default/sample.pdf', openInDefaultApp = false) {
-        const loading = await this.utilService.startLoadingWithOptions('File downloading...');
+        this.utilService.presentLoadingWithOptions('File downloading...');
 
         const fileName = fileUrl.replace(/^.*[\\\/]/, '');
         const extension = fileName.split('.').pop();
 
         this.http.downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName).then((response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
+
             const url = response.nativeURL;
             const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
             if (extension.toLowerCase() === 'pdf' || openInDefaultApp) {
@@ -41,7 +42,7 @@ export class FilehandlerService {
                 this.fileOpener.showOpenWithDialog(url, mimeType).then(() => console.log('File is opened')).catch(e => console.log('Error opening file', e));
             }
         }).catch((error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             console.log('Error download file', error);
         });
 

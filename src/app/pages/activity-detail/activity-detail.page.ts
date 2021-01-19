@@ -113,16 +113,17 @@ export class ActivityDetailPage implements OnInit {
      */
     async openForm() {
         if (this.activityListItem) {
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
+
             this.apiService.getActivitySignOffFormDetail(this.user?.userId, this.activityListItem?.formID, this.activityListItem?.activityIndividualID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.Activity;
                     this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
                     this.navCtrl.navigateForward(['/form-cover']);
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
         }
     }
@@ -132,9 +133,10 @@ export class ActivityDetailPage implements OnInit {
      */
     async openDocument() {
         if (this.activityListItem) {
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
+
             this.apiService.getActivitySignOffDocumentDetail(this.activityListItem?.documentID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     const signOffDocumentDetail = response.Result as DocumentDetail;
                     this.sharedDataService.signOffFor = EnumService.SignOffType.DOCUMENT_ACTIVITY;
@@ -172,7 +174,7 @@ export class ActivityDetailPage implements OnInit {
                     }
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
         }
     }
@@ -209,15 +211,15 @@ export class ActivityDetailPage implements OnInit {
      */
     async completeCustomActivity() {
         if (this.activityListItem && this.activityListItem.activityIndividualID) {
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
 
             this.apiService.activityCompleted(this.user?.userId, this.activityListItem.activityIndividualID).subscribe(() => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 this.navCtrl.back();
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.ACTIVITY_COMPLETED, true);
             }, (error) => {
                 this.errorMessage = error.message || error;
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
         }
     }

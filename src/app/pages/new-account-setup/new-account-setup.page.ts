@@ -53,13 +53,13 @@ export class NewAccountSetupPage implements OnInit {
     }
 
     async ngOnInit() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         this.accountService.getUserProfile(this.userId).subscribe((userProfile) => {
             this.userProfile = userProfile;
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         }, error => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 
@@ -73,7 +73,7 @@ export class NewAccountSetupPage implements OnInit {
 
 
             if (password === confirmPassword) {
-                const loading = await this.utilService.startLoadingWithOptions();
+                this.utilService.presentLoadingWithOptions();
 
                 this.accountService.newAccountSetup({
                     userId: this.userId,
@@ -81,11 +81,11 @@ export class NewAccountSetupPage implements OnInit {
                     confirmPassword
                 }).subscribe((response) => {
                     this.sharedDataService.isLoginAfterAppOpen = true;
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                     this.navCtrl.navigateRoot('/tabs/dashboard', {replaceUrl: true});
                 }, (error) => {
                     this.errorMessage = error?.message || error;
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                 });
             } else {
                 this.errorMessage = 'Password not matching';

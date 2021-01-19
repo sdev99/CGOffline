@@ -144,17 +144,18 @@ export class CurrentCheckinPage implements OnInit {
     };
 
     async openForm(form: FormItem) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
         this.apiService.getSignOffFormDetail(this.user?.userId, form?.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckin;
                 this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
                 this.navCtrl.navigateForward(['/form-cover']);
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

@@ -103,13 +103,14 @@ export class FormHavPage implements OnInit {
     }
 
     async ngOnInit() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getManufacturerList(this.companyId).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             const toolManufacturers = response.Result;
             this.setupDynamicChoiceList(EnumService.HavFormFieldOrder.Manufacturer, toolManufacturers);
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
 
         this.getUserTotalHAVExposureForToday();
@@ -174,14 +175,15 @@ export class FormHavPage implements OnInit {
         this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Type, []);
         this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
 
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getTypeList(this.companyId, manufacturer).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             const toolTypes = response.Result;
             this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Type, toolTypes);
             this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 
@@ -190,14 +192,15 @@ export class FormHavPage implements OnInit {
         const question = sections[sectionIndex]?.questions[questionIndex];
         this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, []);
 
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getModelList(this.companyId, type).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             const toolModels = response.Result;
             this.toolModels = toolModels;
             this.setupDynamicChoiceListForSection(sectionIndex, EnumService.HavFormFieldOrder.Model, toolModels);
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

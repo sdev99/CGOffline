@@ -50,9 +50,10 @@ export class DocumentOpenchoiceDmPage implements OnInit {
     }
 
     async getDocumentSignOffDetail() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getActivitySignOffDocumentDetail(this.documentDetail?.documentID).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 const signOffDocumentDetail = response.Result as DocumentDetail;
                 this.sharedDataService.signOffFor = EnumService.SignOffType.DOCUMENT_DM;
@@ -75,7 +76,7 @@ export class DocumentOpenchoiceDmPage implements OnInit {
                 this.navController.navigateForward('/form-open-auth-dm');
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

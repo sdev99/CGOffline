@@ -87,12 +87,12 @@ export class CheckinWorkpermitPage implements OnInit {
 
 
     async openForm(form: FormItem) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         if (this.sharedDataService.dedicatedMode) {
             const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
             this.apiService.getDedicatedModeSignOffFormDetail(form.formID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.WorkPermitDM;
@@ -101,19 +101,19 @@ export class CheckinWorkpermitPage implements OnInit {
                     this.navController.navigateForward('/form-open-auth-dm');
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
         } else {
             const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
             this.apiService.getSignOffFormDetail(this.user?.userId, form.formID, place?.locationID, place?.projectID, place?.inventoryItemID).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     this.sharedDataService.viewFormFor = EnumService.ViewFormForType.CurrentCheckinWorkPermit;
                     this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
                     this.navCtrl.navigateForward(['/form-cover'], {replaceUrl: true});
                 }
             }, (error) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
             });
         }
     }

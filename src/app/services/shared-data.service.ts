@@ -415,9 +415,9 @@ export class SharedDataService {
                     replaceUrl: true
                 });
             } else {
-                const loading = await this.utilService.startLoadingWithOptions();
+                this.utilService.presentLoadingWithOptions();
                 apiService.getCheckInDetails(userId, this.checkInForLocation.locationID).subscribe((response: Response) => {
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                     if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                         this.checkInDetail = response.Result as CheckinDetail;
                         this.checkInPostData = {
@@ -448,7 +448,7 @@ export class SharedDataService {
                 }, (error: any) => {
                     const errorField = error?.error?.ResponseException?.ValidationErrors[0].Field;
 
-                    this.utilService.hideLoadingFor(loading);
+                    this.utilService.hideLoading();
                     if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
                         this.navCtrl.navigateForward(['/checkin-fail'], {
                             queryParams: {
@@ -489,9 +489,9 @@ export class SharedDataService {
             const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
             const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
-            const loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
             apiService.getCheckInDetails(userId, entityId).subscribe((response: Response) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 
                     let canUserCheckinToLocation = true;
@@ -522,7 +522,7 @@ export class SharedDataService {
                     }
                 }
             }, (error: any) => {
-                this.utilService.hideLoadingFor(loading);
+                this.utilService.hideLoading();
                 this.processCheckInError(error, nextScreen);
             });
         }
@@ -759,7 +759,6 @@ export class SharedDataService {
                                         if (isVideo) {
                                             this.uploadVideo(file, mimeType, (response) => {
                                                 console.log('Uploaded ' + ' ' + fileName + '' + response);
-                                                debugger;
                                                 if (response.status) {
                                                     attachemtUploaded[question.questionId] = response.result.Result;
                                                 }
@@ -1300,12 +1299,13 @@ export class SharedDataService {
         }
     }
 
-    async submitInductionCheckInData(apiService: ApiService) {
-        const loading = await this.utilService.startLoadingWithOptions();
+    submitInductionCheckInData(apiService: ApiService) {
+
+        this.utilService.presentLoadingWithOptions();
         const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
         apiService.insertCheckInDetails(this.checkInPostData).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
 
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, response.Result);
@@ -1321,18 +1321,19 @@ export class SharedDataService {
                 });
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             this.processCheckInError(error, nextScreen);
         });
     }
 
 
     async submitInductionCheckInDataGuest(apiService: ApiService) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
         apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
 
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.navCtrl.navigateForward(['/checkinout-success-dm'], {
@@ -1345,7 +1346,7 @@ export class SharedDataService {
                 });
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             this.processCheckInError(error, nextScreen);
         });
     }
@@ -1417,7 +1418,8 @@ export class SharedDataService {
      * This function is use for submit personal mode sign off data
      */
     async submitPersonalModeSignoffData(apiService: ApiService) {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
 
         const checkInSuccessPage = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
         const checkInFailPage = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
@@ -1447,7 +1449,7 @@ export class SharedDataService {
         }
 
         apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
 
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 if (this.signOffFor === EnumService.SignOffType.FORM_ACTIVITY || this.signOffFor === EnumService.SignOffType.DOCUMENT_ACTIVITY) {
@@ -1515,7 +1517,7 @@ export class SharedDataService {
                 }
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
 
             this.navCtrl.navigateForward([checkInFailPage], {
                 queryParams: {

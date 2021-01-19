@@ -69,17 +69,17 @@ export class SignoffPhotoPage implements OnInit {
      * Upload photo for  signoff
      */
     uploadInductionPhoto = async (file, fileName = '', callBack = null) => {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
 
         this.apiService.inductionPhotoUpload(file, fileName).subscribe((res: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 UtilService.fireCallBack(callBack, res.Result);
             } else {
                 this.errorMessage = res.Message;
             }
         }, (error) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             this.errorMessage = error.message ? error.message : error;
         });
     };

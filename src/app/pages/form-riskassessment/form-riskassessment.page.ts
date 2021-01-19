@@ -148,24 +148,27 @@ export class FormRiskassessmentPage implements OnInit {
     }
 
     async getCompanyUserList() {
-        const loading = await this.utilService.startLoadingWithOptions();
+        this.utilService.presentLoadingWithOptions();
+
         this.apiService.getCompanyUserList(this.companyId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.users = response.Result;
             }
-            this.getCompanyUserGroupList(loading);
+            this.utilService.hideLoading();
+            this.getCompanyUserGroupList();
         }, error => {
-            this.getCompanyUserGroupList(loading);
+            this.utilService.hideLoading();
+            this.getCompanyUserGroupList();
         });
     }
 
     async getRiskRatingOptionList() {
-        let loading;
+
         if (!this.sharedDataService.riskRatingsList) {
-            loading = await this.utilService.startLoadingWithOptions();
+            this.utilService.presentLoadingWithOptions();
         }
         this.apiService.getRiskRatingOptionList().subscribe((response: Response) => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 if (response.Result && response.Result.length > 0) {
                     this.sharedDataService.riskRatingsList = response.Result;
@@ -173,18 +176,19 @@ export class FormRiskassessmentPage implements OnInit {
                 }
             }
         }, error => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 
-    getCompanyUserGroupList(loading) {
+    getCompanyUserGroupList() {
+        this.utilService.presentLoadingWithOptions();
         this.apiService.getCompanyUserGroupList(this.companyId).subscribe((response: Response) => {
             if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                 this.groups = response.Result;
             }
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         }, error => {
-            this.utilService.hideLoadingFor(loading);
+            this.utilService.hideLoading();
         });
     }
 

@@ -122,6 +122,20 @@ export class AppComponent {
                     //     }, 7000);
                     // }
 
+                    // Test start
+                    if (localStorage.getItem('screen_to_test')) {
+                        // this.sharedDataService.isTablet = true;
+                        setTimeout(() => {
+                            this.navController.navigateForward(localStorage.getItem('screen_to_test'));
+                        }, 7000);
+                    }
+
+                    if (localStorage.getItem('is_device_test_tablet')) {
+                        this.sharedDataService.isTablet = true;
+                    }
+
+                    // Test end
+
                     if (this.sharedDataService.isTablet) {
                         this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
                             this.appSettingLoaded(isDeviceAssigned, data);

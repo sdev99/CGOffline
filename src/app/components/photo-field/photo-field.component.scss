@@ -56,12 +56,11 @@
     margin: 12px 0;
     border-radius: 4px;
     overflow: hidden;
-    min-height: 300px;
+    min-height: 100px;
 
     ion-img {
       width: 100%;
       height: calc(100% - 40px);
-      min-height: 260px;
       background-color: #E6EFFB;
       object-fit: cover;
     }
@@ -69,7 +68,6 @@
     .videoPlayer {
       width: 100%;
       height: calc(100% - 40px);
-      min-height: 260px;
       background-color: #E6EFFB;
     }
 

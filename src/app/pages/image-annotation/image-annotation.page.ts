@@ -175,13 +175,17 @@ export class ImageAnnotationPage implements OnInit {
             const top = (content.offsetHeight - imgHeight) / 2;
 
             img.set({
-                left,
-                top,
+                left: 0,
+                top: 0,
                 selectable: false
             });
             img.scaleToWidth(imgWidth);
             img.scaleToHeight(imgHeight);
 
+            const canvasRef = this.canvasRef;
+            canvasRef.cacheCanvasEl.style.top = top + 'px';
+
+            this.canvasRef.setDimensions({width: imgWidth, height: imgHeight});
             this.canvasRef.renderAll();
         });
 
