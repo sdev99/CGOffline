@@ -128,12 +128,17 @@ export class UtilService {
         return Number(formattedNumber.replace(/[^0-9.-]+/g, ''));
     }
 
-    static FCName(sectionIndex, questionIndex, questionId) {
-        return 'FormControl_' + sectionIndex + '_' + questionIndex + '_' + questionId;
-    }
-
-    static CustomFCName(sectionId, questionId, isSectionDuplicate = false, isQuestionDuplicate = false) {
-        return 'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + questionId;
+    static FCUniqueName(section, question) {
+        let preString = '';
+        const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+        const isQuestionDuplicate = question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+        if (section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
+            preString = preString + '' + section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName];
+        }
+        if (question[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
+            preString = preString + '' + question[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName];
+        }
+        return preString + 'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + section.sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + question.questionId;
     }
 
     /**
@@ -143,12 +148,8 @@ export class UtilService {
         return fcName + '_SubFormControl_' + optionId;
     }
 
-    static FCNameAdditioanlNote(questionId) {
-        return 'FormControlAdditionalNote_' + questionId;
-    }
-
-    static FCNameAdditioanlNoteUq(sectionIndex, questionIndex, questionId) {
-        return 'FormControlAdditionalNote_' + sectionIndex + '_' + questionIndex + '_' + questionId;
+    static FCNameAdditioanlNoteUq(formControlName) {
+        return 'FormControlAdditionalNote_' + formControlName;
     }
 
     /**
@@ -156,10 +157,6 @@ export class UtilService {
      */
     static HtmlElementIdUq(sectionIndex, questionIndex, sectionId, questionId) {
         return 'Question_' + sectionIndex + '_' + questionIndex + '_' + sectionId + '_' + questionId;
-    }
-
-    static HtmlElementId(sectionId, questionId) {
-        return 'Question_' + sectionId + '_' + questionId;
     }
 
     static fixTimeString(value) {
@@ -301,7 +298,7 @@ export class UtilService {
             validators.push(Validators.pattern('[0-9]*'));
         }
 
-        const formControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const formControlName = UtilService.FCUniqueName(section, question);
 
         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet) {
             const checkboxFormGroup = new FormGroup({}, {validators: question.questionIsRequired ? this.validatorService.validateCheckboxes : null});
@@ -331,7 +328,7 @@ export class UtilService {
         }
 
         if (question.shouldShowOptionalComment) {
-            const formControlAdditionalNote = UtilService.FCNameAdditioanlNoteUq(sectionIndex, questionIndex, question.questionId);
+            const formControlAdditionalNote = UtilService.FCNameAdditioanlNoteUq(formControlName);
             if (!formGroup.controls[formControlAdditionalNote]) {
                 formGroup.addControl(formControlAdditionalNote, new FormControl(''));
             }
@@ -367,7 +364,7 @@ export class UtilService {
                         const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
                         if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            const controlName = UtilService.FCUniqueName(section, question);
                             if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
                                 formGroup.addControl(controlName, new FormControl(''));
                                 formGroup.addControl(EnumService.AccidentCustomLocationControlsName.PlaceNotintheList, new FormControl(false));
@@ -396,7 +393,7 @@ export class UtilService {
                                 }
                                 questionElementIds.push(elementId);
                             } else {
-                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                const controlName = UtilService.FCUniqueName(section, question);
                                 this.removeFieldIfAdded(formGroup, controlName);
                                 const indexOfElement = questionElementIds.indexOf(elementId);
                                 if (indexOfElement !== -1) {
@@ -485,17 +482,17 @@ export class UtilService {
                             }
                         } else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
                             if (sectionObject) {
-                                sections.some((section, key) => {
-                                    if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                sections.map((section, key) => {
+                                    const uniquePreString = question.questionId + '' + logic.questionLogicId;
+                                    if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString) {
                                         sections.splice(key, 1);
-                                        return true;
                                     }
                                 });
                             } else if (questionObject) {
-                                sections[currentIndexOfSection].questions.some((questionInner, key) => {
-                                    if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+                                sections[currentIndexOfSection].questions.map((questionInner, key) => {
+                                    const uniquePreString = question.questionId + '' + logic.questionLogicId;
+                                    if (questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && questionInner[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString) {
                                         sections[currentIndexOfSection].questions.splice(key, 1);
-                                        return true;
                                     }
                                 });
                             }
@@ -560,7 +557,6 @@ export class UtilService {
                                 valueToBeCompared = dtDateSplit[2] + '-' + dtDateSplit[1] + '-' + dtDateSplit[0] + ' ' + dtTimeValueSplit[0] + ' ' + (dtHourFormatID === 1 ? 'AM' : 'PM');
 
                                 selectedValue = moment(value).utc().format(StaticDataService.dateTimeFormatAMPM);
-
 
                                 dateObjToBeCompared = moment(valueToBeCompared, StaticDataService.dateTimeFormatAMPM);
                                 selectedDateObj = moment(selectedValue, StaticDataService.dateTimeFormatAMPM);
@@ -641,7 +637,6 @@ export class UtilService {
             let sectionObject;
             let questionObject;
 
-
             // For find current index to insert new duplicate item
             let currentIndexOfSection = 0;
             let currentIndexOfQuestion = 0;
@@ -679,7 +674,6 @@ export class UtilService {
                 });
             }
 
-
             if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
                 if (sectionObject) {
                     sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
@@ -694,39 +688,15 @@ export class UtilService {
                 }
             } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
                 if (sectionObject) {
-                    let canSectionBeDuplicate = true;
-
-                    // check if already this section is duplicated
-                    if (sections.length > currentIndexOfSection + 1) {
-                        const sectionToBeShift = sections[currentIndexOfSection + 1];
-                        if (sectionToBeShift[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && sectionToBeShift.sectionId === sectionObject.sectionId) {
-                            console.log('This Section is Already Duplicated');
-                            canSectionBeDuplicate = false;
-                        }
-                    }
-
-                    if (canSectionBeDuplicate) {
-                        const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-                        duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                        sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
-                    }
+                    const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
+                    duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                    duplicateSection[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+                    sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
                 } else if (questionObject) {
-                    let canQuestionBeDuplicate = true;
-
-                    // check if already this question is duplicated
-                    if (sections[currentIndexOfSection].questions.length > currentIndexOfQuestion + 1) {
-                        const questionToBeShift = sections[currentIndexOfSection].questions[currentIndexOfQuestion + 1];
-                        if (questionToBeShift[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && questionToBeShift.questionId === questionObject.questionId) {
-                            console.log('This Question is Already Duplicated');
-                            canQuestionBeDuplicate = false;
-                        }
-                    }
-
-                    if (canQuestionBeDuplicate) {
-                        const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-                        duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
-                        sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
-                    }
+                    const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
+                    duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
+                    duplicateQuestion[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+                    sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
                 }
             } else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
                 if (sectionObject) {
@@ -742,7 +712,6 @@ export class UtilService {
                 }
             }
         }
-
     }
 
     removeFieldIfAdded(formGroup: FormGroup, formControlName) {

@@ -141,8 +141,10 @@ export class FormRiskassessmentPage implements OnInit {
     ionViewDidLeave(): void {
         if (this.sharedDataService.dedicatedMode) {
             if (!this.sharedDataService.isOpenImageAnnotation) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-                this.screenOrientationSubscribe.unsubscribe();
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                    this.screenOrientationSubscribe.unsubscribe();
+                }
             }
         }
     }
@@ -203,13 +205,17 @@ export class FormRiskassessmentPage implements OnInit {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
             } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                }
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
-                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        if (!UtilService.isLocalHost()) {
+                            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        }
                         this.isShowOritationPortrait = false;
                     }
                     if (this.screenOrientation.type.includes('landscape')) {

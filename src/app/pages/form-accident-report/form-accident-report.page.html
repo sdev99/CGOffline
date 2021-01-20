@@ -32,7 +32,7 @@
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
                                                 [form]="formGroup"
                                                 [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-                                                [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                [inputName]="UtilService.FCUniqueName(section, question)"
                                                 [isError]="isError(section, question)"
                                                 placeholder="Choose"
                                         ></app-date-time-field>
@@ -46,26 +46,26 @@
                                             <app-single-choice-field
                                                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
                                                     [form]="formGroup"
-                                                    [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                    [inputName]="UtilService.FCUniqueName(section, question)"
                                                     [list]="question.answerChoiceAttributes"
                                             ></app-single-choice-field>
 
                                             <app-multiple-choice-field
                                                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
                                                     [form]="formGroup"
-                                                    [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                    [inputName]="UtilService.FCUniqueName(section, question)"
                                                     [list]="question.answerChoiceAttributes"
                                             ></app-multiple-choice-field>
 
                                             <app-multiline-text-field
                                                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
                                                     [form]="formGroup"
-                                                    [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                    [inputName]="UtilService.FCUniqueName(section, question)"
                                             ></app-multiline-text-field>
 
                                             <app-photo-field
                                                     *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-                                                    [formControlName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                    [formControlName]="UtilService.FCUniqueName(section, question)"
                                             ></app-photo-field>
                                         </div>
 
@@ -74,7 +74,7 @@
                                                 *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                                 [form]="formGroup"
                                                 [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-                                                [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                [inputName]="UtilService.FCUniqueName(section, question)"
                                                 [list]="question.answerChoiceAttributes"
                                                 [listLabelKey]="question.listLabelKey"
                                                 [listValueKey]="question.listValueKey"
@@ -97,7 +97,7 @@
                                                 </ion-label>
                                                 <ion-select
                                                         [interfaceOptions]="accidentAlertOptions"
-                                                        [formControlName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                                        [formControlName]="UtilService.FCUniqueName(section, question)"
                                                         placeholder="Choose"
                                                         (ionChange)="placeInTheListChange($event)"
                                                 >
@@ -109,7 +109,7 @@
                                             <ion-item>
                                                 <ion-checkbox slot="start"
                                                               [formControlName]="EnumService.AccidentCustomLocationControlsName.PlaceNotintheList"
-                                                              (ionChange)="placeNotintheListChange($event,UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]))"></ion-checkbox>
+                                                              (ionChange)="placeNotintheListChange($event,UtilService.FCUniqueName(section, question))"></ion-checkbox>
                                                 <ion-label>Place not in the list</ion-label>
                                             </ion-item>
 
@@ -330,11 +330,11 @@
                                                         </ion-toolbar>
 
                                                         <div class="parts-checkboxes"
-                                                             [formGroupName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])">
+                                                             [formGroupName]="UtilService.FCUniqueName(section, question)">
                                                             <ion-item
                                                                     *ngFor="let item of bodyParts[currentBodyPartIndex].parts">
                                                                 <ion-checkbox slot="start"
-                                                                              [formControlName]="UtilService.SubFCName(UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]),item.id)"
+                                                                              [formControlName]="UtilService.SubFCName(UtilService.FCUniqueName(section, question),item.id)"
                                                                               (ionChange)="partSelectChange(item, $event)"></ion-checkbox>
                                                                 <ion-label>{{item.name}}</ion-label>
                                                             </ion-item>
@@ -369,7 +369,7 @@
                                         [formGroup]="formGroup"
                                         [sectionIndex]="sectionIndex"
                                         [questionElementIds]="questionElementIds"
-                                        [isSectionDuplicate]="section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]"
+                                        [section]="section"
                                 ></app-custom-questions-container>
                             </ng-template>
                         </ng-container>

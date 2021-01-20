@@ -173,8 +173,10 @@ export class SignoffDigitalinkPage implements OnInit {
 
     ionViewDidLeave(): void {
         if (this.sharedDataService.dedicatedMode) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-            this.screenOrientationSubscribe.unsubscribe();
+            if (!UtilService.isLocalHost()) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                this.screenOrientationSubscribe.unsubscribe();
+            }
         }
     }
 

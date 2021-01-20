@@ -84,11 +84,11 @@ export class FormHavPage implements OnInit {
                     const questions = section.questions;
                     questions.map((question, questionIndex) => {
                         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
-                            this.modelControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            this.modelControlName = UtilService.FCUniqueName(section, question);
                         }
 
                         if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField) {
-                            this.plannedTimeControlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            this.plannedTimeControlName = UtilService.FCUniqueName(section, question);
                         }
                     });
                 }
@@ -143,7 +143,6 @@ export class FormHavPage implements OnInit {
         const sections = this.formBuilderDetail.sections;
         if (sections) {
             const section = sections[sectionIndex];
-            const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 
             const questions = section.questions;
             questions.map((question, questionIndex) => {
@@ -161,7 +160,7 @@ export class FormHavPage implements OnInit {
                         question.listValueKey = 'havModelID';
                         question.listLabelKey = 'model';
                     }
-                    const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                    const controlName = UtilService.FCUniqueName(section, question);
                     const control = this.formGroup.controls[controlName];
                     control.setValue('');
                 }
@@ -205,7 +204,7 @@ export class FormHavPage implements OnInit {
     }
 
     dropDownChange(section, question, sectionIndex, questionIndex) {
-        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const controlName = UtilService.FCUniqueName(section, question);
         const control = this.formGroup.controls[controlName];
         if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
             this.getTypeList(control.value, sectionIndex, questionIndex);
@@ -220,13 +219,17 @@ export class FormHavPage implements OnInit {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
             } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                }
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
-                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        if (!UtilService.isLocalHost()) {
+                            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        }
                         this.isShowOritationPortrait = false;
                     }
                     if (this.screenOrientation.type.includes('landscape')) {
@@ -243,13 +246,15 @@ export class FormHavPage implements OnInit {
 
     ionViewDidLeave(): void {
         if (this.sharedDataService.dedicatedMode) {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-            this.screenOrientationSubscribe.unsubscribe();
+            if (!UtilService.isLocalHost()) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                this.screenOrientationSubscribe.unsubscribe();
+            }
         }
     }
 
     isError(section, question) {
-        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const controlName = UtilService.FCUniqueName(section, question);
         return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 

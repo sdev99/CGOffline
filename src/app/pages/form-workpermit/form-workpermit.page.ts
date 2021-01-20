@@ -91,13 +91,17 @@ export class FormWorkpermitPage {
                 this.screenOrientation.unlock();
                 this.isShowOritationPortrait = true;
             } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                }
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
-                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        if (!UtilService.isLocalHost()) {
+                            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        }
                         this.isShowOritationPortrait = false;
                     }
                     if (this.screenOrientation.type.includes('landscape')) {
@@ -119,8 +123,10 @@ export class FormWorkpermitPage {
     ionViewDidLeave(): void {
         if (this.sharedDataService.dedicatedMode) {
             if (!this.sharedDataService.isOpenImageAnnotation) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-                this.screenOrientationSubscribe.unsubscribe();
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                    this.screenOrientationSubscribe.unsubscribe();
+                }
             }
         }
     }
@@ -169,7 +175,7 @@ export class FormWorkpermitPage {
                         const questions = section.questions;
                         questions.map((question, questionIndex) => {
                             if (this.utilService.shouldShowQuestion(question)) {
-                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                const controlName = UtilService.FCUniqueName(section, question);
 
                                 if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
                                     const control = this.formGroup.controls[controlName];

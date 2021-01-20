@@ -210,7 +210,9 @@ export class SharedDataService {
         localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL);
         localStorage.removeItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES);
         this.navCtrl.navigateRoot('/login', {replaceUrl: true});
-        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        if (!UtilService.isLocalHost()) {
+            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+        }
         this.configureForPushNotification();
     }
 
@@ -699,7 +701,7 @@ export class SharedDataService {
                         const questions = section.questions;
                         questions.map((question, questionIndex) => {
                             if (this.utilService.shouldShowQuestion(question)) {
-                                const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                const controlName = UtilService.FCUniqueName(section, question);
                                 const control = formGroup.controls[controlName];
                                 if (question.questionIsRequired) {
                                     requiredFieldsCount++;
@@ -734,7 +736,7 @@ export class SharedDataService {
                     const questions = section.questions;
                     questions.map(async (question, questionIndex) => {
                         if (this.utilService.shouldShowQuestion(question)) {
-                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            const controlName = UtilService.FCUniqueName(section, question);
                             const control = formGroup.controls[controlName];
 
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
@@ -911,7 +913,7 @@ export class SharedDataService {
                     questions.map((question, questionIndex) => {
                         if (this.utilService.shouldShowQuestion(question)) {
                             const answerFormattedObject: any = JSON.parse(JSON.stringify(question));
-                            const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                            const controlName = UtilService.FCUniqueName(section, question);
                             const control = formGroup.controls[controlName];
                             let isValueFilled = false;
 
@@ -1159,7 +1161,7 @@ export class SharedDataService {
 
                                     // if additional comment
                                     if (question.shouldShowOptionalComment) {
-                                        const additionalControl = formGroup.controls[UtilService.FCNameAdditioanlNoteUq(sectionIndex, questionIndex, question.questionId)];
+                                        const additionalControl = formGroup.controls[UtilService.FCNameAdditioanlNoteUq(controlName)];
                                         if (additionalControl.value) {
                                             answerObject.questionComment = additionalControl.value;
                                         }
@@ -1203,10 +1205,10 @@ export class SharedDataService {
             accidentReport,
         };
 
-        // if (UtilService.isLocalHost()) {
-        //     console.log('Submit Answers', JSON.stringify(questionAnswers));
-        //     return;
-        // }
+        if (UtilService.isLocalHost()) {
+            console.log('Submit Answers', JSON.stringify(questionAnswers));
+            return;
+        }
 
         this.utilService.presentLoadingWithOptions();
         apiService.saveFormAnswers(submitAnswersObject).subscribe((response: Response) => {

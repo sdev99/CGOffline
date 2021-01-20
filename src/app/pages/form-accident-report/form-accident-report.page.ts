@@ -97,8 +97,6 @@ export class FormAccidentReportPage {
 
                     questions.map((question, questionIndex) => {
                         if (section.isAccidentReportSection) {
-                            const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-
                             // Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
                                 question.questionIsRequired = false;
@@ -106,9 +104,9 @@ export class FormAccidentReportPage {
 
                             if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl) {
                                 question.bodyParts = this.bodyParts;
-                                this.bodyPartControlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                this.bodyPartControlName = UtilService.FCUniqueName(section, question);
                             } else if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
-                                this.locationIdControlName = UtilService.CustomFCName(section.sectionId, question.questionId, isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+                                this.locationIdControlName = UtilService.FCUniqueName(section, question);
                             }
 
                             if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
@@ -211,17 +209,23 @@ export class FormAccidentReportPage {
     handleOrientation = () => {
         if (this.sharedDataService.dedicatedMode) {
             if (this.screenOrientation.type.includes('landscape')) {
-                this.screenOrientation.unlock();
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.unlock();
+                }
                 this.isShowOritationPortrait = true;
             } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                }
             }
 
             this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
                 this.ngZone.run(() => {
                     if (this.screenOrientation.type.includes('portrait')) {
                         this.isShowOritationPortrait = false;
-                        this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        if (!UtilService.isLocalHost()) {
+                            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+                        }
                     }
                     if (this.screenOrientation.type.includes('landscape')) {
                         this.isShowOritationPortrait = true;
@@ -238,8 +242,10 @@ export class FormAccidentReportPage {
     ionViewDidLeave(): void {
         if (this.sharedDataService.dedicatedMode) {
             if (!this.sharedDataService.isOpenImageAnnotation) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-                this.screenOrientationSubscribe.unsubscribe();
+                if (!UtilService.isLocalHost()) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                    this.screenOrientationSubscribe.unsubscribe();
+                }
             }
         }
     }
@@ -374,7 +380,7 @@ export class FormAccidentReportPage {
     }
 
     isError(section, question) {
-        const controlName = UtilService.CustomFCName(section.sectionId, question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate], question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const controlName = UtilService.FCUniqueName(section, question);
         return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 

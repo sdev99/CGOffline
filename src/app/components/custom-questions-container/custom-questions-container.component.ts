@@ -19,7 +19,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
     @Input() questions: Array<any>;
     @Input() questionElementIds: Array<string>;
     @Input() isSubmitted: boolean;
-    @Input() isSectionDuplicate: boolean;
+    @Input() section: any;
 
     constructor(
         public sharedDataService: SharedDataService,
@@ -40,7 +40,7 @@ export class CustomQuestionsContainerComponent implements OnInit {
     }
 
     isError(question, questionIndex) {
-        const controlName = UtilService.CustomFCName(this.sectionId, question.questionId, this.isSectionDuplicate, question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]);
+        const controlName = UtilService.FCUniqueName(this.section, question);
         return (this.isSubmitted && !this.formGroup.controls[controlName].valid);
     }
 }

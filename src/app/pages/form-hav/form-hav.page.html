@@ -4,7 +4,8 @@
 <ng-template #formView>
 
     <ion-header mode="ios" *ngIf="formBuilderDetail">
-        <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
+        <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="formBuilderDetail?.title"
+                          (closeModal)="onClose()"></app-modal-header>
 
         <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
                              [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" (closeModal)="onClose()"
@@ -41,7 +42,7 @@
                                     <app-date-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                            [inputName]="UtilService.FCUniqueName(section, question)"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(section, question)"
                                             placeholder="Choose"
@@ -50,7 +51,7 @@
                                     <app-dropdown-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                            [inputName]="UtilService.FCUniqueName(section, question)"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(section, question)"
                                             [list]="question.answerChoiceAttributes"
@@ -64,7 +65,7 @@
                                     <app-number-integer-field
                                             *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
                                             [form]="formGroup"
-                                            [inputName]="UtilService.CustomFCName(section.sectionId , question.questionId, section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate],question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate])"
+                                            [inputName]="UtilService.FCUniqueName(section, question)"
                                             [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
                                             [isError]="isError(section,question)"
                                     ></app-number-integer-field>
@@ -87,7 +88,7 @@
                                     [isSubmitted]="isSubmitted"
                                     [formGroup]="formGroup"
                                     [questionElementIds]="questionElementIds"
-                                    [isSectionDuplicate]="section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]"
+                                    [section]="section"
                             ></app-custom-questions-container>
                         </ng-template>
                     </ng-container>

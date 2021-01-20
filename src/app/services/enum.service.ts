@@ -257,6 +257,7 @@ export class EnumService {
 
 
     static QuestionLogic = {
+        FormControlNamePreStringForUniqueName: 'FormControlNamePreStringForUniqueName',
         LogicApplicableForQuestionTypes: [
             EnumService.CustomAnswerType.SingleChoiceSet,
             EnumService.CustomAnswerType.MultipleChoiceSet,

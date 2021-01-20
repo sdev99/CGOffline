@@ -24,6 +24,7 @@ import {Badge} from '@ionic-native/badge/ngx';
 import {HttpClient} from '@angular/common/http';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {TranslateService} from '@ngx-translate/core';
+import {StaticDataService} from './services/static-data.service';
 
 const {Geolocation, Permissions, App, SplashScreen} = Plugins;
 
@@ -113,6 +114,8 @@ export class AppComponent {
                     this.apiService.getTimeZoneList().subscribe(() => {
                     });
 
+                    // Test demo - should be remove after development complete
+
                     // For test dedicated mode in mobile
                     // if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632' ||
                     //     this.sharedDataService.deviceUID === 'd99fe84c-5538-25ce-8637-870495265348') {
@@ -122,19 +125,17 @@ export class AppComponent {
                     //     }, 7000);
                     // }
 
-                    // Test start
-                    if (localStorage.getItem('screen_to_test')) {
+                    if (localStorage.getItem(StaticDataService.anyScreenTestLocalStoragekey)) {
                         // this.sharedDataService.isTablet = true;
                         setTimeout(() => {
-                            this.navController.navigateForward(localStorage.getItem('screen_to_test'));
+                            this.navController.navigateForward(localStorage.getItem(StaticDataService.anyScreenTestLocalStoragekey));
                         }, 7000);
                     }
 
-                    if (localStorage.getItem('is_device_test_tablet')) {
+                    if (localStorage.getItem(StaticDataService.isDeviceTestTablet)) {
                         this.sharedDataService.isTablet = true;
                     }
-
-                    // Test end
+                    // end
 
                     if (this.sharedDataService.isTablet) {
                         this.checkDeviceForDeticatedMode(({isDeviceAssigned, data}) => {
@@ -248,10 +249,12 @@ export class AppComponent {
         }
 
         try {
-            if (this.platform.is('ios')) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
-            } else {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+            if (!UtilService.isLocalHost()) {
+                if (this.platform.is('ios')) {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE_PRIMARY);
+                } else {
+                    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+                }
             }
         } catch (e) {
 
@@ -275,7 +278,9 @@ export class AppComponent {
 
     configureAppForPersonalMode = async () => {
         try {
-            this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+            if (!UtilService.isLocalHost()) {
+                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+            }
         } catch (e) {
 
         }
