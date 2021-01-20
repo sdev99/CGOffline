@@ -17,6 +17,7 @@ import {CheckedInDetailItem} from '../../_models/checkedInDetailItem';
 import {SignOffFormDetail} from '../../_models/signOffFormDetail';
 import {DocumentDetail} from '../../_models/documentDetail';
 import {environment} from '../../../environments/environment';
+import {StaticDataService} from '../../services/static-data.service';
 
 const {Camera, Permissions} = Plugins;
 
@@ -168,7 +169,7 @@ export class DashboardQrscanPage implements OnInit {
                 this.utilService.hideLoading();
                 if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
                     const userDetail: UserDetail = response.Result as UserDetail;
-                    if (userDetail && userDetail.userId) {
+                    if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
                         this.openNextScreen(userDetail);
                     } else {
                         this.utilService.showAlert('User not found', '', () => {

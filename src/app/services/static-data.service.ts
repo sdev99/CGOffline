@@ -12,6 +12,7 @@ export class StaticDataService {
     static timeFormat = 'hh:mmA';
     static photoQuality = 85;
     static photoMaxHeight = 2500;
+    static userDefaultGuid  = '00000000-0000-0000-0000-000000000000';
 
     static bodyParts = [
         {
