@@ -29,7 +29,7 @@
             <app-archived-item
                     *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle';"
                     (itemSelect)="openArchivedForm(item)"
-                    [icon]="UtilService.FileIcon('pdf')"
+                    [icon]="item.documentFileIconURL"
                     [colFirst]="item.documentTitle"
                     colSecond="Signed by"
                     [colSecondHighlighted]="item.signedByName"

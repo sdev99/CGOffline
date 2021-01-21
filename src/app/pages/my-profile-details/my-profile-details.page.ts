@@ -16,6 +16,7 @@ import {Profile} from '../../_models/profile';
 export class MyProfileDetailsPage implements OnInit {
     user: User;
     profile: Profile;
+    UtilService = UtilService;
 
     offsetData;
     languageData;

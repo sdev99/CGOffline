@@ -75,6 +75,9 @@ export class DashboardQrscanPage implements OnInit {
                     case 'form2':
                         this.checkQrCode('6dadd75e-cb62-484d-a9be-deaab282761d');
                         break;
+                    case 'form_othercompany':
+                        this.checkQrCode('87b71cae-476a-4c08-9c63-f24ef7970f89\n');
+                        break;
                     case 'location':
                         this.checkQrCode('e165d1a3-a0a9-4b95-a543-8049b440c56d');
                         break;

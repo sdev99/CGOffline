@@ -1,21 +1,22 @@
 <ion-content mode="md">
-   <div class="content-container">
-       <div class="content">
-           <h3>Please choose where you want to use this device</h3>
+    <div class="content-container">
+        <div class="content">
+            <h3>Please choose where you want to use this device</h3>
 
-           <ion-radio-group *ngFor="let item of locations" [(ngModel)]="selectedLocation">
-               <ion-item lines="none">
-                   <ion-radio slot="start" [value]="item"></ion-radio>
-                   <ion-label>{{sharedDataService.getEntityName(item)}}</ion-label>
-               </ion-item>
-           </ion-radio-group>
+            <ion-radio-group *ngFor="let item of locations" [(ngModel)]="selectedLocation">
+                <ion-item lines="none">
+                    <ion-radio slot="start" [value]="item"></ion-radio>
+                    <ion-label>{{sharedDataService.getEntityName(item)}}</ion-label>
+                </ion-item>
+            </ion-radio-group>
 
-           <ion-button expand="full" [disabled]="!selectedLocation" class="action-btn" (click)="onContinue()">Continue
-           </ion-button>
-       </div>
+            <ion-button expand="full" [disabled]="!selectedLocation" class="action-btn" (click)="onContinue()">Continue
+            </ion-button>
+        </div>
 
-       <ion-footer mode="ios" class="ion-text-center">
-           <div class="device-uid">DEVICE UID {{sharedDataService.deviceUID}}</div>
-       </ion-footer>
-   </div>
+        <ion-footer mode="ios" class="ion-text-center">
+            <div class="device-uid" sele>DEVICE UID&nbsp;<span
+                    class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span></div>
+        </ion-footer>
+    </div>
 </ion-content>

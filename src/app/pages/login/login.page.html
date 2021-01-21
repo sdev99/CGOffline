@@ -60,7 +60,8 @@
                 {{selectedLanguage ? UtilService.findObj(languages, 'code', selectedLanguage).name : 'ENGLISH'}}
             </ion-button>
 
-            <ion-text class="device-uid">DEVICE UID&nbsp;{{sharedDataService.deviceUID}}</ion-text>
+            <ion-text class="device-uid">DEVICE
+                UID&nbsp;<span class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span></ion-text>
         </div>
 
     </div>

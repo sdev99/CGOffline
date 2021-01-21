@@ -8,8 +8,9 @@
         <div class="content">
             <ion-list lines="full">
                 <ion-item>
-                    <ion-label slot="start">UID</ion-label>
-                    <ion-note color="medium" slot="end">{{sharedDataService.deviceUID}}</ion-note>
+                    <ion-label style="flex: none!important;margin-right: 0 !important;" slot="start">UID</ion-label>
+                    <ion-note color="medium" slot="end"
+                              class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</ion-note>
                 </ion-item>
                 <ion-item>
                     <ion-label slot="start">Device Status</ion-label>

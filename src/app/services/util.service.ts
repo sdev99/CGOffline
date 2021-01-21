@@ -35,6 +35,11 @@ export class UtilService {
     questionElementIdsUpdate: any; // callback
 
 
+    static modifyUDID(udid) {
+        // return udid.replace(/0/g, '∅');
+        return udid;
+    }
+
     static isLocalHost() {
         return !environment.production && !Capacitor.isNative;
     }

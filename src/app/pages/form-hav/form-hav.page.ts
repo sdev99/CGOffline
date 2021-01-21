@@ -329,24 +329,30 @@ export class FormHavPage implements OnInit {
             totalExposure: 0,
         };
         if (this.formGroup.valid) {
-            const toolModel = this.formGroup.controls[this.modelControlName];
-            if (toolModel) {
-                let model: HavModelItem;
-                if (this.toolModels) {
-                    this.toolModels.map((item) => {
-                        if (item.havModelID === toolModel.value) {
-                            model = item;
-                            return;
-                        }
-                    });
-                }
+            const plannedTimeControl = this.formGroup.controls[this.plannedTimeControlName];
+            if (plannedTimeControl.value > 0) {
+                const toolModel = this.formGroup.controls[this.modelControlName];
+                if (toolModel) {
+                    let model: HavModelItem;
+                    if (this.toolModels) {
+                        this.toolModels.map((item) => {
+                            if (item.havModelID === toolModel.value) {
+                                model = item;
+                                return;
+                            }
+                        });
+                    }
 
-                havExposure.vibrationMagnitude = model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0;
-                havExposure.pointsPerHour = this.calculatePointsPerHour();
-                havExposure.exposurePoints = this.calculateExposure();
-                havExposure.hAVExposureId = 0;
-                havExposure.initialExposure = this.currentExposure;
-                havExposure.totalExposure = this.calculateExposure(this.currentExposure);
+                    havExposure.vibrationMagnitude = model ? UtilService.formattedNumberToNumber(model.vibrationValue) : 0;
+                    havExposure.pointsPerHour = this.calculatePointsPerHour();
+                    havExposure.exposurePoints = this.calculateExposure();
+                    havExposure.hAVExposureId = 0;
+                    havExposure.initialExposure = this.currentExposure;
+                    havExposure.totalExposure = this.calculateExposure(this.currentExposure);
+                }
+            } else {
+                this.errorMessage = 'Planned time of use should be greater then 0.';
+                return;
             }
         }
 

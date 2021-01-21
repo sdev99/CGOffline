@@ -17,6 +17,7 @@ const {Network} = Plugins;
 })
 export class DeviceInfoComponent implements OnInit, OnDestroy {
     isOnline = true;
+    UtilService = UtilService;
 
     constructor(
         private menu: MenuController,

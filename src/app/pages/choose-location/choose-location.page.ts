@@ -16,6 +16,7 @@ import {DeviceEntityDetail} from '../../_models/deviceEntityDetail';
 export class ChooseLocationPage implements OnInit {
     locations: Array<DeviceEntityDetail>;
     selectedLocation;
+    UtilService = UtilService;
 
     constructor(
         public navCtrl: NavController,

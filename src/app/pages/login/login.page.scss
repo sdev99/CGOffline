@@ -85,7 +85,7 @@ ion-content {
 
     .device-uid {
       margin-top: 20px;
-      margin-bottom: 17px;
+      margin-bottom: calc(env(safe-area-inset-bottom) + 17px);
       font-family: SF Pro Display;
       font-style: normal;
       font-weight: 500;
@@ -94,6 +94,7 @@ ion-content {
       color: #FFFFFF;
       text-align: center;
       opacity: 0.5;
+
     }
   }
 

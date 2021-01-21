@@ -323,6 +323,13 @@ body * {
   src: url('./assets/fonts/SF-Pro-Display-UltralightItalic.otf');
 }
 
+@font-face {
+  font-family: 'Inconsolata Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: url('./assets/fonts/Inconsolata-Regular.ttf');
+}
+
 @-webkit-keyframes rotate {
   from {
     -webkit-transform: rotate(0deg);
@@ -548,4 +555,9 @@ app-topnavigations-segments-dm {
   display: flex;
   width: 100%;
   flex-direction: column;
+}
+
+.selectable-text {
+  font-family: Inconsolata Regular !important;
+  user-select: all !important;
 }
