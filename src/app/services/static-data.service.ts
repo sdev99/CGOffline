@@ -18,7 +18,7 @@ export class StaticDataService {
     static anyScreenTestLocalStoragekey = 'screen_to_test';
     static isDeviceTestTablet = 'is_device_test_tablet';
     // end
-    
+
     static bodyParts = [
         {
             type: 'Head',

@@ -505,7 +505,11 @@ export class ImageAnnotationPage implements OnInit {
     onContinue() {
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
-        const downlaodImg = this.canvasRef.toDataURL('jpeg', 1);
+        const downlaodImg = this.canvasRef.toDataURL({
+            format: 'jpeg',
+            quality: 1,
+            multiplier: 3
+        });
         if (this.sharedDataService.onAnnotationImageDone) {
             this.sharedDataService.onAnnotationImageDone(downlaodImg);
         }

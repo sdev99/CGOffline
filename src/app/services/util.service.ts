@@ -83,9 +83,10 @@ export class UtilService {
 
     static FileIcon(fileNameOrExtension = '') {
         let iconName = '';
-        const type = fileNameOrExtension?.split('.').pop();
+        const type = fileNameOrExtension?.split('.').pop()?.toLowerCase();
 
         switch (type) {
+            case 'xlsx':
             case 'document':
                 iconName = 'attachment1';
                 break;
@@ -95,9 +96,14 @@ export class UtilService {
             case 'form':
                 iconName = 'attachment3';
                 break;
+            case 'docx':
             case 'folder':
                 iconName = 'attachment4';
                 break;
+            case 'png':
+            case 'jpeg':
+            case 'jpg':
+            case 'gif':
             case 'image':
                 iconName = 'attachment5';
                 break;
@@ -109,7 +115,6 @@ export class UtilService {
         }
         return './assets/icon/' + iconName + '.svg';
     }
-
 
     static findObj(list, key, value, defaultIndex = 0) {
         if (list && list.length > 0) {

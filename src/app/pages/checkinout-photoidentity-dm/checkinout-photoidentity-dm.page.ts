@@ -124,8 +124,9 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
                 width: StaticDataService.photoMaxHeight,
                 height: StaticDataService.photoMaxHeight,
             };
-            // take a picture
-            this.cameraPreview.takeSnapshot(pictureOpts).then((imageData) => {
+
+
+            this.cameraPreview.takePicture(pictureOpts).then((imageData) => {
                 this.photoCaptured = 'data:image/jpeg;base64,' + imageData;
                 this.cameraPreview.stopCamera();
             }, (err) => {
