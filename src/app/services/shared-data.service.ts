@@ -1206,10 +1206,10 @@ export class SharedDataService {
             accidentReport,
         };
 
-        if (UtilService.isLocalHost()) {
-            console.log('Submit Answers', JSON.stringify(questionAnswers));
-            return;
-        }
+        // if (UtilService.isLocalHost()) {
+        //     console.log('Submit Answers', JSON.stringify(questionAnswers));
+        //     return;
+        // }
 
         this.utilService.presentLoadingWithOptions();
         apiService.saveFormAnswers(submitAnswersObject).subscribe((response: Response) => {
