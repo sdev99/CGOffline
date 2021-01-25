@@ -969,7 +969,6 @@ export class SharedDataService {
                                         havQuestionAnswers.push(answerObject);
                                         answerFormattedObject.havAnswerData = answerObject;
                                     }
-
                                 } else if (section.isAccidentReportSection) {
                                     const answerObject: ArAnswerObject = {
                                         accidentReportQuestionAnswerId: 0,

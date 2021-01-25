@@ -17,6 +17,7 @@ export class StaticDataService {
     // Test demo - should be remove after development complete
     static anyScreenTestLocalStoragekey = 'screen_to_test';
     static isDeviceTestTablet = 'is_device_test_tablet';
+    static disableExifHeaderStripping = 'disableExifHeaderStripping';
     // end
 
     static bodyParts = [

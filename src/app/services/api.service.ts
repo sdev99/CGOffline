@@ -368,7 +368,6 @@ export class ApiService {
         return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetModelList}?companyID=${companyId}&typeID=${typeId}`);
     }
 
-
     /**
      *  We will call this API when we want User TotalHAVExposure For Today on Hav form.
      * @param userId current logged in user id

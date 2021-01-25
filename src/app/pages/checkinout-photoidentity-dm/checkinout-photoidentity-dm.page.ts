@@ -88,6 +88,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
             const left = element.offsetLeft;
             const top = header.offsetHeight + element.offsetTop;
 
+            const disableExifHeaderStripping = localStorage.getItem(StaticDataService.disableExifHeaderStripping);
+
             const cameraPreviewOpts: CameraPreviewOptions = {
                 camera: 'front',
                 width,
@@ -97,7 +99,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
                 // tapPhoto: true,
                 // previewDrag: true,
                 toBack: true,
-                alpha: 1
+                alpha: 1,
+                disableExifHeaderStripping: disableExifHeaderStripping ? true : false
             };
             this.cameraPreview.startCamera(cameraPreviewOpts).then(
                 (res) => {
@@ -124,7 +127,6 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
                 width: StaticDataService.photoMaxHeight,
                 height: StaticDataService.photoMaxHeight,
             };
-
 
             this.cameraPreview.takePicture(pictureOpts).then((imageData) => {
                 this.photoCaptured = 'data:image/jpeg;base64,' + imageData;
@@ -179,7 +181,6 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
             this.errorMessage = error.message ? error.message : error;
         });
     };
-
 
     checkInPhotoUpload = async (file, fileName = '', callBack = null) => {
         this.utilService.presentLoadingWithOptions();
