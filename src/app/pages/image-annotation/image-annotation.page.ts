@@ -1,13 +1,14 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {fabric} from 'fabric';
 import {Location} from '@angular/common';
-import {NavController, AlertController} from '@ionic/angular';
+import {NavController, AlertController, IonRouterOutlet} from '@ionic/angular';
 import {AnimationOptions} from '@ionic/angular/providers/nav-controller';
 import {SharedDataService} from '../../services/shared-data.service';
 import {ObservablesService} from '../../services/observables.service';
 import {EnumService} from '../../services/enum.service';
 import {Subscription} from 'rxjs';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {StaticDataService} from '../../services/static-data.service';
 
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
 
@@ -95,12 +96,15 @@ export class ImageAnnotationPage implements OnInit {
     isColorThicknessViewOpen = false;
     rangeValue = 1;
 
+    imageMultiplier = 1;
+
     // Default values
     defaultThickness = 3;
     defaultFontSize = 26;
     defaultColor;
 
     constructor(
+        private routerOutlet: IonRouterOutlet,
         public navCtrl: NavController,
         public sharedDataService: SharedDataService,
         public alertController: AlertController,
@@ -120,8 +124,14 @@ export class ImageAnnotationPage implements OnInit {
     }
 
     ionViewDidEnter(): void {
+        this.routerOutlet.swipeGesture = false;
         this.customiseControl();
     }
+
+
+    ionViewWillLeave = () => {
+        this.routerOutlet.swipeGesture = true;
+    };
 
     initialise() {
         const content = document.getElementById('content');
@@ -179,8 +189,18 @@ export class ImageAnnotationPage implements OnInit {
                 top: 0,
                 selectable: false
             });
-            img.scaleToWidth(imgWidth);
-            img.scaleToHeight(imgHeight);
+
+            // Calculate Image Multipler for Output image
+            if (img.height > StaticDataService.photoMaxHeight) {
+                this.imageMultiplier = StaticDataService.photoMaxHeight / imgHeight;
+            } else {
+                this.imageMultiplier = img.height / imgHeight;
+            }
+
+
+            img.scale(window.innerWidth / img.width);
+            // img.scaleToWidth(imgWidth);
+            // img.scaleToHeight(imgHeight);
 
             const canvasRef = this.canvasRef;
             canvasRef.cacheCanvasEl.style.top = top + 'px';
@@ -251,7 +271,7 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.setActiveObject(object);
         setTimeout(() => {
             this.canvasRef.requestRenderAll();
-        }, 200);
+        }, 500);
     };
 
     private trashControl = () => {
@@ -505,11 +525,15 @@ export class ImageAnnotationPage implements OnInit {
     onContinue() {
         this.canvasRef.discardActiveObject();
         this.canvasRef.isDrawingMode = false;
+        const imageMultiplier = this.imageMultiplier;
+        const qualityVal = StaticDataService.photoQuality / 100;
+
         const downlaodImg = this.canvasRef.toDataURL({
             format: 'jpeg',
-            quality: 1,
-            multiplier: 3
+            quality: qualityVal,
+            multiplier: imageMultiplier
         });
+
         if (this.sharedDataService.onAnnotationImageDone) {
             this.sharedDataService.onAnnotationImageDone(downlaodImg);
         }
