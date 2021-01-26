@@ -298,7 +298,7 @@ export class ColorPickerComponent implements OnInit {
         }
 
         // const imageData = context.getImageData(x, y, 1, 1);
-        const imageData = context.getImageData(x, this.chooserHeight / 2, 1, 1);
+        const imageData = context.getImageData(x, this.chooserHeight, 1, 1);
 
         const red = imageData.data[0];
         const green = imageData.data[1];

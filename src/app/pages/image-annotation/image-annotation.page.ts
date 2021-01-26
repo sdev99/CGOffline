@@ -271,7 +271,7 @@ export class ImageAnnotationPage implements OnInit {
         this.canvasRef.setActiveObject(object);
         setTimeout(() => {
             this.canvasRef.requestRenderAll();
-        }, 500);
+        }, 200);
     };
 
     private trashControl = () => {
