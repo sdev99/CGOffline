@@ -186,7 +186,7 @@ export class ActivityDetailPage implements OnInit {
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
             header: 'Confirm Completion',
-            message: 'You are about to mark this activity as completed. Please confirm. ',
+            message: 'You are about to mark this activity as completed. Please confirm.',
             buttons: [
                 {
                     text: 'Cancel',

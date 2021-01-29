@@ -1,21 +1,19 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-title>{{title}}</ion-title>
-    </ion-toolbar>
+  <ion-toolbar>
+    <ion-title>{{title}}</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <p class="description">
-        {{description}}
-    </p>
+  <p class="description">{{description}}</p>
 
-    <ion-button class="action-btn" (click)="onDismiss(true)">
-        {{okBtnText}}
-    </ion-button>
+  <ion-button class="action-btn" (click)="onDismiss(true)">
+    {{okBtnText}}
+  </ion-button>
 
-    <br/>
+  <br />
 
-    <ion-button class="cancel-btn" fill="outline" (click)="onDismiss(false)">
-        {{cancelBtnText}}
-    </ion-button>
+  <ion-button class="cancel-btn" fill="outline" (click)="onDismiss(false)">
+    {{cancelBtnText}}
+  </ion-button>
 </ion-content>

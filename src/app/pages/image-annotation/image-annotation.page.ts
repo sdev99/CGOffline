@@ -534,8 +534,8 @@ export class ImageAnnotationPage implements OnInit {
   async onClose() {
     const alert = await this.alertController.create({
       cssClass: "my-custom-class",
-      header: "Confirm!",
-      message: "<strong>Do you want to exit without saving?</strong>",
+      header: "You are Leaving",
+      message: "<strong>Are you sure to exit without saving?</strong>",
       buttons: [
         {
           text: "No",
