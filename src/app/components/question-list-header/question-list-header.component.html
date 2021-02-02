@@ -1,19 +1,36 @@
 <ion-list-header lines="full">
-    <h6>
-        <ion-note color="danger" *ngIf="required">*</ion-note>
-        {{(qNo) + '. ' + questionTitle}}
-    </h6>
+  <h6>
+    <ion-note color="danger" *ngIf="required">*</ion-note>
+    {{ qNo + ". " + questionTitle }}
+  </h6>
 
-    <ion-item *ngIf="note" lines="none" class="ion-no-margin ion-no-padding note-item">
-        <ion-label><span style="font-weight: 600">Note: </span><span [innerText]="note"></span></ion-label>
+  <ion-item
+    *ngIf="note"
+    lines="none"
+    class="ion-no-margin ion-no-padding note-item"
+  >
+    <ion-label
+      ><span style="font-weight: 600">Note: </span
+      ><span [innerText]="note"></span
+    ></ion-label>
+  </ion-item>
+
+  <ng-container *ngIf="attachments">
+    <ion-item
+      lines="none"
+      class="form-item"
+      *ngFor="let attachment of attachments"
+      (click)="openFile(attachment)"
+    >
+      <ion-img *ngIf="attachmentIcon" [src]="attachmentIcon"></ion-img>
+      <ion-icon
+        slot="start"
+        *ngIf="!attachmentIcon"
+        [src]="UtilService.FileIcon(attachment.fileExtension)"
+      ></ion-icon>
+      <ion-label>
+        {{ attachment.fileName }}
+      </ion-label>
     </ion-item>
-
-    <ng-container *ngIf="attachments">
-        <ion-item lines="none" class="form-item" *ngFor="let attachment of attachments" (click)="openFile(attachment)">
-            <ion-icon slot="start" [src]="UtilService.FileIcon(attachment.fileExtension)"></ion-icon>
-            <ion-label>
-                {{attachment.fileName}}
-            </ion-label>
-        </ion-item>
-    </ng-container>
+  </ng-container>
 </ion-list-header>

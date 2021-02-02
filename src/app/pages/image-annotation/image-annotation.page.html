@@ -1,46 +1,69 @@
 <ion-header mode="md">
-    <ion-toolbar mode="md">
-        <div class="tools-button-container">
-            <ion-button size="small" fill="clear" (click)="addLine()">
-                <ion-icon slot="icon-only" src="./assets/icon/Arrow.svg"></ion-icon>
-            </ion-button>
+  <ion-toolbar mode="md">
+    <div class="tools-button-container">
+      <ion-button size="small" fill="clear" (click)="addLine()">
+        <ion-icon slot="icon-only" src="./assets/icon/Arrow.svg"></ion-icon>
+      </ion-button>
 
-            <ion-button size="small" fill="clear" (click)="addCircle()">
-                <ion-icon slot="icon-only" src="./assets/icon/Circle.svg"></ion-icon>
-            </ion-button>
+      <ion-button size="small" fill="clear" (click)="addCircle()">
+        <ion-icon slot="icon-only" src="./assets/icon/Circle.svg"></ion-icon>
+      </ion-button>
 
-            <ion-button size="small" fill="clear" (click)="addRectangle()">
-                <ion-icon slot="icon-only" src="./assets/icon/Square.svg"></ion-icon>
-            </ion-button>
+      <ion-button size="small" fill="clear" (click)="addRectangle()">
+        <ion-icon slot="icon-only" src="./assets/icon/Square.svg"></ion-icon>
+      </ion-button>
 
-            <ion-button size="small" fill="clear" (click)="addFreeLine()">
-                <ion-icon slot="icon-only" src="./assets/icon/PencilEditCreate.svg"></ion-icon>
-            </ion-button>
+      <ion-button size="small" fill="clear" (click)="addFreeLine()">
+        <ion-icon
+          slot="icon-only"
+          src="./assets/icon/PencilEditCreate.svg"
+        ></ion-icon>
+      </ion-button>
 
-            <ion-button size="small" fill="clear" class="text-edit-button" (click)="addText()">
-                <ion-icon slot="icon-only" src="./assets/icon/TextEdit.svg"></ion-icon>
-            </ion-button>
+      <ion-button
+        size="small"
+        fill="clear"
+        class="text-edit-button"
+        (click)="addText()"
+      >
+        <ion-icon slot="icon-only" src="./assets/icon/TextEdit.svg"></ion-icon>
+      </ion-button>
 
-            <ion-button size="small" fill="clear" (click)="onClose()">
-                <ion-icon slot="icon-only" src="./assets/icon/ic_close.svg"></ion-icon>
-            </ion-button>
-        </div>
-    </ion-toolbar>
+      <ion-button size="small" fill="clear" (click)="onClose()">
+        <ion-icon slot="icon-only" src="./assets/icon/ic_close.svg"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content id="content" mode="md">
-    <div class="color-thickness-picker-container" [hidden]="!isColorThicknessViewOpen">
-        <app-color-picker (colorChanged)="onColorChanged($event)" [hexColor]="defaultColor"></app-color-picker>
-        <ion-range [ngModel]="rangeValue" class="range" mode="md" color="dark" min="1" max="100"
-                   (ionChange)="rangeChange($event)"></ion-range>
-    </div>
+  <div
+    class="color-thickness-picker-container"
+    [hidden]="!isColorThicknessViewOpen"
+  >
+    <app-color-picker
+      (colorChanged)="onColorChanged($event)"
+      [hexColor]="defaultColor"
+    ></app-color-picker>
+    <ion-range
+      [ngModel]="rangeValue"
+      class="range"
+      mode="md"
+      color="dark"
+      min="1"
+      max="100"
+      (ionChange)="rangeChange($event)"
+    ></ion-range>
+  </div>
 
-    <div class="canvas-view">
-        <!--  <ion-img src="./assets/images/etienne-girardet-sgYamIzhAhg-unsplash 1.png" class="bg-img" id="bgImg"></ion-img>-->
-        <canvas id="c" class="annotation canvas-container-c"></canvas>
-    </div>
+  <div class="canvas-view">
+    <!--  <ion-img src="./assets/images/etienne-girardet-sgYamIzhAhg-unsplash 1.png" class="bg-img" id="bgImg"></ion-img>-->
+    <canvas id="c" class="annotation canvas-container-c"></canvas>
+  </div>
 
-    <div class="continue-button-container">
-        <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
-    </div>
+  <div class="continue-button-container">
+    <ion-button expand="full" class="action-btn" (click)="onContinue()"
+      >Continue</ion-button
+    >
+  </div>
 </ion-content>
