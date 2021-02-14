@@ -161,6 +161,8 @@ export class AppComponent {
             } else {
               this.appSettingLoaded(false);
             }
+          } else {
+            this.utilService.presentLoadingWithOptions();
           }
         });
       });
