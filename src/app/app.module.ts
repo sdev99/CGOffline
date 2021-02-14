@@ -27,6 +27,8 @@ import {FormsModule} from '@angular/forms';
 import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
 import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture/ngx';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [
@@ -55,6 +57,7 @@ import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
         PipesModule,
         DirectivesModule,
         HttpClientModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
     providers: [
         QRScanner,
