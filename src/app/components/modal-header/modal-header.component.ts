@@ -1,19 +1,29 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
+import { environment } from "src/environments/environment";
 
 @Component({
-    selector: 'app-modal-header',
-    templateUrl: './modal-header.component.html',
-    styleUrls: ['./modal-header.component.scss'],
+  selector: "app-modal-header",
+  templateUrl: "./modal-header.component.html",
+  styleUrls: ["./modal-header.component.scss"],
 })
 export class ModalHeaderComponent implements OnInit {
-    @Input() modalTitle: string;
+  @Input() modalTitle: string;
 
-    @Output() closeModal = new EventEmitter<string>();
+  @Output() closeModal = new EventEmitter<string>();
 
-    constructor() {
+  showCloseButton = true;
+  constructor() {
+    if (environment.isWebApp) {
+      this.showCloseButton = false;
     }
+  }
 
-    ngOnInit() {
-    }
-
+  ngOnInit() {}
 }
