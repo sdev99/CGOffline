@@ -162,7 +162,7 @@ export class AppComponent {
               this.appSettingLoaded(false);
             }
           } else {
-            this.utilService.presentLoadingWithOptions();
+            this.utilService.hideLoading();
           }
         });
       });
