@@ -774,169 +774,146 @@ export class SharedDataService {
     havExposure: HavExposure = null,
     workPermitAnswer: WorkPermitAnswer = null
   ) {
-    const sections = formBuilderDetail.sections;
+    if (!environment.isWebApp) {
+      const sections = formBuilderDetail.sections;
 
-    let requiredFieldsCount = 0;
-    let requiredFieldsValidCount = 0;
+      let requiredFieldsCount = 0;
+      let requiredFieldsValidCount = 0;
 
-    let filledFieldsCount = 0;
-    let filledFieldsValidCount = 0;
+      let filledFieldsCount = 0;
+      let filledFieldsValidCount = 0;
 
-    if (sections) {
-      sections.map((section, sectionIndex) => {
-        const isSectionDuplicate =
-          section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+      if (sections) {
+        sections.map((section, sectionIndex) => {
+          const isSectionDuplicate =
+            section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 
-        if (this.utilService.shouldShowSection(section)) {
-          if (section.isRiskAssessmentSection) {
-            const tasks = section.tasks;
-            tasks.map((task) => {
-              if (task.isRequired) {
-                requiredFieldsCount++;
-                const hazards = task.hazards;
-                let isValid = true;
-                hazards.map((hazard) => {
-                  if (!hazard.riskRating || !hazard.residualRiskRating) {
-                    isValid = false;
-                  }
-
-                  if (hazard.memberOfTheWorkForce) {
-                    if (
-                      Object.keys(hazard.addedUsers).length === 0 &&
-                      Object.keys(hazard.addedGroups).length === 0
-                    ) {
-                      isValid = false;
-                    }
-                  }
-
-                  if (hazard.memberOfThePublic) {
-                    if (!hazard.memberOfThePublicDescription) {
-                      isValid = false;
-                    }
-                  }
-                });
-                if (isValid) {
-                  requiredFieldsValidCount++;
-                }
-              }
-            });
-          } else {
-            const questions = section.questions;
-            questions.map((question, questionIndex) => {
-              if (this.utilService.shouldShowQuestion(question)) {
-                const controlName = UtilService.FCUniqueName(section, question);
-                const control = formGroup.controls[controlName];
-                if (question.questionIsRequired) {
+          if (this.utilService.shouldShowSection(section)) {
+            if (section.isRiskAssessmentSection) {
+              const tasks = section.tasks;
+              tasks.map((task) => {
+                if (task.isRequired) {
                   requiredFieldsCount++;
-                  if (control && control.valid) {
+                  const hazards = task.hazards;
+                  let isValid = true;
+                  hazards.map((hazard) => {
+                    if (!hazard.riskRating || !hazard.residualRiskRating) {
+                      isValid = false;
+                    }
+
+                    if (hazard.memberOfTheWorkForce) {
+                      if (
+                        Object.keys(hazard.addedUsers).length === 0 &&
+                        Object.keys(hazard.addedGroups).length === 0
+                      ) {
+                        isValid = false;
+                      }
+                    }
+
+                    if (hazard.memberOfThePublic) {
+                      if (!hazard.memberOfThePublicDescription) {
+                        isValid = false;
+                      }
+                    }
+                  });
+                  if (isValid) {
                     requiredFieldsValidCount++;
                   }
                 }
-                if (control.value) {
-                  filledFieldsCount++;
-                  if (control.valid) {
-                    filledFieldsValidCount++;
+              });
+            } else {
+              const questions = section.questions;
+              questions.map((question, questionIndex) => {
+                if (this.utilService.shouldShowQuestion(question)) {
+                  const controlName = UtilService.FCUniqueName(
+                    section,
+                    question
+                  );
+                  const control = formGroup.controls[controlName];
+                  if (question.questionIsRequired) {
+                    requiredFieldsCount++;
+                    if (control && control.valid) {
+                      requiredFieldsValidCount++;
+                    }
+                  }
+                  if (control.value) {
+                    filledFieldsCount++;
+                    if (control.valid) {
+                      filledFieldsValidCount++;
+                    }
                   }
                 }
-              }
-            });
+              });
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
-    if (formGroup.valid && requiredFieldsCount === requiredFieldsValidCount) {
-      let attachmentCount = 0;
-      let attachmentUploadedCount = 0;
-      const attachemtUploaded = {};
+      if (formGroup.valid && requiredFieldsCount === requiredFieldsValidCount) {
+        let attachmentCount = 0;
+        let attachmentUploadedCount = 0;
+        const attachemtUploaded = {};
 
-      let loading;
+        let loading;
 
-      sections.map((section, sectionIndex) => {
-        if (this.utilService.shouldShowSection(section)) {
-          const isSectionDuplicate =
-            section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-          const questions = section.questions;
-          questions.map(async (question, questionIndex) => {
-            if (this.utilService.shouldShowQuestion(question)) {
-              const controlName = UtilService.FCUniqueName(section, question);
-              const control = formGroup.controls[controlName];
+        sections.map((section, sectionIndex) => {
+          if (this.utilService.shouldShowSection(section)) {
+            const isSectionDuplicate =
+              section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+            const questions = section.questions;
+            questions.map(async (question, questionIndex) => {
+              if (this.utilService.shouldShowQuestion(question)) {
+                const controlName = UtilService.FCUniqueName(section, question);
+                const control = formGroup.controls[controlName];
 
-              if (
-                question.selectedAnswerTypeId ===
-                EnumService.CustomAnswerType.PhotoVideoUpload
-              ) {
-                if (control && control.value) {
-                  attachmentCount++;
+                if (
+                  question.selectedAnswerTypeId ===
+                  EnumService.CustomAnswerType.PhotoVideoUpload
+                ) {
+                  if (control && control.value) {
+                    attachmentCount++;
 
-                  let fileName =
-                    "photo" + this.utilService.getCurrentTimeStamp() + ".jpeg";
-                  let mimeType = "image/jpeg";
-                  let isVideo = false;
-                  if (
-                    StaticDataService.videoFormats.indexOf(
-                      control.value.split(".").pop().toLowerCase()
-                    ) !== -1
-                  ) {
-                    isVideo = true;
-                    fileName = control.value.substr(
-                      control.value.lastIndexOf("/") + 1
-                    );
-                    mimeType =
-                      StaticDataService.fileMimeTypes[
+                    let fileName =
+                      "photo" +
+                      this.utilService.getCurrentTimeStamp() +
+                      ".jpeg";
+                    let mimeType = "image/jpeg";
+                    let isVideo = false;
+                    if (
+                      StaticDataService.videoFormats.indexOf(
                         control.value.split(".").pop().toLowerCase()
-                      ];
-                  }
+                      ) !== -1
+                    ) {
+                      isVideo = true;
+                      fileName = control.value.substr(
+                        control.value.lastIndexOf("/") + 1
+                      );
+                      mimeType =
+                        StaticDataService.fileMimeTypes[
+                          control.value.split(".").pop().toLowerCase()
+                        ];
+                    }
 
-                  this.utilService
-                    .dataUriToFile(control.value, fileName, mimeType)
-                    .then(async (file) => {
-                      if (!loading) {
-                        this.utilService.presentLoadingWithOptions();
-                        loading = true;
-                      }
+                    this.utilService
+                      .dataUriToFile(control.value, fileName, mimeType)
+                      .then(async (file) => {
+                        if (!loading) {
+                          this.utilService.presentLoadingWithOptions();
+                          loading = true;
+                        }
 
-                      if (isVideo) {
-                        this.uploadVideo(
-                          file,
-                          mimeType,
-                          (response) => {
-                            console.log(
-                              "Uploaded " + " " + fileName + "" + response
-                            );
-                            if (response.status) {
-                              attachemtUploaded[question.questionId] =
-                                response.result.Result;
-                            }
-                            attachmentUploadedCount++;
-                            if (attachmentCount === attachmentUploadedCount) {
-                              loading = false;
-                              this.utilService.hideLoading();
-                              this.submitFormAnswers(
-                                apiService,
-                                formGroup,
-                                formBuilderDetail,
-                                personalModeLoggedUser,
-                                callBack,
-                                havExposure,
-                                workPermitAnswer,
-                                attachemtUploaded
+                        if (isVideo) {
+                          this.uploadVideo(
+                            file,
+                            mimeType,
+                            (response) => {
+                              console.log(
+                                "Uploaded " + " " + fileName + "" + response
                               );
-                            }
-                          },
-                          (progress) => {
-                            console.log(
-                              "Progress " + " " + fileName + "" + progress
-                            );
-                          }
-                        );
-                      } else {
-                        apiService
-                          .formPhotoOrVideoUpload(file, fileName)
-                          .subscribe(
-                            (response: Response) => {
-                              attachemtUploaded[question.questionId] =
-                                response.Result;
+                              if (response.status) {
+                                attachemtUploaded[question.questionId] =
+                                  response.result.Result;
+                              }
                               attachmentUploadedCount++;
                               if (attachmentCount === attachmentUploadedCount) {
                                 loading = false;
@@ -953,76 +930,112 @@ export class SharedDataService {
                                 );
                               }
                             },
-                            (error) => {
-                              attachmentUploadedCount++;
-                              if (attachmentCount === attachmentUploadedCount) {
-                                loading = false;
-                                this.utilService.hideLoading();
-                                this.submitFormAnswers(
-                                  apiService,
-                                  formGroup,
-                                  formBuilderDetail,
-                                  personalModeLoggedUser,
-                                  callBack,
-                                  havExposure,
-                                  workPermitAnswer,
-                                  attachemtUploaded
-                                );
-                              }
+                            (progress) => {
+                              console.log(
+                                "Progress " + " " + fileName + "" + progress
+                              );
                             }
                           );
-                      }
-                    })
-                    .catch(() => {
-                      attachmentUploadedCount++;
-                      if (attachmentCount === attachmentUploadedCount) {
-                        loading = false;
-                        this.utilService.hideLoading();
-                        this.submitFormAnswers(
-                          apiService,
-                          formGroup,
-                          formBuilderDetail,
-                          personalModeLoggedUser,
-                          callBack,
-                          havExposure,
-                          workPermitAnswer,
-                          attachemtUploaded
-                        );
-                      }
-                    });
+                        } else {
+                          apiService
+                            .formPhotoOrVideoUpload(file, fileName)
+                            .subscribe(
+                              (response: Response) => {
+                                attachemtUploaded[question.questionId] =
+                                  response.Result;
+                                attachmentUploadedCount++;
+                                if (
+                                  attachmentCount === attachmentUploadedCount
+                                ) {
+                                  loading = false;
+                                  this.utilService.hideLoading();
+                                  this.submitFormAnswers(
+                                    apiService,
+                                    formGroup,
+                                    formBuilderDetail,
+                                    personalModeLoggedUser,
+                                    callBack,
+                                    havExposure,
+                                    workPermitAnswer,
+                                    attachemtUploaded
+                                  );
+                                }
+                              },
+                              (error) => {
+                                attachmentUploadedCount++;
+                                if (
+                                  attachmentCount === attachmentUploadedCount
+                                ) {
+                                  loading = false;
+                                  this.utilService.hideLoading();
+                                  this.submitFormAnswers(
+                                    apiService,
+                                    formGroup,
+                                    formBuilderDetail,
+                                    personalModeLoggedUser,
+                                    callBack,
+                                    havExposure,
+                                    workPermitAnswer,
+                                    attachemtUploaded
+                                  );
+                                }
+                              }
+                            );
+                        }
+                      })
+                      .catch(() => {
+                        attachmentUploadedCount++;
+                        if (attachmentCount === attachmentUploadedCount) {
+                          loading = false;
+                          this.utilService.hideLoading();
+                          this.submitFormAnswers(
+                            apiService,
+                            formGroup,
+                            formBuilderDetail,
+                            personalModeLoggedUser,
+                            callBack,
+                            havExposure,
+                            workPermitAnswer,
+                            attachemtUploaded
+                          );
+                        }
+                      });
+                  }
                 }
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
 
-      if (attachmentCount === 0) {
-        this.submitFormAnswers(
-          apiService,
-          formGroup,
-          formBuilderDetail,
-          personalModeLoggedUser,
-          callBack,
-          havExposure,
-          workPermitAnswer
-        );
-      }
-    } else if (requiredFieldsValidCount === 0) {
-      const errorMessage = "All fields are required to be filled in.";
-      callBack(false, errorMessage);
-    } else {
-      const missingFieldCount = requiredFieldsCount - requiredFieldsValidCount;
-      if (
-        missingFieldCount === 0 &&
-        filledFieldsCount !== filledFieldsValidCount
-      ) {
-        const errorMessage = "Incorrect data found, please check your answers.";
+        if (attachmentCount === 0) {
+          this.submitFormAnswers(
+            apiService,
+            formGroup,
+            formBuilderDetail,
+            personalModeLoggedUser,
+            callBack,
+            havExposure,
+            workPermitAnswer
+          );
+        }
+      } else if (requiredFieldsValidCount === 0) {
+        const errorMessage = "All fields are required to be filled in.";
         callBack(false, errorMessage);
       } else {
-        const errorMessage =
-          missingFieldCount + " required fields are needed to be filled in.";
-        callBack(false, errorMessage);
+        const missingFieldCount =
+          requiredFieldsCount - requiredFieldsValidCount;
+        if (
+          missingFieldCount === 0 &&
+          filledFieldsCount !== filledFieldsValidCount
+        ) {
+          const errorMessage =
+            "Incorrect data found, please check your answers.";
+          callBack(false, errorMessage);
+        } else {
+          const errorMessage =
+            missingFieldCount + " required fields are needed to be filled in.";
+          callBack(false, errorMessage);
+        }
       }
     }
   }
