@@ -139,3 +139,4 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.navCtrl.navigateForward(["/activity-detail"]);
   }
 }
+  
