@@ -42,6 +42,10 @@ export class FormCoverPage {
     if (environment.isWebApp) {
       this.route.queryParams.subscribe((param) => {
         if (param.formID && param.formVersionID) {
+          if (param.languageID) {
+            sharedDataService.currentLanguageId = param.languageID;
+          }
+
           this.getFormBuilderDetails(
             param.formType,
             param.formID,
