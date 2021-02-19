@@ -10810,10 +10810,10 @@
           this.isNavigationTypeDeepLink = false;
           this.isLoginAfterAppOpen = false;
           this.annotationColor = "#98C16B"; // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
-          // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
+          // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1"; // For test dedicated mode
+          // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222"; // For test dedicated mode assign one location
 
-          this.deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222"; // For test dedicated mode assign one location
-          // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+          this.deviceUID = "74448C20-A034-40C6-B6D4-6586DE5E1C01"; // For simulator ipad
           // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
           // deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
           // deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632'; // SdevIphone
@@ -11254,8 +11254,6 @@
             var userId = _this44.dedicatedMode ? _this44.dedicatedModeUserDetail.userId : personalModeLoggedUser.userId;
             var companyId = _this44.dedicatedMode ? _this44.dedicatedModeDeviceDetailData.companyID : personalModeLoggedUser.companyID;
             sections.map(function (section, sectionIndex) {
-              var isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-
               if (_this44.utilService.shouldShowSection(section)) {
                 var formattedAnswers = [];
                 var sectionFormattedObject = JSON.parse(JSON.stringify(section));
@@ -11933,8 +11931,6 @@
 
                         if (sections) {
                           sections.map(function (section, sectionIndex) {
-                            var isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-
                             if (_this48.utilService.shouldShowSection(section)) {
                               if (section.isRiskAssessmentSection) {
                                 var tasks = section.tasks;
@@ -12002,7 +11998,6 @@
                           attachemtUploaded = {};
                           sections.map(function (section, sectionIndex) {
                             if (_this48.utilService.shouldShowSection(section)) {
-                              var isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
                               var questions = section.questions;
                               questions.map(function (question, questionIndex) {
                                 return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this48, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee30() {

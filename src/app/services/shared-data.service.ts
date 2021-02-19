@@ -66,9 +66,9 @@ export class SharedDataService {
   onAnnotationImageDone;
 
   // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
-  // deviceUID = '33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1'; // For test dedicated mode
-  deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222"; // For test dedicated mode assign one location
-  // deviceUID = '74448C20-A034-40C6-B6D4-6586DE5E1C01'; // For simulator ipad
+  // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1"; // For test dedicated mode
+  // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222"; // For test dedicated mode assign one location
+  deviceUID = "74448C20-A034-40C6-B6D4-6586DE5E1C01"; // For simulator ipad
   // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
   // deviceUID = 'f44ab87b-a2d6-8df0-8637-870495265348'; // SdevAndroid
   // deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632'; // SdevIphone
@@ -785,9 +785,6 @@ export class SharedDataService {
 
       if (sections) {
         sections.map((section, sectionIndex) => {
-          const isSectionDuplicate =
-            section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-
           if (this.utilService.shouldShowSection(section)) {
             if (section.isRiskAssessmentSection) {
               const tasks = section.tasks;
@@ -858,8 +855,6 @@ export class SharedDataService {
 
         sections.map((section, sectionIndex) => {
           if (this.utilService.shouldShowSection(section)) {
-            const isSectionDuplicate =
-              section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
             const questions = section.questions;
             questions.map(async (question, questionIndex) => {
               if (this.utilService.shouldShowQuestion(question)) {
@@ -1072,9 +1067,6 @@ export class SharedDataService {
       : personalModeLoggedUser.companyID;
 
     sections.map((section, sectionIndex) => {
-      const isSectionDuplicate =
-        section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-
       if (this.utilService.shouldShowSection(section)) {
         const formattedAnswers = [];
         const sectionFormattedObject: any = JSON.parse(JSON.stringify(section));
