@@ -1,59 +1,75 @@
 <ion-header>
-    <app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
-    <app-topnavigations-btns-dm activeBtn="document"></app-topnavigations-btns-dm>
-    <app-topnavigations-segments-dm [active]="listType" [options]="listTypes"
-                                    [search]="searchQuery"
-                                    (searching)="onSearch($event)"
-                                    (searchbarShowHide)="searchbarShowHide($event)"
-                                    (changed)="segmentChanged($event)"></app-topnavigations-segments-dm>
+  <app-dashboard-header-dm
+    [title]="sharedDataService.getCurrentCheckedInEntityName()"
+  ></app-dashboard-header-dm>
+  <app-topnavigations-btns-dm activeBtn="document"></app-topnavigations-btns-dm>
+  <app-topnavigations-segments-dm
+    [active]="listType"
+    [options]="listTypes"
+    [search]="searchQuery"
+    (searching)="onSearch($event)"
+    (searchbarShowHide)="searchbarShowHide($event)"
+    (changed)="segmentChanged($event)"
+  ></app-topnavigations-segments-dm>
 </ion-header>
 
 <ion-content mode="md">
-    <ion-list
-            *ngIf="(listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0) || (listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0); else noDocument"
-            class="activity-list"
-            lines="full">
-
-        <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available">
-            <app-archived-item
-                    *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
-                    (itemSelect)="openAvailableDocument(item)"
-                    [icon]="item.documentFileIconURL"
-                    [colFirst]="item.documentTitle"
-                    colThird="Signed"
-                    [colThirdHighlighted]="item.formattedCreatedDate"
-            ></app-archived-item>
-        </ng-container>
-
-        <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive">
-            <app-archived-item
-                    *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
-                    (itemSelect)="openArchivedDocument(item)"
-                    [icon]="item.documentFileIconURL"
-                    [colFirst]="item.documentTitle"
-                    colSecond="Signed by"
-                    [colSecondHighlighted]="item.signedByName"
-                    colThird="Signed"
-                    [colThirdHighlighted]="item.formattedCreatedDate"
-            ></app-archived-item>
-        </ng-container>
-
-    </ion-list>
-
-    <ng-template #noDocument>
-        <app-empty-message message="No documents available"></app-empty-message>
-    </ng-template>
+  <ion-list
+    *ngIf="(listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0) || (listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0); else noDocument"
+    class="activity-list"
+    lines="full"
+  >
+    <ng-container
+      *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available"
+    >
+      <app-archived-item
+        *ngFor="let item of availableDocuments | listFilter:searchQuery:'documentTitle'; last as isLast"
+        (itemSelect)="openAvailableDocument(item)"
+        [icon]="item.documentFileIconURL"
+        [colFirst]="item.documentTitle"
+        colThird="Signed"
+        [colThirdHighlighted]="item.formattedCreatedDate"
+      ></app-archived-item>
+    </ng-container>
 
     <ng-container
-            *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0">
-        <app-empty-message *ngIf="(availableDocuments | listFilter:searchQuery:'documentTitle').length == 0"
-                           message="No Results Found"></app-empty-message>
+      *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive"
+    >
+      <app-archived-item
+        *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
+        (itemSelect)="openArchivedDocument(item)"
+        [icon]="item.documentFileIconURL"
+        [colFirst]="item.documentTitle"
+        colSecond="Signed by"
+        [colSecondHighlighted]="item.signedByName"
+        colThird="Signed"
+        [colThirdHighlighted]="item.formattedCreatedDate"
+      ></app-archived-item>
     </ng-container>
+  </ion-list>
 
-    <ng-container *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0">
-        <app-empty-message *ngIf="(archivedDocuments | listFilter:searchQuery:'documentTitle').length == 0"
-                           message="No Results Found"></app-empty-message>
-    </ng-container>
+  <ng-template #noDocument>
+    <app-empty-message
+      *ngIf="!isLoadingDocument"
+      message="No documents available"
+    ></app-empty-message>
+  </ng-template>
 
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingDocument && (availableDocuments | listFilter:searchQuery:'documentTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
+
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingDocument && (archivedDocuments | listFilter:searchQuery:'documentTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
 </ion-content>
-
