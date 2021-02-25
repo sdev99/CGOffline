@@ -1488,7 +1488,14 @@ export class SharedDataService {
           sectionFormattedObject.answerData = formattedAnswers;
         }
 
-        formattedSections.push(sectionFormattedObject);
+        if (
+          (sectionFormattedObject.answerData &&
+            sectionFormattedObject.answerData.length > 0) ||
+          (sectionFormattedObject.taskAnswerData &&
+            sectionFormattedObject.taskAnswerData.length > 0)
+        ) {
+          formattedSections.push(sectionFormattedObject);
+        }
       }
     });
 
@@ -1511,8 +1518,8 @@ export class SharedDataService {
     };
 
     // if (UtilService.isLocalHost()) {
-    //     console.log('Submit Answers', JSON.stringify(questionAnswers));
-    //     return;
+    //   console.log("Submit Answers", JSON.stringify(formattedSections));
+    //   return;
     // }
 
     this.utilService.presentLoadingWithOptions();
