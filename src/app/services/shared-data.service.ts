@@ -829,14 +829,44 @@ export class SharedDataService {
                   const control = formGroup.controls[controlName];
                   if (question.questionIsRequired) {
                     requiredFieldsCount++;
-                    if (control && control.valid) {
-                      requiredFieldsValidCount++;
-                    }
                   }
-                  if (control.value) {
-                    filledFieldsCount++;
-                    if (control.valid) {
+
+                  if (
+                    question.selectedAnswerTypeId ===
+                    EnumService.CustomAnswerType.MultipleChoiceSet
+                  ) {
+                    const formGroups = control.value as FormGroup;
+                    const multipleChoiceValueIDs = [];
+                    question.answerChoiceAttributes.map((choice) => {
+                      const choiceControl =
+                        formGroups[
+                          UtilService.SubFCName(
+                            controlName,
+                            choice.answerChoiceAttributeId
+                          )
+                        ];
+                      if (choiceControl) {
+                        multipleChoiceValueIDs.push(
+                          choice.answerChoiceAttributeId
+                        );
+                      }
+                    });
+                    if (multipleChoiceValueIDs.length > 0) {
                       filledFieldsValidCount++;
+                      filledFieldsValidCount++;
+                      if (question.questionIsRequired) {
+                        requiredFieldsValidCount++;
+                      }
+                    }
+                  } else {
+                    if (control.value) {
+                      filledFieldsCount++;
+                      if (control.valid) {
+                        filledFieldsValidCount++;
+                        if (question.questionIsRequired) {
+                          requiredFieldsValidCount++;
+                        }
+                      }
                     }
                   }
                 }
@@ -846,7 +876,11 @@ export class SharedDataService {
         });
       }
 
-      if (formGroup.valid && requiredFieldsCount === requiredFieldsValidCount) {
+      if (
+        formGroup.valid &&
+        requiredFieldsCount === requiredFieldsValidCount &&
+        filledFieldsCount > 0
+      ) {
         let attachmentCount = 0;
         let attachmentUploadedCount = 0;
         const attachemtUploaded = {};
@@ -1013,6 +1047,9 @@ export class SharedDataService {
             workPermitAnswer
           );
         }
+      } else if (requiredFieldsCount === 0 && filledFieldsCount === 0) {
+        const errorMessage = "At least one answer to be filled in.";
+        callBack(false, errorMessage);
       } else if (requiredFieldsValidCount === 0) {
         const errorMessage = "All fields are required to be filled in.";
         callBack(false, errorMessage);
