@@ -109,6 +109,7 @@ export class SharedDataService {
   signOffDocumentDetail: DocumentDetail; // For activity document  signoff and current checkin document signoff
   viewFormDetail;
 
+  /** Location selected on choose-location page**/
   dedicatedModeLocationUse: DeviceEntityDetail;
 
   // For dedicated mode
@@ -572,9 +573,6 @@ export class SharedDataService {
       const entityId = this.utilService.getEntityIdFromId(
         this.dedicatedModeLocationUse
       );
-      const nextScreen = this.dedicatedMode
-        ? "/dashboard-dm"
-        : "/tabs/dashboard";
 
       this.utilService.presentLoadingWithOptions();
       apiService.getCheckInDetails(userId, entityId).subscribe(
@@ -618,7 +616,7 @@ export class SharedDataService {
         },
         (error: any) => {
           this.utilService.hideLoading();
-          this.processCheckInError(error, nextScreen);
+          this.processCheckInError(error, "/dashboard-dm");
         }
       );
     }

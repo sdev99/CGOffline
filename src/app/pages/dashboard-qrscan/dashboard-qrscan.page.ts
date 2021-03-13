@@ -173,150 +173,150 @@ export class DashboardQrscanPage implements OnInit {
   checkQrCode = async (qrCode) => {
     this.stopScanning();
 
-    this.utilService.presentLoadingWithOptions();
-
     if (this.sharedDataService.dedicatedMode) {
-      this.apiService.getUserByQRCode(qrCode).subscribe(
-        (response: Response) => {
-          this.utilService.hideLoading();
-          if (
-            response.StatusCode ===
-            EnumService.ApiResponseCode.RequestSuccessful
-          ) {
-            const userDetail: UserDetail = response.Result as UserDetail;
-            if (
-              userDetail?.userId &&
-              userDetail?.userId !== StaticDataService.userDefaultGuid
-            ) {
-              this.openNextScreen(userDetail);
-            } else {
-              this.utilService.showAlert(
-                "This user is not valid for any operation.",
-                "",
-                () => {
-                  this.scan();
-                }
-              );
-            }
-          }
-        },
-        (error) => {
-          this.utilService.hideLoading();
-
-          this.utilService.showAlert(
-            error.message || error,
-            "Not found!",
-            () => {
-              this.scan();
-            }
-          );
-        }
-      );
+      this.getQrDetailForDedicatedMode(qrCode);
     } else {
-      this.apiService.getEntityByQRCode(qrCode).subscribe(
-        (response: Response) => {
-          this.utilService.hideLoading();
-          if (
-            response.StatusCode ===
-            EnumService.ApiResponseCode.RequestSuccessful
-          ) {
-            const locationItem: LocationItem = response.Result as LocationItem;
-            if (
-              locationItem &&
-              locationItem.locationID &&
-              locationItem.locationName
-            ) {
-              this.openNextScreen(locationItem);
-            } else {
-              this.utilService.showAlert(
-                "This QR code is not valid for any records.",
-                "",
-                () => {
-                  this.scan();
-                }
-              );
-            }
-          }
-        },
-        (error) => {
-          this.utilService.hideLoading();
-
-          this.utilService.showAlert(
-            error.message || error,
-            "Not found!",
-            () => {
-              this.scan();
-            }
-          );
-        }
-      );
+      this.getQrDetailForPersonalMode(qrCode);
     }
   };
 
-  openNextScreen = (detail) => {
-    if (this.sharedDataService.dedicatedMode) {
-      this.sharedDataService.dedicatedModeUserDetail = detail;
-      switch (this.sharedDataService.dedicatedModeProcessType) {
-        case EnumService.DedicatedModeProcessTypes.CheckinOut:
-          this.sharedDataService.getCheckinDetailsForDedicatedMode(
-            this.sharedDataService.dedicatedModeUserDetail.userId,
-            this.apiService,
-            null,
-            ({ ischeckInPersonalQRNotAllowed }) => {
-              if (ischeckInPersonalQRNotAllowed) {
-                this.utilService.showAlert(
-                  "You cannot check-in here with a personal QR code",
-                  "",
-                  () => {
-                    this.scan();
-                  }
-                );
-              }
-            }
-          );
-          break;
-        case EnumService.DedicatedModeProcessTypes.Document:
-          this.sharedDataService.dedicatedModeDocumentSignOffProcess();
-          break;
-        case EnumService.DedicatedModeProcessTypes.Form:
-          this.sharedDataService.dedicatedModeFormSignOffProcess();
-          break;
-        case EnumService.DedicatedModeProcessTypes.WorkPermit:
-          this.sharedDataService.dedicatedModeWorkPermitSignOffProcess();
-          break;
-        default:
-      }
-    } else {
-      const locationItem = detail as LocationItem;
-      const getEntityIds = this.utilService.getRelevantEntityId(
-        locationItem.locationID
-      );
-      // if user scan form or document qr code
-      if (getEntityIds.FormID > 0 || getEntityIds.DocumentID > 0) {
-        // if checked in to location already
+  getQrDetailForDedicatedMode = (qrCode) => {
+    this.utilService.presentLoadingWithOptions();
+
+    this.apiService.getUserByQRCode(qrCode).subscribe(
+      (response: Response) => {
+        this.utilService.hideLoading();
         if (
-          this.sharedDataService.checkedInPlaces &&
-          this.sharedDataService.checkedInPlaces.length > 0
+          response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
         ) {
-          this.showCheckedInLocations(getEntityIds);
-        } else {
-          this.utilService.showAlert(
-            "For accessing this item, you need to check-in first.",
-            "",
-            () => {
-              this.scan();
-            }
-          );
+          const userDetail: UserDetail = response.Result as UserDetail;
+          if (
+            userDetail?.userId &&
+            userDetail?.userId !== StaticDataService.userDefaultGuid
+          ) {
+            this.openNextScreenForDedicatedMode(userDetail);
+          } else {
+            this.utilService.showAlert(
+              "This user is not valid for any operation.",
+              "",
+              () => {
+                this.scan();
+              }
+            );
+          }
         }
+      },
+      (error) => {
+        this.utilService.hideLoading();
+
+        this.utilService.showAlert(error.message || error, "Not found!", () => {
+          this.scan();
+        });
+      }
+    );
+  };
+
+  getQrDetailForPersonalMode = (qrCode) => {
+    this.utilService.presentLoadingWithOptions();
+
+    this.apiService.getEntityByQRCode(qrCode).subscribe(
+      (response: Response) => {
+        this.utilService.hideLoading();
+        if (
+          response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
+        ) {
+          const locationItem: LocationItem = response.Result as LocationItem;
+          if (
+            locationItem &&
+            locationItem.locationID &&
+            locationItem.locationName
+          ) {
+            this.openNextScreenForPersonalMode(locationItem);
+          } else {
+            this.utilService.showAlert(
+              "This QR code is not valid for any records.",
+              "",
+              () => {
+                this.scan();
+              }
+            );
+          }
+        }
+      },
+      (error) => {
+        this.utilService.hideLoading();
+
+        this.utilService.showAlert(error.message || error, "Not found!", () => {
+          this.scan();
+        });
+      }
+    );
+  };
+
+  openNextScreenForDedicatedMode = (detail) => {
+    this.sharedDataService.dedicatedModeUserDetail = detail;
+    switch (this.sharedDataService.dedicatedModeProcessType) {
+      case EnumService.DedicatedModeProcessTypes.CheckinOut:
+        this.sharedDataService.getCheckinDetailsForDedicatedMode(
+          this.sharedDataService.dedicatedModeUserDetail.userId,
+          this.apiService,
+          null,
+          ({ ischeckInPersonalQRNotAllowed }) => {
+            if (ischeckInPersonalQRNotAllowed) {
+              this.utilService.showAlert(
+                "You cannot check-in here with a personal QR code",
+                "",
+                () => {
+                  this.scan();
+                }
+              );
+            }
+          }
+        );
+        break;
+      case EnumService.DedicatedModeProcessTypes.Document:
+        this.sharedDataService.dedicatedModeDocumentSignOffProcess();
+        break;
+      case EnumService.DedicatedModeProcessTypes.Form:
+        this.sharedDataService.dedicatedModeFormSignOffProcess();
+        break;
+      case EnumService.DedicatedModeProcessTypes.WorkPermit:
+        this.sharedDataService.dedicatedModeWorkPermitSignOffProcess();
+        break;
+      default:
+    }
+  };
+
+  openNextScreenForPersonalMode = (detail) => {
+    const locationItem = detail as LocationItem;
+    const getEntityIds = this.utilService.getRelevantEntityId(
+      locationItem.locationID
+    );
+    // if user scan form or document qr code
+    if (getEntityIds.FormID > 0 || getEntityIds.DocumentID > 0) {
+      // if checked in to location already
+      if (
+        this.sharedDataService.checkedInPlaces &&
+        this.sharedDataService.checkedInPlaces.length > 0
+      ) {
+        this.showCheckedInLocations(getEntityIds);
       } else {
-        this.sharedDataService.checkInForLocation = detail;
-        this.sharedDataService.checkinLocationByOption =
-          EnumService.CheckInLocationByOptions.QrCode;
-        this.sharedDataService.getCheckinDetails(
-          this.user?.userId,
-          this.apiService
+        this.utilService.showAlert(
+          "For accessing this item, you need to check-in first.",
+          "",
+          () => {
+            this.scan();
+          }
         );
       }
+    } else {
+      this.sharedDataService.checkInForLocation = detail;
+      this.sharedDataService.checkinLocationByOption =
+        EnumService.CheckInLocationByOptions.QrCode;
+      this.sharedDataService.getCheckinDetails(
+        this.user?.userId,
+        this.apiService
+      );
     }
   };
 
