@@ -1,0 +1,9 @@
+<ng-container [formGroup]="form">
+	<ion-item>
+		<ion-label class="ion-text-wrap">
+			{{ UtilService.findObj(list, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTextLabel }}
+		</ion-label>
+
+		<ion-checkbox mode="md" slot="start" [formControlName]="inputName" [value]="true"></ion-checkbox>
+	</ion-item>
+</ng-container>
