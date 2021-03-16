@@ -79,6 +79,22 @@ export class UtilService {
 		return names.join(' ');
 	};
 
+	static IsFileImageType(fileNameOrExtension = '') {
+		const type = fileNameOrExtension?.split('.').pop()?.toLowerCase();
+		let isImage = false;
+		switch (type) {
+			case 'png':
+			case 'jpeg':
+			case 'jpg':
+			case 'gif':
+			case 'image':
+				isImage = true;
+				break;
+			default:
+		}
+		return isImage;
+	}
+
 	static FileIcon(fileNameOrExtension = '') {
 		let iconName = '';
 		const type = fileNameOrExtension?.split('.').pop()?.toLowerCase();
