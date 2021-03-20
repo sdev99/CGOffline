@@ -48,7 +48,7 @@
 
 		<ion-item class="profile-value">
 			<ion-label>
-				<p>DEVICE UID</p>
+				<p *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0">DEVICE UID</p>
 				<h3 class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</h3>
 			</ion-label>
 		</ion-item>

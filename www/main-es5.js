@@ -1288,7 +1288,10 @@
         }], [{
           key: "modifyUDID",
           value: function modifyUDID(udid) {
-            // return udid.replace(/0/g, '∅');
+            if (!udid || udid.length === 0) {
+              return 'This device cannot be used in Dedicated Mode';
+            }
+
             return udid;
           }
         }, {
@@ -7282,12 +7285,6 @@
       var src_environments_environment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(
       /*! src/environments/environment */
       "AytR");
-      /* harmony import */
-
-
-      var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(
-      /*! @ionic-native/device/ngx */
-      "xS7M");
 
       var _capacitor_core__WEBP = _capacitor_core__WEBPACK_IMPORTED_MODULE_4__["Plugins"],
           Geolocation = _capacitor_core__WEBP.Geolocation,
@@ -7300,7 +7297,7 @@
       }
 
       var AppComponent = /*#__PURE__*/function () {
-        function AppComponent(platform, ngZone, statusBar, uniqueDeviceID, sharedDataService, utilService, observablesService, navController, screenOrientation, accountService, apiService, router, badge, device, translateService) {
+        function AppComponent(platform, ngZone, statusBar, uniqueDeviceID, sharedDataService, utilService, observablesService, navController, screenOrientation, accountService, apiService, router, badge, translateService) {
           var _this23 = this;
 
           _classCallCheck(this, AppComponent);
@@ -7318,7 +7315,6 @@
           this.apiService = apiService;
           this.router = router;
           this.badge = badge;
-          this.device = device;
           this.translateService = translateService;
 
           this.appSettingLoaded = function (isDeviceAssignedForDedicatedMode) {
@@ -7351,16 +7347,16 @@
             _this23.uniqueDeviceID.get().then(function (uuid) {
               console.log('Device UUID ', uuid);
 
-              if (!uuid || uuid.length == 0 || uuid.length < 5) {
-                _this23.sharedDataService.deviceUID = _this23.device.uuid;
-              } else {
+              if (uuid && uuid.length > 0) {
                 _this23.sharedDataService.deviceUID = uuid;
+              } else {
+                _this23.sharedDataService.deviceUID = '';
               }
 
               _services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].fireCallBack(callBack);
             })["catch"](function (error) {
               console.log(error);
-              _this23.sharedDataService.deviceUID = _this23.device.uuid;
+              _this23.sharedDataService.deviceUID = '';
 
               if (_services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].isLocalHost()) {
                 _this23.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
@@ -7907,8 +7903,6 @@
           type: _angular_router__WEBPACK_IMPORTED_MODULE_15__["Router"]
         }, {
           type: _ionic_native_badge_ngx__WEBPACK_IMPORTED_MODULE_16__["Badge"]
-        }, {
-          type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_20__["Device"]
         }, {
           type: _ngx_translate_core__WEBPACK_IMPORTED_MODULE_18__["TranslateService"]
         }];
@@ -8766,12 +8760,6 @@
       var _environments_environment__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(
       /*! ../environments/environment */
       "AytR");
-      /* harmony import */
-
-
-      var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(
-      /*! @ionic-native/device/ngx */
-      "xS7M");
 
       var AppModule = function AppModule() {
         _classCallCheck(this, AppModule);
@@ -8782,18 +8770,18 @@
         entryComponents: [],
         imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__["BrowserModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_24__["FormsModule"], _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicModule"].forRoot({
           hardwareBackButton: false,
-          mode: "ios"
+          mode: 'ios'
         }), _ngx_translate_core__WEBPACK_IMPORTED_MODULE_27__["TranslateModule"].forRoot({
-          defaultLanguage: "en",
+          defaultLanguage: 'en',
           loader: {
             provide: _ngx_translate_core__WEBPACK_IMPORTED_MODULE_27__["TranslateLoader"],
             useFactory: _app_component__WEBPACK_IMPORTED_MODULE_7__["HttpLoaderFactory"],
             deps: [_angular_common_http__WEBPACK_IMPORTED_MODULE_21__["HttpClient"]]
           }
-        }), _app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"], _components_components_module__WEBPACK_IMPORTED_MODULE_8__["ComponentsModule"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["CommonModule"], _pipes_pipes_module__WEBPACK_IMPORTED_MODULE_11__["PipesModule"], _directives_directives_module__WEBPACK_IMPORTED_MODULE_19__["DirectivesModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_21__["HttpClientModule"], _angular_service_worker__WEBPACK_IMPORTED_MODULE_28__["ServiceWorkerModule"].register("ngsw-worker.js", {
+        }), _app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"], _components_components_module__WEBPACK_IMPORTED_MODULE_8__["ComponentsModule"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["CommonModule"], _pipes_pipes_module__WEBPACK_IMPORTED_MODULE_11__["PipesModule"], _directives_directives_module__WEBPACK_IMPORTED_MODULE_19__["DirectivesModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_21__["HttpClientModule"], _angular_service_worker__WEBPACK_IMPORTED_MODULE_28__["ServiceWorkerModule"].register('ngsw-worker.js', {
           enabled: _environments_environment__WEBPACK_IMPORTED_MODULE_29__["environment"].production
         })],
-        providers: [_ionic_native_qr_scanner_ngx__WEBPACK_IMPORTED_MODULE_9__["QRScanner"], _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_5__["StatusBar"], _ionic_native_file_opener_ngx__WEBPACK_IMPORTED_MODULE_12__["FileOpener"], _ionic_native_file_ngx__WEBPACK_IMPORTED_MODULE_13__["File"], _ionic_native_file_transfer_ngx__WEBPACK_IMPORTED_MODULE_14__["FileTransfer"], _ionic_native_unique_device_id_ngx__WEBPACK_IMPORTED_MODULE_15__["UniqueDeviceID"], _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_30__["Device"], _ionic_native_camera_preview_ngx__WEBPACK_IMPORTED_MODULE_16__["CameraPreview"], _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_25__["Camera"], _ionic_native_badge_ngx__WEBPACK_IMPORTED_MODULE_10__["Badge"], _ionic_native_media_capture_ngx__WEBPACK_IMPORTED_MODULE_26__["MediaCapture"], _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_18__["ScreenOrientation"], _ionic_native_http_ngx__WEBPACK_IMPORTED_MODULE_20__["HTTP"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterOutlet"], {
+        providers: [_ionic_native_qr_scanner_ngx__WEBPACK_IMPORTED_MODULE_9__["QRScanner"], _ionic_native_status_bar_ngx__WEBPACK_IMPORTED_MODULE_5__["StatusBar"], _ionic_native_file_opener_ngx__WEBPACK_IMPORTED_MODULE_12__["FileOpener"], _ionic_native_file_ngx__WEBPACK_IMPORTED_MODULE_13__["File"], _ionic_native_file_transfer_ngx__WEBPACK_IMPORTED_MODULE_14__["FileTransfer"], _ionic_native_unique_device_id_ngx__WEBPACK_IMPORTED_MODULE_15__["UniqueDeviceID"], _ionic_native_camera_preview_ngx__WEBPACK_IMPORTED_MODULE_16__["CameraPreview"], _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_25__["Camera"], _ionic_native_badge_ngx__WEBPACK_IMPORTED_MODULE_10__["Badge"], _ionic_native_media_capture_ngx__WEBPACK_IMPORTED_MODULE_26__["MediaCapture"], _ionic_native_screen_orientation_ngx__WEBPACK_IMPORTED_MODULE_18__["ScreenOrientation"], _ionic_native_http_ngx__WEBPACK_IMPORTED_MODULE_20__["HTTP"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterOutlet"], {
           provide: _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouteReuseStrategy"],
           useClass: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicRouteStrategy"]
         }, {

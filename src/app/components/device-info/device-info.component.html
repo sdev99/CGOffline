@@ -1,44 +1,38 @@
-<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()"
-          swipeGesture="false">
-    <ion-header>
-        <app-modal-header [modalTitle]="'Device Info'" (closeModal)="closeInfoMenu()"></app-modal-header>
-    </ion-header>
+<ion-menu menuId="infoMenu" side="end" type="overlay" contentId="infomenuContent" (ionWillOpen)="menuWillOpen()" swipeGesture="false">
+	<ion-header>
+		<app-modal-header [modalTitle]="'Device Info'" (closeModal)="closeInfoMenu()"></app-modal-header>
+	</ion-header>
 
-    <ion-content mode="ios">
-        <div class="content">
-            <ion-list lines="full">
-                <ion-item>
-                    <ion-label style="flex: none!important;margin-right: 0 !important;" slot="start">UID</ion-label>
-                    <ion-note color="medium" slot="end"
-                              class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</ion-note>
-                </ion-item>
-                <ion-item>
-                    <ion-label slot="start">Device Status</ion-label>
-                    <ion-chip *ngIf="isOnline" color="clear" slot="end">
-                        <ion-icon color="success" name="ellipse"></ion-icon>
-                        <ion-label color="success">Online</ion-label>
-                    </ion-chip>
+	<ion-content mode="ios">
+		<div class="content">
+			<ion-list lines="full">
+				<ion-item>
+					<ion-label *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0" style="flex: none !important; margin-right: 0 !important" slot="start">UID</ion-label>
+					<ion-note color="medium" slot="end" class="selectable-text">{{ UtilService.modifyUDID(sharedDataService.deviceUID) }}</ion-note>
+				</ion-item>
+				<ion-item>
+					<ion-label slot="start">Device Status</ion-label>
+					<ion-chip *ngIf="isOnline" color="clear" slot="end">
+						<ion-icon color="success" name="ellipse"></ion-icon>
+						<ion-label color="success">Online</ion-label>
+					</ion-chip>
 
-                    <ion-chip *ngIf="!isOnline" color="clear" slot="end">
-                        <ion-icon color="danger" name="ellipse"></ion-icon>
-                        <ion-label color="danger">Offline</ion-label>
-                    </ion-chip>
-                </ion-item>
+					<ion-chip *ngIf="!isOnline" color="clear" slot="end">
+						<ion-icon color="danger" name="ellipse"></ion-icon>
+						<ion-label color="danger">Offline</ion-label>
+					</ion-chip>
+				</ion-item>
 
-                <ion-item>
-                    <ion-label slot="start">Last Sync</ion-label>
-                    <ion-note color="medium" slot="end"
-                              *ngIf="lastSyncTime()">{{lastSyncTime() | date:'dd MMM yyyy HH:mm'}}</ion-note>
-                    <ion-note color="medium" slot="end" *ngIf="!lastSyncTime()">No synced yet</ion-note>
-                </ion-item>
-            </ion-list>
+				<ion-item>
+					<ion-label slot="start">Last Sync</ion-label>
+					<ion-note color="medium" slot="end" *ngIf="lastSyncTime()">{{ lastSyncTime() | date: 'dd MMM yyyy HH:mm' }}</ion-note>
+					<ion-note color="medium" slot="end" *ngIf="!lastSyncTime()">No synced yet</ion-note>
+				</ion-item>
+			</ion-list>
 
+			<app-sync-warning-msg *ngIf="isOnline"></app-sync-warning-msg>
 
-            <app-sync-warning-msg *ngIf="isOnline"></app-sync-warning-msg>
-
-            <ion-button [disabled]="!isOnline" class="action-btn" (click)="syncClick()">
-                Synch Now
-            </ion-button>
-        </div>
-    </ion-content>
+			<ion-button [disabled]="!isOnline" class="action-btn" (click)="syncClick()"> Synch Now </ion-button>
+		</div>
+	</ion-content>
 </ion-menu>

@@ -167,7 +167,7 @@ export class AppComponent {
 				console.log(error);
 				this.sharedDataService.deviceUID = '';
 				if (UtilService.isLocalHost()) {
-					this.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
+					// this.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
 				}
 				console.log('Device UID ', this.sharedDataService.deviceUID);
 				UtilService.fireCallBack(callBack);

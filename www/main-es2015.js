@@ -494,7 +494,9 @@ let UtilService = UtilService_1 = class UtilService {
         };
     }
     static modifyUDID(udid) {
-        // return udid.replace(/0/g, '∅');
+        if (!udid || udid.length === 0) {
+            return 'This device cannot be used in Dedicated Mode';
+        }
         return udid;
     }
     static isLocalHost() {
@@ -4808,8 +4810,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngx_translate_http_loader__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @ngx-translate/http-loader */ "mqiu");
 /* harmony import */ var _ngx_translate_core__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @ngx-translate/core */ "sYmb");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! src/environments/environment */ "AytR");
-/* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
-
 
 
 
@@ -4836,7 +4836,7 @@ function HttpLoaderFactory(http) {
     return new _ngx_translate_http_loader__WEBPACK_IMPORTED_MODULE_17__["TranslateHttpLoader"](http, './assets/i18n/', '.json');
 }
 let AppComponent = class AppComponent {
-    constructor(platform, ngZone, statusBar, uniqueDeviceID, sharedDataService, utilService, observablesService, navController, screenOrientation, accountService, apiService, router, badge, device, translateService) {
+    constructor(platform, ngZone, statusBar, uniqueDeviceID, sharedDataService, utilService, observablesService, navController, screenOrientation, accountService, apiService, router, badge, translateService) {
         this.platform = platform;
         this.ngZone = ngZone;
         this.statusBar = statusBar;
@@ -4850,7 +4850,6 @@ let AppComponent = class AppComponent {
         this.apiService = apiService;
         this.router = router;
         this.badge = badge;
-        this.device = device;
         this.translateService = translateService;
         this.appSettingLoaded = (isDeviceAssignedForDedicatedMode, data = null) => {
             this.ngZone.run(() => {
@@ -4877,17 +4876,17 @@ let AppComponent = class AppComponent {
                 .get()
                 .then((uuid) => {
                 console.log('Device UUID ', uuid);
-                if (!uuid || uuid.length == 0 || uuid.length < 5) {
-                    this.sharedDataService.deviceUID = this.device.uuid;
+                if (uuid && uuid.length > 0) {
+                    this.sharedDataService.deviceUID = uuid;
                 }
                 else {
-                    this.sharedDataService.deviceUID = uuid;
+                    this.sharedDataService.deviceUID = '';
                 }
                 _services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].fireCallBack(callBack);
             })
                 .catch((error) => {
                 console.log(error);
-                this.sharedDataService.deviceUID = this.device.uuid;
+                this.sharedDataService.deviceUID = '';
                 if (_services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].isLocalHost()) {
                     this.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
                 }
@@ -5166,7 +5165,6 @@ AppComponent.ctorParameters = () => [
     { type: _services_api_service__WEBPACK_IMPORTED_MODULE_14__["ApiService"] },
     { type: _angular_router__WEBPACK_IMPORTED_MODULE_15__["Router"] },
     { type: _ionic_native_badge_ngx__WEBPACK_IMPORTED_MODULE_16__["Badge"] },
-    { type: _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_20__["Device"] },
     { type: _ngx_translate_core__WEBPACK_IMPORTED_MODULE_18__["TranslateService"] }
 ];
 AppComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
@@ -5563,8 +5561,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngx_translate_core__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @ngx-translate/core */ "sYmb");
 /* harmony import */ var _angular_service_worker__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @angular/service-worker */ "Jho9");
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ../environments/environment */ "AytR");
-/* harmony import */ var _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! @ionic-native/device/ngx */ "xS7M");
-
 
 
 
@@ -5606,10 +5602,10 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _angular_forms__WEBPACK_IMPORTED_MODULE_24__["FormsModule"],
             _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["IonicModule"].forRoot({
                 hardwareBackButton: false,
-                mode: "ios",
+                mode: 'ios',
             }),
             _ngx_translate_core__WEBPACK_IMPORTED_MODULE_27__["TranslateModule"].forRoot({
-                defaultLanguage: "en",
+                defaultLanguage: 'en',
                 loader: {
                     provide: _ngx_translate_core__WEBPACK_IMPORTED_MODULE_27__["TranslateLoader"],
                     useFactory: _app_component__WEBPACK_IMPORTED_MODULE_7__["HttpLoaderFactory"],
@@ -5622,7 +5618,7 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _pipes_pipes_module__WEBPACK_IMPORTED_MODULE_11__["PipesModule"],
             _directives_directives_module__WEBPACK_IMPORTED_MODULE_19__["DirectivesModule"],
             _angular_common_http__WEBPACK_IMPORTED_MODULE_21__["HttpClientModule"],
-            _angular_service_worker__WEBPACK_IMPORTED_MODULE_28__["ServiceWorkerModule"].register("ngsw-worker.js", {
+            _angular_service_worker__WEBPACK_IMPORTED_MODULE_28__["ServiceWorkerModule"].register('ngsw-worker.js', {
                 enabled: _environments_environment__WEBPACK_IMPORTED_MODULE_29__["environment"].production,
             }),
         ],
@@ -5633,7 +5629,6 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
             _ionic_native_file_ngx__WEBPACK_IMPORTED_MODULE_13__["File"],
             _ionic_native_file_transfer_ngx__WEBPACK_IMPORTED_MODULE_14__["FileTransfer"],
             _ionic_native_unique_device_id_ngx__WEBPACK_IMPORTED_MODULE_15__["UniqueDeviceID"],
-            _ionic_native_device_ngx__WEBPACK_IMPORTED_MODULE_30__["Device"],
             _ionic_native_camera_preview_ngx__WEBPACK_IMPORTED_MODULE_16__["CameraPreview"],
             _ionic_native_camera_ngx__WEBPACK_IMPORTED_MODULE_25__["Camera"],
             _ionic_native_badge_ngx__WEBPACK_IMPORTED_MODULE_10__["Badge"],
