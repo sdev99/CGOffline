@@ -253,3 +253,4 @@ CheckinWorkpermitPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decor
 /***/ })
 
 }]);
+//# sourceMappingURL=checkin-workpermit-checkin-workpermit-module-es2015.js.map

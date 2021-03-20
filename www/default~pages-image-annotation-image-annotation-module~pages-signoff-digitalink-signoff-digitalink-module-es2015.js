@@ -30293,3 +30293,4 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
 /***/ })
 
 }]);
+//# sourceMappingURL=default~pages-image-annotation-image-annotation-module~pages-signoff-digitalink-signoff-digitalink-module-es2015.js.map

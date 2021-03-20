@@ -620,3 +620,4 @@ ImageAnnotationPageRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__
 /***/ })
 
 }]);
+//# sourceMappingURL=pages-image-annotation-image-annotation-module-es2015.js.map

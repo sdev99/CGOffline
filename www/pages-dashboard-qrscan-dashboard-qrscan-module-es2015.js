@@ -476,3 +476,4 @@ DashboardQrscanPageModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorat
 /***/ })
 
 }]);
+//# sourceMappingURL=pages-dashboard-qrscan-dashboard-qrscan-module-es2015.js.map

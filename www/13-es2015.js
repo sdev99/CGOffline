@@ -88,3 +88,4 @@ Img.style = imgCss;
 /***/ })
 
 }]);
+//# sourceMappingURL=13-es2015.js.map

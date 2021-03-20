@@ -203,3 +203,4 @@ TabsPageRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])
 /***/ })
 
 }]);
+//# sourceMappingURL=tabs-tabs-module-es2015.js.map

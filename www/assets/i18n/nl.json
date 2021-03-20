@@ -1,0 +1,17 @@
+{
+  "LOGIN": {
+    "SIGN_IN": "Aanmelden",
+    "PAGE_DESCRIPTION": "Voer uw inloggegevens in om in te loggen.",
+    "EMAIL": "E-mailadres",
+    "EMAIL_PLACEHOLDER": "Vul email adres in",
+    "PASSWORD": "Wachtwoord",
+    "PASSWORD_PLACEHOLDER": "Voer wachtwoord in",
+    "FORGOT_PASSWORD": "Wachtwoord vergeten?"
+  },
+  "PROFILE": {
+    "MY_PROFILE": "Mijn profiel"
+  },
+  "USER": {
+    "name": "Hallo, {{name_value}}"
+  }
+}

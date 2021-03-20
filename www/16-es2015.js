@@ -466,3 +466,4 @@ ItemSliding.style = itemSlidingCss;
 /***/ })
 
 }]);
+//# sourceMappingURL=16-es2015.js.map

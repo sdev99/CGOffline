@@ -368,3 +368,4 @@ __webpack_require__.r(__webpack_exports__);
 /***/ })
 
 }]);
+//# sourceMappingURL=pages-activity-detail-activity-detail-module-es2015.js.map

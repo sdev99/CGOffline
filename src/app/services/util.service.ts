@@ -49,15 +49,15 @@ export class UtilService {
 			case 'green':
 				return '#7ED321';
 			case 'gold':
-				return '#F5A623';
+				return '#df951b';
 			case 'yellow':
-				return '#F8E71C';
+				return '#d1c20b';
 			case 'red':
 				return '#D0021B';
 			case 'blue':
 				return '#4A90E2';
 			case 'grey':
-				return '#BBBBBB';
+				return '#9f9898';
 			case 'turquoise':
 				return '#50E3C2';
 			case 'purple':
