@@ -34,7 +34,9 @@ export class UtilService {
 	questionElementIdsUpdate: any; // callback
 
 	static modifyUDID(udid) {
-		// return udid.replace(/0/g, '∅');
+		if (!udid || udid.length === 0) {
+			return 'This device cannot be used in Dedicated Mode';
+		}
 		return udid;
 	}
 

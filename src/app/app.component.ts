@@ -19,7 +19,6 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { Device } from '@ionic-native/device/ngx';
 
 const { Geolocation, Permissions, App, SplashScreen } = Plugins;
 
@@ -47,7 +46,6 @@ export class AppComponent {
 		private apiService: ApiService,
 		private router: Router,
 		private badge: Badge,
-		private device: Device,
 		private translateService: TranslateService
 	) {
 		this.initializeApp();
@@ -157,17 +155,17 @@ export class AppComponent {
 			.get()
 			.then((uuid: any) => {
 				console.log('Device UUID ', uuid);
-				if (!uuid || uuid.length == 0 || uuid.length < 5) {
-					this.sharedDataService.deviceUID = this.device.uuid;
-				} else {
+				if (uuid && uuid.length > 0) {
 					this.sharedDataService.deviceUID = uuid;
+				} else {
+					this.sharedDataService.deviceUID = '';
 				}
 
 				UtilService.fireCallBack(callBack);
 			})
 			.catch((error: any) => {
 				console.log(error);
-				this.sharedDataService.deviceUID = this.device.uuid;
+				this.sharedDataService.deviceUID = '';
 				if (UtilService.isLocalHost()) {
 					this.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
 				}
