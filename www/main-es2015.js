@@ -266,9 +266,6 @@ let UtilService = UtilService_1 = class UtilService {
             const questionElementIds = [];
             if (sections) {
                 sections.map((section, sectionIndex) => {
-                    if (!section.uniqueId) {
-                        section['uniqueId'] = this.Uniqueid();
-                    }
                     // No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
                     if (section.isRiskAssessmentSection) {
                         const tasks = section.tasks;
@@ -291,9 +288,6 @@ let UtilService = UtilService_1 = class UtilService {
                     else {
                         const questions = section.questions;
                         questions.map((question, questionIndex) => {
-                            if (!question.uniqueId) {
-                                question['uniqueId'] = this.Uniqueid();
-                            }
                             const elementId = UtilService_1.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
                             if (section.isAccidentReportSection && question.selectedAnswerTypeId === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].CustomAnswerType.LocationSelection) {
                                 const controlName = UtilService_1.FCUniqueName(section, question);
@@ -346,10 +340,11 @@ let UtilService = UtilService_1 = class UtilService {
          * @param question
          * @param sections
          */
-        this.resetAppliedLogicByQuestion = (question, sections, sectionIndex) => {
+        this.resetAppliedLogicByQuestion = (question, sections, currentSectionIndex, formGroup) => {
             const questionLogics = question.questionLogics;
             // Reset applied logic from this question
             questionLogics.some((logic) => {
+                var _a;
                 if (_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
                     if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.MarkAsFailed) {
                         delete question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed];
@@ -427,6 +422,10 @@ let UtilService = UtilService_1 = class UtilService {
                             }
                             else if (questionObject) {
                                 delete questionObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic];
+                                //Reset for sublogic applied
+                                const controlName = UtilService_1.FCUniqueName(sections[currentSectionIndex], questionObject);
+                                (_a = formGroup.controls[controlName]) === null || _a === void 0 ? void 0 : _a.reset();
+                                this.resetAppliedLogicByQuestion(questionObject, sections, currentSectionIndex, formGroup);
                             }
                         }
                         else if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.Hide) {
@@ -508,15 +507,15 @@ let UtilService = UtilService_1 = class UtilService {
             case 'green':
                 return '#7ED321';
             case 'gold':
-                return '#F5A623';
+                return '#df951b';
             case 'yellow':
-                return '#F8E71C';
+                return '#d1c20b';
             case 'red':
                 return '#D0021B';
             case 'blue':
                 return '#4A90E2';
             case 'grey':
-                return '#BBBBBB';
+                return '#9f9898';
             case 'turquoise':
                 return '#50E3C2';
             case 'purple':
@@ -827,7 +826,7 @@ let UtilService = UtilService_1 = class UtilService {
     checkAndApplyLogic(question, value, formGroup, sections, sectionIndex) {
         if (question.allowQuestionLogic) {
             const questionLogics = question.questionLogics;
-            this.resetAppliedLogicByQuestion(question, sections, sectionIndex);
+            this.resetAppliedLogicByQuestion(question, sections, sectionIndex, formGroup);
             // check which logic applicable
             questionLogics.some((logic) => {
                 if (_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
@@ -1020,7 +1019,6 @@ let UtilService = UtilService_1 = class UtilService {
             else if (questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.Duplicate) {
                 if (sectionObject) {
                     const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-                    duplicateSection['uniqueId'] = this.Uniqueid();
                     duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                     duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
                     sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
@@ -1028,7 +1026,6 @@ let UtilService = UtilService_1 = class UtilService {
                 }
                 else if (questionObject) {
                     const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-                    duplicateQuestion['uniqueId'] = this.Uniqueid();
                     duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                     duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
                     sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);

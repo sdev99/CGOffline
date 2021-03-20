@@ -417,10 +417,6 @@ export class UtilService {
 		const questionElementIds = [];
 		if (sections) {
 			sections.map((section, sectionIndex) => {
-				if (!section.uniqueId) {
-					section['uniqueId'] = this.Uniqueid();
-				}
-
 				// No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
 				if (section.isRiskAssessmentSection) {
 					const tasks = section.tasks;
@@ -441,10 +437,6 @@ export class UtilService {
 				} else {
 					const questions = section.questions;
 					questions.map((question, questionIndex) => {
-						if (!question.uniqueId) {
-							question['uniqueId'] = this.Uniqueid();
-						}
-
 						const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
 						if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
@@ -504,7 +496,7 @@ export class UtilService {
 		if (question.allowQuestionLogic) {
 			const questionLogics = question.questionLogics;
 
-			this.resetAppliedLogicByQuestion(question, sections, sectionIndex);
+			this.resetAppliedLogicByQuestion(question, sections, sectionIndex, formGroup);
 
 			// check which logic applicable
 			questionLogics.some((logic) => {
@@ -635,7 +627,7 @@ export class UtilService {
 	 * @param question
 	 * @param sections
 	 */
-	resetAppliedLogicByQuestion = (question, sections, sectionIndex) => {
+	resetAppliedLogicByQuestion = (question, sections, currentSectionIndex, formGroup) => {
 		const questionLogics = question.questionLogics;
 
 		// Reset applied logic from this question
@@ -723,6 +715,11 @@ export class UtilService {
 							delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
 						} else if (questionObject) {
 							delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+
+							//Reset for sublogic applied
+							const controlName = UtilService.FCUniqueName(sections[currentSectionIndex], questionObject);
+							formGroup.controls[controlName]?.reset();
+							this.resetAppliedLogicByQuestion(questionObject, sections, currentSectionIndex, formGroup);
 						}
 					} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
 						if (sectionObject) {
@@ -844,14 +841,12 @@ export class UtilService {
 			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
 				if (sectionObject) {
 					const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-					duplicateSection['uniqueId'] = this.Uniqueid();
 					duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateSection[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
 					sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
 					this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
 				} else if (questionObject) {
 					const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-					duplicateQuestion['uniqueId'] = this.Uniqueid();
 					duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateQuestion[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
 					sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);

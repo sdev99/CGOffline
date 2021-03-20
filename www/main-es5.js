@@ -482,11 +482,7 @@
 
             if (sections) {
               sections.map(function (section, sectionIndex) {
-                if (!section.uniqueId) {
-                  section['uniqueId'] = _this3.Uniqueid();
-                } // No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
-
-
+                // No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
                 if (section.isRiskAssessmentSection) {
                   var tasks = section.tasks;
                   tasks.map(function (task, questionIndex) {
@@ -509,10 +505,6 @@
                 } else {
                   var questions = section.questions;
                   questions.map(function (question, questionIndex) {
-                    if (!question.uniqueId) {
-                      question['uniqueId'] = _this3.Uniqueid();
-                    }
-
                     var elementId = UtilService_1.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
                     if (section.isAccidentReportSection && question.selectedAnswerTypeId === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].CustomAnswerType.LocationSelection) {
@@ -578,10 +570,12 @@
            */
 
 
-          this.resetAppliedLogicByQuestion = function (question, sections, sectionIndex) {
+          this.resetAppliedLogicByQuestion = function (question, sections, currentSectionIndex, formGroup) {
             var questionLogics = question.questionLogics; // Reset applied logic from this question
 
             questionLogics.some(function (logic) {
+              var _a;
+
               if (_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
                 if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.MarkAsFailed) {
                   delete question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed];
@@ -590,9 +584,7 @@
                 } else {
                   var questionActionOnID = logic.questionActionOnID;
                   var sectionAndQuestionNo = questionActionOnID.split('-');
-
-                  var _sectionIndex = sectionAndQuestionNo[0] - 1;
-
+                  var sectionIndex = sectionAndQuestionNo[0] - 1;
                   var questionIndex = sectionAndQuestionNo[1] - 1;
                   var sectionObject;
                   var questionObject; // For find current index to insert new duplicate item
@@ -600,12 +592,12 @@
                   var currentIndexOfSection = 0;
                   var currentIndexOfQuestion = 0;
 
-                  if (_sectionIndex >= 0) {
+                  if (sectionIndex >= 0) {
                     // Find Section/Question Index that was changed by current logic
                     for (var sectionKey = 0; sectionKey < sections.length; sectionKey++) {
                       var sectionItem = sections[sectionKey];
-                      var isQuestionChanged = _sectionIndex >= 0 && questionIndex >= 0;
-                      var isSectionChanged = _sectionIndex >= 0 && questionIndex < 0;
+                      var isQuestionChanged = sectionIndex >= 0 && questionIndex >= 0;
+                      var isSectionChanged = sectionIndex >= 0 && questionIndex < 0;
 
                       if (isQuestionChanged) {
                         for (var questionKey = 0; questionKey < sectionItem.questions.length; questionKey++) {
@@ -660,7 +652,12 @@
                     if (sectionObject) {
                       delete sectionObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic];
                     } else if (questionObject) {
-                      delete questionObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic];
+                      delete questionObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic]; //Reset for sublogic applied
+
+                      var controlName = UtilService_1.FCUniqueName(sections[currentSectionIndex], questionObject);
+                      (_a = formGroup.controls[controlName]) === null || _a === void 0 ? void 0 : _a.reset();
+
+                      _this3.resetAppliedLogicByQuestion(questionObject, sections, currentSectionIndex, formGroup);
                     }
                   } else if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.Hide) {
                     if (sectionObject) {
@@ -1025,7 +1022,7 @@
 
             if (question.allowQuestionLogic) {
               var questionLogics = question.questionLogics;
-              this.resetAppliedLogicByQuestion(question, sections, sectionIndex); // check which logic applicable
+              this.resetAppliedLogicByQuestion(question, sections, sectionIndex, formGroup); // check which logic applicable
 
               questionLogics.some(function (logic) {
                 if (_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
@@ -1222,14 +1219,12 @@
               } else if (questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.Duplicate) {
                 if (sectionObject) {
                   var duplicateSection = JSON.parse(JSON.stringify(sectionObject));
-                  duplicateSection['uniqueId'] = this.Uniqueid();
                   duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                   duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
                   sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
                   this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
                 } else if (questionObject) {
                   var duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
-                  duplicateQuestion['uniqueId'] = this.Uniqueid();
                   duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                   duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
                   sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
@@ -1312,10 +1307,10 @@
                 return '#7ED321';
 
               case 'gold':
-                return '#F5A623';
+                return '#df951b';
 
               case 'yellow':
-                return '#F8E71C';
+                return '#d1c20b';
 
               case 'red':
                 return '#D0021B';
@@ -1324,7 +1319,7 @@
                 return '#4A90E2';
 
               case 'grey':
-                return '#BBBBBB';
+                return '#9f9898';
 
               case 'turquoise':
                 return '#50E3C2';
