@@ -508,4 +508,3 @@ const hapticImpact = (options) => {
 /***/ })
 
 }]);
-//# sourceMappingURL=common-es2015.js.map

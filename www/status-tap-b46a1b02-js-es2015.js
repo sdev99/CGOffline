@@ -39,4 +39,3 @@ const startStatusTap = () => {
 /***/ })
 
 }]);
-//# sourceMappingURL=status-tap-b46a1b02-js-es2015.js.map

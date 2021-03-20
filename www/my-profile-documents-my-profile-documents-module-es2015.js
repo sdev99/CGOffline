@@ -227,4 +227,3 @@ MyProfileDocumentsPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]
 /***/ })
 
 }]);
-//# sourceMappingURL=my-profile-documents-my-profile-documents-module-es2015.js.map

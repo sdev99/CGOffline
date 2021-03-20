@@ -287,4 +287,3 @@ CheckinoutConfirmPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])
 /***/ })
 
 }]);
-//# sourceMappingURL=pages-checkinout-confirm-checkinout-confirm-module-es2015.js.map

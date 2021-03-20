@@ -244,4 +244,3 @@ CheckinListPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 /***/ })
 
 }]);
-//# sourceMappingURL=checkin-list-checkin-list-module-es2015.js.map

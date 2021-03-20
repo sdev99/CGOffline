@@ -210,4 +210,3 @@ FabList.style = fabListCss;
 /***/ })
 
 }]);
-//# sourceMappingURL=12-es2015.js.map

@@ -456,4 +456,3 @@ SkeletonText.style = skeletonTextCss;
 /***/ })
 
 }]);
-//# sourceMappingURL=17-es2015.js.map

@@ -1,7 +1,7 @@
 <ng-container [formGroup]="form">
 	<ion-radio-group [formControlName]="inputName">
 		<ion-item *ngFor="let item of list" class="question-item">
-			<ion-label class="ion-text-wrap" [ngStyle]="{ color: item.answerChoiceAttributeColor === 'white' ? null : item.answerChoiceAttributeColor }">
+			<ion-label class="ion-text-wrap" [ngStyle]="{ color: UtilService.getColorForAnswerChoice(item.answerChoiceAttributeColor) }">
 				{{ UtilService.findObj(item.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', sharedDataService.getLanguageIdForForm()).answerChoiceAttributeHeaderTitle }}
 			</ion-label>
 			<ion-radio mode="md" slot="start" (click)="onRadioSelect(item)" [value]="item.answerChoiceAttributeId"></ion-radio>

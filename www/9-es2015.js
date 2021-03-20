@@ -54,4 +54,3 @@ Chip.style = {
 /***/ })
 
 }]);
-//# sourceMappingURL=9-es2015.js.map

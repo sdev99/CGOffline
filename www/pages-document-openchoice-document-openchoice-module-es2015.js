@@ -222,4 +222,3 @@ __webpack_require__.r(__webpack_exports__);
 /***/ })
 
 }]);
-//# sourceMappingURL=pages-document-openchoice-document-openchoice-module-es2015.js.map

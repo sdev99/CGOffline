@@ -183,4 +183,3 @@ const MOUSE_WAIT = 2500;
 /***/ })
 
 }]);
-//# sourceMappingURL=tap-click-71d2324a-js-es2015.js.map

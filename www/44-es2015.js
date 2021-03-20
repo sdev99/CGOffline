@@ -53,4 +53,3 @@ const PWACameraModal = class {
 /***/ })
 
 }]);
-//# sourceMappingURL=44-es2015.js.map

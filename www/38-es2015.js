@@ -38,4 +38,3 @@ Text.style = textCss;
 /***/ })
 
 }]);
-//# sourceMappingURL=38-es2015.js.map

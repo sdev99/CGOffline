@@ -397,4 +397,3 @@ Icon.style = iconCss;
 /***/ })
 
 }]);
-//# sourceMappingURL=6-es2015.js.map

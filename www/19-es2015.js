@@ -575,4 +575,3 @@ MenuToggle.style = menuToggleCss;
 /***/ })
 
 }]);
-//# sourceMappingURL=19-es2015.js.map

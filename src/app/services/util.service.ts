@@ -42,6 +42,30 @@ export class UtilService {
 		return !environment.production && !Capacitor.isNative;
 	}
 
+	static getColorForAnswerChoice(color) {
+		switch (color) {
+			case 'black':
+				return '#000000';
+			case 'green':
+				return '#7ED321';
+			case 'gold':
+				return '#F5A623';
+			case 'yellow':
+				return '#F8E71C';
+			case 'red':
+				return '#D0021B';
+			case 'blue':
+				return '#4A90E2';
+			case 'grey':
+				return '#BBBBBB';
+			case 'turquoise':
+				return '#50E3C2';
+			case 'purple':
+				return '#9150E3';
+		}
+		return color;
+	}
+
 	static InductionContentTypeScreenIdentify(contentType, isDedicatedMode = false) {
 		let routeName = '';
 		switch (contentType) {
@@ -237,6 +261,21 @@ export class UtilService {
 		});
 	}
 
+	Uniqueid() {
+		// always start with a letter (for DOM friendlyness)
+		var idstr = String.fromCharCode(Math.floor(Math.random() * 25 + 65));
+		do {
+			// between numbers and characters (48 is 0 and 90 is Z (42-48 = 90)
+			var ascicode = Math.floor(Math.random() * 42 + 48);
+			if (ascicode < 58 || ascicode > 64) {
+				// exclude all chars between : (58) and @ (64)
+				idstr += String.fromCharCode(ascicode);
+			}
+		} while (idstr.length < 32);
+
+		return idstr;
+	}
+
 	async presentLoadingWithOptions(message = '') {
 		this.isLoadingRequestedInitiated = true;
 
@@ -378,6 +417,10 @@ export class UtilService {
 		const questionElementIds = [];
 		if (sections) {
 			sections.map((section, sectionIndex) => {
+				if (!section.uniqueId) {
+					section['uniqueId'] = this.Uniqueid();
+				}
+
 				// No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
 				if (section.isRiskAssessmentSection) {
 					const tasks = section.tasks;
@@ -397,8 +440,11 @@ export class UtilService {
 					});
 				} else {
 					const questions = section.questions;
-					const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 					questions.map((question, questionIndex) => {
+						if (!question.uniqueId) {
+							question['uniqueId'] = this.Uniqueid();
+						}
+
 						const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, question.questionId);
 
 						if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
@@ -424,7 +470,7 @@ export class UtilService {
 						} else {
 							if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
 								this.addDynamicFormControlsIfNotExist(section, sectionIndex, questionIndex, question, formGroup, (value) => {
-									this.checkAndApplyLogic(question, value, formGroup, sections);
+									this.checkAndApplyLogic(question, value, formGroup, sections, sectionIndex);
 								});
 								if (questionElementIds.indexOf(elementId) !== -1) {
 									questionElementIds.splice(questionElementIds.indexOf(elementId), 1);
@@ -447,102 +493,21 @@ export class UtilService {
 		UtilService.fireCallBack(this.questionElementIdsUpdate, questionElementIds);
 	};
 
-	checkAndApplyLogic(question, value, formGroup: FormGroup, sections) {
+	/**
+	 * Check logic for question and apply it to relevent section/question
+	 * @param question
+	 * @param value
+	 * @param formGroup
+	 * @param sections
+	 */
+	checkAndApplyLogic(question, value, formGroup: FormGroup, sections, sectionIndex) {
 		if (question.allowQuestionLogic) {
 			const questionLogics = question.questionLogics;
 
-			// Reset applied logic from this question
-			questionLogics.map((logic) => {
-				if (EnumService.QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
-					if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
-						delete question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
-					} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
-						delete question[EnumService.QuestionLogic.ActionTypeForForm.Notify];
-					} else {
-						const questionActionOnID = logic.questionActionOnID;
-						const sectionAndQuestionNo = questionActionOnID.split('-');
-						const sectionIndex = sectionAndQuestionNo[0] - 1;
-						const questionIndex = sectionAndQuestionNo[1] - 1;
-
-						let sectionObject;
-						let questionObject;
-
-						// For find current index to insert new duplicate item
-						let currentIndexOfSection = 0;
-						let currentIndexOfQuestion = 0;
-
-						if (sectionIndex >= 0) {
-							let duplicateSectionCount = 0;
-							sections.map((sectionItem, sectionKey) => {
-								if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
-									duplicateSectionCount++;
-								}
-
-								if (sectionKey === sectionIndex + duplicateSectionCount) {
-									if (sectionIndex >= 0 && questionIndex >= 0) {
-										let duplicateQuestionCount = 0;
-										sectionItem.questions.some((questionItem, questionKey) => {
-											if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
-												duplicateQuestionCount++;
-											}
-											if (questionKey === questionIndex + duplicateQuestionCount) {
-												questionObject = questionItem;
-												currentIndexOfSection = sectionIndex + duplicateSectionCount;
-												currentIndexOfQuestion = questionIndex + duplicateQuestionCount;
-												return true;
-											}
-										});
-									} else if (sectionIndex >= 0 && questionIndex < 0) {
-										sectionObject = sectionItem;
-										currentIndexOfSection = sectionIndex + duplicateSectionCount;
-									}
-									return;
-								}
-							});
-						}
-
-						if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
-							if (sectionObject) {
-								delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
-							} else if (questionObject) {
-								delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
-							}
-						} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
-							if (sectionObject) {
-								delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
-							} else if (questionObject) {
-								delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
-							}
-						} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
-							if (sectionObject) {
-								sections.map((section, key) => {
-									const uniquePreString = question.questionId + '' + logic.questionLogicId;
-									if (
-										section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] &&
-										section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString
-									) {
-										sections.splice(key, 1);
-									}
-								});
-							} else if (questionObject) {
-								sections[currentIndexOfSection].questions.map((questionInner, key) => {
-									const uniquePreString = question.questionId + '' + logic.questionLogicId;
-									if (
-										questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] &&
-										questionInner[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString
-									) {
-										sections[currentIndexOfSection].questions.splice(key, 1);
-									}
-								});
-							}
-						}
-					}
-				}
-			});
-			// -- End
+			this.resetAppliedLogicByQuestion(question, sections, sectionIndex);
 
 			// check which logic applicable
-			questionLogics.map((logic) => {
+			questionLogics.some((logic) => {
 				if (EnumService.QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
 					let isActionMeet = false;
 					if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet) {
@@ -656,7 +621,7 @@ export class UtilService {
 					}
 
 					if (isActionMeet) {
-						this.applyLogicOn(question, logic, sections);
+						this.applyLogicOn(question, logic, sections, sectionIndex);
 					}
 				}
 			});
@@ -665,7 +630,133 @@ export class UtilService {
 		}
 	}
 
-	applyLogicOn(question, logic, sections) {
+	/**
+	 * Reset all applied logics for passed question
+	 * @param question
+	 * @param sections
+	 */
+	resetAppliedLogicByQuestion = (question, sections, sectionIndex) => {
+		const questionLogics = question.questionLogics;
+
+		// Reset applied logic from this question
+		questionLogics.some((logic) => {
+			if (EnumService.QuestionLogic.LogicApplicableForQuestionTypes.indexOf(question.selectedAnswerTypeId) !== -1) {
+				if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
+					delete question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
+				} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
+					delete question[EnumService.QuestionLogic.ActionTypeForForm.Notify];
+				} else {
+					const questionActionOnID = logic.questionActionOnID;
+					const sectionAndQuestionNo = questionActionOnID.split('-');
+					const sectionIndex = sectionAndQuestionNo[0] - 1;
+					const questionIndex = sectionAndQuestionNo[1] - 1;
+
+					let sectionObject;
+					let questionObject;
+
+					// For find current index to insert new duplicate item
+					let currentIndexOfSection = 0;
+					let currentIndexOfQuestion = 0;
+
+					if (sectionIndex >= 0) {
+						// Find Section/Question Index that was changed by current logic
+						for (let sectionKey = 0; sectionKey < sections.length; sectionKey++) {
+							const sectionItem = sections[sectionKey];
+
+							const isQuestionChanged = sectionIndex >= 0 && questionIndex >= 0;
+							const isSectionChanged = sectionIndex >= 0 && questionIndex < 0;
+
+							if (isQuestionChanged) {
+								for (let questionKey = 0; questionKey < sectionItem.questions.length; questionKey++) {
+									const questionItem = sectionItem.questions[questionKey];
+									if (questionItem['applied_relation_ids'] && logic['applied_relation_id'] && questionItem['applied_relation_ids'].indexOf(logic['applied_relation_id']) != -1) {
+										questionObject = questionItem;
+										currentIndexOfSection = sectionKey;
+										currentIndexOfQuestion = questionKey;
+										break;
+									}
+								}
+							} else if (isSectionChanged) {
+								if (sectionItem['applied_relation_ids'] && logic['applied_relation_id'] && sectionItem['applied_relation_ids'].indexOf(logic['applied_relation_id']) != -1) {
+									sectionObject = sectionItem;
+									currentIndexOfSection = sectionKey;
+									break;
+								}
+							}
+						}
+
+						// let duplicateSectionCount = 0;
+
+						// for (let sectionKey = 0; sectionKey < sections.length; sectionKey++) {
+						// 	const sectionItem = sections[sectionKey];
+						// 	if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+						// 		duplicateSectionCount++;
+						// 	}
+
+						// 	if (sectionKey === sectionIndex + duplicateSectionCount) {
+						// 		if (sectionIndex >= 0 && questionIndex >= 0) {
+						// 			let duplicateQuestionCount = 0;
+
+						// 			for (let questionKey = 0; questionKey < sectionItem.questions.length; questionKey++) {
+						// 				const questionItem = sectionItem.questions[questionKey];
+						// 				if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
+						// 					duplicateQuestionCount++;
+						// 				}
+						// 				if (questionKey === questionIndex + duplicateQuestionCount) {
+						// 					questionObject = questionItem;
+						// 					currentIndexOfSection = sectionIndex + duplicateSectionCount;
+						// 					currentIndexOfQuestion = questionIndex + duplicateQuestionCount;
+						// 					break;
+						// 				}
+						// 			}
+						// 		} else if (sectionIndex >= 0 && questionIndex < 0) {
+						// 			sectionObject = sectionItem;
+						// 			currentIndexOfSection = sectionIndex + duplicateSectionCount;
+						// 		}
+						// 		break;
+						// 	}
+						// }
+					}
+
+					if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
+						if (sectionObject) {
+							delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+						} else if (questionObject) {
+							delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+						}
+					} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
+						if (sectionObject) {
+							delete sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
+						} else if (questionObject) {
+							delete questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
+						}
+					} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
+						if (sectionObject) {
+							sections.some((section, key) => {
+								const uniquePreString = question.questionId + '' + logic.questionLogicId;
+								if (section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] && section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString) {
+									sections.splice(key, 1);
+								}
+							});
+						} else if (questionObject) {
+							sections[currentIndexOfSection].questions.some((questionInner, key) => {
+								const uniquePreString = question.questionId + '' + logic.questionLogicId;
+								if (
+									questionInner[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] &&
+									questionInner[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] === uniquePreString
+								) {
+									sections[currentIndexOfSection].questions.splice(key, 1);
+								}
+							});
+						}
+					}
+				}
+			}
+		});
+		// -- End
+	};
+
+	applyLogicOn(question, logic, sections, currentSectionIndex) {
 		if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
 			question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
 		} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
@@ -687,7 +778,13 @@ export class UtilService {
 			// TO find original question/section index except duplicate question/section index
 			if (sectionIndex >= 0) {
 				let duplicateSectionCount = 0;
-				sections.some((sectionItem, sectionKey) => {
+
+				const currentSection = sections[currentSectionIndex];
+
+				let isValueFound = false;
+
+				for (let sectionKey = 0; sectionKey < sections.length; sectionKey++) {
+					const sectionItem = sections[sectionKey];
 					if (sectionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
 						duplicateSectionCount++;
 					}
@@ -695,7 +792,15 @@ export class UtilService {
 					if (sectionKey === sectionIndex + duplicateSectionCount) {
 						if (sectionIndex >= 0 && questionIndex >= 0) {
 							let duplicateQuestionCount = 0;
-							sectionItem.questions.some((questionItem, questionKey) => {
+
+							let questions;
+							if (sectionItem.sectionId === currentSection.sectionId) {
+								questions = currentSection.questions;
+							} else {
+								questions = sectionItem.questions;
+							}
+							for (let questionKey = 0; questionKey < questions.length; questionKey++) {
+								const questionItem = questions[questionKey];
 								if (questionItem[EnumService.QuestionLogic.ActionTypeForForm.Duplicate]) {
 									duplicateQuestionCount++;
 								}
@@ -703,56 +808,84 @@ export class UtilService {
 									questionObject = questionItem;
 									currentIndexOfSection = sectionKey;
 									currentIndexOfQuestion = questionKey;
-									return true;
+									isValueFound = true;
+									break;
 								}
-							});
+							}
 						} else if (sectionIndex >= 0 && questionIndex < 0) {
 							sectionObject = sectionItem;
 							currentIndexOfSection = sectionKey;
+							isValueFound = true;
+							break;
 						}
-						return true;
 					}
-				});
+					if (isValueFound) {
+						break;
+					}
+				}
 			}
 
 			if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Show) {
 				if (sectionObject) {
 					sectionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(sectionObject, logic);
 				} else if (questionObject) {
 					questionObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
 				}
 			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Hide) {
 				if (sectionObject) {
 					sectionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(sectionObject, logic);
 				} else if (questionObject) {
 					questionObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
 				}
 			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Duplicate) {
 				if (sectionObject) {
 					const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
+					duplicateSection['uniqueId'] = this.Uniqueid();
 					duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateSection[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
 					sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
 				} else if (questionObject) {
 					const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
+					duplicateQuestion['uniqueId'] = this.Uniqueid();
 					duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateQuestion[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
 					sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateQuestion, logic);
 				}
 			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
 				if (sectionObject) {
 					sectionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(sectionObject, logic);
 				} else if (questionObject) {
 					questionObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
 				}
 			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
 				if (sectionObject) {
 					sectionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(sectionObject, logic);
 				} else if (questionObject) {
 					questionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
 				}
 			}
 		}
+	}
+
+	setUniqueRelationIdOnLogicAndQuestionOrSection(question, logic) {
+		const uniqueId = this.Uniqueid();
+		logic['applied_relation_id'] = uniqueId;
+		let relationIds = question['applied_relation_ids'];
+		if (!relationIds) {
+			relationIds = [];
+		}
+		relationIds.push(uniqueId);
+		question['applied_relation_ids'] = relationIds;
 	}
 
 	removeFieldIfAdded(formGroup: FormGroup, formControlName) {

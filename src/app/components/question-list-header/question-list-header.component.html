@@ -22,7 +22,7 @@
 				<ion-img *ngIf="attachmentIcon" [src]="attachmentIcon"></ion-img>
 				<ion-icon slot="start" *ngIf="!attachmentIcon" [src]="UtilService.FileIcon(attachment.fileExtension)"></ion-icon>
 				<ion-label>
-					{{ attachment.fileName }}
+					{{ attachment.documentTitle }}
 				</ion-label>
 			</ion-item>
 		</ng-container>

@@ -158,4 +158,3 @@ DOMTokenList
 /***/ })
 
 }]);
-//# sourceMappingURL=dom-js-es2015.js.map

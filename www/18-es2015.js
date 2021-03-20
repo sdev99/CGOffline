@@ -234,4 +234,3 @@ Loading.style = {
 /***/ })
 
 }]);
-//# sourceMappingURL=18-es2015.js.map
