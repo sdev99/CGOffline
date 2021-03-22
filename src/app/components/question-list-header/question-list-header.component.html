@@ -1,7 +1,7 @@
 <ion-list-header lines="full">
 	<h6>
 		<ion-note color="danger" *ngIf="required">*</ion-note>
-		<ion-text style="white-space: pre">{{ qNo + '. ' + questionTitle }}</ion-text>
+		<ion-text style="white-space: pre-wrap">{{ qNo + '. ' + questionTitle }}</ion-text>
 	</h6>
 
 	<ion-item *ngIf="note" lines="none" class="ion-no-margin ion-no-padding note-item">
