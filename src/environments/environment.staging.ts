@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
-  isWebApp: false,
-  apiUrl: " http://besafetech-test.com/x4wnyp56gow2ffl/api",
+	production: true,
+	isWebApp: false,
+	apiUrl: 'https://api.besafetech-test.com/te3kx2bj6u2y3ru/api/',
 };
