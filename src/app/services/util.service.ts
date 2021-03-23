@@ -180,12 +180,22 @@ export class UtilService {
 
 	static FCUniqueName(section, question) {
 		let preString = '';
-		const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-		const isQuestionDuplicate = question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-		if (section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
+		let isSectionDuplicate = false;
+		if (section) {
+			isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+		} else {
+			debugger;
+		}
+		let isQuestionDuplicate = false;
+		if (question) {
+			isQuestionDuplicate = question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
+		} else {
+			debugger;
+		}
+		if (section && section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
 			preString = preString + '' + section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName];
 		}
-		if (question[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
+		if (question && question[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
 			preString = preString + '' + question[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName];
 		}
 		return preString + 'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + section.sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + question.questionId;
@@ -615,7 +625,7 @@ export class UtilService {
 					}
 
 					if (isActionMeet) {
-						this.applyLogicOn(question, logic, sections, sectionIndex);
+						this.applyLogicOn(question, logic, sections, sectionIndex, formGroup);
 					}
 				}
 			});
@@ -755,7 +765,7 @@ export class UtilService {
 		// -- End
 	};
 
-	applyLogicOn(question, logic, sections, currentSectionIndex) {
+	applyLogicOn(question, logic, sections, currentSectionIndex, formGroup) {
 		if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.MarkAsFailed) {
 			question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
 		} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
@@ -845,12 +855,29 @@ export class UtilService {
 					const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
 					duplicateSection[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateSection[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+
+					try {
+						this.removeLogicHelpersFromObjectForDuplicate(duplicateSection);
+						duplicateSection.questions?.map((quesItem) => {
+							const controlName = UtilService.FCUniqueName(duplicateSection, quesItem);
+							formGroup.controls[controlName]?.reset();
+							this.removeLogicHelpersFromObjectForDuplicate(quesItem);
+						});
+					} catch (error) {}
+
 					sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
 					this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
 				} else if (questionObject) {
 					const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
 					duplicateQuestion[EnumService.QuestionLogic.ActionTypeForForm.Duplicate] = true;
 					duplicateQuestion[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+
+					try {
+						const controlName = UtilService.FCUniqueName(sections[currentSectionIndex], duplicateQuestion);
+						formGroup.controls[controlName]?.reset();
+						this.removeLogicHelpersFromObjectForDuplicate(duplicateQuestion);
+					} catch (error) {}
+
 					sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
 					this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateQuestion, logic);
 				}
@@ -872,6 +899,13 @@ export class UtilService {
 				}
 			}
 		}
+	}
+
+	removeLogicHelpersFromObjectForDuplicate(newObject) {
+		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.HideForLogic];
+		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
+		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
+		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.Notify];
 	}
 
 	setUniqueRelationIdOnLogicAndQuestionOrSection(question, logic) {
