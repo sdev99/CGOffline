@@ -3,10 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  isWebApp: false,
-  // apiUrl: 'https://login.be-safetech.com/x4wnyp56gow2ffl/api'
-  apiUrl: "https://cg.utopia-test.com/x4wnyp56gow2ffl/api",
+	production: false,
+	isWebApp: false,
+	// apiUrl: 'https://login.be-safetech.com/x4wnyp56gow2ffl/api'
+	apiUrl: 'https://cg.utopia-test.com/x4wnyp56gow2ffl/api',
 };
 
 /*

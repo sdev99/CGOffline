@@ -618,12 +618,24 @@ let UtilService = UtilService_1 = class UtilService {
     }
     static FCUniqueName(section, question) {
         let preString = '';
-        const isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-        const isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-        if (section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
+        let isSectionDuplicate = false;
+        if (section) {
+            isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
+        }
+        else {
+            debugger;
+        }
+        let isQuestionDuplicate = false;
+        if (question) {
+            isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
+        }
+        else {
+            debugger;
+        }
+        if (section && section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
             preString = preString + '' + section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
         }
-        if (question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
+        if (question && question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
             preString = preString + '' + question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
         }
         return preString + 'FormControl_' + (isSectionDuplicate ? 'Duplicate_' : '') + section.sectionId + '_' + (isQuestionDuplicate ? 'Duplicate_' : '') + question.questionId;
@@ -927,14 +939,15 @@ let UtilService = UtilService_1 = class UtilService {
                         }
                     }
                     if (isActionMeet) {
-                        this.applyLogicOn(question, logic, sections, sectionIndex);
+                        this.applyLogicOn(question, logic, sections, sectionIndex, formGroup);
                     }
                 }
             });
             this.addFormControlsForVisibleFields(sections, formGroup);
         }
     }
-    applyLogicOn(question, logic, sections, currentSectionIndex) {
+    applyLogicOn(question, logic, sections, currentSectionIndex, formGroup) {
+        var _a, _b;
         if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.MarkAsFailed) {
             question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
         }
@@ -1023,6 +1036,16 @@ let UtilService = UtilService_1 = class UtilService {
                     const duplicateSection = JSON.parse(JSON.stringify(sectionObject));
                     duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                     duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+                    try {
+                        this.removeLogicHelpersFromObjectForDuplicate(duplicateSection);
+                        (_a = duplicateSection.questions) === null || _a === void 0 ? void 0 : _a.map((quesItem) => {
+                            var _a;
+                            const controlName = UtilService_1.FCUniqueName(duplicateSection, quesItem);
+                            (_a = formGroup.controls[controlName]) === null || _a === void 0 ? void 0 : _a.reset();
+                            this.removeLogicHelpersFromObjectForDuplicate(quesItem);
+                        });
+                    }
+                    catch (error) { }
                     sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
                     this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
                 }
@@ -1030,6 +1053,12 @@ let UtilService = UtilService_1 = class UtilService {
                     const duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
                     duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                     duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+                    try {
+                        const controlName = UtilService_1.FCUniqueName(sections[currentSectionIndex], duplicateQuestion);
+                        (_b = formGroup.controls[controlName]) === null || _b === void 0 ? void 0 : _b.reset();
+                        this.removeLogicHelpersFromObjectForDuplicate(duplicateQuestion);
+                    }
+                    catch (error) { }
                     sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
                     this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateQuestion, logic);
                 }
@@ -1055,6 +1084,12 @@ let UtilService = UtilService_1 = class UtilService {
                 }
             }
         }
+    }
+    removeLogicHelpersFromObjectForDuplicate(newObject) {
+        delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.HideForLogic];
+        delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic];
+        delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed];
+        delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Notify];
     }
     setUniqueRelationIdOnLogicAndQuestionOrSection(question, logic) {
         const uniqueId = this.Uniqueid();
@@ -2044,23 +2079,11 @@ EnumService = EnumService_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decor
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
 const environment = {
-    production: false,
+    production: true,
     isWebApp: false,
-    // apiUrl: 'https://login.be-safetech.com/x4wnyp56gow2ffl/api'
-    apiUrl: "https://cg.utopia-test.com/x4wnyp56gow2ffl/api",
+    apiUrl: 'https://api.besafetech-test.com/te3kx2bj6u2y3ru/api/',
 };
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
 
 
 /***/ }),

@@ -1122,7 +1122,7 @@
                   }
 
                   if (isActionMeet) {
-                    _this6.applyLogicOn(question, logic, sections, sectionIndex);
+                    _this6.applyLogicOn(question, logic, sections, sectionIndex, formGroup);
                   }
                 }
               });
@@ -1131,7 +1131,11 @@
           }
         }, {
           key: "applyLogicOn",
-          value: function applyLogicOn(question, logic, sections, currentSectionIndex) {
+          value: function applyLogicOn(question, logic, sections, currentSectionIndex, formGroup) {
+            var _this7 = this;
+
+            var _a, _b;
+
             if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.MarkAsFailed) {
               question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
             } else if (logic.questionActionTypeID === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionType.Notify) {
@@ -1221,12 +1225,32 @@
                   var duplicateSection = JSON.parse(JSON.stringify(sectionObject));
                   duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                   duplicateSection[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+
+                  try {
+                    this.removeLogicHelpersFromObjectForDuplicate(duplicateSection);
+                    (_a = duplicateSection.questions) === null || _a === void 0 ? void 0 : _a.map(function (quesItem) {
+                      var _a;
+
+                      var controlName = UtilService_1.FCUniqueName(duplicateSection, quesItem);
+                      (_a = formGroup.controls[controlName]) === null || _a === void 0 ? void 0 : _a.reset();
+
+                      _this7.removeLogicHelpersFromObjectForDuplicate(quesItem);
+                    });
+                  } catch (error) {}
+
                   sections.splice(currentIndexOfSection + 1, 0, duplicateSection);
                   this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateSection, logic);
                 } else if (questionObject) {
                   var duplicateQuestion = JSON.parse(JSON.stringify(questionObject));
                   duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate] = true;
                   duplicateQuestion[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName] = question.questionId + '' + logic.questionLogicId;
+
+                  try {
+                    var controlName = UtilService_1.FCUniqueName(sections[currentSectionIndex], duplicateQuestion);
+                    (_b = formGroup.controls[controlName]) === null || _b === void 0 ? void 0 : _b.reset();
+                    this.removeLogicHelpersFromObjectForDuplicate(duplicateQuestion);
+                  } catch (error) {}
+
                   sections[currentIndexOfSection].questions.splice(currentIndexOfQuestion + 1, 0, duplicateQuestion);
                   this.setUniqueRelationIdOnLogicAndQuestionOrSection(duplicateQuestion, logic);
                 }
@@ -1248,6 +1272,14 @@
                 }
               }
             }
+          }
+        }, {
+          key: "removeLogicHelpersFromObjectForDuplicate",
+          value: function removeLogicHelpersFromObjectForDuplicate(newObject) {
+            delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.HideForLogic];
+            delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.ShowForLogic];
+            delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.MarkAsFailed];
+            delete newObject[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Notify];
           }
         }, {
           key: "setUniqueRelationIdOnLogicAndQuestionOrSection",
@@ -1467,14 +1499,27 @@
           key: "FCUniqueName",
           value: function FCUniqueName(section, question) {
             var preString = '';
-            var isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-            var isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
+            var isSectionDuplicate = false;
 
-            if (section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
+            if (section) {
+              isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
+            } else {
+              debugger;
+            }
+
+            var isQuestionDuplicate = false;
+
+            if (question) {
+              isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
+            } else {
+              debugger;
+            }
+
+            if (section && section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
               preString = preString + '' + section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
             }
 
-            if (question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
+            if (question && question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
               preString = preString + '' + question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
             }
 
@@ -2077,7 +2122,7 @@
           key: "choosePhotoOption",
           value: function choosePhotoOption(callBack) {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-              var _this7 = this;
+              var _this8 = this;
 
               var actionSheet;
               return regeneratorRuntime.wrap(function _callee4$(_context4) {
@@ -2092,13 +2137,13 @@
                           text: 'Camera',
                           icon: 'camera-outline',
                           handler: function handler() {
-                            _this7.takePhotoFromCamera(callBack);
+                            _this8.takePhotoFromCamera(callBack);
                           }
                         }, {
                           text: 'Gallery',
                           icon: 'images-outline',
                           handler: function handler() {
-                            _this7.takePhotoFromGallery(callBack);
+                            _this8.takePhotoFromGallery(callBack);
                           }
                         }, {
                           text: 'Cancel',
@@ -2450,7 +2495,7 @@
         _createClass(HttpConfigInterceptor, [{
           key: "intercept",
           value: function intercept(request, next) {
-            var _this8 = this;
+            var _this9 = this;
 
             var accessID = this.sharedDataService.deviceUID;
             var token = localStorage.getItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_5__["EnumService"].LocalStorageKeys.API_TOKEN); // Authentication by setting header with token value
@@ -2488,14 +2533,14 @@
 
               if (error) {
                 if (error.StatusCode === _services_enum_service__WEBPACK_IMPORTED_MODULE_5__["EnumService"].ApiResponseCode.InvalidToken) {
-                  return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["from"])(_this8.accountService.getToken()).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function (res) {
+                  return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["from"])(_this9.accountService.getToken()).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function (res) {
                     request = request.clone({
                       setHeaders: {
                         accessID: accessID,
                         token: res.token
                       }
                     });
-                    return _this8.intercept(request, next);
+                    return _this9.intercept(request, next);
                   }));
                 } else if (error.StatusCode === _services_enum_service__WEBPACK_IMPORTED_MODULE_5__["EnumService"].ApiResponseCode.InvalidData) {
                   var errorMessage = '';
@@ -2972,26 +3017,13 @@
 
       __webpack_require__.d(__webpack_exports__, "environment", function () {
         return environment;
-      }); // This file can be replaced during build by using the `fileReplacements` array.
-      // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-      // The list of file replacements can be found in `angular.json`.
-
+      });
 
       var environment = {
-        production: false,
+        production: true,
         isWebApp: false,
-        // apiUrl: 'https://login.be-safetech.com/x4wnyp56gow2ffl/api'
-        apiUrl: "https://cg.utopia-test.com/x4wnyp56gow2ffl/api"
+        apiUrl: 'https://api.besafetech-test.com/te3kx2bj6u2y3ru/api/'
       };
-      /*
-       * For easier debugging in development mode, you can import the following file
-       * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
-       *
-       * This import should be commented out in production mode because it will have a negative impact
-       * on performance if an error is thrown.
-       */
-      // import 'zone.js/dist/zone-error';  // Included with Angular CLI.
-
       /***/
     },
 
@@ -3133,7 +3165,7 @@
 
       var DeviceInfoComponent = /*#__PURE__*/function () {
         function DeviceInfoComponent(menu, navController, sharedDataService) {
-          var _this9 = this;
+          var _this10 = this;
 
           _classCallCheck(this, DeviceInfoComponent);
 
@@ -3144,7 +3176,7 @@
           this.UtilService = _services_util_service__WEBPACK_IMPORTED_MODULE_7__["UtilService"];
 
           this.checkForNetwork = function () {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this9, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this10, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
               var ntstatus;
               return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
@@ -3172,12 +3204,12 @@
         _createClass(DeviceInfoComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this10 = this;
+            var _this11 = this;
 
             Network.addListener('networkStatusChange', function (status) {
               console.log('Network status changed', status);
 
-              _this10.checkForNetwork();
+              _this11.checkForNetwork();
             });
           }
         }, {
@@ -3424,7 +3456,7 @@
 
       var ColorPickerComponent = /*#__PURE__*/function () {
         function ColorPickerComponent() {
-          var _this11 = this;
+          var _this12 = this;
 
           _classCallCheck(this, ColorPickerComponent);
 
@@ -3442,23 +3474,23 @@
             // const width = currentWidth * 90 / 100;
             //
             // const touchX = width / 2;
-            _this11.chooserX = _this11.chooserHeight;
-            _this11.colorFromChooser = '#000000';
+            _this12.chooserX = _this12.chooserHeight;
+            _this12.colorFromChooser = '#000000';
 
-            _this11.colorChanged.emit(_this11.colorFromChooser); //
+            _this12.colorChanged.emit(_this12.colorFromChooser); //
 
 
-            _this11.initChooser();
+            _this12.initChooser();
 
-            _this11.initPalette();
+            _this12.initPalette();
           };
 
           this.drawSelector = function (ctx, x, y) {
-            _this11.drawPalette(_this11.colorFromChooser);
+            _this12.drawPalette(_this12.colorFromChooser);
 
             ctx.beginPath();
-            ctx.arc(x, y, 10 * _this11.getPixelRatio(ctx), 0, 2 * Math.PI, false);
-            ctx.fillStyle = _this11.color;
+            ctx.arc(x, y, 10 * _this12.getPixelRatio(ctx), 0, 2 * Math.PI, false);
+            ctx.fillStyle = _this12.color;
             ctx.fill();
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#FFFFFF';
@@ -3466,11 +3498,11 @@
           };
 
           this.drawChooserSelector = function (ctx, x) {
-            _this11.drawPalette(_this11.colorFromChooser);
+            _this12.drawPalette(_this12.colorFromChooser);
 
             ctx.beginPath();
             ctx.arc(x, ctx.canvas.height / 2, ctx.canvas.height / 2, 0, 2 * Math.PI, false);
-            ctx.fillStyle = _this11.colorFromChooser;
+            ctx.fillStyle = _this12.colorFromChooser;
             ctx.fill();
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#FFFFFF';
@@ -3478,118 +3510,118 @@
           };
 
           this.initPalette = function () {
-            var canvasPalette = _this11.palette.nativeElement;
-            _this11.ctxPalette = canvasPalette.getContext('2d');
+            var canvasPalette = _this12.palette.nativeElement;
+            _this12.ctxPalette = canvasPalette.getContext('2d');
             var currentWidth = window.innerWidth;
 
-            var pixelRatio = _this11.getPixelRatio(_this11.ctxPalette);
+            var pixelRatio = _this12.getPixelRatio(_this12.ctxPalette);
 
             var width = currentWidth * 90 / 100;
             var height = width * 0.5;
-            _this11.ctxPalette.canvas.width = width * pixelRatio;
-            _this11.ctxPalette.canvas.height = height * pixelRatio;
-            _this11.ctxPalette.canvas.style.width = width + 'px';
-            _this11.ctxPalette.canvas.style.height = height + 'px';
+            _this12.ctxPalette.canvas.width = width * pixelRatio;
+            _this12.ctxPalette.canvas.height = height * pixelRatio;
+            _this12.ctxPalette.canvas.style.width = width + 'px';
+            _this12.ctxPalette.canvas.style.height = height + 'px';
 
-            _this11.drawPalette(_this11.colorFromChooser);
+            _this12.drawPalette(_this12.colorFromChooser);
 
             var eventChangeColor = function eventChangeColor(event) {
-              _this11.updateColor(event, canvasPalette, _this11.ctxPalette);
+              _this12.updateColor(event, canvasPalette, _this12.ctxPalette);
             };
 
             POUCH.forEach(function (pouch) {
               canvasPalette.addEventListener(pouch.START, function (event) {
-                _this11.colorTouchStart.emit();
+                _this12.colorTouchStart.emit();
 
-                _this11.drawPalette(_this11.colorFromChooser);
+                _this12.drawPalette(_this12.colorFromChooser);
 
                 canvasPalette.addEventListener(pouch.MOVE, eventChangeColor);
 
-                _this11.updateColor(event, canvasPalette, _this11.ctxPalette);
+                _this12.updateColor(event, canvasPalette, _this12.ctxPalette);
               });
               canvasPalette.addEventListener(pouch.STOP, function (event) {
-                _this11.colorTouchEnd.emit();
+                _this12.colorTouchEnd.emit();
 
                 canvasPalette.removeEventListener(pouch.MOVE, eventChangeColor);
 
-                _this11.updateColor(event, canvasPalette, _this11.ctxPalette);
+                _this12.updateColor(event, canvasPalette, _this12.ctxPalette);
 
-                _this11.drawSelector(_this11.ctxPalette, _this11.paletteX, _this11.paletteY);
+                _this12.drawSelector(_this12.ctxPalette, _this12.paletteX, _this12.paletteY);
               });
             });
           };
 
           this.drawPalette = function (endColor) {
-            _this11.ctxPalette.clearRect(0, 0, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height);
+            _this12.ctxPalette.clearRect(0, 0, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height);
 
-            var gradient = _this11.ctxPalette.createLinearGradient(0, 0, _this11.ctxPalette.canvas.width, 0); // Create color gradient
+            var gradient = _this12.ctxPalette.createLinearGradient(0, 0, _this12.ctxPalette.canvas.width, 0); // Create color gradient
 
 
             gradient.addColorStop(0, '#FFFFFF');
             gradient.addColorStop(1, endColor); // Apply gradient to canvas
 
-            _this11.ctxPalette.fillStyle = gradient;
+            _this12.ctxPalette.fillStyle = gradient;
 
-            _this11.ctxPalette.fillRect(0, 0, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height); // Create semi transparent gradient (white -> trans. -> black)
+            _this12.ctxPalette.fillRect(0, 0, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height); // Create semi transparent gradient (white -> trans. -> black)
 
 
-            gradient = _this11.ctxPalette.createLinearGradient(0, 0, 0, _this11.ctxPalette.canvas.height);
+            gradient = _this12.ctxPalette.createLinearGradient(0, 0, 0, _this12.ctxPalette.canvas.height);
             gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
             gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
             gradient.addColorStop(0.5, 'rgba(0,     0,   0, 0)');
             gradient.addColorStop(1, 'rgba(0,     0,   0, 1)'); // Apply gradient to canvas
 
-            _this11.ctxPalette.fillStyle = gradient;
+            _this12.ctxPalette.fillStyle = gradient;
 
-            _this11.ctxPalette.fillRect(0, 0, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height);
+            _this12.ctxPalette.fillRect(0, 0, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height);
           };
 
           this.initChooser = function () {
-            var canvasChooser = _this11.chooser.nativeElement;
+            var canvasChooser = _this12.chooser.nativeElement;
             var ctx = canvasChooser.getContext('2d');
             var currentWidth = window.innerWidth;
 
-            var pixelRatio = _this11.getPixelRatio(ctx);
+            var pixelRatio = _this12.getPixelRatio(ctx);
 
             var width = currentWidth * 90 / 100;
-            var height = _this11.chooserHeight;
+            var height = _this12.chooserHeight;
             ctx.canvas.width = width * pixelRatio;
             ctx.canvas.height = height * pixelRatio;
             ctx.canvas.style.width = width + 'px';
             ctx.canvas.style.height = height + 'px';
 
-            _this11.drawChooser(ctx);
+            _this12.drawChooser(ctx);
 
             setTimeout(function () {
-              _this11.drawChooserSelector(ctx, _this11.chooserX);
+              _this12.drawChooserSelector(ctx, _this12.chooserX);
             }, 100);
 
             var eventChangeColorChooser = function eventChangeColorChooser(event) {
-              _this11.updateColorChooser(event, canvasChooser, ctx);
+              _this12.updateColorChooser(event, canvasChooser, ctx);
 
-              _this11.drawSelector(_this11.ctxPalette, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height / 2);
+              _this12.drawSelector(_this12.ctxPalette, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height / 2);
             };
 
             POUCH.forEach(function (pouch) {
               canvasChooser.addEventListener(pouch.START, function (event) {
-                _this11.drawChooser(ctx);
+                _this12.drawChooser(ctx);
 
                 canvasChooser.addEventListener(pouch.MOVE, eventChangeColorChooser);
 
-                _this11.updateColorChooser(event, canvasChooser, ctx);
+                _this12.updateColorChooser(event, canvasChooser, ctx);
 
-                _this11.drawSelector(_this11.ctxPalette, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height / 2);
+                _this12.drawSelector(_this12.ctxPalette, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height / 2);
               });
               canvasChooser.addEventListener(pouch.STOP, function (event) {
                 canvasChooser.removeEventListener(pouch.MOVE, eventChangeColorChooser);
 
-                _this11.updateColorChooser(event, canvasChooser, ctx);
+                _this12.updateColorChooser(event, canvasChooser, ctx);
 
-                _this11.drawChooser(ctx);
+                _this12.drawChooser(ctx);
 
-                _this11.drawChooserSelector(ctx, _this11.chooserX);
+                _this12.drawChooserSelector(ctx, _this12.chooserX);
 
-                _this11.drawSelector(_this11.ctxPalette, _this11.ctxPalette.canvas.width, _this11.ctxPalette.canvas.height / 2);
+                _this12.drawSelector(_this12.ctxPalette, _this12.ctxPalette.canvas.width, _this12.ctxPalette.canvas.height / 2);
               });
             });
           };
@@ -3626,17 +3658,17 @@
           };
 
           this.updateColorChooser = function (event, canvas, context) {
-            _this11.color = _this11.colorFromChooser = _this11.getColor(event, canvas, context, true);
+            _this12.color = _this12.colorFromChooser = _this12.getColor(event, canvas, context, true);
 
-            _this11.colorChanged.emit(_this11.color);
+            _this12.colorChanged.emit(_this12.color);
 
-            _this11.drawPalette(_this11.color);
+            _this12.drawPalette(_this12.color);
           };
 
           this.updateColor = function (event, canvas, context) {
-            _this11.color = _this11.getColor(event, canvas, context, false);
+            _this12.color = _this12.getColor(event, canvas, context, false);
 
-            _this11.colorChanged.emit(_this11.color);
+            _this12.colorChanged.emit(_this12.color);
           };
 
           this.getColor = function (event, canvas, context, fromChooser) {
@@ -3647,32 +3679,32 @@
 
             var movingX = touchX - bounding.left;
 
-            if (movingX < _this11.chooserHeight) {
-              movingX = _this11.chooserHeight / 2;
-            } else if (movingX > bounding.width - _this11.chooserHeight) {
-              movingX = bounding.width - _this11.chooserHeight / 2;
+            if (movingX < _this12.chooserHeight) {
+              movingX = _this12.chooserHeight / 2;
+            } else if (movingX > bounding.width - _this12.chooserHeight) {
+              movingX = bounding.width - _this12.chooserHeight / 2;
             } // --end
 
 
-            var x = movingX * _this11.getPixelRatio(context); // const x = (touchX - bounding.left) * this.getPixelRatio(context);
+            var x = movingX * _this12.getPixelRatio(context); // const x = (touchX - bounding.left) * this.getPixelRatio(context);
 
 
-            var y = (touchY - bounding.top) * _this11.getPixelRatio(context);
+            var y = (touchY - bounding.top) * _this12.getPixelRatio(context);
 
             if (fromChooser) {
-              _this11.chooserX = x;
+              _this12.chooserX = x;
             } else {
-              _this11.paletteX = x;
-              _this11.paletteY = y;
+              _this12.paletteX = x;
+              _this12.paletteY = y;
             } // const imageData = context.getImageData(x, y, 1, 1);
 
 
-            var imageData = context.getImageData(x, _this11.chooserHeight, 1, 1);
+            var imageData = context.getImageData(x, _this12.chooserHeight, 1, 1);
             var red = imageData.data[0];
             var green = imageData.data[1];
             var blue = imageData.data[2];
 
-            var color = '#' + _this11.toHex(red) + _this11.toHex(green) + _this11.toHex(blue);
+            var color = '#' + _this12.toHex(red) + _this12.toHex(green) + _this12.toHex(blue);
 
             console.log('x ' + x);
             console.log('y ' + y);
@@ -3698,7 +3730,7 @@
         _createClass(ColorPickerComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this12 = this;
+            var _this13 = this;
 
             if (this.hexColor) {
               this.colorFromChooser = this.hexColor;
@@ -3707,7 +3739,7 @@
             }
 
             setTimeout(function () {
-              _this12.init();
+              _this13.init();
             }, 200);
           }
         }]);
@@ -4115,12 +4147,12 @@
         }, {
           key: "getTimeZoneList",
           value: function getTimeZoneList() {
-            var _this13 = this;
+            var _this14 = this;
 
             return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiMethods.GetTimeZoneList)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(function (data) {
               if (data.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 var list = data.Result;
-                _this13.sharedDataService.timeZoneList = list;
+                _this14.sharedDataService.timeZoneList = list;
                 return list;
               }
 
@@ -4130,12 +4162,12 @@
         }, {
           key: "getCompanyLanguageList",
           value: function getCompanyLanguageList(companyId) {
-            var _this14 = this;
+            var _this15 = this;
 
             return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiMethods.GetCompanyLanguageList, "/").concat(companyId)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(function (data) {
               if (data.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 var list = data.Result;
-                _this14.sharedDataService.companyLanguageList = list;
+                _this15.sharedDataService.companyLanguageList = list;
                 return list;
               }
 
@@ -4158,12 +4190,12 @@
         }, {
           key: "getLocationItemList",
           value: function getLocationItemList(companyId) {
-            var _this15 = this;
+            var _this16 = this;
 
             return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiMethods.GetLocationItemList, "/").concat(companyId)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(function (data) {
               if (data.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 var list = data.Result;
-                _this15.sharedDataService.locationItemList = list;
+                _this16.sharedDataService.locationItemList = list;
               }
 
               return data;
@@ -4873,7 +4905,7 @@
           key: "logoutClick",
           value: function logoutClick() {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
-              var _this16 = this;
+              var _this17 = this;
 
               var modal;
               return regeneratorRuntime.wrap(function _callee10$(_context10) {
@@ -4902,11 +4934,11 @@
                         var data = _ref.data;
 
                         if (data) {
-                          _this16.sharedDataService.resetAllSharedVariable();
+                          _this17.sharedDataService.resetAllSharedVariable();
 
                           localStorage.removeItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_7__["EnumService"].LocalStorageKeys.DEDICATED_MODE_LOCATION_USE);
 
-                          _this16.navController.navigateRoot('choose-location');
+                          _this17.navController.navigateRoot('choose-location');
                         }
                       });
 
@@ -5265,7 +5297,7 @@
 
       var DashboardHeaderComponent = /*#__PURE__*/function () {
         function DashboardHeaderComponent(router, navCtrl, sharedDataService, observablesService, accountService, apiService) {
-          var _this17 = this;
+          var _this18 = this;
 
           _classCallCheck(this, DashboardHeaderComponent);
 
@@ -5287,19 +5319,19 @@
           this.getUserCurrentCheckinDetails = function () {
             var _a;
 
-            _this17.apiService.getUserCurrentCheckingDetails((_a = _this17.user) === null || _a === void 0 ? void 0 : _a.userId).subscribe(function (response) {
+            _this18.apiService.getUserCurrentCheckingDetails((_a = _this18.user) === null || _a === void 0 ? void 0 : _a.userId).subscribe(function (response) {
               if (response.StatusCode === _services_enum_service__WEBPACK_IMPORTED_MODULE_7__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 var checkedInPlaces = response.Result;
-                _this17.sharedDataService.checkedInPlaces = checkedInPlaces;
-                _this17.checkedPlaces = checkedInPlaces;
+                _this18.sharedDataService.checkedInPlaces = checkedInPlaces;
+                _this18.checkedPlaces = checkedInPlaces;
                 localStorage.setItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_7__["EnumService"].LocalStorageKeys.CHECKED_IN_PLACES, JSON.stringify(checkedInPlaces)); // Check if selected checkedInPlaces is currently checked or not
                 // if not then select first place from list
 
                 if (checkedInPlaces && checkedInPlaces.length > 0) {
-                  if (_this17.selectedPlace) {
+                  if (_this18.selectedPlace) {
                     var found = false;
                     checkedInPlaces.map(function (item) {
-                      if (_this17.selectedPlace.userCheckInDetailID === item.userCheckInDetailID) {
+                      if (_this18.selectedPlace.userCheckInDetailID === item.userCheckInDetailID) {
                         found = true;
                         return;
                       }
@@ -5308,19 +5340,19 @@
                     if (!found) {
                       var place = checkedInPlaces && checkedInPlaces.length > 0 ? checkedInPlaces[0] : null;
 
-                      _this17.placedChange(place);
+                      _this18.placedChange(place);
                     }
                   } else {
-                    var _place = _this17.checkedPlaces[0];
+                    var _place = _this18.checkedPlaces[0];
 
-                    _this17.placedChange(_place);
+                    _this18.placedChange(_place);
                   }
 
-                  _this17.checkedIn = true;
+                  _this18.checkedIn = true;
                 } else {
-                  _this17.checkedIn = false;
+                  _this18.checkedIn = false;
 
-                  _this17.placedChange(null);
+                  _this18.placedChange(null);
                 }
               }
             });
@@ -5330,7 +5362,7 @@
           this.checkedPlaces = sharedDataService.checkedInPlaces;
           this.checkedPlaces.map(function (place, key) {
             if (place.userCheckInDetailID === sharedDataService.currentSelectedCheckinPlace.userCheckInDetailID) {
-              _this17.currentCheckinPlaceIndex = key;
+              _this18.currentCheckinPlaceIndex = key;
             }
           });
 
@@ -5351,16 +5383,16 @@
         _createClass(DashboardHeaderComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this18 = this;
+            var _this19 = this;
 
             this.getUserCurrentCheckinDetails();
             this.observablesService.getObservable(_services_enum_service__WEBPACK_IMPORTED_MODULE_7__["EnumService"].ObserverKeys.NEW_CHECKED_IN).subscribe(function (data) {
               if (data) {
-                _this18.getUserCurrentCheckinDetails();
+                _this19.getUserCurrentCheckinDetails();
               }
             });
             this.observablesService.getObservable(_services_enum_service__WEBPACK_IMPORTED_MODULE_7__["EnumService"].ObserverKeys.CURRENT_CHECKED_IN_CHANGED).subscribe(function (data) {
-              _this18.selectedPlace = _this18.sharedDataService.currentSelectedCheckinPlace;
+              _this19.selectedPlace = _this19.sharedDataService.currentSelectedCheckinPlace;
             });
           }
         }, {
@@ -5985,7 +6017,7 @@
 
       var SearchLocationPage = /*#__PURE__*/function () {
         function SearchLocationPage(modalController) {
-          var _this19 = this;
+          var _this20 = this;
 
           _classCallCheck(this, SearchLocationPage);
 
@@ -5993,21 +6025,21 @@
           this.searchText = '';
 
           this.onDismiss = function (item) {
-            _this19.modalController.dismiss(item);
+            _this20.modalController.dismiss(item);
           };
         }
 
         _createClass(SearchLocationPage, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this20 = this;
+            var _this21 = this;
 
             setTimeout(function () {
-              if (_this20.searchBar) {
-                if (_this20.searchBar.setFocus) {
-                  _this20.searchBar.setFocus();
+              if (_this21.searchBar) {
+                if (_this21.searchBar.setFocus) {
+                  _this21.searchBar.setFocus();
                 } else {
-                  _this20.searchBar.nativeElement.setFocus();
+                  _this21.searchBar.nativeElement.setFocus();
                 }
               }
             }, 1000);
@@ -6400,14 +6432,14 @@
 
       var HomeExitDmPage = /*#__PURE__*/function () {
         function HomeExitDmPage(modalController) {
-          var _this21 = this;
+          var _this22 = this;
 
           _classCallCheck(this, HomeExitDmPage);
 
           this.modalController = modalController;
 
           this.onDismiss = function (status) {
-            _this21.modalController.dismiss(status);
+            _this22.modalController.dismiss(status);
           };
         }
 
@@ -6562,22 +6594,22 @@
         }, {
           key: "generatePermitClick",
           value: function generatePermitClick() {
-            var _this22 = this;
+            var _this23 = this;
 
             var _a;
 
             this.utilService.presentLoadingWithOptions();
             var companyID = (_a = this.sharedDataService.dedicatedModeDeviceDetailData) === null || _a === void 0 ? void 0 : _a.companyID;
             this.apiService.getDedicatedModeAvailableWorkPermits(companyID).subscribe(function (response) {
-              _this22.utilService.hideLoading();
+              _this23.utilService.hideLoading();
 
               if (response.StatusCode === _services_enum_service__WEBPACK_IMPORTED_MODULE_8__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                _this22.sharedDataService.availableWorkPermits = response.Result;
+                _this23.sharedDataService.availableWorkPermits = response.Result;
 
-                _this22.navController.navigateForward('checkin-workpermit');
+                _this23.navController.navigateForward('checkin-workpermit');
               }
             }, function (error) {
-              _this22.utilService.hideLoading();
+              _this23.utilService.hideLoading();
             });
           }
         }]);
@@ -7298,7 +7330,7 @@
 
       var AppComponent = /*#__PURE__*/function () {
         function AppComponent(platform, ngZone, statusBar, uniqueDeviceID, sharedDataService, utilService, observablesService, navController, screenOrientation, accountService, apiService, router, badge, translateService) {
-          var _this23 = this;
+          var _this24 = this;
 
           _classCallCheck(this, AppComponent);
 
@@ -7320,49 +7352,49 @@
           this.appSettingLoaded = function (isDeviceAssignedForDedicatedMode) {
             var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-            _this23.ngZone.run(function () {
+            _this24.ngZone.run(function () {
               var _a;
 
-              _this23.utilService.hideLoading();
+              _this24.utilService.hideLoading();
 
               if (isDeviceAssignedForDedicatedMode) {
                 // If already personal mode user logged in then logout it
-                if (!_this23.sharedDataService.dedicatedMode && _this23.accountService.userValue && ((_a = _this23.accountService.userValue) === null || _a === void 0 ? void 0 : _a.userId)) {
-                  _this23.accountService.logout(_this23.accountService.userValue.userId, false);
+                if (!_this24.sharedDataService.dedicatedMode && _this24.accountService.userValue && ((_a = _this24.accountService.userValue) === null || _a === void 0 ? void 0 : _a.userId)) {
+                  _this24.accountService.logout(_this24.accountService.userValue.userId, false);
                 }
 
-                _this23.configureAppForDedicatedMode(data);
+                _this24.configureAppForDedicatedMode(data);
               } else {
                 // If already dedicated mode then clear dedicated mode data
-                if (_this23.sharedDataService.dedicatedMode) {
-                  _this23.sharedDataService.dedicatedModeDeviceDeleted();
+                if (_this24.sharedDataService.dedicatedMode) {
+                  _this24.sharedDataService.dedicatedModeDeviceDeleted();
                 }
 
-                _this23.configureAppForPersonalMode();
+                _this24.configureAppForPersonalMode();
               }
             });
           };
 
           this.getDeviceUniqueId = function (callBack) {
-            _this23.uniqueDeviceID.get().then(function (uuid) {
+            _this24.uniqueDeviceID.get().then(function (uuid) {
               console.log('Device UUID ', uuid);
 
               if (uuid && uuid.length > 0) {
-                _this23.sharedDataService.deviceUID = uuid;
+                _this24.sharedDataService.deviceUID = uuid;
               } else {
-                _this23.sharedDataService.deviceUID = '';
+                _this24.sharedDataService.deviceUID = '';
               }
 
               _services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].fireCallBack(callBack);
             })["catch"](function (error) {
               console.log(error);
-              _this23.sharedDataService.deviceUID = '';
+              _this24.sharedDataService.deviceUID = '';
 
               if (_services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].isLocalHost()) {
-                _this23.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
+                _this24.sharedDataService.deviceUID = '67DA70A1-FD31-4B48-81F6-74E9EB356632';
               }
 
-              console.log('Device UID ', _this23.sharedDataService.deviceUID);
+              console.log('Device UID ', _this24.sharedDataService.deviceUID);
 
               _services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].fireCallBack(callBack);
             });
@@ -7376,26 +7408,26 @@
               // reset password url https://login.be-safetech.com/Login/ResetPassword?code=TTQ4LOM8
               // setup new account https://login.be-safetech.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
               App.addListener('appUrlOpen', function (data) {
-                _this23.ngZone.run(function () {
+                _this24.ngZone.run(function () {
                   // Example url: https://beerswift.app/tabs/tab2
                   // slug = /tabs/tab2
                   var url = data.url;
 
                   if (url.indexOf('ResetPassword') !== -1) {
-                    _this23.sharedDataService.isNavigationTypeDeepLink = true;
+                    _this24.sharedDataService.isNavigationTypeDeepLink = true;
 
                     var code = _services_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].getQueryStringValue(url, 'code');
 
-                    _this23.router.navigate(['forgot-password-reset'], {
+                    _this24.router.navigate(['forgot-password-reset'], {
                       queryParams: {
                         code: code
                       }
                     });
                   } else if (url.indexOf('AccountSetup') !== -1) {
-                    _this23.sharedDataService.isNavigationTypeDeepLink = true;
+                    _this24.sharedDataService.isNavigationTypeDeepLink = true;
                     var userId = url.split('/').pop();
 
-                    _this23.router.navigate(['new-account-setup'], {
+                    _this24.router.navigate(['new-account-setup'], {
                       queryParams: {
                         userId: userId
                       }
@@ -7407,8 +7439,8 @@
           };
 
           this.checkForAccessKey = function (callBack) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
-              var _this24 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
+              var _this25 = this;
 
               return regeneratorRuntime.wrap(function _callee13$(_context13) {
                 while (1) {
@@ -7416,7 +7448,7 @@
                     case 0:
                       if (!localStorage.getItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].LocalStorageKeys.API_ACCESS_KEY)) {
                         this.accountService.getAccessKey().subscribe(function (data) {
-                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this25, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
                             return regeneratorRuntime.wrap(function _callee11$(_context11) {
                               while (1) {
                                 switch (_context11.prev = _context11.next) {
@@ -7431,7 +7463,7 @@
                             }, _callee11);
                           }));
                         }, function (error) {
-                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this25, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
                             return regeneratorRuntime.wrap(function _callee12$(_context12) {
                               while (1) {
                                 switch (_context12.prev = _context12.next) {
@@ -7460,8 +7492,8 @@
           };
 
           this.checkForToken = function (callBack) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
-              var _this25 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
+              var _this26 = this;
 
               return regeneratorRuntime.wrap(function _callee16$(_context16) {
                 while (1) {
@@ -7469,7 +7501,7 @@
                     case 0:
                       if (!localStorage.getItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].LocalStorageKeys.API_TOKEN)) {
                         this.accountService.getToken().subscribe(function (token) {
-                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this25, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
+                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this26, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
                             return regeneratorRuntime.wrap(function _callee14$(_context14) {
                               while (1) {
                                 switch (_context14.prev = _context14.next) {
@@ -7484,7 +7516,7 @@
                             }, _callee14);
                           }));
                         }, function (error) {
-                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this25, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
+                          return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this26, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
                             return regeneratorRuntime.wrap(function _callee15$(_context15) {
                               while (1) {
                                 switch (_context15.prev = _context15.next) {
@@ -7513,15 +7545,15 @@
           };
 
           this.checkDeviceForDeticatedMode = function (callBack) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee19() {
-              var _this26 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee19() {
+              var _this27 = this;
 
               return regeneratorRuntime.wrap(function _callee19$(_context19) {
                 while (1) {
                   switch (_context19.prev = _context19.next) {
                     case 0:
                       this.apiService.getDeviceEntityDetails(this.sharedDataService.deviceUID).subscribe(function (data) {
-                        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this26, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
+                        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this27, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
                           var _a, _b, _c;
 
                           return regeneratorRuntime.wrap(function _callee17$(_context17) {
@@ -7547,7 +7579,7 @@
                           }, _callee17);
                         }));
                       }, function (error) {
-                        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this26, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
+                        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this27, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
                           return regeneratorRuntime.wrap(function _callee18$(_context18) {
                             while (1) {
                               switch (_context18.prev = _context18.next) {
@@ -7576,8 +7608,8 @@
 
           this.configureAppForDedicatedMode = function () {
             var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee20() {
-              var _this27 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee20() {
+              var _this28 = this;
 
               var _d, _e, _f, _g;
 
@@ -7621,7 +7653,7 @@
                       }
 
                       setTimeout(function () {
-                        _this27.configureForLocation();
+                        _this28.configureForLocation();
                       }, 1000);
                       this.sharedDataService.updatePushSettingOnServer(false);
 
@@ -7635,8 +7667,8 @@
           };
 
           this.configureAppForPersonalMode = function () {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee21() {
-              var _this28 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee21() {
+              var _this29 = this;
 
               var user;
               return regeneratorRuntime.wrap(function _callee21$(_context21) {
@@ -7663,7 +7695,7 @@
 
                               if (response.StatusCode === _services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].ApiResponseCode.RequestSuccessful) {
                                 if ((_a = response.Result) === null || _a === void 0 ? void 0 : _a.isMobileSessionExpiration) {
-                                  _this28.navController.navigateRoot('/login', {
+                                  _this29.navController.navigateRoot('/login', {
                                     replaceUrl: true
                                   });
                                 }
@@ -7677,9 +7709,9 @@
 
                       localStorage.removeItem(_services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].LocalStorageKeys.IS_DEDICATED_MODE);
                       setTimeout(function () {
-                        _this28.sharedDataService.configureForPushNotification();
+                        _this29.sharedDataService.configureForPushNotification();
 
-                        _this28.configureForLocation();
+                        _this29.configureForLocation();
                       }, 1000);
 
                     case 4:
@@ -7692,8 +7724,8 @@
           };
 
           this.configureForLocation = function () {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this23, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee22() {
-              var _this29 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this24, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee22() {
+              var _this30 = this;
 
               var locationPermission;
               return regeneratorRuntime.wrap(function _callee22$(_context22) {
@@ -7720,7 +7752,7 @@
                     case 7:
                       Geolocation.getCurrentPosition().then(function (response) {
                         if (response) {
-                          _this29.sharedDataService.myCurrentGeoLocation = response;
+                          _this30.sharedDataService.myCurrentGeoLocation = response;
                           console.log('Current Location CP', response);
                         }
                       })["catch"](function (error) {
@@ -7737,7 +7769,7 @@
                       try {
                         Geolocation.watchPosition({}, function (response) {
                           if (response) {
-                            _this29.sharedDataService.myCurrentGeoLocation = response;
+                            _this30.sharedDataService.myCurrentGeoLocation = response;
                             console.log('Current Location WP', response);
                           }
                         });
@@ -7760,11 +7792,11 @@
         _createClass(AppComponent, [{
           key: "initializeApp",
           value: function initializeApp() {
-            var _this30 = this;
+            var _this31 = this;
 
             this.platform.ready().then(function () {
-              return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this30, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee23() {
-                var _this31 = this;
+              return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this31, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee23() {
+                var _this32 = this;
 
                 var appLang;
                 return regeneratorRuntime.wrap(function _callee23$(_context23) {
@@ -7780,7 +7812,7 @@
                         }
 
                         _capacitor_core__WEBPACK_IMPORTED_MODULE_4__["Plugins"].App.addListener('appRestoredResult', function (data) {
-                          _this31.observablesService.publishSomeData(_services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].ObserverKeys.APP_RESTORED_RESULT, data.data);
+                          _this32.observablesService.publishSomeData(_services_enum_service__WEBPACK_IMPORTED_MODULE_9__["EnumService"].ObserverKeys.APP_RESTORED_RESULT, data.data);
                         });
 
                         _capacitor_core__WEBPACK_IMPORTED_MODULE_4__["Plugins"].App.addListener('backButton', function (data) {});
@@ -7788,10 +7820,10 @@
                         this.setupDeepLink();
                         this.loadAppSettings();
                         setTimeout(function () {
-                          _this31.ngZone.run(function () {
+                          _this32.ngZone.run(function () {
                             SplashScreen.hide();
 
-                            _this31.badge.clear();
+                            _this32.badge.clear();
                           });
                         }, 1500);
 
@@ -7808,7 +7840,7 @@
           key: "loadAppSettings",
           value: function loadAppSettings() {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee24() {
-              var _this32 = this;
+              var _this33 = this;
 
               return regeneratorRuntime.wrap(function _callee24$(_context24) {
                 while (1) {
@@ -7816,9 +7848,9 @@
                     case 0:
                       this.utilService.presentLoadingWithOptions();
                       this.getDeviceUniqueId(function () {
-                        _this32.checkForAccessKey(function () {
-                          _this32.checkForToken(function () {
-                            _this32.apiService.getTimeZoneList().subscribe(function () {}); // Test demo - should be remove after development complete
+                        _this33.checkForAccessKey(function () {
+                          _this33.checkForToken(function () {
+                            _this33.apiService.getTimeZoneList().subscribe(function () {}); // Test demo - should be remove after development complete
                             // For test dedicated mode in mobile
                             // if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632' ||
                             //     this.sharedDataService.deviceUID === 'd99fe84c-5538-25ce-8637-870495265348') {
@@ -7846,18 +7878,18 @@
 
 
                             if (!src_environments_environment__WEBPACK_IMPORTED_MODULE_19__["environment"].isWebApp) {
-                              if (_this32.sharedDataService.isTablet) {
-                                _this32.checkDeviceForDeticatedMode(function (_ref2) {
+                              if (_this33.sharedDataService.isTablet) {
+                                _this33.checkDeviceForDeticatedMode(function (_ref2) {
                                   var isDeviceAssigned = _ref2.isDeviceAssigned,
                                       data = _ref2.data;
 
-                                  _this32.appSettingLoaded(isDeviceAssigned, data);
+                                  _this33.appSettingLoaded(isDeviceAssigned, data);
                                 });
                               } else {
-                                _this32.appSettingLoaded(false);
+                                _this33.appSettingLoaded(false);
                               }
                             } else {
-                              _this32.utilService.hideLoading();
+                              _this33.utilService.hideLoading();
                             }
                           });
                         });
@@ -8521,13 +8553,13 @@
         }, {
           key: "onRadioSelect",
           value: function onRadioSelect(item) {
-            var _this33 = this;
+            var _this34 = this;
 
             var value = this.form.controls[this.inputName].value;
 
             if (value === item.answerChoiceAttributeId) {
               setTimeout(function () {
-                _this33.form.controls[_this33.inputName].reset('');
+                _this34.form.controls[_this34.inputName].reset('');
               }, 100);
             }
           }
@@ -9262,7 +9294,7 @@
         }, {
           key: "login",
           value: function login() {
-            var _this34 = this;
+            var _this35 = this;
 
             var email = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
             var password = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
@@ -9280,10 +9312,10 @@
                 var userInfo = data.Result;
                 localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_DATA, JSON.stringify(userInfo));
 
-                _this34.userSubject.next(userInfo);
+                _this35.userSubject.next(userInfo);
 
                 if (userInfo.mobileAppLanguageID) {
-                  _this34.sharedDataService.currentLanguageId = userInfo.mobileAppLanguageID;
+                  _this35.sharedDataService.currentLanguageId = userInfo.mobileAppLanguageID;
                 }
 
                 return data;
@@ -9295,18 +9327,18 @@
         }, {
           key: "checkMobileSessionExpirationSetting",
           value: function checkMobileSessionExpirationSetting(companyID) {
-            var _this35 = this;
+            var _this36 = this;
 
             return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_7__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].ApiMethods.GetCompanyMobileSessionDetails, "/").concat(companyID)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(function (data) {
               var _a, _b;
 
               if (data.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 if ((_a = data.Result) === null || _a === void 0 ? void 0 : _a.isMobileSessionExpiration) {
-                  var user = _this35.userValue;
+                  var user = _this36.userValue;
                   user.isMobileSessionExpiration = true;
                   localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_DATA, JSON.stringify(user));
 
-                  _this35.userSubject.next(user);
+                  _this36.userSubject.next(user);
                 }
 
                 return data;
@@ -9318,14 +9350,14 @@
         }, {
           key: "getUserProfile",
           value: function getUserProfile(userId) {
-            var _this36 = this;
+            var _this37 = this;
 
             return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_7__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].ApiMethods.GetUserProfileById, "/").concat(userId)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["map"])(function (data) {
               if (data.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].ApiResponseCode.RequestSuccessful) {
                 var userProfile = data.Result;
                 localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_PROFILE, JSON.stringify(userProfile));
-                _this36.sharedDataService.userProfile = userProfile;
-                _this36.sharedDataService.currentLanguageId = userProfile === null || userProfile === void 0 ? void 0 : userProfile.mobileAppLanguageID;
+                _this37.sharedDataService.userProfile = userProfile;
+                _this37.sharedDataService.currentLanguageId = userProfile === null || userProfile === void 0 ? void 0 : userProfile.mobileAppLanguageID;
                 return userProfile;
               }
 
@@ -9387,7 +9419,7 @@
         }, {
           key: "newAccountSetup",
           value: function newAccountSetup(body) {
-            var _this37 = this;
+            var _this38 = this;
 
             return this.http.post("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_7__["environment"].apiUrl, "/").concat(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].ApiMethods.AccountSetup), Object.assign({
               deviceID: this.sharedDataService.pushToken,
@@ -9399,7 +9431,7 @@
                 var userInfo = data.Result;
                 localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_DATA, JSON.stringify(userInfo));
 
-                _this37.userSubject.next(userInfo);
+                _this38.userSubject.next(userInfo);
 
                 return data;
               }
@@ -9458,7 +9490,7 @@
         }, {
           key: "logout",
           value: function logout(userId) {
-            var _this38 = this;
+            var _this39 = this;
 
             var navigateToLogin = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
             var option = {
@@ -9472,10 +9504,10 @@
                 localStorage.removeItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_DATA);
                 localStorage.removeItem(_enum_service__WEBPACK_IMPORTED_MODULE_6__["EnumService"].LocalStorageKeys.USER_PROFILE);
 
-                _this38.userSubject.next(null);
+                _this39.userSubject.next(null);
 
                 if (navigateToLogin) {
-                  _this38.navController.navigateBack(['login'], {
+                  _this39.navController.navigateBack(['login'], {
                     replaceUrl: true
                   });
 
@@ -10714,7 +10746,7 @@
 
       var PhotoFieldComponent = PhotoFieldComponent_1 = /*#__PURE__*/function () {
         function PhotoFieldComponent(photoService, sanitizer, mediaCapture, navCtrl, sharedDataService, actionSheetController) {
-          var _this39 = this;
+          var _this40 = this;
 
           _classCallCheck(this, PhotoFieldComponent);
 
@@ -10733,15 +10765,15 @@
           this.onTouch = function () {};
 
           this.openImageAnnotation = function (photo) {
-            _this39.sharedDataService.isOpenImageAnnotation = true;
+            _this40.sharedDataService.isOpenImageAnnotation = true;
 
-            _this39.sharedDataService.setAnnotationImage(photo);
+            _this40.sharedDataService.setAnnotationImage(photo);
 
-            _this39.sharedDataService.onAnnotationImageDone = function (image) {
-              _this39.photoAdded(image);
+            _this40.sharedDataService.onAnnotationImageDone = function (image) {
+              _this40.photoAdded(image);
             };
 
-            _this39.navCtrl.navigateForward(['/image-annotation']);
+            _this40.navCtrl.navigateForward(['/image-annotation']);
           };
         }
 
@@ -10764,30 +10796,30 @@
         }, {
           key: "addPhotoFromCamera",
           value: function addPhotoFromCamera() {
-            var _this40 = this;
+            var _this41 = this;
 
             this.photoService.takePhotoFromCamera(function (photo) {
-              _this40.isVideo = false;
+              _this41.isVideo = false;
 
-              _this40.openImageAnnotation(photo);
+              _this41.openImageAnnotation(photo);
             });
           }
         }, {
           key: "addVideoFromCamera",
           value: function addVideoFromCamera() {
-            var _this41 = this;
+            var _this42 = this;
 
             var options = {
               limit: 1,
               duration: 3600
             };
             this.mediaCapture.captureVideo(options).then(function (data) {
-              _this41.isVideo = true;
+              _this42.isVideo = true;
               var capturedFile = data[0];
               var videoUrl = capturedFile.fullPath;
-              _this41.videoUrl = _capacitor_core__WEBPACK_IMPORTED_MODULE_11__["Capacitor"].convertFileSrc(videoUrl);
+              _this42.videoUrl = _capacitor_core__WEBPACK_IMPORTED_MODULE_11__["Capacitor"].convertFileSrc(videoUrl);
 
-              _this41.photoAdded(videoUrl);
+              _this42.photoAdded(videoUrl);
             }, function (err) {
               console.error(err);
             });
@@ -10796,7 +10828,7 @@
           key: "choosePhotoVideoOption",
           value: function choosePhotoVideoOption() {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee25() {
-              var _this42 = this;
+              var _this43 = this;
 
               var actionSheet;
               return regeneratorRuntime.wrap(function _callee25$(_context25) {
@@ -10811,13 +10843,13 @@
                           text: 'Photo',
                           icon: 'camera-outline',
                           handler: function handler() {
-                            _this42.addPhotoFromCamera();
+                            _this43.addPhotoFromCamera();
                           }
                         }, {
                           text: 'Video',
                           icon: 'videocam-outline',
                           handler: function handler() {
-                            _this42.addVideoFromCamera();
+                            _this43.addVideoFromCamera();
                           }
                         }, {
                           text: 'Cancel',
@@ -10843,19 +10875,19 @@
         }, {
           key: "addPhotoFromLibrary",
           value: function addPhotoFromLibrary() {
-            var _this43 = this;
+            var _this44 = this;
 
             this.photoService.takePhotoFromGallery(function (photo) {
               if (photo.isVideo) {
-                _this43.isVideo = true;
+                _this44.isVideo = true;
                 var videoUrl = photo.dataUrl;
-                _this43.videoUrl = _capacitor_core__WEBPACK_IMPORTED_MODULE_11__["Capacitor"].convertFileSrc(videoUrl);
+                _this44.videoUrl = _capacitor_core__WEBPACK_IMPORTED_MODULE_11__["Capacitor"].convertFileSrc(videoUrl);
 
-                _this43.photoAdded(videoUrl);
+                _this44.photoAdded(videoUrl);
               } else {
-                _this43.isVideo = false;
+                _this44.isVideo = false;
 
-                _this43.openImageAnnotation(photo);
+                _this44.openImageAnnotation(photo);
               }
             }, true);
           }
@@ -10992,12 +11024,12 @@
         }, {
           key: "showSearchBar",
           value: function showSearchBar() {
-            var _this44 = this;
+            var _this45 = this;
 
             this.ngZone.run(function () {
-              _this44.searchBarShow = !_this44.searchBarShow;
+              _this45.searchBarShow = !_this45.searchBarShow;
 
-              _this44.searchbarShowHide.emit(_this44.searchBarShow);
+              _this45.searchbarShowHide.emit(_this45.searchBarShow);
             });
           }
         }]);
@@ -11153,7 +11185,7 @@
 
       var SharedDataService = /*#__PURE__*/function () {
         function SharedDataService(router, platform, file, fileTransfer, navCtrl, observablesService, utilService, screenOrientation) {
-          var _this45 = this;
+          var _this46 = this;
 
           _classCallCheck(this, SharedDataService);
 
@@ -11201,8 +11233,8 @@
           this.currentLanguageId = 0;
 
           this.configureForPushNotification = function () {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this45, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee26() {
-              var _this46 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this46, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee26() {
+              var _this47 = this;
 
               var notificationPermission;
               return regeneratorRuntime.wrap(function _callee26$(_context26) {
@@ -11233,11 +11265,11 @@
                         if (result.granted) {
                           localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].LocalStorageKeys.PUSH_PERMISSION_ALLOWED, 'true'); // Register with Apple / Google to receive push via APNS/FCM
 
-                          _this46.registerForPushNotification();
+                          _this47.registerForPushNotification();
                         } else {
                           localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].LocalStorageKeys.PUSH_PERMISSION_ALLOWED, 'false');
 
-                          _this46.updatePushSettingOnServer(false);
+                          _this47.updatePushSettingOnServer(false);
                         }
                       });
 
@@ -11253,7 +11285,7 @@
                       // On success, we should be able to receive notifications
                       PushNotifications.addListener('registration', function (token) {
                         localStorage.setItem(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].LocalStorageKeys.PUSH_TOKEN, token.value);
-                        _this46.pushToken = token.value;
+                        _this47.pushToken = token.value;
                         console.log('Push registration success, token: ' + token.value);
                       }); // Show us the notification payload if the app is open on our device
 
@@ -11269,11 +11301,11 @@
                             case _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].NotificationActionType.NewActivityAssigned:
                             case _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].NotificationActionType.SignOffRejected:
                             case _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].NotificationActionType.ActivityOverdue:
-                              if (!_this46.dedicatedMode && _this46.getLoggedInUser() && _this46.getLoggedInUser().userId) {
+                              if (!_this47.dedicatedMode && _this47.getLoggedInUser() && _this47.getLoggedInUser().userId) {
                                 setTimeout(function () {
                                   var contentlink = notificationData.contentlink;
                                   var activityId = contentlink.split('_').pop();
-                                  var activityList = _this46.activityList;
+                                  var activityList = _this47.activityList;
                                   var currentActivityOpen;
 
                                   if (activityList) {
@@ -11291,10 +11323,10 @@
                                     };
                                   }
 
-                                  _this46.currentActivityOpen = currentActivityOpen;
+                                  _this47.currentActivityOpen = currentActivityOpen;
                                   console.log('Push currentActivityOpen', currentActivityOpen);
 
-                                  _this46.navCtrl.navigateForward(['/activity-detail']);
+                                  _this47.navCtrl.navigateForward(['/activity-detail']);
                                 }, 100);
                               }
 
@@ -11324,21 +11356,21 @@
           this.registerForPushNotification = function () {
             PushNotifications.register();
 
-            _this45.updatePushSettingOnServer(true);
+            _this46.updatePushSettingOnServer(true);
           };
 
           this.updatePushSettingOnServer = function (isEnable) {
             var _a, _b;
 
-            if (_this45.dedicatedMode) {
-              _this45.apiServiceRerence.updatePushNotification({
+            if (_this46.dedicatedMode) {
+              _this46.apiServiceRerence.updatePushNotification({
                 isPushNotification: isEnable
-              }, _this45.deviceUID).subscribe(function () {});
+              }, _this46.deviceUID).subscribe(function () {});
             } else {
-              if ((_a = _this45.getLoggedInUser()) === null || _a === void 0 ? void 0 : _a.userId) {
-                _this45.apiServiceRerence.updatePushNotification({
+              if ((_a = _this46.getLoggedInUser()) === null || _a === void 0 ? void 0 : _a.userId) {
+                _this46.apiServiceRerence.updatePushNotification({
                   isPushNotification: isEnable
-                }, (_b = _this45.getLoggedInUser()) === null || _b === void 0 ? void 0 : _b.userId).subscribe(function () {});
+                }, (_b = _this46.getLoggedInUser()) === null || _b === void 0 ? void 0 : _b.userId).subscribe(function () {});
               }
             }
           };
@@ -11348,7 +11380,7 @@
 
 
           this.getCurrentCheckedInEntityName = function () {
-            return _this45.getEntityName(_this45.dedicatedModeLocationUse);
+            return _this46.getEntityName(_this46.dedicatedModeLocationUse);
           };
           /**
            * For dedicated mode
@@ -11368,8 +11400,8 @@
           };
 
           this.getCheckinDetails = function (userId, apiService) {
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this45, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee27() {
-              var _this47 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this46, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee27() {
+              var _this48 = this;
 
               var ifAlreadyCheckedinPlace;
               return regeneratorRuntime.wrap(function _callee27$(_context27) {
@@ -11379,7 +11411,7 @@
                       if (userId && this.checkInForLocation) {
                         if (this.checkedInPlaces) {
                           this.checkedInPlaces.map(function (place) {
-                            var entityIds = _this47.utilService.getRelevantEntityId(_this47.checkInForLocation.locationID);
+                            var entityIds = _this48.utilService.getRelevantEntityId(_this48.checkInForLocation.locationID);
 
                             if (entityIds.InventoryID > 0 && entityIds.InventoryID === place.inventoryItemID || entityIds.ProjectID > 0 && entityIds.ProjectID === place.projectID || entityIds.LocationID > 0 && entityIds.LocationID === place.locationID) {
                               ifAlreadyCheckedinPlace = place;
@@ -11405,28 +11437,28 @@
                           apiService.getCheckInDetails(userId, this.checkInForLocation.locationID).subscribe(function (response) {
                             var _a, _b;
 
-                            _this47.utilService.hideLoading();
+                            _this48.utilService.hideLoading();
 
                             if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                              _this47.checkInDetail = response.Result;
-                              _this47.checkInPostData = {
+                              _this48.checkInDetail = response.Result;
+                              _this48.checkInPostData = {
                                 userId: userId,
-                                checkInLatitude: (_a = _this47.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
-                                checkInLongitude: (_b = _this47.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
+                                checkInLatitude: (_a = _this48.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
+                                checkInLongitude: (_b = _this48.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
                                 isGuestReturning: false,
-                                projectID: _this47.checkInDetail.checkInEntityDetail.projectID,
-                                inventoryItemID: _this47.checkInDetail.checkInEntityDetail.inventoryItemID,
-                                locationID: _this47.checkInDetail.checkInEntityDetail.locationID
+                                projectID: _this48.checkInDetail.checkInEntityDetail.projectID,
+                                inventoryItemID: _this48.checkInDetail.checkInEntityDetail.inventoryItemID,
+                                locationID: _this48.checkInDetail.checkInEntityDetail.locationID
                               };
 
-                              _this47.navCtrl.navigateForward(['/checkinout-confirm'], {
+                              _this48.navCtrl.navigateForward(['/checkinout-confirm'], {
                                 queryParams: {
                                   headerTitle: 'Check In',
                                   title: 'You are checking in',
-                                  subtitle: _this47.checkInForLocation.locationName,
+                                  subtitle: _this48.checkInForLocation.locationName,
                                   buttonTitle: 'Check In Now',
                                   nextPageData: JSON.stringify({
-                                    locationDetail: JSON.stringify(_this47.checkInForLocation)
+                                    locationDetail: JSON.stringify(_this48.checkInForLocation)
                                   }),
                                   nextPagePath: '/checkin-induction',
                                   locationCheckType: _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ConfirmForCheckType.CheckIn
@@ -11439,10 +11471,10 @@
 
                             var errorField = (_b = (_a = error === null || error === void 0 ? void 0 : error.error) === null || _a === void 0 ? void 0 : _a.ResponseException) === null || _b === void 0 ? void 0 : _b.ValidationErrors[0].Field;
 
-                            _this47.utilService.hideLoading();
+                            _this48.utilService.hideLoading();
 
                             if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
-                              _this47.navCtrl.navigateForward(['/checkin-fail'], {
+                              _this48.navCtrl.navigateForward(['/checkin-fail'], {
                                 queryParams: {
                                   title: 'You cannot check-in',
                                   errorTitle: 'Simultanious Check-In Not Allowed.',
@@ -11452,7 +11484,7 @@
                                 replaceUrl: true
                               });
                             } else {
-                              _this47.navCtrl.navigateForward(['/checkin-fail'], {
+                              _this48.navCtrl.navigateForward(['/checkin-fail'], {
                                 queryParams: {
                                   title: 'You cannot check-in',
                                   errorTitle: 'No Qualification',
@@ -11486,8 +11518,8 @@
           this.getCheckinDetailsForDedicatedMode = function (userId, apiService) {
             var userPhoto = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
             var callBack = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this45, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee28() {
-              var _this48 = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this46, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee28() {
+              var _this49 = this;
 
               var entityId;
               return regeneratorRuntime.wrap(function _callee28$(_context28) {
@@ -11500,12 +11532,12 @@
                         apiService.getCheckInDetails(userId, entityId).subscribe(function (response) {
                           var _a, _b;
 
-                          _this48.utilService.hideLoading();
+                          _this49.utilService.hideLoading();
 
                           if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
                             var canUserCheckinToLocation = true;
 
-                            if (_this48.dedicatedModeProcessType === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].DedicatedModeProcessTypes.CheckinOut && _this48.checkinoutDmAs === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].CheckInType.QrCode) {
+                            if (_this49.dedicatedModeProcessType === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].DedicatedModeProcessTypes.CheckinOut && _this49.checkinoutDmAs === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].CheckInType.QrCode) {
                               var checkinDetail = response.Result;
 
                               if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
@@ -11518,25 +11550,25 @@
                             }
 
                             if (canUserCheckinToLocation) {
-                              _this48.checkInDetail = response.Result;
-                              _this48.checkInPostData = {
+                              _this49.checkInDetail = response.Result;
+                              _this49.checkInPostData = {
                                 userId: userId,
                                 userPhoto: userPhoto,
-                                checkInLatitude: (_a = _this48.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
-                                checkInLongitude: (_b = _this48.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
+                                checkInLatitude: (_a = _this49.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
+                                checkInLongitude: (_b = _this49.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
                                 isGuestReturning: false,
-                                projectID: _this48.dedicatedModeLocationUse.projectID,
-                                inventoryItemID: _this48.dedicatedModeLocationUse.inventoryItemID,
-                                locationID: _this48.dedicatedModeLocationUse.locationID
+                                projectID: _this49.dedicatedModeLocationUse.projectID,
+                                inventoryItemID: _this49.dedicatedModeLocationUse.inventoryItemID,
+                                locationID: _this49.dedicatedModeLocationUse.locationID
                               };
 
-                              _this48.processCheckinDetailsStepInitial(apiService, false);
+                              _this49.processCheckinDetailsStepInitial(apiService, false);
                             }
                           }
                         }, function (error) {
-                          _this48.utilService.hideLoading();
+                          _this49.utilService.hideLoading();
 
-                          _this48.processCheckInError(error, '/dashboard-dm');
+                          _this49.processCheckInError(error, '/dashboard-dm');
                         });
                       }
 
@@ -11552,25 +11584,25 @@
           this.getCheckinDetailsGuest = function (apiService) {
             var isGuestReturning = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-            var entityId = _this45.utilService.getEntityIdFromId(_this45.dedicatedModeLocationUse);
+            var entityId = _this46.utilService.getEntityIdFromId(_this46.dedicatedModeLocationUse);
 
-            var nextScreen = _this45.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
-            var dedicatedModeDeviceDetailData = _this45.dedicatedModeDeviceDetailData;
-            var dedicatedModeGuestDetail = _this45.dedicatedModeGuestDetail;
-            var dedicatedModeLocationUse = _this45.dedicatedModeLocationUse;
+            var nextScreen = _this46.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
+            var dedicatedModeDeviceDetailData = _this46.dedicatedModeDeviceDetailData;
+            var dedicatedModeGuestDetail = _this46.dedicatedModeGuestDetail;
+            var dedicatedModeLocationUse = _this46.dedicatedModeLocationUse;
 
-            _this45.utilService.presentLoadingWithOptions();
+            _this46.utilService.presentLoadingWithOptions();
 
             apiService.getCheckInDetails_Guest(dedicatedModeGuestDetail.guestPhone || '', dedicatedModeGuestDetail.guestFirsName || '', dedicatedModeGuestDetail.guestMiddleName || '', dedicatedModeGuestDetail.guestLastName || '', entityId).subscribe(function (res) {
               var _a, _b;
 
-              _this45.utilService.hideLoading();
+              _this46.utilService.hideLoading();
 
               if (res.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                _this45.checkInDetail = res.Result;
-                _this45.checkInPostData = {
-                  checkInLatitude: (_a = _this45.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
-                  checkInLongitude: (_b = _this45.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
+                _this46.checkInDetail = res.Result;
+                _this46.checkInPostData = {
+                  checkInLatitude: (_a = _this46.myCurrentGeoLocation) === null || _a === void 0 ? void 0 : _a.coords.latitude,
+                  checkInLongitude: (_b = _this46.myCurrentGeoLocation) === null || _b === void 0 ? void 0 : _b.coords.longitude,
                   isGuestReturning: isGuestReturning,
                   projectID: dedicatedModeLocationUse.projectID,
                   inventoryItemID: dedicatedModeLocationUse.inventoryItemID,
@@ -11583,12 +11615,12 @@
                   companyID: dedicatedModeDeviceDetailData.companyID
                 };
 
-                _this45.processCheckinDetailsStepInitial(apiService, true);
+                _this46.processCheckinDetailsStepInitial(apiService, true);
               }
             }, function (error) {
-              _this45.utilService.hideLoading();
+              _this46.utilService.hideLoading();
 
-              _this45.processCheckInError(error, nextScreen);
+              _this46.processCheckInError(error, nextScreen);
             });
           };
 
@@ -11605,20 +11637,20 @@
             var accidentReportQuestionAnswers = [];
             var riskAssessmentAnswers = [];
 
-            var selectedLanguageID = _this45.getLanguageIdForForm();
+            var selectedLanguageID = _this46.getLanguageIdForForm();
 
             var formattedSections = [];
-            var userId = _this45.dedicatedMode ? _this45.dedicatedModeUserDetail.userId : personalModeLoggedUser.userId;
-            var companyId = _this45.dedicatedMode ? _this45.dedicatedModeDeviceDetailData.companyID : personalModeLoggedUser.companyID;
+            var userId = _this46.dedicatedMode ? _this46.dedicatedModeUserDetail.userId : personalModeLoggedUser.userId;
+            var companyId = _this46.dedicatedMode ? _this46.dedicatedModeDeviceDetailData.companyID : personalModeLoggedUser.companyID;
             sections.map(function (section, sectionIndex) {
-              if (_this45.utilService.shouldShowSection(section)) {
+              if (_this46.utilService.shouldShowSection(section)) {
                 var formattedAnswers = [];
                 var sectionFormattedObject = JSON.parse(JSON.stringify(section));
 
                 if (section.isRiskAssessmentSection) {
                   var tasks = section.tasks;
                   tasks.map(function (task) {
-                    if (_this45.utilService.shouldShowQuestion(task)) {
+                    if (_this46.utilService.shouldShowQuestion(task)) {
                       var answerFormattedObject = JSON.parse(JSON.stringify(task));
                       var hazardsAnswers = [];
                       var hazards = task.hazards;
@@ -11671,7 +11703,7 @@
                 } else {
                   var questions = section.questions;
                   questions.map(function (question, questionIndex) {
-                    if (_this45.utilService.shouldShowQuestion(question)) {
+                    if (_this46.utilService.shouldShowQuestion(question)) {
                       var answerFormattedObject = JSON.parse(JSON.stringify(question));
 
                       var controlName = _util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].FCUniqueName(section, question);
@@ -11771,7 +11803,7 @@
                               } else if (control.value) {
                                 isValueFilled = true;
 
-                                var entityIds = _this45.utilService.getRelevantEntityId(control.value);
+                                var entityIds = _this46.utilService.getRelevantEntityId(control.value);
 
                                 _answerObject3.accidentInventoryID = entityIds.InventoryID;
                                 _answerObject3.accidentProjectID = entityIds.ProjectID;
@@ -12035,29 +12067,29 @@
               return;
             }
 
-            _this45.utilService.presentLoadingWithOptions();
+            _this46.utilService.presentLoadingWithOptions();
 
             apiService.saveFormAnswers(submitAnswersObject).subscribe(function (response) {
-              _this45.utilService.hideLoading();
+              _this46.utilService.hideLoading();
 
-              if (_this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Activity || _this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.CurrentCheckin || _this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.CurrentCheckinWorkPermit || _this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.FormDM || _this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.WorkPermitDM) {
-                _this45.workPermitAnswer = workPermitAnswer;
+              if (_this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Activity || _this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.CurrentCheckin || _this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.CurrentCheckinWorkPermit || _this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.FormDM || _this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.WorkPermitDM) {
+                _this46.workPermitAnswer = workPermitAnswer;
 
-                _this45.startFormSignOffProcess(userId, apiService, response.Result);
-              } else if (_this45.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction) {
-                if (_this45.checkInPostData) {
-                  _this45.checkInPostData.inductionFormContent = response.Result.formAnswerHtmlString;
-                  _this45.checkInPostData.answerNotificationList = response.Result.answerNotificationList;
+                _this46.startFormSignOffProcess(userId, apiService, response.Result);
+              } else if (_this46.viewFormFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction) {
+                if (_this46.checkInPostData) {
+                  _this46.checkInPostData.inductionFormContent = response.Result.formAnswerHtmlString;
+                  _this46.checkInPostData.answerNotificationList = response.Result.answerNotificationList;
                 }
 
-                _this45.inductionNavigationProcess(userId, _this45.inductionContentItemIndex);
+                _this46.inductionNavigationProcess(userId, _this46.inductionContentItemIndex);
               }
 
               callBack(true, response.Result);
             }, function (error) {
               callBack(false, error.message);
 
-              _this45.utilService.hideLoading();
+              _this46.utilService.hideLoading();
             });
           };
 
@@ -12283,7 +12315,7 @@
             var havExposure = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
             var workPermitAnswer = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : null;
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee31() {
-              var _this49 = this;
+              var _this50 = this;
 
               var sections, requiredFieldsCount, requiredFieldsValidCount, filledFieldsCount, filledFieldsValidCount, attachmentCount, attachmentUploadedCount, attachemtUploaded, loading, errorMessage, _errorMessage, missingFieldCount, _errorMessage2, _errorMessage3;
 
@@ -12300,7 +12332,7 @@
 
                         if (sections) {
                           sections.map(function (section, sectionIndex) {
-                            if (_this49.utilService.shouldShowSection(section)) {
+                            if (_this50.utilService.shouldShowSection(section)) {
                               if (section.isRiskAssessmentSection) {
                                 var tasks = section.tasks;
                                 tasks.map(function (task) {
@@ -12334,7 +12366,7 @@
                               } else {
                                 var questions = section.questions;
                                 questions.map(function (question, questionIndex) {
-                                  if (_this49.utilService.shouldShowQuestion(question)) {
+                                  if (_this50.utilService.shouldShowQuestion(question)) {
                                     var controlName = _util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].FCUniqueName(section, question);
 
                                     var control = formGroup.controls[controlName];
@@ -12387,11 +12419,11 @@
                           attachmentUploadedCount = 0;
                           attachemtUploaded = {};
                           sections.map(function (section, sectionIndex) {
-                            if (_this49.utilService.shouldShowSection(section)) {
+                            if (_this50.utilService.shouldShowSection(section)) {
                               var questions = section.questions;
                               questions.map(function (question, questionIndex) {
-                                return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this49, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee30() {
-                                  var _this50 = this;
+                                return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this50, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee30() {
+                                  var _this51 = this;
 
                                   var controlName, control, fileName, mimeType, isVideo;
                                   return regeneratorRuntime.wrap(function _callee30$(_context30) {
@@ -12416,8 +12448,8 @@
                                                 }
 
                                                 this.utilService.dataUriToFile(control.value, fileName, mimeType).then(function (file) {
-                                                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this50, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee29() {
-                                                    var _this51 = this;
+                                                  return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(_this51, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee29() {
+                                                    var _this52 = this;
 
                                                     return regeneratorRuntime.wrap(function _callee29$(_context29) {
                                                       while (1) {
@@ -12441,9 +12473,9 @@
                                                                 if (attachmentCount === attachmentUploadedCount) {
                                                                   loading = false;
 
-                                                                  _this51.utilService.hideLoading();
+                                                                  _this52.utilService.hideLoading();
 
-                                                                  _this51.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                                  _this52.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                                                 }
                                                               }, function (progress) {
                                                                 console.log('Progress ' + ' ' + fileName + '' + progress);
@@ -12456,9 +12488,9 @@
                                                                 if (attachmentCount === attachmentUploadedCount) {
                                                                   loading = false;
 
-                                                                  _this51.utilService.hideLoading();
+                                                                  _this52.utilService.hideLoading();
 
-                                                                  _this51.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                                  _this52.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                                                 }
                                                               }, function (error) {
                                                                 attachmentUploadedCount++;
@@ -12466,9 +12498,9 @@
                                                                 if (attachmentCount === attachmentUploadedCount) {
                                                                   loading = false;
 
-                                                                  _this51.utilService.hideLoading();
+                                                                  _this52.utilService.hideLoading();
 
-                                                                  _this51.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                                  _this52.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                                                 }
                                                               });
                                                             }
@@ -12486,9 +12518,9 @@
                                                   if (attachmentCount === attachmentUploadedCount) {
                                                     loading = false;
 
-                                                    _this50.utilService.hideLoading();
+                                                    _this51.utilService.hideLoading();
 
-                                                    _this50.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
+                                                    _this51.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer, attachemtUploaded);
                                                   }
                                                 });
                                               }
@@ -12608,19 +12640,19 @@
         }, {
           key: "submitInductionCheckInData",
           value: function submitInductionCheckInData(apiService) {
-            var _this52 = this;
+            var _this53 = this;
 
             this.utilService.presentLoadingWithOptions();
             var nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
             apiService.insertCheckInDetails(this.checkInPostData).subscribe(function (response) {
-              _this52.utilService.hideLoading();
+              _this53.utilService.hideLoading();
 
               if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                _this52.observablesService.publishSomeData(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ObserverKeys.NEW_CHECKED_IN, response.Result);
+                _this53.observablesService.publishSomeData(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ObserverKeys.NEW_CHECKED_IN, response.Result);
 
-                var suucessScreen = _this52.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
+                var suucessScreen = _this53.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
 
-                _this52.navCtrl.navigateForward([suucessScreen], {
+                _this53.navCtrl.navigateForward([suucessScreen], {
                   queryParams: {
                     message: 'You have now checked-in',
                     nextPage: nextScreen,
@@ -12630,16 +12662,16 @@
                 });
               }
             }, function (error) {
-              _this52.utilService.hideLoading();
+              _this53.utilService.hideLoading();
 
-              _this52.processCheckInError(error, nextScreen);
+              _this53.processCheckInError(error, nextScreen);
             });
           }
         }, {
           key: "submitInductionCheckInDataGuest",
           value: function submitInductionCheckInDataGuest(apiService) {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee32() {
-              var _this53 = this;
+              var _this54 = this;
 
               var nextScreen;
               return regeneratorRuntime.wrap(function _callee32$(_context32) {
@@ -12649,10 +12681,10 @@
                       this.utilService.presentLoadingWithOptions();
                       nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
                       apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(function (response) {
-                        _this53.utilService.hideLoading();
+                        _this54.utilService.hideLoading();
 
                         if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                          _this53.navCtrl.navigateForward(['/checkinout-success-dm'], {
+                          _this54.navCtrl.navigateForward(['/checkinout-success-dm'], {
                             queryParams: {
                               message: 'You have now checked-in',
                               nextPage: nextScreen,
@@ -12662,9 +12694,9 @@
                           });
                         }
                       }, function (error) {
-                        _this53.utilService.hideLoading();
+                        _this54.utilService.hideLoading();
 
-                        _this53.processCheckInError(error, nextScreen);
+                        _this54.processCheckInError(error, nextScreen);
                       });
 
                     case 3:
@@ -12751,7 +12783,7 @@
             var _a, _b;
 
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee33() {
-              var _this54 = this;
+              var _this55 = this;
 
               var checkInSuccessPage, checkInFailPage, nextPage, isWorkPermitCurrentCheckin, isworkPermitActivity;
               return regeneratorRuntime.wrap(function _callee33$(_context33) {
@@ -12799,17 +12831,17 @@
 
                     case 19:
                       apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe(function (response) {
-                        _this54.utilService.hideLoading();
+                        _this55.utilService.hideLoading();
 
                         if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                          if (_this54.signOffFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].SignOffType.FORM_ACTIVITY || _this54.signOffFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].SignOffType.DOCUMENT_ACTIVITY) {
-                            _this54.observablesService.publishSomeData(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ObserverKeys.ACTIVITY_COMPLETED, true);
+                          if (_this55.signOffFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].SignOffType.FORM_ACTIVITY || _this55.signOffFor === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].SignOffType.DOCUMENT_ACTIVITY) {
+                            _this55.observablesService.publishSomeData(_enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ObserverKeys.ACTIVITY_COMPLETED, true);
                           } // show work permit issue success/fail for work permit type form filled from current checkin or activity list
 
 
                           if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
-                            if (_this54.workPermitAnswer.scoreAchieved >= _this54.workPermitAnswer.totalScore) {
-                              _this54.navCtrl.navigateForward([checkInSuccessPage], {
+                            if (_this55.workPermitAnswer.scoreAchieved >= _this55.workPermitAnswer.totalScore) {
+                              _this55.navCtrl.navigateForward([checkInSuccessPage], {
                                 queryParams: {
                                   title: 'Passed',
                                   message: 'PERMIT ISSUED',
@@ -12820,7 +12852,7 @@
                                 replaceUrl: true
                               });
                             } else {
-                              _this54.navCtrl.navigateForward([checkInFailPage], {
+                              _this55.navCtrl.navigateForward([checkInFailPage], {
                                 queryParams: {
                                   title: 'Not Passed',
                                   errorTitle: 'NO PERMIT',
@@ -12832,7 +12864,7 @@
                               });
                             }
                           } else {
-                            _this54.navCtrl.navigateForward([checkInSuccessPage], {
+                            _this55.navCtrl.navigateForward([checkInSuccessPage], {
                               queryParams: {
                                 message: 'You Signed-Off Successfully',
                                 nextPage: nextPage,
@@ -12842,7 +12874,7 @@
                           }
                         } else {
                           if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
-                            _this54.navCtrl.navigateForward([checkInFailPage], {
+                            _this55.navCtrl.navigateForward([checkInFailPage], {
                               queryParams: {
                                 title: 'Not Passed',
                                 errorTitle: 'NOT PERMIT',
@@ -12853,7 +12885,7 @@
                               replaceUrl: true
                             });
                           } else {
-                            _this54.navCtrl.navigateForward([checkInFailPage], {
+                            _this55.navCtrl.navigateForward([checkInFailPage], {
                               queryParams: {
                                 title: 'You cannot Sign-Off',
                                 errorTitle: 'NOT QUALIFIED',
@@ -12866,9 +12898,9 @@
                           }
                         }
                       }, function (error) {
-                        _this54.utilService.hideLoading();
+                        _this55.utilService.hideLoading();
 
-                        _this54.navCtrl.navigateForward([checkInFailPage], {
+                        _this55.navCtrl.navigateForward([checkInFailPage], {
                           queryParams: {
                             title: 'You cannot Sign-Off',
                             errorTitle: 'NOT QUALIFIED',
@@ -12897,7 +12929,7 @@
         }, {
           key: "inductionNavigationProcess",
           value: function inductionNavigationProcess() {
-            var _this55 = this;
+            var _this56 = this;
 
             var userId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
             var inductionContentItemIndex = arguments.length > 1 ? arguments[1] : undefined;
@@ -12914,22 +12946,22 @@
                   if (this.dedicatedMode) {
                     this.utilService.presentLoadingWithOptions();
                     this.apiServiceRerence.getDedicatedModeSignOffFormDetail(inductionContentItem.formID).subscribe(function (response) {
-                      _this55.utilService.hideLoading();
+                      _this56.utilService.hideLoading();
 
                       if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                        _this55.viewFormFor = _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction;
-                        _this55.signOffFormDetail = response.Result;
-                        _this55.inductionContentItemIndex = inductionContentItemIndex + 1;
+                        _this56.viewFormFor = _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction;
+                        _this56.signOffFormDetail = response.Result;
+                        _this56.inductionContentItemIndex = inductionContentItemIndex + 1;
 
-                        _this55.navCtrl.navigateForward(_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].InductionContentTypeScreenIdentify(inductionContentItem.contentType, _this55.dedicatedMode), {
+                        _this56.navCtrl.navigateForward(_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].InductionContentTypeScreenIdentify(inductionContentItem.contentType, _this56.dedicatedMode), {
                           queryParams: {
-                            inductionContentItemIndex: _this55.inductionContentItemIndex
+                            inductionContentItemIndex: _this56.inductionContentItemIndex
                           },
                           replaceUrl: true
                         });
                       }
                     }, function (error) {
-                      _this55.utilService.hideLoading();
+                      _this56.utilService.hideLoading();
                     });
                   } else {
                     var entityIds = this.utilService.getRelevantEntityId((_a = this.checkInForLocation) === null || _a === void 0 ? void 0 : _a.locationID);
@@ -12938,22 +12970,22 @@
                     var InventoryID = entityIds.InventoryID;
                     this.utilService.presentLoadingWithOptions();
                     this.apiServiceRerence.getSignOffFormDetail(userId, inductionContentItem.formID, LocationID, ProjectID, InventoryID).subscribe(function (response) {
-                      _this55.utilService.hideLoading();
+                      _this56.utilService.hideLoading();
 
                       if (response.StatusCode === _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ApiResponseCode.RequestSuccessful) {
-                        _this55.viewFormFor = _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction;
-                        _this55.signOffFormDetail = response.Result;
-                        _this55.inductionContentItemIndex = inductionContentItemIndex + 1;
+                        _this56.viewFormFor = _enum_service__WEBPACK_IMPORTED_MODULE_2__["EnumService"].ViewFormForType.Induction;
+                        _this56.signOffFormDetail = response.Result;
+                        _this56.inductionContentItemIndex = inductionContentItemIndex + 1;
 
-                        _this55.navCtrl.navigateForward(_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].InductionContentTypeScreenIdentify(inductionContentItem.contentType, _this55.dedicatedMode), {
+                        _this56.navCtrl.navigateForward(_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"].InductionContentTypeScreenIdentify(inductionContentItem.contentType, _this56.dedicatedMode), {
                           queryParams: {
-                            inductionContentItemIndex: _this55.inductionContentItemIndex
+                            inductionContentItemIndex: _this56.inductionContentItemIndex
                           },
                           replaceUrl: true
                         });
                       }
                     }, function (error) {
-                      _this55.utilService.hideLoading();
+                      _this56.utilService.hideLoading();
                     });
                   }
                 } else {
@@ -13729,7 +13761,7 @@
             var fileUrl = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'http://www.africau.edu/images/default/sample.pdf';
             var openInDefaultApp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee34() {
-              var _this56 = this;
+              var _this57 = this;
 
               var fileName, extension;
               return regeneratorRuntime.wrap(function _callee34$(_context34) {
@@ -13740,33 +13772,33 @@
                       fileName = fileUrl.replace(/^.*[\\\/]/, '');
                       extension = fileName.split('.').pop();
                       this.http.downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName).then(function (response) {
-                        _this56.utilService.hideLoading();
+                        _this57.utilService.hideLoading();
 
                         var url = response.nativeURL;
 
                         var mimeType = _static_data_service__WEBPACK_IMPORTED_MODULE_7__["StaticDataService"].fileMimeTypes[extension.toLowerCase()];
 
                         if (extension.toLowerCase() === 'pdf' || openInDefaultApp) {
-                          _this56.fileOpener.open(url, mimeType).then(function () {
+                          _this57.fileOpener.open(url, mimeType).then(function () {
                             return console.log('File is opened');
                           })["catch"](function (e) {
                             return console.log('Error opening file', e);
                           });
-                        } else if (_this56.platform.is('ios')) {
-                          _this56.fileOpener.open(url, mimeType).then(function () {
+                        } else if (_this57.platform.is('ios')) {
+                          _this57.fileOpener.open(url, mimeType).then(function () {
                             return console.log('File is opened');
                           })["catch"](function (e) {
                             return console.log('Error opening file', e);
                           });
                         } else {
-                          _this56.fileOpener.showOpenWithDialog(url, mimeType).then(function () {
+                          _this57.fileOpener.showOpenWithDialog(url, mimeType).then(function () {
                             return console.log('File is opened');
                           })["catch"](function (e) {
                             return console.log('Error opening file', e);
                           });
                         }
                       })["catch"](function (error) {
-                        _this56.utilService.hideLoading();
+                        _this57.utilService.hideLoading();
 
                         console.log('Error download file', error);
                       }); // const pdfUrl = 'http://www.africau.edu/images/default/sample.pdf';
