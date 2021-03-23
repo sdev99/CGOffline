@@ -4,15 +4,15 @@
 
 ### For Development
 
--   Run "ionic build"
+-   Run "ionic cap sync"
 
 ### For Staging
 
--   Run "ionic build -c=staging"
+-   Run "ionic cap sync -c=staging"
 
 ### For Production
 
--   Run "ionic build --prod"
+-   Run "ionic cap sync --prod"
 
 ## Form Preview WebApp Deploy Instructions
 

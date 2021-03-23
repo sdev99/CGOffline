@@ -1503,17 +1503,13 @@
 
             if (section) {
               isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-            } else {
-              debugger;
-            }
+            } else {}
 
             var isQuestionDuplicate = false;
 
             if (question) {
               isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
-            } else {
-              debugger;
-            }
+            } else {}
 
             if (section && section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
               preString = preString + '' + section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
@@ -3022,7 +3018,7 @@
       var environment = {
         production: true,
         isWebApp: false,
-        apiUrl: 'https://api.besafetech-test.com/te3kx2bj6u2y3ru/api/'
+        apiUrl: 'https://besafetech-test.com/x4wnyp56gow2ffl/api'
       };
       /***/
     },

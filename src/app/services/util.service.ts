@@ -184,13 +184,11 @@ export class UtilService {
 		if (section) {
 			isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 		} else {
-			debugger;
 		}
 		let isQuestionDuplicate = false;
 		if (question) {
 			isQuestionDuplicate = question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
 		} else {
-			debugger;
 		}
 		if (section && section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName]) {
 			preString = preString + '' + section[EnumService.QuestionLogic.FormControlNamePreStringForUniqueName];

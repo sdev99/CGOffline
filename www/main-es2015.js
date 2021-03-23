@@ -623,14 +623,12 @@ let UtilService = UtilService_1 = class UtilService {
             isSectionDuplicate = section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
         }
         else {
-            debugger;
         }
         let isQuestionDuplicate = false;
         if (question) {
             isQuestionDuplicate = question[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.ActionTypeForForm.Duplicate];
         }
         else {
-            debugger;
         }
         if (section && section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName]) {
             preString = preString + '' + section[_enum_service__WEBPACK_IMPORTED_MODULE_3__["EnumService"].QuestionLogic.FormControlNamePreStringForUniqueName];
@@ -2082,7 +2080,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     production: true,
     isWebApp: false,
-    apiUrl: 'https://api.besafetech-test.com/te3kx2bj6u2y3ru/api/',
+    apiUrl: 'https://besafetech-test.com/x4wnyp56gow2ffl/api',
 };
 
 
