@@ -1,5 +1,19 @@
 # ComplianceGenie-MobileApp
 
+## Create iOS/Android Build Instructions
+
+### For Development
+
+-   Run "ionic build"
+
+### For Staging
+
+-   Run "ionic build -c=staging"
+
+### For Production
+
+-   Run "ionic build --prod"
+
 ## Form Preview WebApp Deploy Instructions
 
 ### For Development
