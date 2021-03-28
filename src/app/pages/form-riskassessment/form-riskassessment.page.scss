@@ -48,12 +48,44 @@ ion-content {
 		}
 	}
 
-	.harad-name-container {
+	ion-item.task-name-container {
+		--padding-end: 0 !important;
 		display: flex;
-		padding-left: 20px;
-		padding-top: 20px;
 		flex-direction: row;
-		align-items: center;
+
+		.task-input-view {
+			flex: 1;
+			display: flex;
+			flex-direction: row;
+			border: 1px solid #ddd;
+			background-color: #ffffff;
+			margin-top: 8px;
+			ion-button {
+				color: #aaa;
+			}
+			ion-textarea {
+				background: transparent;
+				border: none;
+				border-left: 1px solid #e8eaf2;
+				margin: 0;
+				padding: 5px 12px;
+				font-size: 17px;
+			}
+		}
+
+		ion-button {
+			--padding-end: 8px;
+		}
+
+		.close-icon-btn {
+			margin-top: 50px;
+		}
+	}
+
+	ion-item.harad-name-container {
+		--padding-end: 0 !important;
+		display: flex;
+		flex-direction: row;
 		width: 100%;
 
 		.harard-input-view {
@@ -62,16 +94,6 @@ ion-content {
 			flex-direction: row;
 			border: 1px solid #ddd;
 			background-color: #ffffff;
-			.hazard-icon {
-				padding-top: 10px;
-				width: 65px;
-				display: flex;
-				justify-content: center;
-				border-right: 1px solid #ddd;
-				ion-icon {
-					font-size: 30px;
-				}
-			}
 			ion-textarea {
 				background: transparent;
 				border: none;
@@ -82,7 +104,6 @@ ion-content {
 		}
 
 		ion-button {
-			--padding-start: 8px;
 			--padding-end: 8px;
 		}
 	}
@@ -98,6 +119,13 @@ ion-content {
 		ion-icon {
 			color: #a1a8ca;
 			font-size: 26px;
+		}
+	}
+
+	ion-item.rating-type-title {
+		--padding-bottom: 0;
+		h3 {
+			margin-bottom: 0;
 		}
 	}
 	.add-control-measure-btn {
