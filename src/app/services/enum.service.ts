@@ -164,6 +164,10 @@ export class EnumService {
 		GetDedicatedModeLiveWorkPermits: 'GetDedicatedModeLiveWorkPermits', // GET
 		GetDedicatedModeArchiveWorkPermits: 'GetDedicatedModeArchiveWorkPermits', // GET
 		GetDedicatedModeAvailableWorkPermits: 'GetDedicatedModeAvailableWorkPermits', // GET
+		GetRiskAssessmentSeverityOptions: 'GetRiskAssessmentSeverityOptions', // GET
+		GetRiskAssessmentProbabilityOptions: 'GetRiskAssessmentProbabilityOptions', // GET
+		GetRiskItemList: 'GetRiskItemList', // GET
+		GetHazardItemList: 'GetHazardItemList', // GET
 	};
 
 	static ApiResponseCode = {

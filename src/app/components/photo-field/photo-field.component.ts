@@ -43,6 +43,19 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     ) {
     }
 
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+
+    registerOnTouched(fn: any): void {
+        this.onTouch = fn;
+    }
+
+    writeValue(obj: any): void {
+        this.onChange(obj);
+        this.image = obj;
+    }
+    
     editPhoto() {
         this.openImageAnnotation(this.image);
     }
@@ -124,18 +137,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     }
 
 
-    registerOnChange(fn: any): void {
-        this.onChange = fn;
-    }
-
-    registerOnTouched(fn: any): void {
-        this.onTouch = fn;
-    }
-
-    writeValue(obj: any): void {
-        this.onChange(obj);
-        this.image = obj;
-    }
+    
 
 
     sanitize(url: string): SafeUrl {

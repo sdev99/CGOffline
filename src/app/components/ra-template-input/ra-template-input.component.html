@@ -1,0 +1,15 @@
+<ion-item class="template-manual-input-container">
+	<ion-label position="stacked">
+		<ion-img [src]="labelIcon"></ion-img>
+		{{ label }}
+	</ion-label>
+	<div class="input-view">
+		<ion-button fill="clear" (click)="openTemplate.emit($event)" *ngIf="templateEnable">
+			<ion-icon slot="icon-only" src="./assets/icon/template-icon.svg"></ion-icon>
+		</ion-button>
+		<ion-textarea #myInput rows="1" [disabled]="!inputEnable" autoGrow="true" [(ngModel)]="value"></ion-textarea>
+	</div>
+	<ion-button class="close-icon-btn" slot="end" fill="clear">
+		<ion-icon name="close-circle" slot="icon-only"></ion-icon>
+	</ion-button>
+</ion-item>

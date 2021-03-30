@@ -311,15 +311,16 @@ export class AppComponent {
 		if (!this.sharedDataService.isNavigationTypeDeepLink) {
 			const user: User = this.accountService.userValue;
 			if (user?.userId && !user.isMobileSessionExpiration) {
-				if (UtilService.isLocalHost()) {
-					this.navController.navigateRoot('/form-riskassessment', {
-						replaceUrl: true,
-					});
-				} else {
-					this.navController.navigateRoot('/tabs/dashboard', {
-						replaceUrl: true,
-					});
-				}
+				this.navController.navigateRoot('/tabs/dashboard', {
+					replaceUrl: true,
+				});
+
+				// if (UtilService.isLocalHost()) {
+				// 	this.navController.navigateRoot('/form-riskassessment', {
+				// 		replaceUrl: true,
+				// 	});
+				// }
+
 				if (!this.sharedDataService.isLoginAfterAppOpen && user?.companyID) {
 					this.accountService.checkMobileSessionExpirationSetting(user?.companyID).subscribe((response: Response) => {
 						if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {

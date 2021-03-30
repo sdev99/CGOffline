@@ -38,96 +38,79 @@
 									[ngClass]="{error:!isTaskValid(task)}"
 									[id]="UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskId)"
 								>
-									<!-- <app-question-list-header
-										[questionTitle]=" UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.getLanguageIdForForm()).taskTranslationTitle"
-										[note]="UtilService.findObj(task.taskTranslations, 'taskTranslationLanguageId', sharedDataService.getLanguageIdForForm()).taskTranslationInstructionOrNote"
-										[required]="task.isRequired"
-										[attachments]="task.taskAttachments"
-										[attachmentIcon]="task.taskAttachmentIconPath"
-										[qNo]="questionElementIds.indexOf(UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskId))+1"
-									></app-question-list-header> -->
-
-									<ion-item class="task-name-container">
-										<ion-label position="stacked">Task 1</ion-label>
-										<div class="task-input-view">
-											<ion-button fill="clear">
-												<ion-icon slot="icon-only" name="grid-outline"></ion-icon>
-											</ion-button>
-											<ion-textarea autoGrow="true" [(ngModel)]="task.taskName" [value]=""></ion-textarea>
-										</div>
-										<ion-button class="close-icon-btn" slot="end" fill="clear">
-											<ion-icon name="close-circle" slot="icon-only"></ion-icon>
-										</ion-button>
-									</ion-item>
+									<app-ra-template-input [templateEnable]="true" [inputEnable]="true" label="Task 1" [(ngModel)]="task.name"></app-ra-template-input>
 
 									<div class="risk-assesment-component" *ngFor="let hazard of task.hazards; let hazardIndex=index;">
-										<ion-item lines="none" style="--padding-bottom: 0">
-											<ion-icon src="./assets/icon/thunder.svg"></ion-icon>
-											<ion-label
-												>{{UtilService.findObj(hazard.hazardTranslations, 'hazardTranslationLanguageId',
-												sharedDataService.getLanguageIdForForm()).hazardTranslationTitle}}</ion-label
-											>
-										</ion-item>
+										<app-ra-template-input
+											[templateEnable]="false"
+											[inputEnable]="true"
+											labelIcon="./assets/icon/thunder.svg"
+											label="Hazard One"
+											[(ngModel)]="hazard.hazardName"
+										></app-ra-template-input>
 
-										<ion-item lines="full" class="harad-name-container">
-											<div class="harard-input-view">
-												<ion-textarea
-													autoGrow="true"
-													[(ngModel)]="hazard.hazardName"
-													[value]="UtilService.findObj(hazard.hazardTranslations, 'hazardTranslationLanguageId',sharedDataService.getLanguageIdForForm()).hazardTranslationTitle"
-												></ion-textarea>
-											</div>
-											<ion-button class="close-icon-btn" slot="end" fill="clear">
-												<ion-icon name="close-circle" slot="icon-only"></ion-icon>
-											</ion-button>
-										</ion-item>
+										<div class="hr-line" style="margin-top: 25px"></div>
 
 										<ion-item class="rating-type-title">
 											<h3>Risk Rating</h3>
 										</ion-item>
 
-										<ion-item class="drop-down-item rating-item" lines="none">
-											<ion-label position="stacked"> Severity </ion-label>
-											<ion-select
-												[(ngModel)]="hazard.riskRatingSeverity"
-												placeholder="Choose"
-												[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverity)}"
-												[interface]="ionSelectInterface"
-											>
-												<ion-select-option *ngFor="let item of severityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
-													>{{item.riskRatingOptionTitle}}</ion-select-option
-												>
-											</ion-select>
-										</ion-item>
+										<div class="ratings-view-container">
+											<div class="rating-dropdowns">
+												<ion-item class="drop-down-item rating-item" lines="none">
+													<ion-label position="stacked"> Severity </ion-label>
+													<ion-select
+														[(ngModel)]="hazard.riskRatingSeverity"
+														placeholder="Choose"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverity)}"
+														[interface]="ionSelectInterface"
+													>
+														<ion-select-option *ngFor="let item of severityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
+															>{{item.riskRatingOptionTitle}}</ion-select-option
+														>
+													</ion-select>
+												</ion-item>
 
-										<ion-item class="drop-down-item rating-item" lines="none">
-											<ion-label position="stacked"> Probability </ion-label>
-											<ion-select
-												[(ngModel)]="hazard.riskRatingProbability"
-												placeholder="Choose"
-												[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbability)}"
-												[interface]="ionSelectInterface"
-											>
-												<ion-select-option *ngFor="let item of probabilityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
-													>{{item.riskRatingOptionTitle}}</ion-select-option
-												>
-											</ion-select>
-										</ion-item>
+												<ion-item class="drop-down-item rating-item" lines="none">
+													<ion-label position="stacked"> Probability </ion-label>
+													<ion-select
+														[(ngModel)]="hazard.riskRatingProbability"
+														placeholder="Choose"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbability)}"
+														[interface]="ionSelectInterface"
+													>
+														<ion-select-option *ngFor="let item of probabilityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
+															>{{item.riskRatingOptionTitle}}</ion-select-option
+														>
+													</ion-select>
+												</ion-item>
+											</div>
 
-										<div class="hr-line" style="margin-top: 8px"></div>
+											<div class="rating-arrow-col">
+												<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
+											</div>
+											<div class="rating-value-view">
+												<ion-text>Calculated Value</ion-text>
+												<div class="rating-value">
+													<h2>8</h2>
+													<p>High</p>
+												</div>
+											</div>
+										</div>
+
+										<div class="hr-line" style="margin-top: 30px"></div>
 
 										<div class="options">
 											<ng-container *ngIf="hazard.controlMeasures">
-												<ion-item *ngFor="let controlMeasure of hazard.controlMeasures">
-													<ion-label
-														>{{UtilService.findObj(controlMeasure.controlMeasureTranslations, 'controlMeasureTranslationLanguageId',
-														sharedDataService.getLanguageIdForForm()).controlMeasureTranslationTitle}}</ion-label
-													>
-													<ion-checkbox mode="md" slot="start" [(ngModel)]="controlMeasure.isSelected"></ion-checkbox>
-													<ion-button class="close-icon-btn" slot="end" fill="clear">
-														<ion-icon name="close-circle" slot="icon-only"></ion-icon>
-													</ion-button>
-												</ion-item>
+												<ng-container *ngFor="let controlMeasure of hazard.controlMeasures">
+													<app-ra-template-input
+														[templateEnable]="true"
+														[inputEnable]="true"
+														labelIcon="./assets/icon/control-measure.svg"
+														label="Control Measure 1"
+														[(ngModel)]="controlMeasure.name"
+													></app-ra-template-input>
+												</ng-container>
 											</ng-container>
 
 											<ion-toolbar>
@@ -144,35 +127,50 @@
 											<h3>Residual Risk Rating</h3>
 										</ion-item>
 
-										<ion-item class="drop-down-item rating-item" lines="none">
-											<ion-label position="stacked"> Severity </ion-label>
-											<ion-select
-												[(ngModel)]="hazard.residualRiskRatingSeverity"
-												placeholder="Choose"
-												[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingSeverity)}"
-												[interface]="ionSelectInterface"
-											>
-												<ion-select-option *ngFor="let item of severityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
-													>{{item.riskRatingOptionTitle}}</ion-select-option
-												>
-											</ion-select>
-										</ion-item>
+										<div class="ratings-view-container">
+											<div class="rating-dropdowns">
+												<ion-item class="drop-down-item rating-item" lines="none">
+													<ion-label position="stacked"> Severity </ion-label>
+													<ion-select
+														[(ngModel)]="hazard.riskRatingSeverity"
+														placeholder="Choose"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverity)}"
+														[interface]="ionSelectInterface"
+													>
+														<ion-select-option *ngFor="let item of severityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
+															>{{item.riskRatingOptionTitle}}</ion-select-option
+														>
+													</ion-select>
+												</ion-item>
 
-										<ion-item class="drop-down-item rating-item" lines="none">
-											<ion-label position="stacked"> Probability </ion-label>
-											<ion-select
-												[(ngModel)]="hazard.residualRiskRatingProbability"
-												placeholder="Choose"
-												[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingProbability)}"
-												[interface]="ionSelectInterface"
-											>
-												<ion-select-option *ngFor="let item of probabilityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
-													>{{item.riskRatingOptionTitle}}</ion-select-option
-												>
-											</ion-select>
-										</ion-item>
+												<ion-item class="drop-down-item rating-item" lines="none">
+													<ion-label position="stacked"> Probability </ion-label>
+													<ion-select
+														[(ngModel)]="hazard.riskRatingProbability"
+														placeholder="Choose"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbability)}"
+														[interface]="ionSelectInterface"
+													>
+														<ion-select-option *ngFor="let item of probabilityRatings" [class]="'risk-rating-'+item.riskRatingOptionId" [value]="item.riskRatingOptionId"
+															>{{item.riskRatingOptionTitle}}</ion-select-option
+														>
+													</ion-select>
+												</ion-item>
+											</div>
 
-										<div class="hr-line" style="margin-top: 8px"></div>
+											<div class="rating-arrow-col">
+												<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
+											</div>
+											<div class="rating-value-view">
+												<ion-text>Calculated Value</ion-text>
+												<div class="rating-value">
+													<h2>8</h2>
+													<p>High</p>
+												</div>
+											</div>
+										</div>
+
+										<div class="hr-line" style="margin-top: 30px"></div>
 
 										<!-- Persons Exposed -->
 										<div class="radio-input-view">
@@ -260,6 +258,8 @@
 
 											<!-- Personal Exposed Notification -->
 											<ng-container>
+												<div class="hr-line" style="margin-top: 8px"></div>
+
 												<ion-item>
 													<ion-label>Personnel Exposed Notification</ion-label>
 													<ion-checkbox mode="md" slot="start" [(ngModel)]="hazard.personnelExposedNotification"></ion-checkbox>
@@ -324,7 +324,7 @@
 
 													<ion-item *ngFor="let notType of exposedNotificationType">
 														<ion-label>{{notType.title}}</ion-label>
-														<ion-checkbox mode="md" slot="start" [(ngModel)]="notType.selected"></ion-checkbox>
+														<ion-checkbox mode="md" slot="start" [(ngModel)]="notType.selected" [disabled]="notType.disabled"></ion-checkbox>
 													</ion-item>
 												</ng-container>
 											</ng-container>

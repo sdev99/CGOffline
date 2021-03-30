@@ -38,6 +38,7 @@ import { ArchivedItemComponent } from './archived-item/archived-item.component';
 import { CustomIonRefreshLoaderComponent } from './custom-ion-refresh-loader/custom-ion-refresh-loader.component';
 import { ModalHeaderComponent } from './modal-header/modal-header.component';
 import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.component';
+import { RaTemplateInputComponent } from './ra-template-input/ra-template-input.component';
 
 @NgModule({
 	declarations: [
@@ -77,6 +78,7 @@ import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.
 		SectionTitleComponent,
 		ArchivedItemComponent,
 		CustomIonRefreshLoaderComponent,
+		RaTemplateInputComponent,
 	],
 	imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule],
 	exports: [
@@ -116,6 +118,7 @@ import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.
 		SectionTitleComponent,
 		ArchivedItemComponent,
 		CustomIonRefreshLoaderComponent,
+		RaTemplateInputComponent,
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
