@@ -435,6 +435,20 @@ export class ApiService {
 	}
 
 	/**
+	 *  We will call this API when we want GetRiskAssessmentProbabilityOptions.
+	 */
+	getRiskAssessmentProbabilityOptions() {
+		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskAssessmentProbabilityOptions}`);
+	}
+
+	/**
+	 *  We will call this API when we want GetRiskAssessmentSeverityOptions.
+	 */
+	getRiskAssessmentSeverityOptions() {
+		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskAssessmentSeverityOptions}`);
+	}
+
+	/**
 	 *  We will call this API when we want task template for risk assessment form.
 	 */
 	getRiskItemList(companyId) {

@@ -17,7 +17,11 @@ import { Response, User } from '../../_models';
 import { AccountService } from '../../services/account.service';
 import { PhotoService } from '../../services/photo.service';
 import { RiskRatingItem } from '../../_models/riskRatingItem';
-import { setTimeout } from 'timers';
+import { RAtaskAswerObject } from 'src/app/_models/RAtaskAswerObject';
+import { RAhazardAswerObject } from 'src/app/_models/RAhazardAswerObject';
+import { RAcontrolMeasureAnswerObject } from 'src/app/_models/RAcontrolMeasureAnswerObject';
+import { RiskRatingSeverityOption } from 'src/app/_models/riskRatingSeverityOption';
+import { RiskRatingProbabilityOption } from 'src/app/_models/riskRatingProbabilityOption';
 
 @Component({
 	selector: 'app-form-riskassessment',
@@ -40,8 +44,8 @@ export class FormRiskassessmentPage implements OnInit {
 	riskRatings: [RiskRatingItem];
 	residualRiskRatings: [RiskRatingItem];
 
-	severityRatings: [RiskRatingItem];
-	probabilityRatings: [RiskRatingItem];
+	severityRatings: Array<RiskRatingSeverityOption>;
+	probabilityRatings: Array<RiskRatingProbabilityOption>;
 
 	users;
 	groups;
@@ -58,10 +62,10 @@ export class FormRiskassessmentPage implements OnInit {
 
 	// formBuilderDetail = JSON.parse('{"formId":131,"title":"Risk Assessment Form","description":null,"formVersionId":197,"formVersionNo":3,"isDraft":false,"formTypeID":2,"companyId":27,"defaultLanguageId":35,"sections":[{"sectionId":208,"sectionIsHidden":false,"sectionDisplayOrder":1,"isRiskAssessmentSection":true,"isHAVSection":false,"isAccidentReportSection":false,"sectionTranslations":[{"sectionTranslationId":311,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Risk Assessmentssss"}],"questions":[],"tasks":[{"taskId":29,"isRequired":true,"shouldShowTaskTemplate":false,"allowInstructionOrNote":true,"shouldShowOptionalComment":false,"allowAttachment":true,"displayOrder":1,"sectionID":208,"selectedTaskTemplateID":null,"taskTranslations":[{"taskTranslationId":32,"taskTranslationLanguageId":35,"taskTranslationTitle":"Task One","taskTranslationInstructionOrNote":"Test Note for task one"}],"taskAttachments":[{"questionAttachmentId":0,"isExistingFile":false,"shouldSaveFileToPlatform":false,"fileName":"demo51.png","fileType":null,"fileExtension":"png","folderName":"Choose","questionID":29,"documentID":125,"folderID":null}],"hazards":[{"hazardId":34,"riskRating":null,"residualRiskRating":null,"hasPersonnelExposedNotification":false,"displayOrder":1,"taskID":29,"personnelExposedNotificationID":null,"personnelExposedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"hazardTranslations":[{"hazardTranslationId":38,"hazardTranslationLanguageId":35,"hazardTranslationTitle":"Hazard One Test"}],"controlMeasures":[{"controlMeasureId":38,"shouldShowControlMeasureTemplate":false,"displayOrder":1,"controlMeasureTranslations":[{"controlMeasureTranslationId":44,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Wight measure"}]},{"controlMeasureId":39,"shouldShowControlMeasureTemplate":false,"displayOrder":2,"controlMeasureTranslations":[{"controlMeasureTranslationId":45,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Height measure"}]},{"controlMeasureId":40,"shouldShowControlMeasureTemplate":false,"displayOrder":3,"controlMeasureTranslations":[{"controlMeasureTranslationId":46,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Width measure"}]}]},{"hazardId":35,"riskRating":null,"residualRiskRating":null,"hasPersonnelExposedNotification":false,"displayOrder":2,"taskID":29,"personnelExposedNotificationID":null,"personnelExposedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"hazardTranslations":[{"hazardTranslationId":39,"hazardTranslationLanguageId":35,"hazardTranslationTitle":"Hazard Two Test"}],"controlMeasures":[]}]},{"taskId":30,"isRequired":false,"shouldShowTaskTemplate":false,"allowInstructionOrNote":false,"shouldShowOptionalComment":false,"allowAttachment":false,"displayOrder":2,"sectionID":208,"selectedTaskTemplateID":null,"taskTranslations":[{"taskTranslationId":33,"taskTranslationLanguageId":35,"taskTranslationTitle":"Task Two","taskTranslationInstructionOrNote":""}],"taskAttachments":[],"hazards":[{"hazardId":36,"riskRating":null,"residualRiskRating":null,"hasPersonnelExposedNotification":false,"displayOrder":1,"taskID":30,"personnelExposedNotificationID":null,"personnelExposedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"hazardTranslations":[{"hazardTranslationId":40,"hazardTranslationLanguageId":35,"hazardTranslationTitle":"Task two hazard one"}],"controlMeasures":[{"controlMeasureId":41,"shouldShowControlMeasureTemplate":false,"displayOrder":1,"controlMeasureTranslations":[{"controlMeasureTranslationId":47,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Level measure"}]},{"controlMeasureId":42,"shouldShowControlMeasureTemplate":false,"displayOrder":2,"controlMeasureTranslations":[{"controlMeasureTranslationId":48,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Pressure measure"}]}]}]}]},{"sectionId":209,"sectionIsHidden":false,"sectionDisplayOrder":2,"isRiskAssessmentSection":false,"isHAVSection":false,"isAccidentReportSection":false,"sectionTranslations":[{"sectionTranslationId":312,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Section Two Custom Questions"}],"questions":[{"questionId":475,"questionIsHidden":false,"questionIsRequired":false,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":3,"questionDisplayOrder":1,"sectionID":209,"questionTranslations":[{"questionTranslationId":553,"questionTranslationLanguageId":35,"questionTranslationTitle":"Single Line Text","questionTranslationInstructionOrNote":"","questionTranslationTextLabel":""}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":476,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":true,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":true,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":2,"questionDisplayOrder":2,"sectionID":209,"questionTranslations":[{"questionTranslationId":554,"questionTranslationLanguageId":35,"questionTranslationTitle":"Multiple Choice Question","questionTranslationInstructionOrNote":"Choose multiple answers","questionTranslationTextLabel":""}],"answerChoiceAttributes":[{"answerChoiceAttributeId":527,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"turquoise","answerChoiceAttributeScoreOrWeight":3,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":646,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Correct"}]},{"answerChoiceAttributeId":528,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"red","answerChoiceAttributeScoreOrWeight":2,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":647,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Wrong"}]},{"answerChoiceAttributeId":529,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"blue","answerChoiceAttributeScoreOrWeight":3,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":648,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Wrong"}]},{"answerChoiceAttributeId":530,"answerChoiceAttributeText":null,"answerChoiceAttributeColor":"blue","answerChoiceAttributeScoreOrWeight":2,"answerChoiceAttributeHeaders":[{"answerChoiceAttributeHeaderId":649,"answerChoiceAttributeHeaderLanguageId":35,"answerChoiceAttributeHeaderTitle":"Correct"}]}],"questionLogics":[],"questionAttachments":[{"questionAttachmentId":36,"isExistingFile":false,"shouldSaveFileToPlatform":false,"fileName":"videoplayback.mp4","fileType":null,"fileExtension":"mp4","folderName":"Choose","questionID":476,"documentID":228,"folderID":null}]},{"questionId":477,"questionIsHidden":false,"questionIsRequired":false,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":5,"questionDisplayOrder":3,"sectionID":209,"questionTranslations":[{"questionTranslationId":555,"questionTranslationLanguageId":35,"questionTranslationTitle":"Number Field Integer","questionTranslationInstructionOrNote":"","questionTranslationTextLabel":""}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]},{"questionId":478,"questionIsHidden":false,"questionIsRequired":true,"allowInstructionOrNote":false,"allowTextLabel":false,"shouldShowOptionalComment":false,"allowAttachment":false,"allowQuestionLogic":false,"isExistingFile":false,"shouldShowAnswerChoiceTemplate":false,"selectedAnswerTypeId":6,"questionDisplayOrder":4,"sectionID":209,"questionTranslations":[{"questionTranslationId":556,"questionTranslationLanguageId":35,"questionTranslationTitle":"Number Field Decimal","questionTranslationInstructionOrNote":"","questionTranslationTextLabel":""}],"answerChoiceAttributes":[],"questionLogics":[],"questionAttachments":[]}],"tasks":[]}],"selectedLanguage":null,"selectedLanguages":[{"languageId":35,"languageLabel":"English"}],"supportedLanguages":[],"answerTypes":[],"answerChoiceColors":null,"hourFormats":null,"questionActionOnList":null,"questionActionTypes":null,"questionChoiceSetTypes":null,"questionOperatorTypes":null,"userList":null,"groupList":null,"workPermitDetails":{"workPermitId":0,"totalScore":null,"hasExpirationDate":false,"hasExpiresOn":false,"expiresOnDate":null,"hasExpiresAfter":false,"durationValue":null,"hasPermitIssuedNotification":false,"hasPermitNotIssuedNotification":false,"operatorTypeID":null,"durationTypeID":null,"permitIssuedNotificationID":null,"permitNotIssuedNotificationID":null,"formVersionID":0,"permitNotIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]}},"accidentReport":{"accidentReportId":0,"hasAccidentNotification":false,"notificationID":null,"formVersionID":0,"accidentNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]}},"modifiedBy":"00000000-0000-0000-0000-000000000000","folderDocumentList":null,"folderDocumentTreeList":null,"signedUsers":[],"taskTemplates":[]}');
 	formBuilderDetail = JSON.parse(
-		'{"formId":502,"title":"CLN 31 TEST","description":null,"formVersionId":773,"formVersionNo":3,"isDraft":false,"formTypeID":2,"companyId":27,"defaultLanguageId":35,"isPreview":false,"sections":[{"sectionId":1698,"sectionIsHidden":false,"sectionDisplayOrder":1,"isRiskAssessmentSection":true,"isHAVSection":false,"isAccidentReportSection":false,"sectionTranslations":[{"sectionTranslationId":1840,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Risk Assessment"}],"questions":[],"tasks":[{"taskId":127,"isRequired":false,"shouldShowTaskTemplate":false,"allowInstructionOrNote":false,"shouldShowOptionalComment":false,"allowAttachment":false,"displayOrder":1,"sectionID":1698,"selectedTaskTemplateID":null,"taskTranslations":[{"taskTranslationId":101,"taskTranslationLanguageId":35,"taskTranslationTitle":"Task One","taskTranslationInstructionOrNote":""}],"taskAttachments":[],"hazards":[{"hazardId":119,"riskRating":null,"residualRiskRating":null,"hasPersonnelExposedNotification":false,"displayOrder":1,"taskID":127,"personnelExposedNotificationID":null,"personnelExposedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"hazardTranslations":[{"hazardTranslationId":123,"hazardTranslationLanguageId":35,"hazardTranslationTitle":"Hazard One"}],"controlMeasures":[{"controlMeasureId":156,"shouldShowControlMeasureTemplate":false,"displayOrder":1,"controlMeasureTranslations":[{"controlMeasureTranslationId":162,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Control measure One"}]},{"controlMeasureId":157,"shouldShowControlMeasureTemplate":false,"displayOrder":2,"controlMeasureTranslations":[{"controlMeasureTranslationId":163,"controlMeasureTranslationLanguageId":35,"controlMeasureTranslationTitle":"Control measure Two"}]}],"availableUsers":[],"availableUserGroups":[]}],"taskAttachmentIconPath":null}]}],"selectedLanguage":null,"selectedLanguages":[{"languageId":35,"languageLabel":"English"}],"supportedLanguages":[],"answerTypes":[],"answerChoiceColors":null,"hourFormats":null,"questionActionOnList":null,"questionActionTypes":null,"questionChoiceSetTypes":null,"questionOperatorTypes":null,"userList":null,"groupList":null,"workPermitDetails":{"workPermitId":0,"totalScore":null,"hasExpirationDate":false,"hasExpiresOn":false,"expiresOnDate":null,"hasExpiresAfter":false,"durationValue":null,"hasPermitIssuedNotification":false,"hasPermitNotIssuedNotification":false,"operatorTypeID":null,"durationTypeID":null,"permitIssuedNotificationID":null,"permitNotIssuedNotificationID":null,"formVersionID":0,"permitNotIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedAvailableUsers":[],"permitIssuedAvailableUserGroups":[],"permitNotIssuedAvailableUsers":[],"permitNotIssuedAvailableUserGroups":[]},"accidentReport":{"accidentReportId":0,"hasAccidentNotification":false,"notificationID":null,"formVersionID":0,"accidentNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"availableUsers":[],"availableUserGroups":[]},"riskAssessmentDetails":null,"modifiedBy":"00000000-0000-0000-0000-000000000000","folderDocumentList":null,"folderDocumentTreeList":null,"signedUsers":[],"taskTemplates":[]}'
+		'{"formId":505,"title":"CLN-31 Test","description":null,"formVersionId":776,"formVersionNo":1,"isDraft":false,"formTypeID":2,"companyId":27,"defaultLanguageId":35,"isPreview":false,"sections":[{"sectionId":1699,"sectionIsHidden":false,"sectionDisplayOrder":1,"isRiskAssessmentSection":true,"isHAVSection":false,"isAccidentReportSection":false,"sectionTranslations":[{"sectionTranslationId":1841,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Risk Assessment"}],"questions":[],"tasks":[]}],"selectedLanguage":null,"selectedLanguages":[{"languageId":35,"languageLabel":"English"}],"supportedLanguages":[],"answerTypes":[],"answerChoiceColors":null,"hourFormats":null,"questionActionOnList":null,"questionActionTypes":null,"questionChoiceSetTypes":null,"questionOperatorTypes":null,"userList":null,"groupList":null,"workPermitDetails":{"workPermitId":0,"totalScore":null,"hasExpirationDate":false,"hasExpiresOn":false,"expiresOnDate":null,"hasExpiresAfter":false,"durationValue":null,"hasPermitIssuedNotification":false,"hasPermitNotIssuedNotification":false,"operatorTypeID":null,"durationTypeID":null,"permitIssuedNotificationID":null,"permitNotIssuedNotificationID":null,"formVersionID":0,"permitNotIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedAvailableUsers":[],"permitIssuedAvailableUserGroups":[],"permitNotIssuedAvailableUsers":[],"permitNotIssuedAvailableUserGroups":[]},"accidentReport":{"accidentReportId":0,"hasAccidentNotification":false,"notificationID":null,"formVersionID":0,"accidentNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"availableUsers":[],"availableUserGroups":[]},"riskAssessmentDetails":{"riskAssessmentId":9,"controlMeasureAddOptions":[],"allowEndUserToAddHazardsAndCM":true,"selectedControlMeasureAddOption":3,"formVersionID":776},"modifiedBy":"00000000-0000-0000-0000-000000000000","folderDocumentList":null,"folderDocumentTreeList":null,"signedUsers":[],"taskTemplates":[]}'
 	);
 
-	exposedNotificationType = [{ title: 'system', selected:true, disabled:true }, { title: 'email' }, { title: 'sms' }];
+	exposedNotificationType = [{ title: 'system', selected: true, disabled: true }, { title: 'email' }, { title: 'sms' }];
 
 	questionElementIds = [];
 	currentQuestionIndex = 0;
@@ -69,7 +73,10 @@ export class FormRiskassessmentPage implements OnInit {
 
 	companyId;
 
-	
+	riskAssessmentAnswerDetails: Array<RAtaskAswerObject> = [];
+	riskAssessmentInputEditType = EnumService.RiskAssessmentAnswerEditOptionsType.Choose;
+	canTemplateEnable = false;
+	canInputEnable = false;
 
 	constructor(
 		public navCtrl: NavController,
@@ -97,8 +104,20 @@ export class FormRiskassessmentPage implements OnInit {
 			this.formBuilderDetail = sharedDataService.formBuilderDetails;
 		}
 
-		if (sharedDataService.riskRatingsList && sharedDataService.riskRatingsList.length > 0) {
+		if (sharedDataService.severityRatings && sharedDataService.severityRatings.length > 0 && sharedDataService.probabilityRatings && sharedDataService.probabilityRatings.length > 0) {
 			this.putRiskRatingInVariable();
+		}
+
+		const riskAssessmentDetails = this.formBuilderDetail.riskAssessmentDetails;
+		this.riskAssessmentInputEditType = riskAssessmentDetails?.selectedControlMeasureAddOption;
+
+		if (this.riskAssessmentInputEditType === EnumService.RiskAssessmentAnswerEditOptionsType.Both) {
+			this.canTemplateEnable = true;
+			this.canInputEnable = true;
+		} else if (this.riskAssessmentInputEditType === EnumService.RiskAssessmentAnswerEditOptionsType.Template) {
+			this.canTemplateEnable = true;
+		} else if (this.riskAssessmentInputEditType === EnumService.RiskAssessmentAnswerEditOptionsType.Manually) {
+			this.canInputEnable = true;
 		}
 
 		const sections = this.formBuilderDetail.sections;
@@ -135,7 +154,7 @@ export class FormRiskassessmentPage implements OnInit {
 		// Add form controls for each type of fields
 		this.formGroup = new FormGroup({});
 		this.utilService.questionElementIdsUpdate = (questionElementIds) => {
-			this.questionElementIds = questionElementIds;
+			this.questionElementIds = questionElementIds || [];
 		};
 		this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
 		// -- End -- Add form controls for each type of fields
@@ -143,7 +162,8 @@ export class FormRiskassessmentPage implements OnInit {
 
 	ngOnInit() {
 		this.getCompanyUserList();
-		this.getRiskRatingOptionList();
+		this.getRiskAssessmentProbabilityOptions();
+		this.getRiskAssessmentSeverityOptions();
 	}
 
 	ionViewDidEnter() {
@@ -165,6 +185,18 @@ export class FormRiskassessmentPage implements OnInit {
 		}
 	}
 
+	addTask() {
+		this.riskAssessmentAnswerDetails.push(new RAtaskAswerObject());
+	}
+
+	addTaskHazard(task: RAtaskAswerObject, taskIndex) {
+		task.hazardAnswers.push(new RAhazardAswerObject());
+	}
+
+	addControlMeasure(hazard: RAhazardAswerObject, hazardIndex) {
+		hazard.controlMeasureAnswers.push(new RAcontrolMeasureAnswerObject());
+	}
+
 	async getCompanyUserList() {
 		this.utilService.presentLoadingWithOptions();
 
@@ -183,16 +215,56 @@ export class FormRiskassessmentPage implements OnInit {
 		);
 	}
 
-	async getRiskRatingOptionList() {
-		if (!this.sharedDataService.riskRatingsList) {
+	// async getRiskRatingOptionList() {
+	// 	if (!this.sharedDataService.riskRatingsList) {
+	// 		this.utilService.presentLoadingWithOptions();
+	// 	}
+	// 	this.apiService.getRiskRatingOptionList().subscribe(
+	// 		(response: Response) => {
+	// 			this.utilService.hideLoading();
+	// 			if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+	// 				if (response.Result && response.Result.length > 0) {
+	// 					this.sharedDataService.riskRatingsList = response.Result;
+	// 					this.putRiskRatingInVariable();
+	// 				}
+	// 			}
+	// 		},
+	// 		(error) => {
+	// 			this.utilService.hideLoading();
+	// 		}
+	// 	);
+	// }
+
+	async getRiskAssessmentProbabilityOptions() {
+		if (!this.sharedDataService.probabilityRatings) {
 			this.utilService.presentLoadingWithOptions();
 		}
-		this.apiService.getRiskRatingOptionList().subscribe(
+		this.apiService.getRiskAssessmentProbabilityOptions().subscribe(
 			(response: Response) => {
 				this.utilService.hideLoading();
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					if (response.Result && response.Result.length > 0) {
-						this.sharedDataService.riskRatingsList = response.Result;
+						this.sharedDataService.probabilityRatings = response.Result;
+						this.putRiskRatingInVariable();
+					}
+				}
+			},
+			(error) => {
+				this.utilService.hideLoading();
+			}
+		);
+	}
+
+	async getRiskAssessmentSeverityOptions() {
+		if (!this.sharedDataService.severityRatings) {
+			this.utilService.presentLoadingWithOptions();
+		}
+		this.apiService.getRiskAssessmentSeverityOptions().subscribe(
+			(response: Response) => {
+				this.utilService.hideLoading();
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					if (response.Result && response.Result.length > 0) {
+						this.sharedDataService.severityRatings = response.Result;
 						this.putRiskRatingInVariable();
 					}
 				}
@@ -219,10 +291,8 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	putRiskRatingInVariable = () => {
-		this.riskRatings = this.sharedDataService.riskRatingsList.clone() as [RiskRatingItem];
-		this.residualRiskRatings = this.sharedDataService.riskRatingsList.clone() as [RiskRatingItem];
-		this.severityRatings = this.sharedDataService.riskRatingsList.clone() as [RiskRatingItem];
-		this.probabilityRatings = this.sharedDataService.riskRatingsList.clone() as [RiskRatingItem];
+		this.severityRatings = this.sharedDataService.severityRatings as [RiskRatingSeverityOption];
+		this.probabilityRatings = this.sharedDataService.probabilityRatings as [RiskRatingProbabilityOption];
 	};
 
 	handleOrientation = () => {

@@ -36,6 +36,8 @@ import { UserDetail } from '../_models/userDetail';
 import { File } from '@ionic-native/file/ngx';
 import { FileTransfer, FileUploadOptions } from '@ionic-native/file-transfer/ngx';
 import { environment } from '../../environments/environment';
+import { RiskRatingSeverityOption } from '../_models/riskRatingSeverityOption';
+import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOption';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -85,7 +87,11 @@ export class SharedDataService {
 	userProfile: Profile;
 	timeZoneList;
 	companyLanguageList;
+	
 	riskRatingsList: [RiskRatingItem];
+	severityRatings: Array<RiskRatingSeverityOption>;
+	probabilityRatings: Array<RiskRatingProbabilityOption>;
+
 	globalDirectories: GlobalDirectory;
 	locationItemList;
 

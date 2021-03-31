@@ -198,6 +198,13 @@ export class EnumService {
 		ConfirmationBox: 14,
 	};
 
+	static RiskAssessmentAnswerEditOptionsType = {
+		Choose: 0,
+		Template: 1,
+		Manually: 2,
+		Both: 3,
+	};
+
 	static HavFormFieldOrder = {
 		DateOfUsage: 1,
 		Manufacturer: 2,

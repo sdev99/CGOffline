@@ -315,11 +315,11 @@ export class AppComponent {
 					replaceUrl: true,
 				});
 
-				// if (UtilService.isLocalHost()) {
-				// 	this.navController.navigateRoot('/form-riskassessment', {
-				// 		replaceUrl: true,
-				// 	});
-				// }
+				if (UtilService.isLocalHost()) {
+					this.navController.navigateRoot('/form-riskassessment', {
+						replaceUrl: true,
+					});
+				}
 
 				if (!this.sharedDataService.isLoginAfterAppOpen && user?.companyID) {
 					this.accountService.checkMobileSessionExpirationSetting(user?.companyID).subscribe((response: Response) => {
