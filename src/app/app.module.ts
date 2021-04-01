@@ -29,10 +29,11 @@ import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ion
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { TemplateDropdownComponent } from './components/template-dropdown/template-dropdown.component';
 
 @NgModule({
-	declarations: [AppComponent, SearchLocationPage],
-	entryComponents: [],
+	declarations: [AppComponent, SearchLocationPage, TemplateDropdownComponent],
+	entryComponents: [TemplateDropdownComponent],
 	imports: [
 		BrowserModule,
 		FormsModule,

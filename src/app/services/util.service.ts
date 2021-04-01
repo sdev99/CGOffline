@@ -64,6 +64,8 @@ export class UtilService {
 				return '#50E3C2';
 			case 'purple':
 				return '#9150E3';
+			case 'orange':
+				return '#EE5A35';
 		}
 		return color;
 	}
@@ -341,6 +343,32 @@ export class UtilService {
 		await alert.present();
 	}
 
+	async showConfirmAlert(message = '', title = '', callBack = null) {
+		const alert = await this.alertController.create({
+			cssClass: 'my-custom-class',
+			header: title,
+			message,
+			buttons: [
+				{
+					text: 'No',
+					role: 'cancel',
+					cssClass: 'secondary',
+					handler: () => {
+						callBack(false);
+					},
+				},
+				{
+					text: 'Yes',
+					handler: () => {
+						callBack(true);
+					},
+				},
+			],
+		});
+
+		await alert.present();
+	}
+
 	getCurrentTimeStamp() {
 		return Math.floor(Date.now());
 	}
@@ -429,9 +457,10 @@ export class UtilService {
 			sections.map((section, sectionIndex) => {
 				// No need to add form control for Risk Assessment section because we are not using form controls, we using ngModel
 				if (section.isRiskAssessmentSection) {
-					const tasks = section.tasks;
+					const tasks = section.riskAssessmentAnswerDetails?.taskAnswers;
+
 					tasks.map((task, questionIndex) => {
-						const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskId);
+						const elementId = UtilService.HtmlElementIdUq(sectionIndex, questionIndex, section.sectionId, task.taskAnswerId);
 						if (this.shouldShowSection(section) && this.shouldShowQuestion(task)) {
 							if (questionElementIds.indexOf(elementId) !== -1) {
 								questionElementIds.splice(questionElementIds.indexOf(elementId), 1);

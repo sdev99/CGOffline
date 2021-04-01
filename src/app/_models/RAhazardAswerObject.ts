@@ -20,6 +20,10 @@ export class RAhazardAswerObject {
 	hazardAnswerDisplayOrder: number;
 	taskAnswerID: number;
 	controlMeasureAnswers: Array<RAcontrolMeasureAnswerObject>;
+	isSystemNotification: boolean;
+	isEmailNotification: boolean;
+	isSMSNotification: boolean;
+
 	constructor() {
 		this.hazardAnswerId = 0;
 		this.hazardAnswerTitle = '';
@@ -37,8 +41,11 @@ export class RAhazardAswerObject {
 		this.hasPersonnelExposedNotification = false;
 		this.personnelExposedNotificationUserIDs = '';
 		this.personnelExposedNotificationUserGroupIDs = '';
-		this.hazardAnswerDisplayOrder = 0;
+		this.hazardAnswerDisplayOrder = 1;
 		this.taskAnswerID = 0;
 		this.controlMeasureAnswers = [];
+		this.isSystemNotification = true;
+		this.isEmailNotification = false;
+		this.isSMSNotification = false;
 	}
 }

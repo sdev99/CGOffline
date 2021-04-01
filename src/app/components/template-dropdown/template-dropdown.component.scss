@@ -1,0 +1,14 @@
+ion-searchbar {
+	z-index: 99;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	padding-top: 0;
+	border: none;
+	--box-shadow: none;
+	--background: #f7fafe;
+}
+
+.list-container {
+	height: 100%;
+	overflow-y: auto;
+}

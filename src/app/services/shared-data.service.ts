@@ -38,6 +38,7 @@ import { FileTransfer, FileUploadOptions } from '@ionic-native/file-transfer/ngx
 import { environment } from '../../environments/environment';
 import { RiskRatingSeverityOption } from '../_models/riskRatingSeverityOption';
 import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOption';
+import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -87,10 +88,11 @@ export class SharedDataService {
 	userProfile: Profile;
 	timeZoneList;
 	companyLanguageList;
-	
+
 	riskRatingsList: [RiskRatingItem];
 	severityRatings: Array<RiskRatingSeverityOption>;
 	probabilityRatings: Array<RiskRatingProbabilityOption>;
+	raTaskTemplateList: Array<RAtaskTemplateItem>;
 
 	globalDirectories: GlobalDirectory;
 	locationItemList;
@@ -678,31 +680,35 @@ export class SharedDataService {
 				sections.map((section, sectionIndex) => {
 					if (this.utilService.shouldShowSection(section)) {
 						if (section.isRiskAssessmentSection) {
-							const tasks = section.tasks;
+							const tasks = section.riskAssessmentAnswerDetails?.taskAnswers;
 							tasks.map((task) => {
 								if (task.isRequired) {
 									requiredFieldsCount++;
-									const hazards = task.hazards;
+									const hazards = task.hazardAnswers;
 									let isValid = true;
 									hazards.map((hazard) => {
-										if (!hazard.riskRating || !hazard.residualRiskRating) {
+										if (!hazard.riskRatingSeverityID || !hazard.riskRatingProbabilityID) {
+											isValid = false;
+										}
+										if (!hazard.residualRiskRatingSeverityID || !hazard.residualRiskRatingProbabilityID) {
 											isValid = false;
 										}
 
-										if (hazard.memberOfTheWorkForce) {
-											if (Object.keys(hazard.addedUsers).length === 0 && Object.keys(hazard.addedGroups).length === 0) {
+										if (hazard.isMembersOfTheWorkForce) {
+											if (hazard.isMembersOfTheWorkForceUserIDs.length === 0 && hazard.isMembersOfTheWorkForceUserGroupIDs.length === 0) {
 												isValid = false;
 											}
 										}
 
-										if (hazard.memberOfThePublic) {
-											if (!hazard.memberOfThePublicDescription) {
+										if (hazard.isMembersOfThePublic) {
+											if (!hazard.membersOfThePublicDescription) {
 												isValid = false;
 											}
 										}
 									});
 									if (isValid) {
 										requiredFieldsValidCount++;
+										filledFieldsCount++;
 									}
 								}
 							});
@@ -920,6 +926,7 @@ export class SharedDataService {
 		const havQuestionAnswers = [];
 		const accidentReportQuestionAnswers = [];
 		const riskAssessmentAnswers = [];
+		const riskAssessmentAnswerDetails = { taskAnswers: [] };
 
 		const selectedLanguageID = this.getLanguageIdForForm();
 
@@ -934,54 +941,55 @@ export class SharedDataService {
 				const sectionFormattedObject: any = JSON.parse(JSON.stringify(section));
 
 				if (section.isRiskAssessmentSection) {
-					const tasks = section.tasks;
-
+					const tasks = section.riskAssessmentAnswerDetails?.taskAnswers;
+					riskAssessmentAnswerDetails.taskAnswers = tasks;
 					tasks.map((task) => {
 						if (this.utilService.shouldShowQuestion(task)) {
 							const answerFormattedObject: any = JSON.parse(JSON.stringify(task));
-							const hazardsAnswers = [];
-							const hazards = task.hazards;
-							hazards.map((hazard) => {
-								const hazardFormattedObject: any = JSON.parse(JSON.stringify(hazard));
+							// const hazardsAnswers = [];
+							const hazardsAnswers = task.hazardAnswers;
+							const hazards = task.hazardAnswers;
+							// hazards.map((hazard) => {
+							// 	const hazardFormattedObject: any = JSON.parse(JSON.stringify(hazard));
 
-								const answerObject: RiskAssessmentAnswerObject = {
-									riskAQuestionAnswerId: 0,
-									hazardID: hazard.hazardId,
-									formVersionID: formVersionId,
-									riskRatingID: hazard.riskRating || 0,
-									residualRiskRatingID: hazard.residualRiskRating || 0,
-									isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
-									isMembersOfThePublic: hazard.memberOfThePublic,
-									[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: task[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
-									[EnumService.QuestionLogic.ActionTypeForForm.Notify]: task[EnumService.QuestionLogic.ActionTypeForForm.Notify],
-								};
+							// 	const answerObject: RiskAssessmentAnswerObject = {
+							// 		riskAQuestionAnswerId: 0,
+							// 		hazardID: hazard.hazardAnswerId,
+							// 		formVersionID: formVersionId,
+							// 		riskRatingID: hazard.riskRating || 0,
+							// 		residualRiskRatingID: hazard.residualRiskRating || 0,
+							// 		isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
+							// 		isMembersOfThePublic: hazard.memberOfThePublic,
+							// 		[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: task[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+							// 		[EnumService.QuestionLogic.ActionTypeForForm.Notify]: task[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+							// 	};
 
-								const controlMeasures = hazard.controlMeasures;
-								const controlMeasureIDs = [];
-								if (controlMeasures) {
-									controlMeasures.map((controlMeasure) => {
-										if (controlMeasure.isSelected) {
-											controlMeasureIDs.push(controlMeasure.controlMeasureId);
-										}
-									});
-								}
-								if (controlMeasureIDs.length > 0) {
-									answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
-								}
+							// 	const controlMeasures = hazard.controlMeasures;
+							// 	const controlMeasureIDs = [];
+							// 	if (controlMeasures) {
+							// 		controlMeasures.map((controlMeasure) => {
+							// 			if (controlMeasure.isSelected) {
+							// 				controlMeasureIDs.push(controlMeasure.controlMeasureId);
+							// 			}
+							// 		});
+							// 	}
+							// 	if (controlMeasureIDs.length > 0) {
+							// 		answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
+							// 	}
 
-								if (hazard.memberOfTheWorkForce) {
-									answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
-									answerObject.userGroupIDs = Object.keys(hazard.addedGroups).join(',');
-								}
+							// 	if (hazard.memberOfTheWorkForce) {
+							// 		answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
+							// 		answerObject.userGroupIDs = Object.keys(hazard.addedGroups).join(',');
+							// 	}
 
-								if (hazard.memberOfThePublic) {
-									answerObject.membersOfThePublicDescription = hazard.memberOfThePublicDescription;
-								}
-								riskAssessmentAnswers.push(answerObject);
+							// 	if (hazard.memberOfThePublic) {
+							// 		answerObject.membersOfThePublicDescription = hazard.memberOfThePublicDescription;
+							// 	}
+							// 	riskAssessmentAnswers.push(answerObject);
 
-								hazardFormattedObject.answerData = answerObject;
-								hazardsAnswers.push(hazardFormattedObject);
-							});
+							// 	hazardFormattedObject.answerData = answerObject;
+							// 	hazardsAnswers.push(hazardFormattedObject);
+							// });
 
 							answerFormattedObject.answerData = hazardsAnswers;
 							formattedAnswers.push(answerFormattedObject);
@@ -1295,12 +1303,13 @@ export class SharedDataService {
 			formattedSections,
 			workPermitDetails,
 			accidentReport,
+			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

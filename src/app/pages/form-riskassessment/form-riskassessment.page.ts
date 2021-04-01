@@ -1,5 +1,5 @@
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonContent, ModalController, NavController } from '@ionic/angular';
+import { IonContent, ModalController, NavController, PopoverController } from '@ionic/angular';
 import { DemoDataService } from '../../services/demo-data.service';
 import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -22,6 +22,9 @@ import { RAhazardAswerObject } from 'src/app/_models/RAhazardAswerObject';
 import { RAcontrolMeasureAnswerObject } from 'src/app/_models/RAcontrolMeasureAnswerObject';
 import { RiskRatingSeverityOption } from 'src/app/_models/riskRatingSeverityOption';
 import { RiskRatingProbabilityOption } from 'src/app/_models/riskRatingProbabilityOption';
+import { RAcontrolMeasureTemplateItem } from 'src/app/_models/RAcontrolMeasureTemplateItem';
+import { RAtaskTemplateItem } from 'src/app/_models/RAtaskTemplateItem';
+import { TemplateDropdownComponent } from 'src/app/components/template-dropdown/template-dropdown.component';
 
 @Component({
 	selector: 'app-form-riskassessment',
@@ -65,7 +68,11 @@ export class FormRiskassessmentPage implements OnInit {
 		'{"formId":505,"title":"CLN-31 Test","description":null,"formVersionId":776,"formVersionNo":1,"isDraft":false,"formTypeID":2,"companyId":27,"defaultLanguageId":35,"isPreview":false,"sections":[{"sectionId":1699,"sectionIsHidden":false,"sectionDisplayOrder":1,"isRiskAssessmentSection":true,"isHAVSection":false,"isAccidentReportSection":false,"sectionTranslations":[{"sectionTranslationId":1841,"sectionTranslationLanguageId":35,"sectionTranslationTitle":"Risk Assessment"}],"questions":[],"tasks":[]}],"selectedLanguage":null,"selectedLanguages":[{"languageId":35,"languageLabel":"English"}],"supportedLanguages":[],"answerTypes":[],"answerChoiceColors":null,"hourFormats":null,"questionActionOnList":null,"questionActionTypes":null,"questionChoiceSetTypes":null,"questionOperatorTypes":null,"userList":null,"groupList":null,"workPermitDetails":{"workPermitId":0,"totalScore":null,"hasExpirationDate":false,"hasExpiresOn":false,"expiresOnDate":null,"hasExpiresAfter":false,"durationValue":null,"hasPermitIssuedNotification":false,"hasPermitNotIssuedNotification":false,"operatorTypeID":null,"durationTypeID":null,"permitIssuedNotificationID":null,"permitNotIssuedNotificationID":null,"formVersionID":0,"permitNotIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"permitIssuedAvailableUsers":[],"permitIssuedAvailableUserGroups":[],"permitNotIssuedAvailableUsers":[],"permitNotIssuedAvailableUserGroups":[]},"accidentReport":{"accidentReportId":0,"hasAccidentNotification":false,"notificationID":null,"formVersionID":0,"accidentNotification":{"notifyUser":true,"selectedUserId":"00000000-0000-0000-0000-000000000000","selectedUsers":[],"notifyGroup":false,"selectedGroupId":0,"selectedGroups":[],"isSystemNotification":true,"isEmailNotification":false,"isSMSNotification":false,"selectedUsersAndGroups":[]},"availableUsers":[],"availableUserGroups":[]},"riskAssessmentDetails":{"riskAssessmentId":9,"controlMeasureAddOptions":[],"allowEndUserToAddHazardsAndCM":true,"selectedControlMeasureAddOption":3,"formVersionID":776},"modifiedBy":"00000000-0000-0000-0000-000000000000","folderDocumentList":null,"folderDocumentTreeList":null,"signedUsers":[],"taskTemplates":[]}'
 	);
 
-	exposedNotificationType = [{ title: 'system', selected: true, disabled: true }, { title: 'email' }, { title: 'sms' }];
+	exposedNotificationType = [
+		{ title: 'system', apiKey: 'isSystemNotification', disabled: true },
+		{ title: 'email', apiKey: 'isEmailNotification' },
+		{ title: 'sms', apiKey: 'isSMSNotification' },
+	];
 
 	questionElementIds = [];
 	currentQuestionIndex = 0;
@@ -73,10 +80,12 @@ export class FormRiskassessmentPage implements OnInit {
 
 	companyId;
 
-	riskAssessmentAnswerDetails: Array<RAtaskAswerObject> = [];
 	riskAssessmentInputEditType = EnumService.RiskAssessmentAnswerEditOptionsType.Choose;
 	canTemplateEnable = false;
 	canInputEnable = false;
+
+	taskTemplateList: Array<RAtaskTemplateItem> = [];
+	controlMeasureTemplateList: Array<RAcontrolMeasureTemplateItem> = [];
 
 	constructor(
 		public navCtrl: NavController,
@@ -90,9 +99,18 @@ export class FormRiskassessmentPage implements OnInit {
 		public utilService: UtilService,
 		private ngZone: NgZone,
 		public accountService: AccountService,
-		public photoService: PhotoService
+		public photoService: PhotoService,
+		public popoverController: PopoverController
 	) {
 		this.user = accountService.userValue;
+
+		if (sharedDataService.formBuilderDetails) {
+			this.formBuilderDetail = sharedDataService.formBuilderDetails;
+		}
+
+		if (sharedDataService.raTaskTemplateList) {
+			this.taskTemplateList = sharedDataService.raTaskTemplateList;
+		}
 
 		if (this.sharedDataService.dedicatedMode) {
 			this.companyId = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
@@ -100,8 +118,8 @@ export class FormRiskassessmentPage implements OnInit {
 			this.companyId = this.user?.companyID;
 		}
 
-		if (sharedDataService.formBuilderDetails) {
-			this.formBuilderDetail = sharedDataService.formBuilderDetails;
+		if (!this.companyId) {
+			this.companyId = this.formBuilderDetail.companyId;
 		}
 
 		if (sharedDataService.severityRatings && sharedDataService.severityRatings.length > 0 && sharedDataService.probabilityRatings && sharedDataService.probabilityRatings.length > 0) {
@@ -120,33 +138,15 @@ export class FormRiskassessmentPage implements OnInit {
 			this.canInputEnable = true;
 		}
 
+		if (this.canTemplateEnable) {
+			this.getRiskItemList();
+		}
+
 		const sections = this.formBuilderDetail.sections;
 		if (sections) {
-			sections.map((section, sectionIndex) => {
+			sections.map((section) => {
 				if (section.isRiskAssessmentSection) {
-					const tasks = section.tasks;
-					tasks.map((task) => {
-						const hazards = task.hazards;
-						hazards.map((hazard) => {
-							hazard.addedUsers = {};
-							hazard.addedGroups = {};
-							hazard.riskRating = null;
-							hazard.residualRiskRating = null;
-							hazard.selectedUserGroupType = this.userGroupTypes[0];
-							hazard.selectedUser = null;
-							hazard.selectedGroup = null;
-							hazard.memberOfTheWorkForce = false;
-							hazard.personnelExposedNotification = false;
-							hazard.memberOfThePublic = false;
-							hazard.memberOfThePublicDescription = '';
-
-							//new
-							hazard.riskRatingSeverity = null;
-							hazard.riskRatingProbability = null;
-							hazard.residualRiskRatingSeverity = null;
-							hazard.residualRiskRatingProbability = null;
-						});
-					});
+					section.riskAssessmentAnswerDetails = { taskAnswers: [] };
 				}
 			});
 		}
@@ -185,8 +185,50 @@ export class FormRiskassessmentPage implements OnInit {
 		}
 	}
 
-	addTask() {
-		this.riskAssessmentAnswerDetails.push(new RAtaskAswerObject());
+	async openTaskTemplateForTask(event, task) {
+		const popover = await this.popoverController.create({
+			component: TemplateDropdownComponent,
+			cssClass: 'template-dropdown-popover',
+			event: event,
+			translucent: true,
+			mode: 'md',
+			componentProps: {
+				titleKey: 'riskItemName',
+				list: this.taskTemplateList,
+			},
+		});
+		popover.onWillDismiss().then(({ data }) => {
+			if (data) {
+				task.taskAnswerTitle = data.riskItemName;
+				this.getHazardItemList(data.companyRiskItemID);
+			}
+		});
+		return await popover.present();
+	}
+
+	async openTaskTemplateForControlMeasure(event, controlMeasure) {
+		const popover = await this.popoverController.create({
+			component: TemplateDropdownComponent,
+			cssClass: 'template-dropdown-popover',
+			event: event,
+			translucent: true,
+			mode: 'md',
+			componentProps: {
+				titleKey: 'hazardItemName',
+				list: this.controlMeasureTemplateList,
+			},
+		});
+		popover.onWillDismiss().then(({ data }) => {
+			if (data) {
+				controlMeasure.controlMeasureAnswerTitle = data.hazardItemName;
+			}
+		});
+		return await popover.present();
+	}
+
+	addTask(section) {
+		section.riskAssessmentAnswerDetails?.taskAnswers.push(new RAtaskAswerObject());
+		this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
 	}
 
 	addTaskHazard(task: RAtaskAswerObject, taskIndex) {
@@ -195,6 +237,30 @@ export class FormRiskassessmentPage implements OnInit {
 
 	addControlMeasure(hazard: RAhazardAswerObject, hazardIndex) {
 		hazard.controlMeasureAnswers.push(new RAcontrolMeasureAnswerObject());
+	}
+
+	removeTask(section, taskIndex) {
+		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
+			if (status) {
+				section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
+			}
+		});
+	}
+
+	removeHazard(task, hazardIndex) {
+		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
+			if (status) {
+				task.hazardAnswers.splice(hazardIndex, 1);
+			}
+		});
+	}
+
+	removeControlMeasure(hazard, controlMeasureIndex) {
+		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
+			if (status) {
+				hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
+			}
+		});
 	}
 
 	async getCompanyUserList() {
@@ -266,6 +332,41 @@ export class FormRiskassessmentPage implements OnInit {
 					if (response.Result && response.Result.length > 0) {
 						this.sharedDataService.severityRatings = response.Result;
 						this.putRiskRatingInVariable();
+					}
+				}
+			},
+			(error) => {
+				this.utilService.hideLoading();
+			}
+		);
+	}
+
+	async getRiskItemList() {
+		this.utilService.presentLoadingWithOptions();
+		this.apiService.getRiskItemList(this.companyId).subscribe(
+			(response: Response) => {
+				this.utilService.hideLoading();
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					if (response.Result && response.Result.length > 0) {
+						this.sharedDataService.raTaskTemplateList = response.Result;
+						this.taskTemplateList = response.Result;
+					}
+				}
+			},
+			(error) => {
+				this.utilService.hideLoading();
+			}
+		);
+	}
+
+	async getHazardItemList(companyRiskItemID) {
+		this.utilService.presentLoadingWithOptions();
+		this.apiService.getHazardItemList(this.companyId, companyRiskItemID).subscribe(
+			(response: Response) => {
+				this.utilService.hideLoading();
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					if (response.Result && response.Result.length > 0) {
+						this.controlMeasureTemplateList = response.Result;
 					}
 				}
 			},
@@ -384,20 +485,22 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	onScrollEnd = (event) => {
-		if (this.scrollingDetail) {
-			const scrollTop = this.scrollingDetail.scrollTop;
-			if (scrollTop === 0) {
-				this.currentQuestionIndex = 0;
-			} else {
-				this.questionElementIds.map((elementId, key) => {
-					const y = document.getElementById(elementId).offsetTop;
-					if (scrollTop >= y) {
-						this.currentQuestionIndex = key;
-						return;
-					}
-				});
+		try {
+			if (this.scrollingDetail) {
+				const scrollTop = this.scrollingDetail.scrollTop;
+				if (scrollTop === 0) {
+					this.currentQuestionIndex = 0;
+				} else {
+					this.questionElementIds.map((elementId, key) => {
+						const y = document.getElementById(elementId).offsetTop;
+						if (scrollTop >= y) {
+							this.currentQuestionIndex = key;
+							return;
+						}
+					});
+				}
 			}
-		}
+		} catch (error) {}
 	};
 
 	onScroll = (event) => {
@@ -405,11 +508,51 @@ export class FormRiskassessmentPage implements OnInit {
 	};
 
 	scrollToQuestion = () => {
-		const elementId = this.questionElementIds[this.currentQuestionIndex];
-		const y = document.getElementById(elementId).offsetTop;
-		this.content.scrollToPoint(0, y, 500);
+		try {
+			const elementId = this.questionElementIds[this.currentQuestionIndex];
+			const y = document.getElementById(elementId).offsetTop;
+			this.content.scrollToPoint(0, y, 500);
+		} catch (error) {}
 	};
 
+	getRatingTypeAndColor = (rating) => {
+		let color = '';
+		let type = '';
+
+		if (rating >= 1 && rating <= 3) {
+			color = UtilService.getColorForAnswerChoice('green');
+			type = 'Low';
+		} else if (rating >= 4 && rating <= 6) {
+			color = UtilService.getColorForAnswerChoice('yellow');
+			type = 'Moderate';
+		} else if (rating >= 8 && rating <= 12) {
+			color = UtilService.getColorForAnswerChoice('orange');
+			type = 'High';
+		} else if (rating >= 15 && rating <= 25) {
+			color = UtilService.getColorForAnswerChoice('red');
+			type = 'Extreme';
+		} else {
+			color = '#ffffff';
+			type = '';
+		}
+
+		return {
+			color,
+			type,
+		};
+	};
+
+	calculateResidualRatingForHazard(hazard) {
+		const severityId = hazard.residualRiskRatingSeverityID || 0;
+		const probabilityId = hazard.residualRiskRatingProbabilityID || 0;
+		hazard.residualRiskRatingCalculatedValue = severityId * probabilityId;
+	}
+
+	calculateRatingForHazard(hazard) {
+		const severityId = hazard.riskRatingSeverityID || 0;
+		const probabilityId = hazard.riskRatingProbabilityID || 0;
+		hazard.riskRatingCalculatedValue = severityId * probabilityId;
+	}
 	// -- End -- Navigate to question
 
 	isValid(index, question) {
@@ -461,49 +604,44 @@ export class FormRiskassessmentPage implements OnInit {
 		return isValid;
 	}
 
-	addUser(section) {
-		if (!section.addedUsers) {
-			section.addedUsers = {};
+	addUserOrGroup(hazard, listType, selectedIdKey) {
+		let list;
+		if (hazard[listType]) {
+			list = hazard[listType].split(',');
+		} else {
+			list = [];
 		}
-		this.users.map((item) => {
-			if (item.userId === section.selectedUser) {
-				section.addedUsers[section.selectedUser] = item;
-				return;
-			}
-		});
-		section.selectedUser = null;
-	}
-
-	addGroup(section) {
-		if (!section.addedGroups) {
-			section.addedGroups = {};
+		if (list.indexOf(hazard[selectedIdKey]) === -1) {
+			list.push(hazard[selectedIdKey]);
 		}
-		this.groups.map((item) => {
-			if (item.userGroupID === section.selectedGroup) {
-				section.addedGroups[section.selectedGroup] = item;
-				return;
-			}
-		});
-		section.selectedGroup = null;
+		hazard[listType] = list.join(',');
+		hazard[selectedIdKey] = null;
 	}
 
-	removeUser(section, id) {
-		delete section.addedUsers[id];
-	}
-
-	removeGroup(section, id) {
-		delete section.addedGroups[id];
+	removeUserOrGroup(hazard, listType, index) {
+		let list;
+		if (hazard[listType]) {
+			list = hazard[listType].split(',');
+		} else {
+			list = [];
+		}
+		debugger;
+		list.splice(index, 1);
+		debugger;
+		hazard[listType] = list.join(',');
 	}
 
 	// Check required field valid or not
 	isTaskValid(task) {
 		let isValid = true;
 		if (this.isSubmitted && task.isRequired) {
-			const hazards = task.hazards;
+			const hazards = task.hazardAnswers;
 			hazards.map((hazard) => {
 				if (
-					!this.isRiskRatingValid(task, hazard.riskRating) ||
-					!this.isRiskRatingValid(task, hazard.residualRiskRating) ||
+					!this.isRiskRatingValid(task, hazard.riskRatingSeverityID) ||
+					!this.isRiskRatingValid(task, hazard.riskRatingProbabilityID) ||
+					!this.isRiskRatingValid(task, hazard.residualRiskRatingSeverityID) ||
+					!this.isRiskRatingValid(task, hazard.residualRiskRatingProbabilityID) ||
 					!this.isMemberOfTheWorkForceValid(task, hazard) ||
 					!this.isMemberOfTheWorkForceValid(task, hazard)
 				) {
@@ -523,14 +661,14 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	isMemberOfTheWorkForceValid(task, hazard) {
-		if (this.isSubmitted && task.isRequired && hazard.memberOfTheWorkForce && Object.keys(hazard.addedUsers).length === 0 && Object.keys(hazard.addedGroups).length === 0) {
+		if (this.isSubmitted && task.isRequired && hazard.isMembersOfTheWorkForce && hazard.isMembersOfTheWorkForceUserIDs.length === 0 && hazard.isMembersOfTheWorkForceUserGroupIDs.length === 0) {
 			return false;
 		}
 		return true;
 	}
 
 	isMemberOfThePublicValid(task, hazard) {
-		if (this.isSubmitted && task.isRequired && hazard.memberOfThePublic && !hazard.memberOfThePublicDescription) {
+		if (this.isSubmitted && task.isRequired && hazard.isMembersOfThePublic && !hazard.membersOfThePublicDescription) {
 			return false;
 		}
 		return true;

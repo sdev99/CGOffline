@@ -31,7 +31,7 @@
 
 						<!--  Risk Assessment Section-->
 						<ng-container *ngIf="section.isRiskAssessmentSection; else customQuestions">
-							<ng-container *ngFor="let task of riskAssessmentAnswerDetails; let taskIndex=index">
+							<ng-container *ngFor="let task of section.riskAssessmentAnswerDetails?.taskAnswers; let taskIndex=index">
 								<div
 									class="list-item-container"
 									*ngIf="utilService.shouldShowQuestion(task)"
@@ -43,6 +43,8 @@
 										[inputEnable]="canInputEnable"
 										[label]="'Task '+(taskIndex+1)"
 										[(ngModel)]="task.taskAnswerTitle"
+										(openTemplate)="openTaskTemplateForTask($event, task)"
+										(onRemove)="removeTask(section, taskIndex)"
 									></app-ra-template-input>
 
 									<div class="risk-assesment-component" *ngFor="let hazard of task.hazardAnswers; let hazardIndex=index;">
@@ -51,6 +53,7 @@
 											labelIcon="./assets/icon/thunder.svg"
 											[label]="'Hazard '+(hazardIndex+1)"
 											[(ngModel)]="hazard.hazardAnswerTitle"
+											(onRemove)="removeHazard(task, hazardIndex)"
 										></app-ra-template-input>
 
 										<div class="hr-line" style="margin-top: 25px"></div>
@@ -64,16 +67,19 @@
 												<ion-item class="drop-down-item rating-item" lines="none">
 													<ion-label position="stacked"> Severity </ion-label>
 													<ion-select
+														mode="ios"
 														[(ngModel)]="hazard.riskRatingSeverityID"
 														placeholder="Choose"
-														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverity)}"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverityID)}"
+														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
+														(ionChange)="calculateRatingForHazard(hazard)"
 													>
 														<ion-select-option
 															*ngFor="let item of severityRatings"
-															[class]="'risk-rating-'+item.riskAssessmentSeverityOptionColor"
+															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -81,44 +87,51 @@
 												<ion-item class="drop-down-item rating-item" lines="none">
 													<ion-label position="stacked"> Probability </ion-label>
 													<ion-select
+														mode="ios"
 														[(ngModel)]="hazard.riskRatingProbabilityID"
 														placeholder="Choose"
-														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbability)}"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbabilityID)}"
+														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
+														(ionChange)="calculateRatingForHazard(hazard)"
 													>
 														<ion-select-option
 															*ngFor="let item of probabilityRatings"
-															[class]="'risk-rating-'+item.riskAssessmentProbabilityOptionColor"
+															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
 											</div>
 
-											<div class="rating-arrow-col">
-												<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
-											</div>
-											<div class="rating-value-view">
-												<ion-text>Calculated Value</ion-text>
-												<div class="rating-value">
-													<h2>8</h2>
-													<p>High</p>
+											<ng-container *ngIf="hazard.riskRatingCalculatedValue>0">
+												<div class="rating-arrow-col">
+													<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
 												</div>
-											</div>
+												<div class="rating-value-view">
+													<ion-text>Calculated Value</ion-text>
+													<div class="rating-value" [ngStyle]="{'background-color': getRatingTypeAndColor(hazard.riskRatingCalculatedValue).color}">
+														<h2>{{hazard.riskRatingCalculatedValue}}</h2>
+														<p>{{getRatingTypeAndColor(hazard.riskRatingCalculatedValue).type}}</p>
+													</div>
+												</div>
+											</ng-container>
 										</div>
 
 										<div class="hr-line" style="margin-top: 30px"></div>
 
 										<div class="options">
 											<ng-container *ngIf="hazard.controlMeasureAnswers">
-												<ng-container *ngFor="let controlMeasure of hazard.controlMeasures; let controlMeasureIndex=idx;">
+												<ng-container *ngFor="let controlMeasure of hazard.controlMeasureAnswers; let controlMeasureIndex=index;">
 													<app-ra-template-input
 														[templateEnable]="canTemplateEnable"
 														[inputEnable]="canInputEnable"
 														labelIcon="./assets/icon/control-measure.svg"
 														[label]="'Control Measure ' +(controlMeasureIndex+1)"
 														[(ngModel)]="controlMeasure.controlMeasureAnswerTitle"
+														(openTemplate)="openTaskTemplateForControlMeasure($event, controlMeasure)"
+														(onRemove)="removeControlMeasure(hazard, controlMeasureIndex)"
 													></app-ra-template-input>
 												</ng-container>
 											</ng-container>
@@ -142,16 +155,19 @@
 												<ion-item class="drop-down-item rating-item" lines="none">
 													<ion-label position="stacked"> Severity </ion-label>
 													<ion-select
+														mode="ios"
 														[(ngModel)]="hazard.residualRiskRatingSeverityID"
 														placeholder="Choose"
-														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverity)}"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingSeverityID)}"
+														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
+														(ionChange)="calculateResidualRatingForHazard(hazard)"
 													>
 														<ion-select-option
 															*ngFor="let item of severityRatings"
-															[class]="'risk-rating-'+item.riskAssessmentSeverityOptionColor"
+															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -159,31 +175,37 @@
 												<ion-item class="drop-down-item rating-item" lines="none">
 													<ion-label position="stacked"> Probability </ion-label>
 													<ion-select
+														mode="ios"
+														class="riskrating-dropdown"
 														[(ngModel)]="hazard.residualRiskRatingProbabilityID"
 														placeholder="Choose"
-														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbability)}"
+														[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingProbabilityID)}"
+														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
+														(ionChange)="calculateResidualRatingForHazard(hazard)"
 													>
 														<ion-select-option
 															*ngFor="let item of probabilityRatings"
-															[class]="'risk-rating-'+item.riskAssessmentProbabilityOptionColor"
+															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
 											</div>
 
-											<div class="rating-arrow-col">
-												<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
-											</div>
-											<div class="rating-value-view">
-												<ion-text>Calculated Value</ion-text>
-												<div class="rating-value">
-													<h2>8</h2>
-													<p>High</p>
+											<ng-container *ngIf="hazard.residualRiskRatingCalculatedValue>0">
+												<div class="rating-arrow-col">
+													<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
 												</div>
-											</div>
+												<div class="rating-value-view">
+													<ion-text>Calculated Value</ion-text>
+													<div class="rating-value" [ngStyle]="{'background-color': getRatingTypeAndColor(hazard.residualRiskRatingCalculatedValue).color}">
+														<h2>{{hazard.residualRiskRatingCalculatedValue}}</h2>
+														<p>{{getRatingTypeAndColor(hazard.residualRiskRatingCalculatedValue).type}}</p>
+													</div>
+												</div>
+											</ng-container>
 										</div>
 
 										<div class="hr-line" style="margin-top: 30px"></div>
@@ -205,52 +227,70 @@
 															*ngFor="let item of userGroupTypes"
 															mode="ios"
 															fill="clear"
-															[ngClass]="{'active':(hazard.selectedUserGroupType && item.id===hazard.selectedUserGroupType.id)}"
-															(click)="hazard.selectedUserGroupType=item"
+															[ngClass]="{'active':(hazard.memberOfTheWorkForceSelectedUserGroupType && item.id===hazard.memberOfTheWorkForceSelectedUserGroupType.id)}"
+															(click)="hazard.memberOfTheWorkForceSelectedUserGroupType=item"
 														>
 															{{item.name}}
 														</ion-button>
 													</div>
 
 													<ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
-														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='users'">
+														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='users'">
 															<ion-select
 																[interface]="ionSelectInterface"
 																placeholder="Choose"
 																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.selectedUser"
+																[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
 															>
 																<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
 															</ion-select>
-															<ion-button slot="end" size="md" expand="block" (click)="addUser(hazard)"> Add </ion-button>
+															<ion-button
+																slot="end"
+																size="md"
+																expand="block"
+																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserIDs','memberOfTheWorkForceSelectedUser' )"
+															>
+																Add
+															</ion-button>
 														</ng-container>
 
-														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='groups'">
+														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='groups'">
 															<ion-select
 																[interface]="ionSelectInterface"
 																placeholder="Choose"
 																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.selectedGroup"
+																[(ngModel)]="hazard.memberOfTheWorkForceSelectedGroup"
 															>
 																<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
 															</ion-select>
-															<ion-button slot="end" size="md" expand="block" (click)="addGroup(hazard)"> Add </ion-button>
+															<ion-button
+																slot="end"
+																size="md"
+																expand="block"
+																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserGroupIDs', 'memberOfTheWorkForceSelectedGroup')"
+															>
+																Add
+															</ion-button>
 														</ng-container>
 													</ion-item>
 
-													<ng-container *ngIf="hazard.addedUsers">
-														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.addedUsers | keyvalue">
-															<ion-label> {{item.value.firstAndLastName}} </ion-label>
-															<ion-button slot="end" shape="round" (click)="removeUser(hazard, item.key)">
+													<ng-container *ngIf="hazard.isMembersOfTheWorkForceUserIDs">
+														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.isMembersOfTheWorkForceUserIDs?.split(','); let userIdIndex=index; ">
+															<ion-label> {{UtilService.findObj(users, 'userId', item, 0).firstAndLastName}} </ion-label>
+															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,  'isMembersOfTheWorkForceUserIDs',userIdIndex)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>
 														</ion-item>
 													</ng-container>
 
-													<ng-container *ngIf="hazard.addedGroups">
-														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.addedGroups | keyvalue">
-															<ion-label> {{item.value.groupName}} </ion-label>
-															<ion-button slot="end" shape="round" (click)="removeGroup(hazard, item.key)">
+													<ng-container *ngIf="hazard.isMembersOfTheWorkForceUserGroupIDs">
+														<ion-item
+															class="user-group-item"
+															lines="inset"
+															*ngFor="let item of hazard.isMembersOfTheWorkForceUserGroupIDs?.split(','); let groupIdIndex=index;"
+														>
+															<ion-label> {{UtilService.findObj(groups, 'userGroupID', item, 0).groupName}} </ion-label>
+															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'isMembersOfTheWorkForceUserGroupIDs',groupIdIndex)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>
 														</ion-item>
@@ -267,13 +307,17 @@
 												</ion-item>
 
 												<ng-container *ngIf="hazard.isMembersOfThePublic">
-													<ion-textarea [ngClass]="{error:!isMemberOfThePublicValid(task, hazard)}" rows="5" [(ngModel)]="hazard.memberOfThePublicDescription"></ion-textarea>
+													<ion-textarea
+														[ngClass]="{error:!isMemberOfThePublicValid(task, hazard)}"
+														rows="5"
+														[(ngModel)]="hazard.membersOfThePublicDescription"
+													></ion-textarea>
 												</ng-container>
 											</ng-container>
 											<!-- End - Member of the public -->
 
 											<!-- Personal Exposed Notification -->
-											<ng-container>
+											<ng-container *ngIf="hazard.isMembersOfTheWorkForce">
 												<div class="hr-line" style="margin-top: 8px"></div>
 
 												<ion-item>
@@ -300,11 +344,18 @@
 																[interface]="ionSelectInterface"
 																placeholder="Choose"
 																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.selectedUser"
+																[(ngModel)]="hazard.personnelExposedSelectedUser"
 															>
 																<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
 															</ion-select>
-															<ion-button slot="end" size="md" expand="block" (click)="addUser(hazard)"> Add </ion-button>
+															<ion-button
+																slot="end"
+																size="md"
+																expand="block"
+																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserIDs', 'personnelExposedSelectedUser')"
+															>
+																Add
+															</ion-button>
 														</ng-container>
 
 														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='groups'">
@@ -312,27 +363,42 @@
 																[interface]="ionSelectInterface"
 																placeholder="Choose"
 																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.selectedGroup"
+																[(ngModel)]="hazard.personnelExposedSelectedGroup"
 															>
 																<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
 															</ion-select>
-															<ion-button slot="end" size="md" expand="block" (click)="addGroup(hazard)"> Add </ion-button>
+															<ion-button
+																slot="end"
+																size="md"
+																expand="block"
+																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserGroupIDs','personnelExposedSelectedGroup')"
+															>
+																Add
+															</ion-button>
 														</ng-container>
 													</ion-item>
 
-													<ng-container *ngIf="hazard.addedUsers">
-														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.addedUsers | keyvalue">
-															<ion-label> {{item.value.firstAndLastName}} </ion-label>
-															<ion-button slot="end" shape="round" (click)="removeUser(hazard, item.key)">
+													<ng-container *ngIf="hazard.personnelExposedNotificationUserIDs">
+														<ion-item
+															class="user-group-item"
+															lines="inset"
+															*ngFor="let item of hazard.personnelExposedNotificationUserIDs?.split(','); let userIdIndex=index;"
+														>
+															<ion-label> {{UtilService.findObj(users, 'userId', item, 0).firstAndLastName}} </ion-label>
+															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'personnelExposedNotificationUserIDs',userIdIndex)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>
 														</ion-item>
 													</ng-container>
 
-													<ng-container *ngIf="hazard.addedGroups">
-														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.addedGroups | keyvalue">
-															<ion-label> {{item.value.groupName}} </ion-label>
-															<ion-button slot="end" shape="round" (click)="removeGroup(hazard, item.key)">
+													<ng-container *ngIf="hazard.personnelExposedNotificationUserGroupIDs">
+														<ion-item
+															class="user-group-item"
+															lines="inset"
+															*ngFor="let item of hazard.personnelExposedNotificationUserGroupIDs?.split(','); let groupIdIndex=index;"
+														>
+															<ion-label> {{UtilService.findObj(groups, 'userGroupID', item, 0).groupName}} </ion-label>
+															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'personnelExposedNotificationUserGroupIDs',groupIdIndex)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>
 														</ion-item>
@@ -340,7 +406,7 @@
 
 													<ion-item *ngFor="let notType of exposedNotificationType">
 														<ion-label>{{notType.title}}</ion-label>
-														<ion-checkbox mode="md" slot="start" [(ngModel)]="notType.selected" [disabled]="notType.disabled"></ion-checkbox>
+														<ion-checkbox mode="md" slot="start" [(ngModel)]="hazard[notType.apiKey]" [disabled]="notType.disabled"></ion-checkbox>
 													</ion-item>
 												</ng-container>
 											</ng-container>
@@ -349,7 +415,7 @@
 										<!-- End - Persons Exposed -->
 
 										<!-- Add New Hazard Button -->
-										<ng-container *ngIf="taskIndex === (riskAssessmentAnswerDetails?.length-1) && hazardIndex === (task.hazardAnswers?.length-1)">
+										<ng-container *ngIf="taskIndex === (section.riskAssessmentAnswerDetails?.taskAnswers?.length-1) && hazardIndex === (task.hazardAnswers?.length-1)">
 											<div class="hr-line" style="margin-top: 8px"></div>
 											<ion-item>
 												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task, taskIndex)">Add Hazard</ion-button>
@@ -357,11 +423,19 @@
 										</ng-container>
 										<!-- End - Add New Hazard Button -->
 									</div>
+
+									<div class="risk-assesment-component" *ngIf="!task.hazardAnswers || task.hazardAnswers.length===0">
+										<!-- Add New Hazard Button -->
+										<ion-item>
+											<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task, taskIndex)">Add Hazard</ion-button>
+										</ion-item>
+										<!-- End - Add New Hazard Button -->
+									</div>
 								</div>
 							</ng-container>
 
 							<ion-item>
-								<ion-button fill="outline" class="add-hazard-button" (click)="addTask()">Add Task</ion-button>
+								<ion-button fill="outline" class="add-hazard-button" (click)="addTask(section)">Add Task</ion-button>
 							</ion-item>
 						</ng-container>
 

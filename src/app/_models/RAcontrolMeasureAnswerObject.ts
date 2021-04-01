@@ -6,7 +6,7 @@ export class RAcontrolMeasureAnswerObject {
 	constructor() {
 		this.controlMeasureAnswerId = 0;
 		this.controlMeasureAnswerTitle = '';
-		this.controlMeasureAnswerDisplayOrder = 0;
+		this.controlMeasureAnswerDisplayOrder = 1;
 		this.hazardAnswerID = 0;
 	}
 }

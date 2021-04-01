@@ -52,50 +52,57 @@ ion-content {
 		display: flex;
 		flex-direction: row;
 		align-items: flex-end;
-	}
-	.rating-arrow-col {
-		width: 40px;
-		margin-bottom: 44px;
-		ion-icon {
-			font-size: 32px;
+
+		.rating-dropdowns {
+			width: 42vw;
 		}
-	}
-	.rating-value-view {
-		display: flex;
-		flex-direction: column;
-		ion-text {
-			font-size: 12px;
-			font-family: IBM Plex Sans;
-			font-weight: 500;
-		}
-		.rating-value {
-			margin-top: 12px;
-			width: 120px;
-			height: 160px;
-			flex: 1;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			background-color: #f1963c;
-			h2 {
-				font-family: IBM Plex Sans;
-				font-style: normal;
-				font-weight: 600;
-				font-size: 36px;
-				line-height: 47px;
-				text-align: center;
-				color: #000000;
+		.rating-arrow-col {
+			width: 35px;
+			margin-bottom: 44px;
+			ion-icon {
+				font-size: 26px;
 			}
-			p {
+		}
+		.rating-value-view {
+			width: 42vw;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding-left: 10px;
+			ion-text {
+				font-size: 12px;
 				font-family: IBM Plex Sans;
-				font-style: normal;
-				font-weight: 600;
-				margin-top: 0;
-				font-size: 17px;
-				line-height: 22px;
-				text-align: center;
-				color: #000000;
+				font-weight: 500;
+			}
+			.rating-value {
+				margin-top: 12px;
+				width: 80%;
+				max-width: 300px;
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				background-color: #f1963c;
+				h2 {
+					font-family: IBM Plex Sans;
+					font-style: normal;
+					font-weight: 600;
+					font-size: 36px;
+					line-height: 47px;
+					text-align: center;
+					color: #000000;
+				}
+				p {
+					font-family: IBM Plex Sans;
+					font-style: normal;
+					font-weight: 600;
+					margin-top: 0;
+					font-size: 17px;
+					line-height: 22px;
+					text-align: center;
+					color: #000000;
+				}
 			}
 		}
 	}
@@ -269,9 +276,9 @@ ion-content {
 				}
 
 				&.rating-item {
-					width: 200px;
 					--padding-top: !important;
 					--padding-bottom: 0 !important;
+					--padding-end: 0;
 				}
 
 				ion-select {
@@ -293,7 +300,6 @@ ion-content {
 					background-position: 16px;
 					background-repeat: no-repeat;
 					background-color: #ffffff;
-					min-width: 122px;
 
 					&::part(icon) {
 						display: none !important;

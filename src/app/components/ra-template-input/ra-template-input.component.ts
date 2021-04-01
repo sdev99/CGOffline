@@ -20,6 +20,7 @@ export class RaTemplateInputComponent<T> implements ControlValueAccessor {
 	@Input() label: string;
 	@Input() labelIcon: string;
 	@Output() openTemplate = new EventEmitter<any>();
+	@Output() onRemove = new EventEmitter<any>();
 
 	@Input() templateEnable: boolean;
 	@Input() inputEnable: boolean;

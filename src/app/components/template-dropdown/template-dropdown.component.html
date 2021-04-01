@@ -1,0 +1,14 @@
+<ion-searchbar #searchBar autofocus placeholder="Search" mode="md" [(ngModel)]="searchText"></ion-searchbar>
+<div class="list-container">
+	<ion-list lines="none">
+		<ion-item *ngFor="let item of list | listFilter: searchText:titleKey" lines="none" (click)="onDismiss(item)">
+			<ion-label>
+				<h3>{{ item[titleKey] }}</h3>
+			</ion-label>
+		</ion-item>
+	</ion-list>
+
+	<ng-container *ngIf="(list | listFilter: searchText:titleKey).length === 0">
+		<app-empty-message message="No template available"></app-empty-message>
+	</ng-container>
+</div>

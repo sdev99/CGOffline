@@ -6,11 +6,14 @@ export class RAtaskAswerObject {
 	taskAnswerComment: string;
 	taskAnswerDisplayOrder: number;
 	hazardAnswers: Array<RAhazardAswerObject>;
+	isRequired: boolean;
 	constructor() {
-		this.taskAnswerId = 0;
+		this.isRequired = true;
+		const randId = Math.floor(Math.random() * 25 + 65);
+		this.taskAnswerId = randId;
 		this.taskAnswerTitle = '';
 		this.taskAnswerComment = '';
-		this.taskAnswerDisplayOrder = 0;
+		this.taskAnswerDisplayOrder = 1;
 		this.hazardAnswers = [new RAhazardAswerObject()];
 	}
 }
