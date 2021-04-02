@@ -534,13 +534,14 @@ ion-button {
 
 	.risk-rating-dropdown-option {
 		--border-color: transparent;
-		--padding-start: 63px;
+		--inner-padding-start: 50px;
 		font-size: 12px;
 		--min-height: 38px;
 		display: flex;
 		align-items: center;
 
 		&::before {
+			pointer-events: none;
 			position: absolute;
 			width: 39px;
 			height: 26px;

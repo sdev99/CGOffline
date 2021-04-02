@@ -69,9 +69,9 @@ export class FormRiskassessmentPage implements OnInit {
 	);
 
 	exposedNotificationType = [
-		{ title: 'system', apiKey: 'isSystemNotification', disabled: true },
-		{ title: 'email', apiKey: 'isEmailNotification' },
-		{ title: 'sms', apiKey: 'isSMSNotification' },
+		{ title: 'system', apiKey: 'isPersonnelExposedSystemNotification', disabled: true },
+		{ title: 'email', apiKey: 'isPersonnelExposedEmailNotification' },
+		{ title: 'sms', apiKey: 'isPersonnelExposedSMSNotification' },
 	];
 
 	questionElementIds = [];
@@ -83,6 +83,7 @@ export class FormRiskassessmentPage implements OnInit {
 	riskAssessmentInputEditType = EnumService.RiskAssessmentAnswerEditOptionsType.Choose;
 	canTemplateEnable = false;
 	canInputEnable = false;
+	allowEndUserToAddHazardsAndCM = false;
 
 	taskTemplateList: Array<RAtaskTemplateItem> = [];
 	controlMeasureTemplateList: Array<RAcontrolMeasureTemplateItem> = [];
@@ -128,6 +129,7 @@ export class FormRiskassessmentPage implements OnInit {
 
 		const riskAssessmentDetails = this.formBuilderDetail.riskAssessmentDetails;
 		this.riskAssessmentInputEditType = riskAssessmentDetails?.selectedControlMeasureAddOption;
+		this.allowEndUserToAddHazardsAndCM = riskAssessmentDetails?.allowEndUserToAddHazardsAndCM;
 
 		if (this.riskAssessmentInputEditType === EnumService.RiskAssessmentAnswerEditOptionsType.Both) {
 			this.canTemplateEnable = true;
@@ -226,23 +228,69 @@ export class FormRiskassessmentPage implements OnInit {
 		return await popover.present();
 	}
 
+	/**
+	 *
+	 * @param event
+	 * @param hazard
+	 * @param selectionHoldKey
+	 * @param valuesHoldKey  comma separated string
+	 * @param list
+	 * @param titleKey
+	 * @param valueKey
+	 * @returns
+	 */
+	async openDrodownForAddUserGroup(event, hazard, selectionHoldKey, valuesHoldKey, list, titleKey, valueKey) {
+		const valuesList = hazard[valuesHoldKey] ? hazard[valuesHoldKey].split(',') : [];
+		let filteredList = list.filter((value) => {
+			return valuesList.indexOf(value[valueKey]) === -1;
+		});
+		const popover = await this.popoverController.create({
+			component: TemplateDropdownComponent,
+			cssClass: 'template-dropdown-popover',
+			event: event,
+			translucent: true,
+			mode: 'md',
+			componentProps: {
+				titleKey: titleKey,
+				list: filteredList,
+			},
+		});
+		popover.onWillDismiss().then(({ data }) => {
+			if (data) {
+				hazard[selectionHoldKey] = data[valueKey];
+			}
+		});
+		return await popover.present();
+	}
+
 	addTask(section) {
-		section.riskAssessmentAnswerDetails?.taskAnswers.push(new RAtaskAswerObject());
+		const newTask = new RAtaskAswerObject();
+		newTask.taskAnswerDisplayOrder = (section.riskAssessmentAnswerDetails?.taskAnswers?.length || 0) + 1;
+		section.riskAssessmentAnswerDetails?.taskAnswers.push(newTask);
 		this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
 	}
 
-	addTaskHazard(task: RAtaskAswerObject, taskIndex) {
-		task.hazardAnswers.push(new RAhazardAswerObject());
+	addTaskHazard(task: RAtaskAswerObject) {
+		const newHazard = new RAhazardAswerObject();
+		newHazard.hazardAnswerDisplayOrder = (task.hazardAnswers?.length || 0) + 1;
+		task.hazardAnswers.push(newHazard);
 	}
 
-	addControlMeasure(hazard: RAhazardAswerObject, hazardIndex) {
-		hazard.controlMeasureAnswers.push(new RAcontrolMeasureAnswerObject());
+	addControlMeasure(hazard: RAhazardAswerObject) {
+		const newControlMeasure = new RAcontrolMeasureAnswerObject();
+		newControlMeasure.controlMeasureAnswerDisplayOrder = (hazard.controlMeasureAnswers?.length || 0) + 1;
+		hazard.controlMeasureAnswers.push(newControlMeasure);
 	}
 
 	removeTask(section, taskIndex) {
 		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
 			if (status) {
-				section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
+				try {
+					section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
+					section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
+						taskAnswer.taskAnswerDisplayOrder = key + 1;
+					});
+				} catch (error) {}
 			}
 		});
 	}
@@ -250,7 +298,12 @@ export class FormRiskassessmentPage implements OnInit {
 	removeHazard(task, hazardIndex) {
 		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
 			if (status) {
-				task.hazardAnswers.splice(hazardIndex, 1);
+				try {
+					task.hazardAnswers.splice(hazardIndex, 1);
+					task.hazardAnswers.map((hazardAnswer: RAhazardAswerObject, key) => {
+						hazardAnswer.hazardAnswerDisplayOrder = key + 1;
+					});
+				} catch (error) {}
 			}
 		});
 	}
@@ -258,7 +311,12 @@ export class FormRiskassessmentPage implements OnInit {
 	removeControlMeasure(hazard, controlMeasureIndex) {
 		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
 			if (status) {
-				hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
+				try {
+					hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
+					hazard.controlMeasureAnswers.map((controlMeasureAnswer: RAcontrolMeasureAnswerObject, key) => {
+						controlMeasureAnswer.controlMeasureAnswerDisplayOrder = key + 1;
+					});
+				} catch (error) {}
 			}
 		});
 	}
@@ -643,7 +701,7 @@ export class FormRiskassessmentPage implements OnInit {
 					!this.isRiskRatingValid(task, hazard.residualRiskRatingSeverityID) ||
 					!this.isRiskRatingValid(task, hazard.residualRiskRatingProbabilityID) ||
 					!this.isMemberOfTheWorkForceValid(task, hazard) ||
-					!this.isMemberOfTheWorkForceValid(task, hazard)
+					!this.isMemberOfThePublicValid(task, hazard)
 				) {
 					isValid = false;
 					return;
@@ -661,14 +719,22 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	isMemberOfTheWorkForceValid(task, hazard) {
-		if (this.isSubmitted && task.isRequired && hazard.isMembersOfTheWorkForce && hazard.isMembersOfTheWorkForceUserIDs.length === 0 && hazard.isMembersOfTheWorkForceUserGroupIDs.length === 0) {
+		if (this.isSubmitted && task.isRequired && hazard.isMembersOfTheWorkForce && !hazard.isMembersOfTheWorkForceUserIDs && !hazard.isMembersOfTheWorkForceUserGroupIDs) {
+			return false;
+		}
+
+		return this.hasPersonnelExposedNotificationValid(task, hazard);
+	}
+
+	isMemberOfThePublicValid(task, hazard) {
+		if (this.isSubmitted && task.isRequired && hazard.isMembersOfThePublic && !hazard.membersOfThePublicDescription) {
 			return false;
 		}
 		return true;
 	}
 
-	isMemberOfThePublicValid(task, hazard) {
-		if (this.isSubmitted && task.isRequired && hazard.isMembersOfThePublic && !hazard.membersOfThePublicDescription) {
+	hasPersonnelExposedNotificationValid(task, hazard) {
+		if (this.isSubmitted && task.isRequired && hazard.hasPersonnelExposedNotification && !hazard.personnelExposedNotificationUserIDs && !hazard.personnelExposedNotificationUserGroupIDs) {
 			return false;
 		}
 		return true;

@@ -36,10 +36,10 @@
 									class="list-item-container"
 									*ngIf="utilService.shouldShowQuestion(task)"
 									[ngClass]="{error:!isTaskValid(task)}"
-									[id]="UtilService.HtmlElementIdUq(sectionIndex, taskIndex, section.sectionId, task.taskId)"
+									[id]="UtilService.HtmlElementIdUq(sectionIndex, taskIndex, section.sectionId, task.taskAnswerId)"
 								>
 									<app-ra-template-input
-										[templateEnable]="true"
+										[templateEnable]="canTemplateEnable"
 										[inputEnable]="canInputEnable"
 										[label]="'Task '+(taskIndex+1)"
 										[(ngModel)]="task.taskAnswerTitle"
@@ -137,7 +137,7 @@
 											</ng-container>
 
 											<ion-toolbar>
-												<ion-button slot="end" fill="clear" class="add-control-measure-btn" (click)="addControlMeasure(hazard, hazardIndex)">
+												<ion-button slot="end" fill="clear" class="add-control-measure-btn" (click)="addControlMeasure(hazard)">
 													<ion-icon slot="start" name="add"></ion-icon>
 													add control measure
 												</ion-button>
@@ -222,7 +222,7 @@
 												</ion-item>
 
 												<ng-container *ngIf="hazard.isMembersOfTheWorkForce">
-													<div class="custom-segment-view">
+													<div class="custom-segment-view" [ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}">
 														<ion-button
 															*ngFor="let item of userGroupTypes"
 															mode="ios"
@@ -236,14 +236,20 @@
 
 													<ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
 														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='users'">
-															<ion-select
-																[interface]="ionSelectInterface"
-																placeholder="Choose"
-																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
+															<div
+																class="custom-dropdown-mask"
+																(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedUser' , 'isMembersOfTheWorkForceUserIDs', users, 'firstAndLastName', 'userId')"
 															>
-																<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
-															</ion-select>
+																<ion-select
+																	[interface]="ionSelectInterface"
+																	placeholder="Choose"
+																	[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
+																	[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
+																>
+																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
+																</ion-select>
+															</div>
+
 															<ion-button
 																slot="end"
 																size="md"
@@ -255,14 +261,20 @@
 														</ng-container>
 
 														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='groups'">
-															<ion-select
-																[interface]="ionSelectInterface"
-																placeholder="Choose"
-																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.memberOfTheWorkForceSelectedGroup"
+															<div
+																class="custom-dropdown-mask"
+																(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedGroup' ,'isMembersOfTheWorkForceUserGroupIDs' , groups, 'groupName', 'userGroupID')"
 															>
-																<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
-															</ion-select>
+																<ion-select
+																	[interface]="ionSelectInterface"
+																	placeholder="Choose"
+																	[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
+																	[(ngModel)]="hazard.memberOfTheWorkForceSelectedGroup"
+																>
+																	<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
+																</ion-select>
+															</div>
+
 															<ion-button
 																slot="end"
 																size="md"
@@ -326,7 +338,7 @@
 												</ion-item>
 
 												<ng-container *ngIf="hazard.hasPersonnelExposedNotification">
-													<div class="custom-segment-view">
+													<div class="custom-segment-view" [ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}">
 														<ion-button
 															*ngFor="let item of userGroupTypes"
 															mode="ios"
@@ -340,14 +352,20 @@
 
 													<ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
 														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='users'">
-															<ion-select
-																[interface]="ionSelectInterface"
-																placeholder="Choose"
-																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.personnelExposedSelectedUser"
+															<div
+																class="custom-dropdown-mask"
+																(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedUser', 'personnelExposedNotificationUserIDs' , users, 'firstAndLastName', 'userId')"
 															>
-																<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
-															</ion-select>
+																<ion-select
+																	[interface]="ionSelectInterface"
+																	placeholder="Choose"
+																	[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
+																	[(ngModel)]="hazard.personnelExposedSelectedUser"
+																>
+																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
+																</ion-select>
+															</div>
+
 															<ion-button
 																slot="end"
 																size="md"
@@ -359,14 +377,20 @@
 														</ng-container>
 
 														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='groups'">
-															<ion-select
-																[interface]="ionSelectInterface"
-																placeholder="Choose"
-																[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																[(ngModel)]="hazard.personnelExposedSelectedGroup"
+															<div
+																class="custom-dropdown-mask"
+																(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedGroup','personnelExposedNotificationUserGroupIDs' , groups, 'groupName', 'userGroupID')"
 															>
-																<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
-															</ion-select>
+																<ion-select
+																	[interface]="ionSelectInterface"
+																	placeholder="Choose"
+																	[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
+																	[(ngModel)]="hazard.personnelExposedSelectedGroup"
+																>
+																	<ion-select-option *ngFor="let item of groups" [value]="item.userGroupID">{{item.groupName}}</ion-select-option>
+																</ion-select>
+															</div>
+
 															<ion-button
 																slot="end"
 																size="md"
@@ -418,7 +442,7 @@
 										<ng-container *ngIf="taskIndex === (section.riskAssessmentAnswerDetails?.taskAnswers?.length-1) && hazardIndex === (task.hazardAnswers?.length-1)">
 											<div class="hr-line" style="margin-top: 8px"></div>
 											<ion-item>
-												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task, taskIndex)">Add Hazard</ion-button>
+												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)">Add Hazard</ion-button>
 											</ion-item>
 										</ng-container>
 										<!-- End - Add New Hazard Button -->
@@ -427,14 +451,14 @@
 									<div class="risk-assesment-component" *ngIf="!task.hazardAnswers || task.hazardAnswers.length===0">
 										<!-- Add New Hazard Button -->
 										<ion-item>
-											<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task, taskIndex)">Add Hazard</ion-button>
+											<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)">Add Hazard</ion-button>
 										</ion-item>
 										<!-- End - Add New Hazard Button -->
 									</div>
 								</div>
 							</ng-container>
 
-							<ion-item>
+							<ion-item *ngIf="allowEndUserToAddHazardsAndCM">
 								<ion-button fill="outline" class="add-hazard-button" (click)="addTask(section)">Add Task</ion-button>
 							</ion-item>
 						</ng-container>

@@ -695,8 +695,13 @@ export class SharedDataService {
 										}
 
 										if (hazard.isMembersOfTheWorkForce) {
-											if (hazard.isMembersOfTheWorkForceUserIDs.length === 0 && hazard.isMembersOfTheWorkForceUserGroupIDs.length === 0) {
+											if (!hazard.isMembersOfTheWorkForceUserIDs && !hazard.isMembersOfTheWorkForceUserGroupIDs.length) {
 												isValid = false;
+											}
+											if (hazard.hasPersonnelExposedNotification) {
+												if (!hazard.personnelExposedNotificationUserIDs && !hazard.personnelExposedNotificationUserGroupIDs) {
+													isValid = false;
+												}
 											}
 										}
 
