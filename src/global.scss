@@ -552,16 +552,21 @@ ion-button {
 			border: 2px solid #ede6e6;
 			border-radius: 5px;
 		}
-		&.green::before {
+		&.green::before,
+		&.rating1::before,
+		&.rating2::before {
 			background-color: #72f34a;
 		}
-		&.yellow::before {
+		&.yellow::before,
+		&.rating3::before {
 			background-color: #fef853;
 		}
-		&.orange::before {
+		&.orange::before,
+		&.rating4::before {
 			background-color: #f1973d;
 		}
-		&.red::before {
+		&.red::before,
+		&.rating5::before {
 			background-color: #eb4033;
 		}
 	}
