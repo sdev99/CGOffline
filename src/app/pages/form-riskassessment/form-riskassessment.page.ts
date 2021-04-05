@@ -290,6 +290,7 @@ export class FormRiskassessmentPage implements OnInit {
 					section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
 						taskAnswer.taskAnswerDisplayOrder = key + 1;
 					});
+					this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
 				} catch (error) {}
 			}
 		});

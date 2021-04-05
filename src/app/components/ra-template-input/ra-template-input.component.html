@@ -7,7 +7,7 @@
 		<ion-button fill="clear" (click)="openTemplate.emit($event)" *ngIf="templateEnable">
 			<ion-icon slot="icon-only" src="./assets/icon/template-icon.svg"></ion-icon>
 		</ion-button>
-		<ion-textarea #myInput rows="1" [disabled]="!inputEnable" autoGrow="true" [(ngModel)]="value"></ion-textarea>
+		<ion-textarea [ngClass]="{ error: isInvalid }" #myInput rows="1" [disabled]="!inputEnable" autoGrow="true" [(ngModel)]="value"></ion-textarea>
 	</div>
 	<ion-button class="close-icon-btn" slot="end" fill="clear" (click)="onRemove.emit($event)">
 		<ion-icon name="close-circle" slot="icon-only"></ion-icon>

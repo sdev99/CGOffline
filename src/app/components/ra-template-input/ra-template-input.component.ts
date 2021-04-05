@@ -17,6 +17,7 @@ export class RaTemplateInputComponent<T> implements ControlValueAccessor {
 	@ViewChild('myInput') myInput: ElementRef;
 
 	private innerValue: T;
+	@Input() isInvalid: boolean;
 	@Input() label: string;
 	@Input() labelIcon: string;
 	@Output() openTemplate = new EventEmitter<any>();

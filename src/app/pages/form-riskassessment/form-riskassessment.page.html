@@ -35,7 +35,6 @@
 								<div
 									class="list-item-container"
 									*ngIf="utilService.shouldShowQuestion(task)"
-									[ngClass]="{error:!isTaskValid(task)}"
 									[id]="UtilService.HtmlElementIdUq(sectionIndex, taskIndex, section.sectionId, task.taskAnswerId)"
 								>
 									<app-ra-template-input
@@ -43,6 +42,7 @@
 										[inputEnable]="canInputEnable"
 										[label]="'Task '+(taskIndex+1)"
 										[(ngModel)]="task.taskAnswerTitle"
+										[isInvalid]="isSubmitted && !task.taskAnswerTitle"
 										(openTemplate)="openTaskTemplateForTask($event, task)"
 										(onRemove)="removeTask(section, taskIndex)"
 									></app-ra-template-input>
@@ -50,6 +50,7 @@
 									<div class="risk-assesment-component" *ngFor="let hazard of task.hazardAnswers; let hazardIndex=index;">
 										<app-ra-template-input
 											[inputEnable]="true"
+											[isInvalid]="isSubmitted && !hazard.hazardAnswerTitle"
 											labelIcon="./assets/icon/thunder.svg"
 											[label]="'Hazard '+(hazardIndex+1)"
 											[(ngModel)]="hazard.hazardAnswerTitle"
@@ -127,6 +128,7 @@
 													<app-ra-template-input
 														[templateEnable]="canTemplateEnable"
 														[inputEnable]="canInputEnable"
+														[isInvalid]="isSubmitted && !controlMeasure.controlMeasureAnswerTitle"
 														labelIcon="./assets/icon/control-measure.svg"
 														[label]="'Control Measure ' +(controlMeasureIndex+1)"
 														[(ngModel)]="controlMeasure.controlMeasureAnswerTitle"

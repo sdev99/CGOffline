@@ -686,7 +686,13 @@ export class SharedDataService {
 									requiredFieldsCount++;
 									const hazards = task.hazardAnswers;
 									let isValid = true;
+									if (!task.taskAnswerTitle) {
+										isValid = false;
+									}
 									hazards.map((hazard) => {
+										if (!hazard.hazardAnswerTitle) {
+											isValid = false;
+										}
 										if (!hazard.riskRatingSeverityID || !hazard.riskRatingProbabilityID) {
 											isValid = false;
 										}
@@ -710,6 +716,13 @@ export class SharedDataService {
 												isValid = false;
 											}
 										}
+
+										const controlMeasures = hazard.controlMeasureAnswers;
+										controlMeasures.map((controlMeasure) => {
+											if (!controlMeasure.controlMeasureAnswerTitle) {
+												isValid = false;
+											}
+										});
 									});
 									if (isValid) {
 										requiredFieldsValidCount++;
@@ -1311,10 +1324,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		// if (UtilService.isLocalHost()) {
-		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-		// 	return;
-		// }
+		if (UtilService.isLocalHost()) {
+			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+			return;
+		}
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

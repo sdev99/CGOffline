@@ -18,15 +18,15 @@ export class TemplateDropdownComponent implements OnInit {
 	constructor(private popoverController: PopoverController) {}
 
 	ngOnInit() {
-		setTimeout(() => {
-			if (this.searchBar) {
-				if (this.searchBar.setFocus) {
-					this.searchBar.setFocus();
-				} else {
-					this.searchBar.nativeElement.setFocus();
-				}
-			}
-		}, 1000);
+		// setTimeout(() => {
+		// 	if (this.searchBar) {
+		// 		if (this.searchBar.setFocus) {
+		// 			this.searchBar.setFocus();
+		// 		} else {
+		// 			this.searchBar.nativeElement.setFocus();
+		// 		}
+		// 	}
+		// }, 1000);
 	}
 
 	onDismiss = (item) => {
