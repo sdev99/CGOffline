@@ -445,7 +445,7 @@ export class FormRiskassessmentPage implements OnInit {
 		this.apiService.getCompanyUserGroupList(this.companyId).subscribe(
 			(response: Response) => {
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					// this.groups = response.Result;
+					this.groups = response.Result;
 				}
 				this.utilService.hideLoading();
 			},
