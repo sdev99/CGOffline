@@ -50,8 +50,8 @@ export class FormRiskassessmentPage implements OnInit {
 	severityRatings: Array<RiskRatingSeverityOption>;
 	probabilityRatings: Array<RiskRatingProbabilityOption>;
 
-	users;
-	groups;
+	users = [];
+	groups = [];
 
 	ionSelectInterface = 'popover';
 
@@ -195,6 +195,8 @@ export class FormRiskassessmentPage implements OnInit {
 			translucent: true,
 			mode: 'md',
 			componentProps: {
+				emptyListText: 'No templates available',
+				showEmptyListIcon: true,
 				titleKey: 'riskItemName',
 				list: this.taskTemplateList,
 			},
@@ -216,6 +218,8 @@ export class FormRiskassessmentPage implements OnInit {
 			translucent: true,
 			mode: 'md',
 			componentProps: {
+				emptyListText: 'No templates available',
+				showEmptyListIcon: true,
 				titleKey: 'hazardItemName',
 				list: this.controlMeasureTemplateList,
 			},
@@ -251,6 +255,7 @@ export class FormRiskassessmentPage implements OnInit {
 			translucent: true,
 			mode: 'md',
 			componentProps: {
+				showEmptyListIcon: false,
 				titleKey: titleKey,
 				list: filteredList,
 			},
@@ -440,7 +445,7 @@ export class FormRiskassessmentPage implements OnInit {
 		this.apiService.getCompanyUserGroupList(this.companyId).subscribe(
 			(response: Response) => {
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.groups = response.Result;
+					// this.groups = response.Result;
 				}
 				this.utilService.hideLoading();
 			},

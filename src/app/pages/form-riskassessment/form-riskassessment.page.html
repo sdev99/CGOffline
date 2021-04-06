@@ -138,7 +138,7 @@
 												</ng-container>
 											</ng-container>
 
-											<ion-toolbar>
+											<ion-toolbar [ngClass]="{error:(isSubmitted && (!hazard.controlMeasureAnswers || hazard.controlMeasureAnswers.length===0))}">
 												<ion-button slot="end" fill="clear" class="add-control-measure-btn" (click)="addControlMeasure(hazard)">
 													<ion-icon slot="start" name="add"></ion-icon>
 													add control measure
@@ -441,7 +441,7 @@
 										<!-- End - Persons Exposed -->
 
 										<!-- Add New Hazard Button -->
-										<ng-container *ngIf="taskIndex === (section.riskAssessmentAnswerDetails?.taskAnswers?.length-1) && hazardIndex === (task.hazardAnswers?.length-1)">
+										<ng-container *ngIf="hazardIndex === task.hazardAnswers?.length-1">
 											<div class="hr-line" style="margin-top: 8px"></div>
 											<ion-item>
 												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)">Add Hazard</ion-button>

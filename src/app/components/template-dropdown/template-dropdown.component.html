@@ -9,6 +9,6 @@
 	</ion-list>
 
 	<ng-container *ngIf="(list | listFilter: searchText:titleKey).length === 0">
-		<app-empty-message message="No template available"></app-empty-message>
+		<app-empty-message *ngIf="emptyListText || showEmptyListIcon" [message]="emptyListText"></app-empty-message>
 	</ng-container>
 </div>

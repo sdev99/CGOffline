@@ -12,6 +12,9 @@ export class TemplateDropdownComponent implements OnInit {
 	@Input() list: Array<RAtaskTemplateItem | RAcontrolMeasureTemplateItem>;
 	@Input() titleKey: string;
 
+	@Input() emptyListText: string;
+	@Input() showEmptyListIcon: boolean = false;
+
 	@ViewChild('searchBar') searchBar: any;
 	searchText = '';
 

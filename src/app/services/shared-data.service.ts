@@ -718,11 +718,15 @@ export class SharedDataService {
 										}
 
 										const controlMeasures = hazard.controlMeasureAnswers;
-										controlMeasures.map((controlMeasure) => {
-											if (!controlMeasure.controlMeasureAnswerTitle) {
-												isValid = false;
-											}
-										});
+										if (controlMeasures && controlMeasures.length > 0) {
+											controlMeasures.map((controlMeasure) => {
+												if (!controlMeasure.controlMeasureAnswerTitle) {
+													isValid = false;
+												}
+											});
+										} else {
+											isValid = false;
+										}
 									});
 									if (isValid) {
 										requiredFieldsValidCount++;
