@@ -48,6 +48,8 @@ const { PushNotifications, Permissions } = Plugins;
 export class SharedDataService {
 	apiServiceRerence: ApiService;
 
+	apiBaseUrl = environment.apiUrl;
+
 	myCurrentGeoLocation: GeolocationPosition;
 
 	isNavigationTypeDeepLink = false;
@@ -152,6 +154,21 @@ export class SharedDataService {
 		public utilService: UtilService,
 		private screenOrientation: ScreenOrientation
 	) {
+		// Set dynamic api url for WebApp based on domain
+		if (environment.isWebApp) {
+			const currentHost = window.location.host;
+			var apiUrlDevHostname = new URL(environment.apiUrlDev).hostname;
+			var apiUrlStagingHostname = new URL(environment.apiUrlStaging).hostname;
+			var apiUrlProdHostname = new URL(environment.apiUrlProd).hostname;
+			if (currentHost === apiUrlDevHostname) {
+				this.apiBaseUrl = environment.apiUrlDev;
+			} else if (currentHost === apiUrlStagingHostname) {
+				this.apiBaseUrl = environment.apiUrlStaging;
+			} else if (currentHost === apiUrlProdHostname) {
+				this.apiBaseUrl = environment.apiUrlProd;
+			}
+		}
+
 		this.isTablet = platform.is('tablet');
 		this.dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
 		const dedicatedModeLocationUse = localStorage.getItem(EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE);
@@ -625,7 +642,7 @@ export class SharedDataService {
 		const accessID = this.deviceUID;
 		const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
 
-		const url = environment.apiUrl + '/' + EnumService.ApiMethods.FormPhotoOrVideoUpload;
+		const url = this.apiBaseUrl + '/' + EnumService.ApiMethods.FormPhotoOrVideoUpload;
 		const filename = selectedVideo.substr(selectedVideo.lastIndexOf('/') + 1);
 		const options: FileUploadOptions = {
 			fileName: filename,

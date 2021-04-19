@@ -17,11 +17,11 @@ export class ApiService {
 	constructor(private http: HttpClient, public sharedDataService: SharedDataService) {}
 
 	getTermsOfServices() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetTermsOfServices}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetTermsOfServices}`);
 	}
 
 	getTimeZoneList() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetTimeZoneList}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetTimeZoneList}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const list = data.Result;
@@ -35,7 +35,7 @@ export class ApiService {
 	}
 
 	getCompanyLanguageList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyLanguageList}/${companyId}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCompanyLanguageList}/${companyId}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const list = data.Result;
@@ -55,11 +55,11 @@ export class ApiService {
 		} else {
 			companyID = this.sharedDataService.getLoggedInUser().companyID;
 		}
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetEntityByQRCode}?code=${qrCode}&companyID=${companyID}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetEntityByQRCode}?code=${qrCode}&companyID=${companyID}`);
 	}
 
 	getLocationItemList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const list = data.Result;
@@ -71,7 +71,7 @@ export class ApiService {
 	}
 
 	getGlobalDirectories(companyFolderName) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetGlobalDirectories}?companyFolderName=${companyFolderName}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetGlobalDirectories}?companyFolderName=${companyFolderName}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					return data.Result;
@@ -82,7 +82,7 @@ export class ApiService {
 	}
 
 	updatePushNotification(body, userId) {
-		return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdatePushNotification}/${userId}`, body).pipe(
+		return this.http.put(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.UpdatePushNotification}/${userId}`, body).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					return true;
@@ -101,7 +101,7 @@ export class ApiService {
 	checkInPhotoUpload(file, fileName = '') {
 		const formData = new FormData();
 		formData.append('file', file, fileName);
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.CheckInPhotoUpload}`, formData);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.CheckInPhotoUpload}`, formData);
 	}
 
 	/**
@@ -113,7 +113,7 @@ export class ApiService {
 	inductionPhotoUpload(file, fileName = '') {
 		const formData = new FormData();
 		formData.append('file', file, fileName);
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InductionPhotoUpload}`, formData);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InductionPhotoUpload}`, formData);
 	}
 
 	/**
@@ -125,7 +125,7 @@ export class ApiService {
 	formPhotoOrVideoUpload(file, fileName = '') {
 		const formData = new FormData();
 		formData.append('file', file, fileName);
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.FormPhotoOrVideoUpload}`, formData);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.FormPhotoOrVideoUpload}`, formData);
 	}
 
 	/**
@@ -137,7 +137,7 @@ export class ApiService {
 	inductionSignatureUpload(file, fileName = '') {
 		const formData = new FormData();
 		formData.append('file', file, fileName);
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InductionSignatureUpload}`, formData);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InductionSignatureUpload}`, formData);
 	}
 
 	/**
@@ -146,7 +146,7 @@ export class ApiService {
 	 * Note: FormattedDescription & FormattedInstructions fields contains the line break character "<br/>". Please replace it with line break character which is used in mobile app.
 	 */
 	getActivityList(userId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserActivityList}/${userId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserActivityList}/${userId}`);
 	}
 
 	/**
@@ -154,7 +154,7 @@ export class ApiService {
 	 * @param activityId We will get activityIndividualID from GetUserActivityList API.
 	 */
 	getActivityDetail(activityId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserActivityDetail}/${activityId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserActivityDetail}/${activityId}`);
 	}
 
 	/**
@@ -163,7 +163,7 @@ export class ApiService {
 	 * @param activityId we will get this from GetUserActivityList API
 	 */
 	activityCompleted(userId, activityId) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ActivityCompleted}?id=${userId}&activityIndividualID=${activityId}`, {});
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ActivityCompleted}?id=${userId}&activityIndividualID=${activityId}`, {});
 	}
 
 	/**
@@ -174,7 +174,7 @@ export class ApiService {
 	 * Note: If activity type is form sign off and IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed activity signoff steps for form signoff.
 	 */
 	getActivitySignOffFormDetail(userId, formId, activityIndividualID) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetActivitySignOffFormDetail}?id=${userId}&formId=${formId}&activityIndividualID=${activityIndividualID}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetActivitySignOffFormDetail}?id=${userId}&formId=${formId}&activityIndividualID=${activityIndividualID}`);
 	}
 
 	/**
@@ -188,7 +188,7 @@ export class ApiService {
 	 */
 	getSignOffFormDetail(userId, formId, locationID = 0, projectID = 0, inventoryItemID = 0) {
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetSignOffFormDetail}?id=${userId}&formId=${formId}&LocationID=${locationID}&ProjectID=${projectID}&InventoryItemID=${inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetSignOffFormDetail}?id=${userId}&formId=${formId}&LocationID=${locationID}&ProjectID=${projectID}&InventoryItemID=${inventoryItemID}`
 		);
 	}
 
@@ -198,7 +198,7 @@ export class ApiService {
 	 * Note: If activity type is document sign off and IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed activity signoff steps for document signoff.
 	 */
 	getActivitySignOffDocumentDetail(documentId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetActivitySignOffDocumentDetail}/${documentId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetActivitySignOffDocumentDetail}/${documentId}`);
 	}
 
 	/**
@@ -207,7 +207,7 @@ export class ApiService {
 	 * Note: If IsSignatureSignOff/IsPhotoSignOff(returned from this api) is true then we need to proceed signoff steps for form signoff.
 	 */
 	getDedicatedModeSignOffFormDetail(formId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeSignOffFormDetail}?formID=${formId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeSignOffFormDetail}?formID=${formId}`);
 	}
 
 	/**
@@ -216,7 +216,7 @@ export class ApiService {
 	 * @param companyFolderName we will get company folder name at the time of login
 	 */
 	downloadDocument(filename, companyFolderName) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.DownloadDocument}?fileName=${filename}&companyFolderName=${companyFolderName}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.DownloadDocument}?fileName=${filename}&companyFolderName=${companyFolderName}`);
 	}
 
 	/**
@@ -227,7 +227,7 @@ export class ApiService {
 	getPersonalModeAvailableForms(userId, companyID) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
 		);
 	}
 
@@ -239,7 +239,7 @@ export class ApiService {
 	getPersonalModeAvailableDocuments(userId, companyID) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
 		);
 	}
 
@@ -251,7 +251,7 @@ export class ApiService {
 	getPersonalModeAvailableWorkPermits(userId, companyID) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
 		);
 	}
 
@@ -261,7 +261,7 @@ export class ApiService {
 	 * @param formVersionId we will get this from GetPersonalModeAvailableForms api
 	 */
 	getFormBuilderDetails(formId, formVersionId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetFormBuilderDetails}/${formId}?formVersionId=${formVersionId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetFormBuilderDetails}/${formId}?formVersionId=${formVersionId}`);
 	}
 
 	/**
@@ -269,7 +269,7 @@ export class ApiService {
 	 * @param userId current logged in user id
 	 */
 	getUserCurrentCheckingDetails(userId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserCurrentCheckInDetails}/${userId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserCurrentCheckInDetails}/${userId}`);
 	}
 
 	/**
@@ -278,7 +278,7 @@ export class ApiService {
 	 * @param entityId You will get this ID from GetLocationItemList API
 	 */
 	getCheckInDetails(userId, entityId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCheckInDetails}/${userId}?EntityID=${entityId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCheckInDetails}/${userId}?EntityID=${entityId}`);
 	}
 
 	/**
@@ -288,7 +288,7 @@ export class ApiService {
 	 */
 	getCheckInDetails_Guest(phone, firstName, middleName, lastName, entityId) {
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetCheckInDetails_Guest}?phone=${phone}&firstName=${firstName}&middleName=${middleName}&lastName=${lastName}&entityId=${entityId}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCheckInDetails_Guest}?phone=${phone}&firstName=${firstName}&middleName=${middleName}&lastName=${lastName}&entityId=${entityId}`
 		);
 	}
 
@@ -297,7 +297,7 @@ export class ApiService {
 	 * @param userId for current logged in user.
 	 */
 	getMySignedDocuments(userId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.MySignedDocuments}/${userId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.MySignedDocuments}/${userId}`);
 	}
 
 	/**
@@ -305,7 +305,7 @@ export class ApiService {
 	 * @param postBody SignOffDetailsPostData
 	 */
 	insertPersonalModeSignOffDetails(postBody: SignOffDetailsPostData) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertPersonalModeSignOffDetails}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InsertPersonalModeSignOffDetails}`, postBody);
 	}
 
 	/**
@@ -313,7 +313,7 @@ export class ApiService {
 	 * @param postBody SignOffDetailsPostData
 	 */
 	insertCheckInDetails(postBody: CheckInPostData) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckInDetails}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InsertCheckInDetails}`, postBody);
 	}
 
 	/**
@@ -321,7 +321,7 @@ export class ApiService {
 	 * @param postBody SignOffDetailsPostData
 	 */
 	insertCheckInDetailsGuest(postBody: CheckInPostData) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckInDetails_Guest}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InsertCheckInDetails_Guest}`, postBody);
 	}
 
 	/**
@@ -329,7 +329,7 @@ export class ApiService {
 	 * @param postBody user checkout details
 	 */
 	insertCheckOutDetails(postBody: { userCheckInDetailID?: number; userId?: string; checkOutLatitude?: number; checkOutLongitude?: number }) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InsertCheckOutDetails}`, postBody);
 	}
 
 	/**
@@ -345,7 +345,7 @@ export class ApiService {
 		checkOutLatitude?: number;
 		checkOutLongitude?: number;
 	}) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.InsertCheckOutDetails_Guest}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.InsertCheckOutDetails_Guest}`, postBody);
 	}
 
 	/**
@@ -353,7 +353,7 @@ export class ApiService {
 	 * @param companyId we will get companyID when user logged into the system
 	 */
 	getCompanyUserList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyUserList}/${companyId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCompanyUserList}/${companyId}`);
 	}
 
 	/**
@@ -361,7 +361,7 @@ export class ApiService {
 	 * @param companyId we will get companyID when user logged into the system
 	 */
 	getCompanyUserGroupList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyUserGroupList}/${companyId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCompanyUserGroupList}/${companyId}`);
 	}
 
 	/**
@@ -369,7 +369,7 @@ export class ApiService {
 	 * @param companyId we will get companyID when user logged into the system
 	 */
 	getManufacturerList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetManufacturerList}/${companyId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetManufacturerList}/${companyId}`);
 	}
 
 	/**
@@ -378,7 +378,7 @@ export class ApiService {
 	 * @param manufacturerID we will manufacturerID from API GetManufacturerList
 	 */
 	getTypeList(companyId, manufacturerId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetTypeList}?companyID=${companyId}&manufacturerID=${manufacturerId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetTypeList}?companyID=${companyId}&manufacturerID=${manufacturerId}`);
 	}
 
 	/**
@@ -387,7 +387,7 @@ export class ApiService {
 	 * @param typeId we will get typeID from API GetTypeList
 	 */
 	getModelList(companyId, typeId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetModelList}?companyID=${companyId}&typeID=${typeId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetModelList}?companyID=${companyId}&typeID=${typeId}`);
 	}
 
 	/**
@@ -395,7 +395,7 @@ export class ApiService {
 	 * @param userId current logged in user id
 	 */
 	getUserTotalHAVExposureForToday(userId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserTotalHAVExposureForToday}/${userId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserTotalHAVExposureForToday}/${userId}`);
 	}
 
 	/**
@@ -403,63 +403,63 @@ export class ApiService {
 	 * @param postBody answers JSON object
 	 */
 	saveFormAnswers(postBody) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.SaveFormAnswers}`, postBody);
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.SaveFormAnswers}`, postBody);
 	}
 
 	/**
 	 *  We will call this API when we want Accident Body Part List.
 	 */
 	getAccidentBodyPartList() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentBodyPartList}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetAccidentBodyPartList}`);
 	}
 
 	/**
 	 *  We will call this API when we want Accident Classification List.
 	 */
 	getAccidentClassificationList() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentClassificationList}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetAccidentClassificationList}`);
 	}
 
 	/**
 	 *  We will call this API when we want Accident Type List.
 	 */
 	getAccidentTypeList() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccidentTypeList}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetAccidentTypeList}`);
 	}
 
 	/**
 	 *  We will call this API when we want GetRiskRatingOptionList.
 	 */
 	getRiskRatingOptionList() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskRatingOptionList}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetRiskRatingOptionList}`);
 	}
 
 	/**
 	 *  We will call this API when we want GetRiskAssessmentProbabilityOptions.
 	 */
 	getRiskAssessmentProbabilityOptions() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskAssessmentProbabilityOptions}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetRiskAssessmentProbabilityOptions}`);
 	}
 
 	/**
 	 *  We will call this API when we want GetRiskAssessmentSeverityOptions.
 	 */
 	getRiskAssessmentSeverityOptions() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskAssessmentSeverityOptions}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetRiskAssessmentSeverityOptions}`);
 	}
 
 	/**
 	 *  We will call this API when we want task template for risk assessment form.
 	 */
 	getRiskItemList(companyId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetRiskItemList}/${companyId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetRiskItemList}/${companyId}`);
 	}
 
 	/**
 	 *  We will call this API when we want control measures template for risk assessment form.
 	 */
 	getHazardItemList(companyId, riskItemId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetHazardItemList}?companyID=${companyId}&companyRiskItemID=${riskItemId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetHazardItemList}?companyID=${companyId}&companyRiskItemID=${riskItemId}`);
 	}
 
 	// Dedicated mode api
@@ -469,7 +469,7 @@ export class ApiService {
 	 *  @param deviceId unique device id
 	 */
 	getDeviceEntityDetails(deviceId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceEntityDetails}/${deviceId}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceEntityDetails}/${deviceId}`);
 	}
 
 	/**
@@ -483,7 +483,7 @@ export class ApiService {
 		} else {
 			companyID = this.sharedDataService.getLoggedInUser().companyID;
 		}
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserByQRCode}?code=${qrCode}&companyID=${companyID}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserByQRCode}?code=${qrCode}&companyID=${companyID}`);
 	}
 
 	/**
@@ -492,7 +492,7 @@ export class ApiService {
 	 *  @param companyId: we will get this from GetDeviceEntityDetails API.
 	 */
 	getUserAutoSuggest(companyId, prefix) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserAutoSuggest}?companyID=${companyId}&prefix=${prefix}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserAutoSuggest}?companyID=${companyId}&prefix=${prefix}`);
 	}
 
 	/**
@@ -500,7 +500,7 @@ export class ApiService {
 	 *  @param phone phonenumber
 	 */
 	getGuestUserDetailByPhone(phone) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetGuestUserDetailByPhone}?phone=${phone}`);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetGuestUserDetailByPhone}?phone=${phone}`);
 	}
 
 	/**
@@ -510,7 +510,7 @@ export class ApiService {
 	getDedicatedModeAvailableDocuments(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -521,7 +521,7 @@ export class ApiService {
 	getDedicatedModeArchiveDocuments(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -532,7 +532,7 @@ export class ApiService {
 	getDedicatedModeAvailableForms(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -543,7 +543,7 @@ export class ApiService {
 	getDedicatedModeArchiveForms(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -553,7 +553,7 @@ export class ApiService {
 	getEvacuationList() {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetEvacuationList}?LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetEvacuationList}?LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -564,7 +564,7 @@ export class ApiService {
 	getDedicatedModeLiveWorkPermits(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeLiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeLiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -575,7 +575,7 @@ export class ApiService {
 	getDedicatedModeArchiveWorkPermits(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeArchiveWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 
@@ -586,7 +586,7 @@ export class ApiService {
 	getDedicatedModeAvailableWorkPermits(companyID) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
 		return this.http.get(
-			`${environment.apiUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
+			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
 		);
 	}
 }

@@ -54,7 +54,7 @@ export class AccountService {
 
 	login(email = '', password = '', rememberMe = true) {
 		return this.http
-			.post(`${environment.apiUrl}/${EnumService.ApiMethods.UserSignIn}`, {
+			.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.UserSignIn}`, {
 				email,
 				password,
 				rememberMe,
@@ -79,7 +79,7 @@ export class AccountService {
 	}
 
 	checkMobileSessionExpirationSetting(companyID) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetCompanyMobileSessionDetails}/${companyID}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCompanyMobileSessionDetails}/${companyID}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					if (data.Result?.isMobileSessionExpiration) {
@@ -97,7 +97,7 @@ export class AccountService {
 	}
 
 	getUserProfile(userId) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetUserProfileById}/${userId}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetUserProfileById}/${userId}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const userProfile: Profile = data.Result;
@@ -113,7 +113,7 @@ export class AccountService {
 	}
 
 	getDeviceDetails(deviceUID) {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetDeviceDetails}/${deviceUID}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceDetails}/${deviceUID}`).pipe(
 			map((data: Response) => {
 				return data;
 			})
@@ -122,11 +122,11 @@ export class AccountService {
 
 	activateDevice() {
 		const deviceDetailId = this.sharedDataService.dedicatedModeDeviceDetailData.deviceID;
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ActivateDevice}?id=${deviceDetailId}`, {});
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ActivateDevice}?id=${deviceDetailId}`, {});
 	}
 
 	getAccessKey() {
-		return this.http.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetAccessKey}`).pipe(
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetAccessKey}`).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const accessKey = data.Result;
@@ -143,7 +143,7 @@ export class AccountService {
 
 	getToken() {
 		return this.http
-			.get(`${environment.apiUrl}/${EnumService.ApiMethods.GetToken}`, {
+			.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetToken}`, {
 				headers: new HttpHeaders({
 					accessID: this.sharedDataService.deviceUID,
 					accessKey: localStorage.getItem(EnumService.LocalStorageKeys.API_ACCESS_KEY),
@@ -166,7 +166,7 @@ export class AccountService {
 
 	newAccountSetup(body) {
 		return this.http
-			.post(`${environment.apiUrl}/${EnumService.ApiMethods.AccountSetup}`, {
+			.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.AccountSetup}`, {
 				deviceID: this.sharedDataService.pushToken,
 				platformName: this.platform.is('ios') ? 'IOS' : 'Android',
 				...body,
@@ -185,7 +185,7 @@ export class AccountService {
 	}
 
 	forgotpassword(email) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ForgotPassword}`, { email }).pipe(
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ForgotPassword}`, { email }).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const message = data.Message;
@@ -198,7 +198,7 @@ export class AccountService {
 
 	resetpassword(body) {
 		return this.http
-			.post(`${environment.apiUrl}/${EnumService.ApiMethods.ResetPassword}`, {
+			.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ResetPassword}`, {
 				deviceID: this.sharedDataService.pushToken,
 				platformName: this.platform.is('ios') ? 'IOS' : 'Android',
 				...body,
@@ -215,7 +215,7 @@ export class AccountService {
 	}
 
 	changePassword(body) {
-		return this.http.post(`${environment.apiUrl}/${EnumService.ApiMethods.ChangePassword}`, body).pipe(
+		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ChangePassword}`, body).pipe(
 			map((data: Response) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const message = data.Message;
@@ -227,7 +227,7 @@ export class AccountService {
 	}
 
 	updateProfile(body) {
-		return this.http.put(`${environment.apiUrl}/${EnumService.ApiMethods.UpdateUserProfile}`, body).pipe(
+		return this.http.put(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.UpdateUserProfile}`, body).pipe(
 			map((data: Response) => {
 				return data;
 			})
@@ -241,7 +241,7 @@ export class AccountService {
 			},
 		};
 
-		return this.http.delete(`${environment.apiUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(
+		return this.http.delete(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(
 			map((data: any) => {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					// remove user from local storage and set current user to null
