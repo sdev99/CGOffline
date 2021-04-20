@@ -216,13 +216,12 @@ export class EnumService {
 	static AccidentFormFieldOrder = {
 		AccidentDateTime: 1,
 		AccidentLocation: 2,
-		ReddorReport: 3,
-		About: 4,
-		Type: 5,
-		Classification: 6,
-		BodyPartEffected: 7,
-		Description: 8,
-		Attachment: 9,
+		About: 3,
+		Type: 4,
+		Classification: 5,
+		BodyPartEffected: 6,
+		Description: 7,
+		Attachment: 8,
 	};
 
 	static AccidentCustomLocationControlsName = {

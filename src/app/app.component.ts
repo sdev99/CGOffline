@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PermissionType, Plugins, PushNotification, PushNotificationToken, PushNotificationActionPerformed } from '@capacitor/core';
+import { PermissionType, Plugins } from '@capacitor/core';
 
 import { NavController, Platform } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';

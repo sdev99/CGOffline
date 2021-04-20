@@ -27,7 +27,6 @@ import { WorkPermitAnswer } from '../_models/workPermitAnswer';
 import { ArAnswerObject } from '../_models/arAnswerObject';
 import { StaticDataService } from './static-data.service';
 import { RiskRatingItem } from '../_models/riskRatingItem';
-import { RiskAssessmentAnswerObject } from '../_models/riskAssessmentAnswerObject';
 import { Router } from '@angular/router';
 import { DedicatedModeDeviceDetailData } from '../_models/dedicatedModeDeviceDetailData';
 import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
@@ -1131,18 +1130,7 @@ export class SharedDataService {
 												answerObject.accidentLocationID = entityIds.LocationID;
 											}
 											break;
-										case EnumService.AccidentFormFieldOrder.ReddorReport:
-											const answerChoiceAttributes = question.answerChoiceAttributes;
-											answerChoiceAttributes.map((choice) => {
-												if (choice.answerChoiceAttributeId === control.value) {
-													const choiceTitle = UtilService.findObj(choice.answerChoiceAttributeHeaders, 'answerChoiceAttributeHeaderLanguageId', selectedLanguageID)
-														?.answerChoiceAttributeHeaderTitle;
-													isValueFilled = true;
-													answerObject.accidentIsRIDDORReportNeeded = choiceTitle === 'Yes' ? true : false;
-													return;
-												}
-											});
-											break;
+
 										case EnumService.AccidentFormFieldOrder.About:
 											const formGroups = control.value as FormGroup;
 											const multipleChoiceValueIDs = [];
