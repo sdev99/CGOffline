@@ -1039,6 +1039,7 @@ export class SharedDataService {
 					const questions = section.questions;
 
 					questions.map((question, questionIndex) => {
+						const questionDisplayOrder = questionIndex + 1;
 						if (this.utilService.shouldShowQuestion(question)) {
 							const answerFormattedObject: any = JSON.parse(JSON.stringify(question));
 							const controlName = UtilService.FCUniqueName(section, question);
@@ -1060,7 +1061,7 @@ export class SharedDataService {
 										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
 									};
 
-									switch (question.questionDisplayOrder) {
+									switch (questionDisplayOrder) {
 										case EnumService.HavFormFieldOrder.DateOfUsage:
 											if (control.value) {
 												answerObject.dateOfUsage = moment(control.value).format(StaticDataService.dateTimeFormat);
@@ -1108,7 +1109,7 @@ export class SharedDataService {
 										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
 									};
 
-									switch (question.questionDisplayOrder) {
+									switch (questionDisplayOrder) {
 										case EnumService.AccidentFormFieldOrder.AccidentDateTime:
 											if (control.value) {
 												isValueFilled = true;

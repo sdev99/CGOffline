@@ -80,7 +80,8 @@ export class FormHavPage implements OnInit {
 				if (section.isHAVSection) {
 					const questions = section.questions;
 					questions.map((question, questionIndex) => {
-						if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
+						const questionDisplayOrder = questionIndex + 1;
+						if (questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
 							this.modelControlName = UtilService.FCUniqueName(section, question);
 						}
 
@@ -145,16 +146,17 @@ export class FormHavPage implements OnInit {
 
 			const questions = section.questions;
 			questions.map((question, questionIndex) => {
-				if (question.questionDisplayOrder === listType) {
-					if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
+				const questionDisplayOrder = questionIndex + 1;
+				if (questionDisplayOrder === listType) {
+					if (questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
 						question.answerChoiceAttributes = list;
 						question.listValueKey = 'havManufacturerID';
 						question.listLabelKey = 'havManufacturerName';
-					} else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
+					} else if (questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
 						question.answerChoiceAttributes = list;
 						question.listValueKey = 'havTypeID';
 						question.listLabelKey = 'havTypeName';
-					} else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
+					} else if (questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
 						question.answerChoiceAttributes = list;
 						question.listValueKey = 'havModelID';
 						question.listLabelKey = 'model';
@@ -211,9 +213,10 @@ export class FormHavPage implements OnInit {
 	dropDownChange(section, question, sectionIndex, questionIndex) {
 		const controlName = UtilService.FCUniqueName(section, question);
 		const control = this.formGroup.controls[controlName];
-		if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
+		const questionDisplayOrder = questionIndex + 1;
+		if (questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
 			this.getTypeList(control.value, sectionIndex, questionIndex);
-		} else if (question.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
+		} else if (questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
 			this.getModelList(control.value, sectionIndex, questionIndex);
 		}
 	}

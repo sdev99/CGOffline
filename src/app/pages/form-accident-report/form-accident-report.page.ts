@@ -93,6 +93,7 @@ export class FormAccidentReportPage {
 					const questions = section.questions;
 
 					questions.map((question, questionIndex) => {
+						const questionDisplayOrder = questionIndex + 1;
 						if (section.isAccidentReportSection) {
 							// Make photo attachment not required field for accident section, it should be from api but for temporary for here make it not required
 							if (question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload) {
@@ -118,7 +119,7 @@ export class FormAccidentReportPage {
 							} catch (error) {}
 
 							if (!question.answerChoiceAttributes || question.answerChoiceAttributes.length === 0) {
-								this.setupDynamicChoiceList(question.questionDisplayOrder);
+								this.setupDynamicChoiceList(questionDisplayOrder);
 							}
 						}
 					});
@@ -195,18 +196,19 @@ export class FormAccidentReportPage {
 			sections.map((section) => {
 				if (section.isAccidentReportSection) {
 					const questions = section.questions;
-					questions.map((question) => {
-						if (question.questionDisplayOrder === listType) {
+					questions.map((question, questionIndex) => {
+						const questionDisplayOrder = questionIndex + 1;
+						if (questionDisplayOrder === listType) {
 							this.ngZone.run(() => {
-								if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Type) {
+								if (questionDisplayOrder === EnumService.AccidentFormFieldOrder.Type) {
 									question.answerChoiceAttributes = this.types;
 									question.listValueKey = 'accidentTypeId';
 									question.listLabelKey = 'accidentTypeTitle';
-								} else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.Classification) {
+								} else if (questionDisplayOrder === EnumService.AccidentFormFieldOrder.Classification) {
 									question.answerChoiceAttributes = this.classifications;
 									question.listValueKey = 'accidentClassificationId';
 									question.listLabelKey = 'accidentClassificationTitle';
-								} else if (question.questionDisplayOrder === EnumService.AccidentFormFieldOrder.AccidentLocation) {
+								} else if (questionDisplayOrder === EnumService.AccidentFormFieldOrder.AccidentLocation) {
 									question.answerChoiceAttributes = this.locations;
 									question.listValueKey = 'locationName';
 									question.listLabelKey = 'locationID';
