@@ -1115,6 +1115,7 @@ export class SharedDataService {
 												isValueFilled = true;
 												answerObject.accidentDateTime = moment(control.value).format(StaticDataService.dateTimeFormat);
 											}
+											answerObject.accidentAnswerSequence = 1;
 											break;
 										case EnumService.AccidentFormFieldOrder.AccidentLocation:
 											const placeNotintheList = formGroup.controls.placeNotintheList;
@@ -1130,6 +1131,7 @@ export class SharedDataService {
 												answerObject.accidentProjectID = entityIds.ProjectID;
 												answerObject.accidentLocationID = entityIds.LocationID;
 											}
+											answerObject.accidentAnswerSequence = 2;
 											break;
 
 										case EnumService.AccidentFormFieldOrder.About:
@@ -1145,18 +1147,21 @@ export class SharedDataService {
 												isValueFilled = true;
 												answerObject.accidentAboutIDs = multipleChoiceValueIDs.join(',');
 											}
+											answerObject.accidentAnswerSequence = 4;
 											break;
 										case EnumService.AccidentFormFieldOrder.Type:
 											if (control.value) {
 												isValueFilled = true;
 												answerObject.accidentTypeID = control.value;
 											}
+											answerObject.accidentAnswerSequence = 5;
 											break;
 										case EnumService.AccidentFormFieldOrder.Classification:
 											if (control.value) {
 												isValueFilled = true;
 												answerObject.accidentClassificationID = control.value;
 											}
+											answerObject.accidentAnswerSequence = 6;
 											break;
 										case EnumService.AccidentFormFieldOrder.BodyPartEffected:
 											const bodyPartFormGroups = control.value as FormGroup;
@@ -1173,18 +1178,21 @@ export class SharedDataService {
 												isValueFilled = true;
 												answerObject.accidentBodyPartIDs = bodyPartsIDs.join(',');
 											}
+											answerObject.accidentAnswerSequence = 7;
 											break;
 										case EnumService.AccidentFormFieldOrder.Description:
 											if (control.value) {
 												isValueFilled = true;
 												answerObject.accidentDescription = control.value;
 											}
+											answerObject.accidentAnswerSequence = 8;
 											break;
 										case EnumService.AccidentFormFieldOrder.Attachment:
 											if (attachemtUploaded[question.questionId]) {
 												isValueFilled = true;
 												answerObject.accidentAttachmentFileName = attachemtUploaded[question.questionId];
 											}
+											answerObject.accidentAnswerSequence = 9;
 											break;
 									}
 
