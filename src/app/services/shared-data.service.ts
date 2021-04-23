@@ -38,6 +38,7 @@ import { environment } from '../../environments/environment';
 import { RiskRatingSeverityOption } from '../_models/riskRatingSeverityOption';
 import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOption';
 import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
+import { AuthGuard } from '../helpers/auth.guard';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -207,6 +208,25 @@ export class SharedDataService {
 		const globalDirectories = localStorage.getItem(EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES);
 		if (globalDirectories) {
 			this.globalDirectories = JSON.parse(globalDirectories) as GlobalDirectory;
+		}
+	}
+
+	addDynamicRoute(dynamicPath, component, canActivateAuth = false): void {
+		const appRoutes = [...this.router.config];
+		let alreadyAdded = false;
+		appRoutes.map((route) => {
+			if (route.path === dynamicPath) {
+				alreadyAdded = true;
+			}
+		});
+		const canActivate = [];
+		if (canActivateAuth) {
+			canActivate.push(AuthGuard);
+		}
+		if (!alreadyAdded) {
+			const route = { path: dynamicPath, component, canActivate };
+			appRoutes.push(route);
+			this.router.resetConfig(appRoutes);
 		}
 	}
 

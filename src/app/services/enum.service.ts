@@ -129,9 +129,9 @@ export class EnumService {
 		GetSignOffFormDetail: 'GetSignOffFormDetail', // GET
 		GetDedicatedModeSignOffFormDetail: 'GetDedicatedModeSignOffFormDetail', // GET
 		GetActivitySignOffDocumentDetail: 'GetActivitySignOffDocumentDetail', // GET
-		GetPersonalModeAvailableDocuments: 'GetPersonalModeAvailableDocuments', // GET
-		GetPersonalModeAvailableWorkPermits: 'GetPersonalModeAvailableWorkPermits', // GET
-		GetPersonalModeAvailableForms: 'GetPersonalModeAvailableForms', // GET
+		GetPersonalModeAvailableDocuments: 'GetPersonalModeAvailableDocuments_V1', // GET
+		GetPersonalModeAvailableWorkPermits: 'GetPersonalModeAvailableWorkPermits_V1', // GET
+		GetPersonalModeAvailableForms: 'GetPersonalModeAvailableForms_V1', // GET
 		InsertPersonalModeSignOffDetails: 'InsertPersonalModeSignOffDetails', // POST
 		MySignedDocuments: 'MySignedDocuments', // GET
 		DownloadDocument: 'DownloadDocument', // GET
@@ -156,14 +156,14 @@ export class EnumService {
 		GetAccidentTypeList: 'GetAccidentTypeList', // GET
 		GetUserTotalHAVExposureForToday: 'GetUserTotalHAVExposureForToday', // GET
 		GetRiskRatingOptionList: 'GetRiskRatingOptionList', // GET
-		GetDedicatedModeAvailableDocuments: 'GetDedicatedModeAvailableDocuments', // GET
+		GetDedicatedModeAvailableDocuments: 'GetDedicatedModeAvailableDocuments_V1', // GET
 		GetDedicatedModeArchiveDocuments: 'GetDedicatedModeArchiveDocuments', // GET
-		GetDedicatedModeAvailableForms: 'GetDedicatedModeAvailableForms', // GET
+		GetDedicatedModeAvailableForms: 'GetDedicatedModeAvailableForms_V1', // GET
 		GetDedicatedModeArchiveForms: 'GetDedicatedModeArchiveForms', // GET
 		GetEvacuationList: 'GetEvacuationList', // GET
 		GetDedicatedModeLiveWorkPermits: 'GetDedicatedModeLiveWorkPermits', // GET
 		GetDedicatedModeArchiveWorkPermits: 'GetDedicatedModeArchiveWorkPermits', // GET
-		GetDedicatedModeAvailableWorkPermits: 'GetDedicatedModeAvailableWorkPermits', // GET
+		GetDedicatedModeAvailableWorkPermits: 'GetDedicatedModeAvailableWorkPermits_V1', // GET
 		GetRiskAssessmentSeverityOptions: 'GetRiskAssessmentSeverityOptions', // GET
 		GetRiskAssessmentProbabilityOptions: 'GetRiskAssessmentProbabilityOptions', // GET
 		GetRiskItemList: 'GetRiskItemList', // GET

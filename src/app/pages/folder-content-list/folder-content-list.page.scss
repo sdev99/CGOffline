@@ -1,0 +1,93 @@
+ion-toolbar {
+	ion-title {
+		padding-left: 55px;
+	}
+}
+ion-content {
+	ion-list.activity-list {
+		ion-list-header {
+			padding: 20px;
+			align-items: center;
+			--border-color: #dce7ef;
+			--border-width: 1px;
+			--border-style: solid;
+
+			ion-label {
+				font-family: IBM Plex Sans;
+				font-style: normal;
+				font-weight: bold;
+				font-size: 16px;
+				line-height: 21px;
+				color: #444444;
+				margin: 0;
+			}
+
+			.status-badge {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+
+				span {
+					font-family: IBM Plex Sans;
+					font-style: normal;
+					font-weight: normal;
+					font-size: 17px;
+					line-height: 22px;
+					color: #171538;
+				}
+
+				ion-badge {
+					font-family: IBM Plex Sans;
+					font-style: normal;
+					font-weight: 600;
+					font-size: 10px;
+					text-align: center;
+
+					&.rejected {
+						color: #e74731;
+					}
+
+					&.overdue {
+						color: #ffffff;
+					}
+				}
+			}
+		}
+
+		ion-item {
+			--border-color: #dce7ef;
+			--border-width: 1px;
+			--border-style: solid;
+			--padding-top: 12px;
+			--padding-bottom: 12px;
+
+			ion-label {
+				font-family: IBM Plex Sans;
+				font-style: normal;
+				font-weight: normal;
+				font-size: 14px;
+				line-height: 18px;
+				color: #21092a;
+			}
+
+			ion-icon {
+				width: 22px;
+				height: 22px;
+			}
+
+			ion-img {
+				width: 22px;
+				height: 22px;
+			}
+		}
+	}
+}
+
+.loading-spinner {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+}

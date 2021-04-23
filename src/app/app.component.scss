@@ -1,32 +1,32 @@
-@import "./src/theme/variables";
+@import './src/theme/variables';
 
 ::ng-deep {
-  ion-item.question-item {
-    --min-height: 18px;
-    --padding-start: 0;
-    --padding-top: 0;
-    --padding-bottom: 0;
-    --inner-padding-end: 0;
-    margin: 0 $paddingHorizontal;
+	ion-item.question-item {
+		--min-height: 18px;
+		--padding-start: 0;
+		--padding-top: 0;
+		--padding-bottom: 0;
+		--inner-padding-end: 0;
+		margin: 0 $paddingHorizontal;
 
-    &:last-child {
-      margin-bottom: 14px;
-    }
+		&:last-child {
+			margin-bottom: 14px;
+		}
 
-    ion-label {
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 18px;
-      color: #171538;
-    }
-  }
+		ion-label {
+			font-family: IBM Plex Sans;
+			font-style: normal;
+			font-weight: normal;
+			font-size: 14px;
+			line-height: 18px;
+			color: #171538;
+		}
+	}
 
-  .error {
-    --background: #FFF6DE !important;
-    background-color: #FFF6DE !important;
-    border: 1px solid #E4D3A3 !important;
-    border-radius: 3px !important;
-  }
+	.error {
+		--background: #fff6de !important;
+		background-color: #fff6de !important;
+		border: 1px solid #e4d3a3 !important;
+		border-radius: 3px !important;
+	}
 }

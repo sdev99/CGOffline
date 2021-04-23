@@ -281,3 +281,12 @@ ion-label {
 .text-huge {
 	font-size: 1.8em;
 }
+
+.folder-item {
+	--min-height: 64px;
+	--border-color: #e8eaf2;
+	--padding-start: 40px;
+	ion-icon {
+		margin-right: 16px;
+	}
+}

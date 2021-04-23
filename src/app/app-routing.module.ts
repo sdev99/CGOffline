@@ -262,6 +262,10 @@ const routes: Routes = [
 		path: 'checkin-list',
 		loadChildren: () => import('./pages/checkin-list/checkin-list.module').then((m) => m.CheckinListPageModule),
 	},
+	{
+		path: 'folder-content-list',
+		loadChildren: () => import('./pages/folder-content-list/folder-content-list.module').then((m) => m.FolderContentListPageModule),
+	},
 ];
 
 const webAppRoutes: Routes = [

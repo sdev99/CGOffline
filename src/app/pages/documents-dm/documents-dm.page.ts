@@ -8,6 +8,7 @@ import { EnumService } from '../../services/enum.service';
 import { Response } from '../../_models';
 import { DocumentDetail } from '../../_models/documentDetail';
 import { ArchivedDocumentDetail } from '../../_models/archivedDocumentDetail';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-documents-dm',
@@ -28,13 +29,26 @@ export class DocumentsDmPage implements OnInit {
 
 	isLoadingDocument = false;
 
+	itemDetail: DocumentDetail;
+	pageTitle = '';
+
 	constructor(
-		private navController: NavController,
+		private navCtrl: NavController,
 		private filehandlerService: FilehandlerService,
 		public utilService: UtilService,
 		public sharedDataService: SharedDataService,
-		public apiService: ApiService
-	) {}
+		public apiService: ApiService,
+		public activatedRoute: ActivatedRoute
+	) {
+		this.activatedRoute.queryParams.subscribe((res) => {
+			if (res) {
+				if (res.itemDetail) {
+					this.itemDetail = JSON.parse(res.itemDetail);
+					this.pageTitle = this.itemDetail.documentTitle;
+				}
+			}
+		});
+	}
 
 	ngOnInit() {}
 
@@ -45,9 +59,10 @@ export class DocumentsDmPage implements OnInit {
 	}
 
 	getDedicatedModeAvailableDocuments() {
+		const folderID = this.itemDetail ? this.itemDetail.folderID : 0;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
 		this.isLoadingDocument = true;
-		this.apiService.getDedicatedModeAvailableDocuments(companyID).subscribe(
+		this.apiService.getDedicatedModeAvailableDocuments(companyID, folderID).subscribe(
 			(response: Response) => {
 				this.isLoadingDocument = false;
 				if (response) {
@@ -97,7 +112,7 @@ export class DocumentsDmPage implements OnInit {
 
 	openAvailableDocument(item: DocumentDetail) {
 		if (item.documentFileName) {
-			this.navController.navigateForward('/document-openchoice-dm', {
+			this.navCtrl.navigateForward('/document-openchoice-dm', {
 				queryParams: {
 					documentDetail: JSON.stringify(item),
 				},
@@ -113,5 +128,13 @@ export class DocumentsDmPage implements OnInit {
 		} else {
 			this.utilService.showAlert('This device needs to be synced first in order to show the selected file. Please sync device and try again.', 'File Not Available Yet');
 		}
+	}
+
+	openDocumentFolder(item: DocumentDetail) {
+		const newPath = 'documents-dm/' + item.folderID;
+		this.sharedDataService.addDynamicRoute(newPath, DocumentsDmPage, true);
+		this.navCtrl.navigateForward([newPath], {
+			queryParams: { itemDetail: JSON.stringify(item) },
+		});
 	}
 }

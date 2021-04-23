@@ -9,6 +9,7 @@ import { SignOffDetailsPostData } from '../_models/signOffDetailsPostData';
 import { CheckInPostData } from '../_models/checkInPostData';
 import { CheckedInDetailItem } from '../_models/checkedInDetailItem';
 import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
+import { UtilService } from './util.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -224,11 +225,17 @@ export class ApiService {
 	 * @param userId current logged in user id
 	 * @param companyID we will get company id at the time of login
 	 */
-	getPersonalModeAvailableForms(userId, companyID) {
+	getPersonalModeAvailableForms(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: place?.locationID,
+			ProjectID: place?.projectID,
+			InventoryItemID: place?.inventoryItemID,
+			FormFolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?${queryString}`);
 	}
 
 	/**
@@ -236,11 +243,17 @@ export class ApiService {
 	 * @param userId current logged in user id
 	 * @param companyID we will get company id at the time of login
 	 */
-	getPersonalModeAvailableDocuments(userId, companyID) {
+	getPersonalModeAvailableDocuments(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: place?.locationID,
+			ProjectID: place?.projectID,
+			InventoryItemID: place?.inventoryItemID,
+			FolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?${queryString}`);
 	}
 
 	/**
@@ -507,11 +520,18 @@ export class ApiService {
 	 * This API will return all archived documents for dedicated mode
 	 * @param companyID we will get this from GetDeviceEntityDetails API.
 	 */
-	getDedicatedModeAvailableDocuments(companyID) {
+	getDedicatedModeAvailableDocuments(companyID, folderId = 0) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableDocuments}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: dedicatedModeLocationUse?.locationID,
+			ProjectID: dedicatedModeLocationUse?.projectID,
+			InventoryItemID: dedicatedModeLocationUse?.inventoryItemID,
+			FolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableDocuments}?${queryString}`);
 	}
 
 	/**
@@ -529,11 +549,17 @@ export class ApiService {
 	 *  This API will return all available forms for dedicated mode
 	 * @param companyID we will get this from GetDeviceEntityDetails API.
 	 */
-	getDedicatedModeAvailableForms(companyID) {
+	getDedicatedModeAvailableForms(companyID, folderId = 0) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableForms}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: dedicatedModeLocationUse?.locationID,
+			ProjectID: dedicatedModeLocationUse?.projectID,
+			InventoryItemID: dedicatedModeLocationUse?.inventoryItemID,
+			FormFolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableForms}?${queryString}`);
 	}
 
 	/**

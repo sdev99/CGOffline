@@ -1,35 +1,41 @@
 <ion-header>
-    <ng-container *ngIf="!sharedDataService.dedicatedMode">
-        <app-dashboard-header [showPlaceNavigationBtns]="false" [isCurrentCheckin]="true"
-                              [hideCheckinButton]="isCheckedIn"
-        ></app-dashboard-header>
+	<ng-container *ngIf="!sharedDataService.dedicatedMode">
+		<app-dashboard-header [showPlaceNavigationBtns]="false" [isCurrentCheckin]="true" [hideCheckinButton]="isCheckedIn"></app-dashboard-header>
 
-        <ion-toolbar style="padding-top: 0">
-            <ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark"
-                             mode="md"></ion-back-button>
-            <ion-title class="ion-text-left">Work Permit Forms</ion-title>
-        </ion-toolbar>
-    </ng-container>
+		<ion-toolbar style="padding-top: 0">
+			<ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
+			<ion-title class="ion-text-left">{{pageTitle || 'Work Permit Forms'}}</ion-title>
+		</ion-toolbar>
+	</ng-container>
 
-    <ng-container *ngIf="sharedDataService.dedicatedMode">
-        <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-                             modalSubTitle="Work Permit"
-                             (closeModal)="back()"></app-modal-header-dm>
-    </ng-container>
+	<ng-container *ngIf="sharedDataService.dedicatedMode">
+		<app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Work Permit" (closeModal)="back()"></app-modal-header-dm>
 
+		<ion-toolbar *ngIf="itemDetail && itemDetail.formFolderID > 0" style="padding-top: 0">
+			<ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
+			<ion-title class="ion-text-left">{{pageTitle}}</ion-title>
+		</ion-toolbar>
+	</ng-container>
 </ion-header>
 
-
 <ion-content>
-    <ion-list *ngIf="availableWorkPermits && availableWorkPermits.length>0" class="activity-list" lines="full">
-        <ion-item *ngFor="let item of availableWorkPermits" (click)="openForm(item)">
-            <ion-icon slot="start" [src]="UtilService.FileIcon('form')"></ion-icon>
-            <ion-label>{{item.formTitle}}</ion-label>
-        </ion-item>
-    </ion-list>
+	<ion-list *ngIf="availableWorkPermits && availableWorkPermits.length>0" class="activity-list" lines="full">
+		<ng-container *ngFor="let item of availableWorkPermits">
+			<ion-item *ngIf="item.formFolderID > 0" (click)="openFormFolder(item)">
+				<ion-icon slot="start" [src]="UtilService.FileIcon('folder')"></ion-icon>
+				<ion-label class="ion-text-wrap">{{item.formTitle}}</ion-label>
+			</ion-item>
+		</ng-container>
 
-    <ng-container *ngIf="!availableWorkPermits || availableWorkPermits?.length===0">
-        <app-empty-message message="No permits available"></app-empty-message>
-    </ng-container>
+		<ng-container *ngFor="let item of availableWorkPermits">
+			<ion-item *ngIf="item.formID > 0" (click)="openForm(item)">
+				<ion-icon slot="start" [src]="UtilService.FileIcon('form')"></ion-icon>
+				<ion-label>{{item.formTitle}}</ion-label>
+			</ion-item>
+		</ng-container>
+	</ion-list>
 
+	<ng-container *ngIf="!availableWorkPermits || availableWorkPermits?.length===0">
+		<app-empty-message message="No permits available"></app-empty-message>
+	</ng-container>
 </ion-content>

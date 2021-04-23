@@ -223,6 +223,15 @@ export class UtilService {
 		return value.replace('T', ' ');
 	}
 
+	static convertToQuerystring(obj) {
+		let str = [];
+		for (const p in obj)
+			if (obj.hasOwnProperty(p)) {
+				str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+			}
+		return str.join('&');
+	}
+
 	static getQueryStringValue = (url, key) => {
 		return decodeURIComponent(url.replace(new RegExp('^(?:.*[&\\?]' + encodeURIComponent(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
 	};
