@@ -1,106 +1,129 @@
 $paddingHorizontal: 23px;
 
 ion-content {
-  &.dedicated-mode {
-    --background: #F6F9FB;
+	&.dedicated-mode {
+		--background: #f6f9fb;
 
-    app-exposure::ng-deep .exposure{
-      background-color: #ffffff;
-      flex-direction: row;
-      padding: 10px 20px;
-      border-radius: 12px;
+		app-exposure::ng-deep .exposure {
+			background-color: #ffffff;
+			flex-direction: row;
+			padding: 10px 20px;
+			border-radius: 12px;
 
-      ion-label {
-        flex: 1;
-        text-align: left;
-      }
+			ion-label {
+				flex: 1;
+				text-align: left;
+			}
 
-      &.top {
-        width: 70%;
-        margin-left: auto;
-        margin-right: auto;
-      }
+			&.top {
+				width: 70%;
+				margin-left: auto;
+				margin-right: auto;
+			}
 
-      &.bottom {
-        background-color: #F6F9FB;
-        border-radius: 0;
-        margin: 12px 1px 0;
-      }
+			&.bottom {
+				background-color: #f6f9fb;
+				border-radius: 0;
+				margin: 12px 1px 0;
+			}
 
-      .points {
-        margin: 8px;
-      }
-    }
+			.points {
+				margin: 8px;
+			}
+		}
 
-    ion-list {
-      width: 70%;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 12px;
-    }
+		ion-list {
+			width: 70%;
+			margin-left: auto;
+			margin-right: auto;
+			border-radius: 12px;
+		}
 
-    .text-bottom-msg {
-      box-shadow: 0px 0 20px rgba(0, 0, 0, 0.3);
+		.text-bottom-msg {
+			box-shadow: 0px 0 20px rgba(0, 0, 0, 0.3);
 
-      margin-top: 40px;
-      color: #171538;
-      padding: 0 16px;
-      background-color: #ffffff;
+			margin-top: 40px;
+			color: #171538;
+			padding: 0 16px;
+			background-color: #ffffff;
 
-      ion-label {
-        padding: 16px 0;
-      }
+			ion-label {
+				padding: 16px 0;
+			}
 
-      .action-btn {
-        width: 200px;
-        margin: 0;
-        margin-left: 16px;
-      }
-    }
-  }
+			.action-btn {
+				width: 200px;
+				margin: 0;
+				margin-left: 16px;
+			}
+		}
+	}
 
-  .hr-line-full {
-    width: 100%;
-    height: 1px;
-    background-color: rgba(74, 144, 226, 0.2);
-  }
+	.hr-line-full {
+		width: 100%;
+		height: 1px;
+		background-color: rgba(74, 144, 226, 0.2);
+	}
 
-  app-exposure::ng-deep {
-    .points {
-      &.total {
-        background: #E74731;
-        font-family: SF Pro Display;
-        font-weight: bold;
-        font-size: 16px;
-        line-height: 19px;
-      }
-    }
-  }
+	app-exposure::ng-deep {
+		.points {
+			&.total {
+				background: #e74731;
+				font-family: SF Pro Display;
+				font-weight: bold;
+				font-size: 16px;
+				line-height: 19px;
+			}
+		}
+	}
 
-  .text-bottom-msg {
-    font-family: IBM Plex Sans;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 18px;
-    text-align: center;
-    color: #171538;
-    padding: 16px 32px;
-  }
+	.text-bottom-msg {
+		font-family: IBM Plex Sans;
+		font-style: normal;
+		font-weight: normal;
+		font-size: 14px;
+		line-height: 18px;
+		text-align: center;
+		color: #171538;
+		padding: 16px 32px;
+	}
 
-  .action-btn {
-    width: 100%;
-    margin: 0;
-    --border-radius: 3px;
-    border-radius: 3px;
-    overflow: hidden;
-  }
+	.add-tool-button-container-item {
+		--padding-start: 30px;
+		--padding-end: 30px;
+		--min-height: 108px;
+		border-top: 1px solid rgba(74, 144, 226, 0.2);
 
-  app-number-integer-field::ng-deep {
-    .input-item {
-      ion-input {
-        width: 160px;
-      }
-    }
-  }
+		.add-tool-button {
+			border: 1px dashed #2a6fdb;
+			border-radius: 4px;
+			font-style: normal;
+			font-weight: normal;
+			font-size: 12px;
+			line-height: 16px;
+			display: flex;
+			align-items: center;
+			text-align: center;
+			color: #2a6fdb;
+			height: 48px;
+			--background: transparent;
+			flex: 1;
+		}
+	}
+
+	.action-btn {
+		width: 100%;
+		margin: 0;
+		--border-radius: 3px;
+		border-radius: 3px;
+		overflow: hidden;
+	}
+
+	app-number-integer-field::ng-deep {
+		.input-item {
+			ion-input {
+				width: 160px;
+			}
+		}
+	}
 }

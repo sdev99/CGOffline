@@ -52,7 +52,55 @@ export class CheckinWorkpermitPage implements OnInit {
 		});
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		if (this.itemDetail && this.itemDetail.formFolderID) {
+			this.availableWorkPermits = [];
+
+			this.utilService.presentLoadingWithOptions();
+
+			if (this.sharedDataService.dedicatedMode) {
+				this.getDedicatedModeAvailableWorkPermits(this.itemDetail, () => {
+					this.utilService.hideLoading();
+				});
+			} else {
+				this.getPersonalModeAvailableWorkPermits(this.itemDetail, () => {
+					this.utilService.hideLoading();
+				});
+			}
+		}
+	}
+
+	getDedicatedModeAvailableWorkPermits(itemDetail: FormItem, callBack = null) {
+		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+
+		this.apiService.getDedicatedModeAvailableWorkPermits(companyID, itemDetail.formFolderID).subscribe(
+			(response: Response) => {
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					this.availableWorkPermits = response.Result;
+				}
+				UtilService.fireCallBack(callBack);
+			},
+			(error) => {
+				this.availableWorkPermits = [];
+				UtilService.fireCallBack(callBack);
+			}
+		);
+	}
+
+	getPersonalModeAvailableWorkPermits = async (itemDetail: FormItem, callBack = null) => {
+		this.apiService.getPersonalModeAvailableWorkPermits(this.user?.userId, this.user.companyID, itemDetail.formFolderID).subscribe(
+			(response: Response) => {
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					this.availableWorkPermits = response.Result;
+				}
+				UtilService.fireCallBack(callBack);
+			},
+			(error) => {
+				this.availableWorkPermits = [];
+				UtilService.fireCallBack(callBack);
+			}
+		);
+	};
 
 	fileIcon(type) {
 		let iconName = '';

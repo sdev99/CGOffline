@@ -261,11 +261,17 @@ export class ApiService {
 	 * @param userId current logged in user id
 	 * @param companyID we will get company id at the time of login
 	 */
-	getPersonalModeAvailableWorkPermits(userId, companyID) {
+	getPersonalModeAvailableWorkPermits(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?CompanyID=${companyID}&LocationID=${place?.locationID}&ProjectID=${place?.projectID}&InventoryItemID=${place?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: place?.locationID,
+			ProjectID: place?.projectID,
+			InventoryItemID: place?.inventoryItemID,
+			FormFolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?${queryString}`);
 	}
 
 	/**
@@ -608,11 +614,18 @@ export class ApiService {
 	/**
 	 *  This API will return all available work permits for dedicated mode
 	 * @param companyID we will get this from GetDeviceEntityDetails API.
+	 * @param folderId we will get this from getDedicatedModeAvailableWorkPermits  API.
 	 */
-	getDedicatedModeAvailableWorkPermits(companyID) {
+	getDedicatedModeAvailableWorkPermits(companyID, folderId = 0) {
 		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
-		return this.http.get(
-			`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?CompanyID=${companyID}&LocationID=${dedicatedModeLocationUse?.locationID}&ProjectID=${dedicatedModeLocationUse?.projectID}&InventoryItemID=${dedicatedModeLocationUse?.inventoryItemID}`
-		);
+		const queryParam = {
+			CompanyID: companyID,
+			LocationID: dedicatedModeLocationUse?.locationID,
+			ProjectID: dedicatedModeLocationUse?.projectID,
+			InventoryItemID: dedicatedModeLocationUse?.inventoryItemID,
+			FormFolderID: folderId,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?${queryString}`);
 	}
 }

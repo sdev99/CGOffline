@@ -66,6 +66,8 @@ export class UtilService {
 				return '#9150E3';
 			case 'orange':
 				return '#EE5A35';
+			case 'white':
+				return '#000';
 		}
 		return color;
 	}

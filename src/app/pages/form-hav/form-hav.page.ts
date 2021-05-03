@@ -261,6 +261,12 @@ export class FormHavPage implements OnInit {
 		}
 	}
 
+	addNewTool(section) {
+		const havTools = section.havTools || [];
+		havTools.push(JSON.parse(JSON.stringify(section.questions)));
+		section.havTools = havTools;
+	}
+
 	isError(section, question) {
 		const controlName = UtilService.FCUniqueName(section, question);
 		return this.isSubmitted && !this.formGroup.controls[controlName].valid;

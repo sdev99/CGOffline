@@ -402,6 +402,25 @@ export class SharedDataService {
 	};
 
 	/**
+	 * checkAutoCheckOutForCurrentCheckin
+	 */
+	public checkAutoCheckOutForCurrentCheckin() {
+		const currentCheckinList = this.checkedInPlaces;
+		if (currentCheckinList && currentCheckinList.length > 0) {
+			currentCheckinList.map((item) => {
+				const userAutoCheckOutTime = item.userAutoCheckOutTime;
+				const locationAutoCheckOutHour = item.locationAutoCheckOutHour;
+				const locationAutoCheckOutTime = item.locationAutoCheckOutTime;
+				if (userAutoCheckOutTime && (locationAutoCheckOutTime || locationAutoCheckOutTime)) {
+				} else if (userAutoCheckOutTime) {
+				} else if (locationAutoCheckOutTime) {
+				} else if (locationAutoCheckOutHour) {
+				}
+			});
+		}
+	}
+
+	/**
 	 * For dedicated mode
 	 */
 	public getCurrentCheckedInEntityName = () => {
@@ -801,6 +820,13 @@ export class SharedDataService {
 											filledFieldsCount++;
 											if (control.valid) {
 												filledFieldsValidCount++;
+												if (question.questionIsRequired) {
+													requiredFieldsValidCount++;
+												}
+											}
+										} else if (section.isAccidentReportSection && question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection) {
+											const locationNameControl = formGroup.controls[EnumService.AccidentCustomLocationControlsName.LocationName];
+											if (locationNameControl.value && locationNameControl.valid) {
 												if (question.questionIsRequired) {
 													requiredFieldsValidCount++;
 												}
@@ -1362,10 +1388,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		// if (UtilService.isLocalHost()) {
-		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-		// 	return;
-		// }
+		if (UtilService.isLocalHost()) {
+			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+			return;
+		}
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(
@@ -1464,6 +1490,9 @@ export class SharedDataService {
 		this.utilService.presentLoadingWithOptions();
 		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
+		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
+		this.checkInPostData.signOffDate = utcDateTime;
+
 		apiService.insertCheckInDetails(this.checkInPostData).subscribe(
 			(response: Response) => {
 				this.utilService.hideLoading();
@@ -1493,6 +1522,9 @@ export class SharedDataService {
 		this.utilService.presentLoadingWithOptions();
 
 		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
+
+		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
+		this.checkInPostData.signOffDate = utcDateTime;
 
 		apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
 			(response: Response) => {
@@ -1610,6 +1642,9 @@ export class SharedDataService {
 				nextPage = '/tabs/dashboard';
 			}
 		}
+
+		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
+		this.signOffDetailsPostData.signOffDate = utcDateTime;
 
 		apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe(
 			(response: Response) => {
