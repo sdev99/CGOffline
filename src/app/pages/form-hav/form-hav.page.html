@@ -18,56 +18,75 @@
 
 			<app-exposure label="Your Current Exposure" [points]="currentExposure" containerClassName="top"></app-exposure>
 
-			<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-				<ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
-					<ng-container *ngIf="utilService.shouldShowSection(section)">
-						<app-section-title [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
-						</app-section-title>
+			<ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
+				<ng-container *ngIf="utilService.shouldShowSection(section)">
+					<ng-container *ngIf="section.isHAVSection; else customQuestions">
+						<ng-container *ngFor="let havAssessmentTool of section.havAssessmentTools;let havAssessmentToolsIndex = index">
+							<app-section-title
+								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle+(section.havAssessmentTools.length>1?' - Tool '+(havAssessmentToolsIndex+1):'')"
+								[showRemoveIcon]="section.havAssessmentTools.length>1"
+								(onRemove)="removeHavTool(section,havAssessmentToolsIndex)"
+							>
+							</app-section-title>
 
-						<ng-container *ngIf="section.isHAVSection; else customQuestions">
-							<ng-container *ngFor="let question of section.questions;let questionIndex = index">
+							<ng-container *ngFor="let question of havAssessmentTool.questions;let questionIndex = index">
 								<ng-container *ngIf="utilService.shouldShowQuestion(question)">
-									<app-date-field
-										*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
-										[form]="formGroup"
-										[inputName]="UtilService.FCUniqueName(section, question)"
-										[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-										[isError]="isError(section, question)"
-										placeholder="Choose"
-									></app-date-field>
+									<ion-item class="question-item date-item" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField">
+										<ion-label position="stacked"
+											>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
+											sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}</ion-label
+										>
+										<div class="date-field" [ngClass]="{'error': isError( question)}">
+											<ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
+											<ion-datetime placeholder="Choose" display-timezone="utc" max="2050" [(ngModel)]="question.value"></ion-datetime>
+										</div>
+									</ion-item>
 
-									<app-dropdown-field
-										*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
-										[form]="formGroup"
-										[inputName]="UtilService.FCUniqueName(section, question)"
-										[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-										[isError]="isError(section, question)"
-										[list]="question.answerChoiceAttributes"
-										[listLabelKey]="question.listLabelKey"
-										[listValueKey]="question.listValueKey"
-										(valueChange)="dropDownChange(section, question, sectionIndex,questionIndex)"
-										placeholder="Choose"
-									></app-dropdown-field>
+									<ion-item class="question-item drop-down-item" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown">
+										<ion-label position="stacked">
+											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+										</ion-label>
+										<ion-select
+											placeholder="Choose"
+											[(ngModel)]="question.value"
+											[ngClass]="{'error': isError( question)}"
+											(ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
+										>
+											<ng-container *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown ">
+												<ion-select-option *ngFor="let item of toolManufacturers" [value]="item.havManufacturerID"> {{item.havManufacturerName}} </ion-select-option>
+											</ng-container>
+											<ng-template #otherDropdown>
+												<ion-select-option *ngFor="let item of question.answerChoiceAttributes" [value]="question.listValueKey?item[question.listValueKey]:item">
+													{{question.listLabelKey ? item[question.listLabelKey] : item}}
+												</ion-select-option>
+											</ng-template>
+										</ion-select>
+									</ion-item>
 
-									<app-number-integer-field
-										*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
-										[form]="formGroup"
-										[inputName]="UtilService.FCUniqueName(section, question)"
-										[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-										[isError]="isError(section,question)"
-									></app-number-integer-field>
+									<ion-item class="question-item input-item planned-time" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField">
+										<ion-label position="stacked">
+											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+										</ion-label>
+										<ion-input [(ngModel)]="question.value" inputmode="numeric" [ngClass]="{'error': isError(question)}"></ion-input>
+									</ion-item>
 								</ng-container>
 							</ng-container>
-
-							<app-exposure label="Calculated Exposure" [points]="calculateExposure()" containerClassName="bottom"></app-exposure>
-							<app-exposure label="Total Exposure Will Be" [points]="calculateExposure(currentExposure)"></app-exposure>
-
-							<ion-item class="add-tool-button-container-item">
-								<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">Add Tool</ion-button>
-							</ion-item>
+							<app-exposure label="Calculated Exposure" [points]="calculateExposure(havAssessmentTool)" containerClassName="bottom"></app-exposure>
 						</ng-container>
+						<app-exposure label="Total Exposure Will Be" [points]="totalCalculateExposure(section)"></app-exposure>
 
+						<ion-item class="add-tool-button-container-item">
+							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">Add Tool</ion-button>
+						</ion-item>
+					</ng-container>
+
+					<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 						<ng-template #customQuestions>
+							<app-section-title
+								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
+							>
+							</app-section-title>
+
 							<app-custom-questions-container
 								[sectionIndex]="sectionIndex"
 								[sectionId]="section.sectionId"
@@ -78,22 +97,22 @@
 								[section]="section"
 							></app-custom-questions-container>
 						</ng-template>
-					</ng-container>
-				</ion-list>
-
-				<!--        End of form -->
-				<ng-container *ngIf="!sharedDataService.dedicatedMode">
-					<div class="hr-line-full ion-margin-top"></div>
-
-					<ion-item class="ion-margin-vertical text-bottom-msg">
-						<ion-label class="ion-text-wrap ion-text-center"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
-					</ion-item>
-
-					<ion-item class="ion-margin-vertical ion-padding-bottom">
-						<ion-button type="submit" expand="full" class="action-btn">Sign-Off</ion-button>
-					</ion-item>
+					</form>
 				</ng-container>
-			</form>
+			</ion-list>
+
+			<!--        End of form -->
+			<ng-container *ngIf="!sharedDataService.dedicatedMode">
+				<div class="hr-line-full ion-margin-top"></div>
+
+				<ion-item class="ion-margin-vertical text-bottom-msg">
+					<ion-label class="ion-text-wrap ion-text-center"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
+				</ion-item>
+
+				<ion-item class="ion-margin-vertical ion-padding-bottom">
+					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">Sign-Off</ion-button>
+				</ion-item>
+			</ng-container>
 			<div class="fill-vertical-space"></div>
 
 			<!--        End of form -->

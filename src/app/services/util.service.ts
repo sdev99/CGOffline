@@ -484,6 +484,26 @@ export class UtilService {
 							}
 						}
 					});
+				} // No need to add form control for Hav section because we are not using form controls, we using ngModel
+				else if (section.isHAVSection) {
+					const havAssessmentTools = section.havAssessmentTools;
+
+					havAssessmentTools.map((havAssessmentTool, havAssessmentToolIndex) => {
+						havAssessmentTool.questions.map((question, questionIndex) => {
+							const elementId = UtilService.HtmlElementIdUq(sectionIndex + '' + havAssessmentToolIndex, questionIndex, section.sectionId, question.questionId);
+							if (this.shouldShowSection(section) && this.shouldShowQuestion(question)) {
+								if (questionElementIds.indexOf(elementId) !== -1) {
+									questionElementIds.splice(questionElementIds.indexOf(elementId), 1);
+								}
+								questionElementIds.push(elementId);
+							} else {
+								const indexOfElement = questionElementIds.indexOf(elementId);
+								if (indexOfElement !== -1) {
+									questionElementIds.splice(indexOfElement, 1);
+								}
+							}
+						});
+					});
 				} else {
 					const questions = section.questions;
 					questions.map((question, questionIndex) => {

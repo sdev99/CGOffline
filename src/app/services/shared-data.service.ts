@@ -39,6 +39,7 @@ import { RiskRatingSeverityOption } from '../_models/riskRatingSeverityOption';
 import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOption';
 import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
 import { AuthGuard } from '../helpers/auth.guard';
+import { HavAnswerDetail } from '../_models/havAnswerDetail';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -719,7 +720,7 @@ export class SharedDataService {
 		formBuilderDetail,
 		personalModeLoggedUser: User,
 		callBack,
-		havExposure: HavExposure = null,
+		havAnswerDetail: HavAnswerDetail = null,
 		workPermitAnswer: WorkPermitAnswer = null
 	) {
 		if (!environment.isWebApp) {
@@ -789,6 +790,11 @@ export class SharedDataService {
 									}
 								}
 							});
+						} else if (section.isHAVSection) {
+							requiredFieldsCount++;
+							filledFieldsCount++;
+							requiredFieldsValidCount++;
+							//skip
 						} else {
 							const questions = section.questions;
 							questions.map((question, questionIndex) => {
@@ -895,7 +901,7 @@ export class SharedDataService {
 																	formBuilderDetail,
 																	personalModeLoggedUser,
 																	callBack,
-																	havExposure,
+																	havAnswerDetail,
 																	workPermitAnswer,
 																	attachemtUploaded
 																);
@@ -919,7 +925,7 @@ export class SharedDataService {
 																	formBuilderDetail,
 																	personalModeLoggedUser,
 																	callBack,
-																	havExposure,
+																	havAnswerDetail,
 																	workPermitAnswer,
 																	attachemtUploaded
 																);
@@ -936,7 +942,7 @@ export class SharedDataService {
 																	formBuilderDetail,
 																	personalModeLoggedUser,
 																	callBack,
-																	havExposure,
+																	havAnswerDetail,
 																	workPermitAnswer,
 																	attachemtUploaded
 																);
@@ -956,7 +962,7 @@ export class SharedDataService {
 														formBuilderDetail,
 														personalModeLoggedUser,
 														callBack,
-														havExposure,
+														havAnswerDetail,
 														workPermitAnswer,
 														attachemtUploaded
 													);
@@ -970,7 +976,7 @@ export class SharedDataService {
 				});
 
 				if (attachmentCount === 0) {
-					this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havExposure, workPermitAnswer);
+					this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havAnswerDetail, workPermitAnswer);
 				}
 			} else if (requiredFieldsCount === 0 && filledFieldsCount === 0) {
 				const errorMessage = 'At least one answer to be filled in.';
@@ -997,7 +1003,7 @@ export class SharedDataService {
 		formBuilderDetail,
 		personalModeLoggedUser: User,
 		callBack,
-		havExposure: HavExposure = null,
+		havAnswerDetail: HavAnswerDetail = null,
 		workPermitAnswer: WorkPermitAnswer = null,
 		attachemtUploaded = {}
 	) => {
@@ -1007,7 +1013,6 @@ export class SharedDataService {
 		const formVersionId = formBuilderDetail.formVersionId;
 
 		const questionAnswers = [];
-		const havQuestionAnswers = [];
 		const accidentReportQuestionAnswers = [];
 		const riskAssessmentAnswers = [];
 		const riskAssessmentAnswerDetails = { taskAnswers: [] };
@@ -1030,50 +1035,7 @@ export class SharedDataService {
 					tasks.map((task) => {
 						if (this.utilService.shouldShowQuestion(task)) {
 							const answerFormattedObject: any = JSON.parse(JSON.stringify(task));
-							// const hazardsAnswers = [];
 							const hazardsAnswers = task.hazardAnswers;
-							const hazards = task.hazardAnswers;
-							// hazards.map((hazard) => {
-							// 	const hazardFormattedObject: any = JSON.parse(JSON.stringify(hazard));
-
-							// 	const answerObject: RiskAssessmentAnswerObject = {
-							// 		riskAQuestionAnswerId: 0,
-							// 		hazardID: hazard.hazardAnswerId,
-							// 		formVersionID: formVersionId,
-							// 		riskRatingID: hazard.riskRating || 0,
-							// 		residualRiskRatingID: hazard.residualRiskRating || 0,
-							// 		isMembersOfTheWorkForce: hazard.memberOfTheWorkForce,
-							// 		isMembersOfThePublic: hazard.memberOfThePublic,
-							// 		[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: task[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
-							// 		[EnumService.QuestionLogic.ActionTypeForForm.Notify]: task[EnumService.QuestionLogic.ActionTypeForForm.Notify],
-							// 	};
-
-							// 	const controlMeasures = hazard.controlMeasures;
-							// 	const controlMeasureIDs = [];
-							// 	if (controlMeasures) {
-							// 		controlMeasures.map((controlMeasure) => {
-							// 			if (controlMeasure.isSelected) {
-							// 				controlMeasureIDs.push(controlMeasure.controlMeasureId);
-							// 			}
-							// 		});
-							// 	}
-							// 	if (controlMeasureIDs.length > 0) {
-							// 		answerObject.controlMeasureIDs = controlMeasureIDs.join(',');
-							// 	}
-
-							// 	if (hazard.memberOfTheWorkForce) {
-							// 		answerObject.userIDs = Object.keys(hazard.addedUsers).join(',');
-							// 		answerObject.userGroupIDs = Object.keys(hazard.addedGroups).join(',');
-							// 	}
-
-							// 	if (hazard.memberOfThePublic) {
-							// 		answerObject.membersOfThePublicDescription = hazard.memberOfThePublicDescription;
-							// 	}
-							// 	riskAssessmentAnswers.push(answerObject);
-
-							// 	hazardFormattedObject.answerData = answerObject;
-							// 	hazardsAnswers.push(hazardFormattedObject);
-							// });
 
 							answerFormattedObject.answerData = hazardsAnswers;
 							formattedAnswers.push(answerFormattedObject);
@@ -1081,6 +1043,69 @@ export class SharedDataService {
 					});
 
 					sectionFormattedObject.taskAnswerData = formattedAnswers;
+				} else if (section.isHAVSection) {
+					const havAssessmentTools = section.havAssessmentTools;
+					havAssessmentTools.some((havAssessmentTool) => {
+						const questions = havAssessmentTool.questions;
+
+						questions.some((question, questionIndex) => {
+							const questionDisplayOrder = questionIndex + 1;
+							const questionLabel = UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', selectedLanguageID).questionTranslationTitle;
+							const answerFormattedObject: any = JSON.parse(JSON.stringify(question));
+
+							const havQuestionAnswerObject: HavAnswerObject = {
+								hAVQuestionAnswerId: 0,
+								questionID: question.questionId,
+								questionTitle: questionLabel,
+								formVersionID: formVersionId,
+								answerTypeID: question.selectedAnswerTypeId,
+								hAVSequence: question.questionDisplayOrder,
+								[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
+								[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+							};
+
+							let isValueFilled = false;
+							switch (questionDisplayOrder) {
+								case EnumService.HavFormFieldOrder.DateOfUsage:
+									if (question.value) {
+										havQuestionAnswerObject.dateOfUsage = moment(question.value).format(StaticDataService.dateFormat);
+										isValueFilled = true;
+									}
+									break;
+								case EnumService.HavFormFieldOrder.Manufacturer:
+									if (question.value) {
+										havQuestionAnswerObject.hAVManufacturerID = question.value;
+										isValueFilled = true;
+									}
+									break;
+								case EnumService.HavFormFieldOrder.Type:
+									if (question.value) {
+										havQuestionAnswerObject.hAVTypeID = question.value;
+										isValueFilled = true;
+									}
+									break;
+								case EnumService.HavFormFieldOrder.Model:
+									if (question.value) {
+										havQuestionAnswerObject.hAVModelID = question.value;
+										isValueFilled = true;
+									}
+									break;
+								case EnumService.HavFormFieldOrder.PlannedTimeOfUsage:
+									if (question.value) {
+										isValueFilled = true;
+										havQuestionAnswerObject.plannedTimeOfUse = Number(question.value);
+									}
+									break;
+							}
+
+							if (isValueFilled) {
+								answerFormattedObject.havAnswerData = havQuestionAnswerObject;
+								formattedAnswers.push(answerFormattedObject);
+							}
+						});
+					});
+
+					sectionFormattedObject.answerData = formattedAnswers;
 				} else {
 					const questions = section.questions;
 
@@ -1095,55 +1120,7 @@ export class SharedDataService {
 							if (control) {
 								const questionLabel = UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', selectedLanguageID).questionTranslationTitle;
 
-								if (section.isHAVSection) {
-									const answerObject: HavAnswerObject = {
-										hAVQuestionAnswerId: 0,
-										questionID: question.questionId,
-										questionTitle: questionLabel,
-										formVersionID: formVersionId,
-										answerTypeID: question.selectedAnswerTypeId,
-										hAVSequence: question.questionDisplayOrder,
-										[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
-										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
-									};
-
-									switch (questionDisplayOrder) {
-										case EnumService.HavFormFieldOrder.DateOfUsage:
-											if (control.value) {
-												answerObject.dateOfUsage = moment(control.value).format(StaticDataService.dateTimeFormat);
-												isValueFilled = true;
-											}
-											break;
-										case EnumService.HavFormFieldOrder.Manufacturer:
-											if (control.value) {
-												answerObject.hAVManufacturerID = control.value;
-												isValueFilled = true;
-											}
-											break;
-										case EnumService.HavFormFieldOrder.Type:
-											if (control.value) {
-												answerObject.hAVTypeID = control.value;
-												isValueFilled = true;
-											}
-											break;
-										case EnumService.HavFormFieldOrder.Model:
-											if (control.value) {
-												answerObject.hAVModelID = control.value;
-												isValueFilled = true;
-											}
-											break;
-										case EnumService.HavFormFieldOrder.PlannedTimeOfUsage:
-											if (control.value) {
-												isValueFilled = true;
-												answerObject.plannedTimeOfUse = Number(control.value);
-											}
-											break;
-									}
-									if (isValueFilled) {
-										havQuestionAnswers.push(answerObject);
-										answerFormattedObject.havAnswerData = answerObject;
-									}
-								} else if (section.isAccidentReportSection) {
+								if (section.isAccidentReportSection) {
 									const answerObject: ArAnswerObject = {
 										accidentReportQuestionAnswerId: 0,
 										questionID: question.questionId,
@@ -1377,10 +1354,9 @@ export class SharedDataService {
 			userId,
 			companyId,
 			questionAnswers,
-			hAVQuestionAnswers: havQuestionAnswers,
 			accidentReportQuestionAnswers,
 			riskAssessmentAnswers,
-			hAVExposure: havExposure,
+			havAnswerDetail: havAnswerDetail,
 			workPermitAnswer,
 			formattedSections,
 			workPermitDetails,
@@ -1388,10 +1364,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

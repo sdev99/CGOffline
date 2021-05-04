@@ -1,3 +1,8 @@
 <ion-item class="section-item">
-  <ion-label class="ion-text-wrap">{{title}}</ion-label>
+	<ion-label class="ion-text-wrap">{{ title }}</ion-label>
+	<ion-buttons slot="end" *ngIf="showRemoveIcon">
+		<ion-button class="close-icon-btn" slot="end" fill="clear" (click)="onRemove.emit($event)">
+			<ion-icon name="close-circle" slot="icon-only"></ion-icon>
+		</ion-button>
+	</ion-buttons>
 </ion-item>

@@ -18,4 +18,12 @@ ion-item {
 		color: #171538;
 		white-space: pre-wrap !important;
 	}
+
+	.close-icon-btn {
+		margin-right: 0;
+		ion-icon {
+			color: #a1a8ca;
+			font-size: 26px;
+		}
+	}
 }
