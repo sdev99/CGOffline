@@ -64,6 +64,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 	ionViewWillEnter() {
 		console.log('Dashboard ionViewWillEnter');
 		this.accountService.checkForMobileLanguageId();
+		this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
 	}
 
 	async testFormPreview() {

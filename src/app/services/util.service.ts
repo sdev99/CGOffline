@@ -44,6 +44,13 @@ export class UtilService {
 		return !environment.production && !Capacitor.isNative;
 	}
 
+	static appendZero(num) {
+		if (num < 10) {
+			return '0' + num;
+		}
+		return num;
+	}
+
 	static getColorForAnswerChoice(color) {
 		switch (color) {
 			case 'black':

@@ -71,6 +71,11 @@ export class CurrentCheckinPage implements OnInit {
 		});
 	}
 
+	ionViewWillEnter() {
+		console.log('CurrentCheckin ionViewWillEnter');
+		this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
+	}
+
 	doRefresh(event) {
 		this.isRefreshing = true;
 		this.getPersonalModeData(false, () => {

@@ -140,10 +140,11 @@ export class SharedDataService {
 
 	workPermitAnswer: WorkPermitAnswer;
 
-	//
 	currentLanguageId = 0;
 
 	videoFileUpload;
+
+	autocheckoutTimeoutRef = {};
 
 	constructor(
 		private router: Router,
@@ -406,16 +407,69 @@ export class SharedDataService {
 	 * checkAutoCheckOutForCurrentCheckin
 	 */
 	public checkAutoCheckOutForCurrentCheckin() {
+		//Clear previous timeout
+		Object.keys(this.autocheckoutTimeoutRef).map((timeoutRef: any) => {
+			clearTimeout(timeoutRef);
+		});
+		this.autocheckoutTimeoutRef = {};
+
 		const currentCheckinList = this.checkedInPlaces;
 		if (currentCheckinList && currentCheckinList.length > 0) {
 			currentCheckinList.map((item) => {
-				const userAutoCheckOutTime = item.userAutoCheckOutTime;
-				const locationAutoCheckOutHour = item.locationAutoCheckOutHour;
-				const locationAutoCheckOutTime = item.locationAutoCheckOutTime;
-				if (userAutoCheckOutTime && (locationAutoCheckOutTime || locationAutoCheckOutTime)) {
-				} else if (userAutoCheckOutTime) {
-				} else if (locationAutoCheckOutTime) {
-				} else if (locationAutoCheckOutHour) {
+				let checkInDate = moment(item.checkInDate);
+				let autoCheckoutDateTime;
+
+				let isAutoCheckOut = false;
+
+				if (item.userAutoCheckOutTime && item.userAutoCheckOutTime.indexOf(':') !== -1) {
+					const parts = item.userAutoCheckOutTime.split(':');
+					let hour = parseInt(parts[0]);
+					let minute = parseInt(parts[1]);
+					autoCheckoutDateTime = moment(checkInDate.format('YYYY-MM-DDT' + hour + ':' + minute + ':00.00')).add(checkInDate.utcOffset(), 'minutes');
+
+					// if (dtUserAutoCheckOutTime > checkInDate_Local && dtUserAutoCheckOutTime <= userLocalDate) {
+					// }
+					isAutoCheckOut = true;
+				}
+
+				if (!isAutoCheckOut) {
+					if (item.locationAutoCheckOutTime && item.locationAutoCheckOutTime.indexOf(':') !== -1) {
+						const parts = item.locationAutoCheckOutTime.split(':');
+						let hour = parseInt(parts[0]);
+						let minute = parseInt(parts[1]);
+						autoCheckoutDateTime = moment(checkInDate.format('YYYY-MM-DDT' + UtilService.appendZero(hour) + ':' + UtilService.appendZero(minute) + ':00.00')).add(
+							checkInDate.utcOffset(),
+							'minutes'
+						);
+
+						isAutoCheckOut = true;
+					}
+				}
+
+				if (!isAutoCheckOut) {
+					if (item.locationAutoCheckOutHour > 0) {
+						const checkInDateObj = moment(item.checkInDate);
+						autoCheckoutDateTime = checkInDateObj.add(item.locationAutoCheckOutHour, 'hour');
+						isAutoCheckOut = true;
+					}
+				}
+
+				if (isAutoCheckOut) {
+					const currentDate = moment();
+					if (currentDate < autoCheckoutDateTime) {
+						const seconds = autoCheckoutDateTime.diff(currentDate, 'seconds');
+						this.autocheckoutTimeoutRef[item.userCheckInDetailID] = setTimeout(() => {
+							if (this.checkedInPlaces) {
+								this.checkedInPlaces.some((place, placeIndex) => {
+									if (place.userCheckInDetailID === item.userCheckInDetailID) {
+										this.checkedInPlaces = this.checkedInPlaces.splice(placeIndex, 1);
+										this.observablesService.publishSomeData(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT, {});
+									}
+								});
+							}
+							this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
+						}, seconds * 1000);
+					}
 				}
 			});
 		}
@@ -1364,10 +1418,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

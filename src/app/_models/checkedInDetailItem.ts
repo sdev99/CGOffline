@@ -34,7 +34,7 @@ export class CheckedInDetailItem {
 	timeDifference: string;
 	userAutoCheckOutTime: string;
 	locationAutoCheckOutTime: string;
-	locationAutoCheckOutHour: string;
+	locationAutoCheckOutHour: number;
 	currentUTCDate: string;
 	answerNotificationList: string;
 }
