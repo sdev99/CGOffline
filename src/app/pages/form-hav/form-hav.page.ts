@@ -1,5 +1,5 @@
-import { Component, NgZone, OnInit } from '@angular/core';
-import { ModalController, NavController } from '@ionic/angular';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { IonContent, ModalController, NavController } from '@ionic/angular';
 import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -25,6 +25,8 @@ import * as moment from 'moment';
 	styleUrls: ['./form-hav.page.scss'],
 })
 export class FormHavPage implements OnInit {
+	@ViewChild(IonContent) content: IonContent;
+
 	UtilService = UtilService;
 	EnumService = EnumService;
 	user: User;
@@ -487,11 +489,18 @@ export class FormHavPage implements OnInit {
 					if (status) {
 					} else {
 						this.errorMessage = result;
+						this._scrollToTop();
 					}
 				},
 				havAnswerDetail
 			);
+		} else {
+			this._scrollToTop();
 		}
+	}
+
+	_scrollToTop() {
+		this.content.scrollToTop(200);
 	}
 
 	ionViewDidEnter() {}

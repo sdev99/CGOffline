@@ -14,7 +14,7 @@
 		<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 	</ion-header>
 
-	<ion-content mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+	<ion-content #content mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 		<div class="content-container">
 			<form [formGroup]="formGroup" (ngSubmit)="onContinue()" *ngIf="formBuilderDetail">
 				<ion-list lines="none">

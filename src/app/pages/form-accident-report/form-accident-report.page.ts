@@ -1,5 +1,5 @@
-import { Component, NgZone } from '@angular/core';
-import { ModalController, NavController } from '@ionic/angular';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { IonContent, ModalController, NavController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { StaticDataService } from '../../services/static-data.service';
 import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
@@ -20,6 +20,8 @@ import { LocationItem } from '../../_models/locationItem';
 	styleUrls: ['./form-accident-report.page.scss'],
 })
 export class FormAccidentReportPage {
+	@ViewChild(IonContent) content: IonContent;
+
 	EnumService = EnumService;
 	UtilService = UtilService;
 	user: User;
@@ -412,6 +414,10 @@ export class FormAccidentReportPage {
 		return true;
 	}
 
+	_scrollToTop() {
+		this.content.scrollToTop(200);
+	}
+
 	onContinue() {
 		this.isSubmitted = true;
 		this.errorMessage = '';
@@ -425,8 +431,11 @@ export class FormAccidentReportPage {
 				if (status) {
 				} else {
 					this.errorMessage = result;
+					this._scrollToTop();
 				}
 			});
+		} else {
+			this._scrollToTop();
 		}
 	}
 }

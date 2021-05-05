@@ -12,7 +12,7 @@
 		></app-modal-header-dm>
 	</ion-header>
 
-	<ion-content mode="md" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+	<ion-content #content mode="md" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 		<div class="content-container">
 			<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
 

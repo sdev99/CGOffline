@@ -1364,10 +1364,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		// if (UtilService.isLocalHost()) {
-		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-		// 	return;
-		// }
+		if (UtilService.isLocalHost()) {
+			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+			return;
+		}
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

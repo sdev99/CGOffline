@@ -753,7 +753,12 @@ export class FormRiskassessmentPage implements OnInit {
 			if (status) {
 			} else {
 				this.errorMessage = result;
+				this._scrollToTop();
 			}
 		});
+	}
+
+	_scrollToTop() {
+		this.content.scrollToTop(200);
 	}
 }
