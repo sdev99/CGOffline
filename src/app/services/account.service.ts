@@ -243,7 +243,7 @@ export class AccountService {
 
 		return this.http.delete(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.UserDeviceDelete}/${userId}`, option).pipe(
 			map((data: any) => {
-				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful || data.StatusCode === EnumService.ApiResponseCode.InvalidData) {
 					// remove user from local storage and set current user to null
 					localStorage.removeItem(EnumService.LocalStorageKeys.USER_DATA);
 					localStorage.removeItem(EnumService.LocalStorageKeys.USER_PROFILE);

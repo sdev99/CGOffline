@@ -45,6 +45,18 @@ export class DashboardPage implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		if (!this.sharedDataService.dedicatedMode) {
+			// if no user found or company is deleted , logout the user
+			this.accountService.getUserProfile(this.accountService.userValue?.userId).subscribe(
+				(profile) => {
+					if (!profile) {
+						this.accountService.logout(this.accountService.userValue?.userId, true).subscribe(() => {});
+					}
+				},
+				(error) => {
+					this.accountService.logout(this.accountService.userValue?.userId, true).subscribe(() => {});
+				}
+			);
+
 			this.apiService.getGlobalDirectories(this.user?.companyFolderName).subscribe(
 				(response) => {
 					if (response) {

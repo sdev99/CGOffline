@@ -176,7 +176,7 @@ export class EnumService {
 		RequestSuccessful: 200,
 		RequestDenied: 401,
 		InvalidData: 412,
-		UnalbeToProcess: 400,
+		UnableToProcess: 400,
 		NoDataFound: 204,
 		UrlNotFound: 501,
 		InvalidToken: 419,
