@@ -458,17 +458,19 @@ export class SharedDataService {
 					const currentDate = moment();
 					if (currentDate < autoCheckoutDateTime) {
 						const seconds = autoCheckoutDateTime.diff(currentDate, 'seconds');
-						this.autocheckoutTimeoutRef[item.userCheckInDetailID] = setTimeout(() => {
-							if (this.checkedInPlaces) {
-								this.checkedInPlaces.some((place, placeIndex) => {
-									if (place.userCheckInDetailID === item.userCheckInDetailID) {
-										this.checkedInPlaces = this.checkedInPlaces.splice(placeIndex, 1);
-										this.observablesService.publishSomeData(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT, {});
-									}
-								});
-							}
-							this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
-						}, seconds * 1000);
+						if (seconds > 0) {
+							this.autocheckoutTimeoutRef[item.userCheckInDetailID] = setTimeout(() => {
+								if (this.checkedInPlaces) {
+									this.checkedInPlaces.some((place, placeIndex) => {
+										if (place.userCheckInDetailID === item.userCheckInDetailID) {
+											this.checkedInPlaces = this.checkedInPlaces.splice(placeIndex, 1);
+											this.observablesService.publishSomeData(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT, {});
+										}
+									});
+								}
+								this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
+							}, seconds * 1000);
+						}
 					}
 				}
 			});

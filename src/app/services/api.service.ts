@@ -10,6 +10,7 @@ import { CheckInPostData } from '../_models/checkInPostData';
 import { CheckedInDetailItem } from '../_models/checkedInDetailItem';
 import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
 import { UtilService } from './util.service';
+import { Observable, Observer } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root',
@@ -227,15 +228,21 @@ export class ApiService {
 	 */
 	getPersonalModeAvailableForms(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		const queryParam = {
-			CompanyID: companyID,
-			LocationID: place?.locationID,
-			ProjectID: place?.projectID,
-			InventoryItemID: place?.inventoryItemID,
-			FormFolderID: folderId,
-		};
-		const queryString = UtilService.convertToQuerystring(queryParam);
-		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?${queryString}`);
+		if (companyID && place && (place.locationID || place.projectID || place.inventoryItemID)) {
+			const queryParam = {
+				CompanyID: companyID,
+				LocationID: place?.locationID,
+				ProjectID: place?.projectID,
+				InventoryItemID: place?.inventoryItemID,
+				FormFolderID: folderId,
+			};
+			const queryString = UtilService.convertToQuerystring(queryParam);
+			return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableForms}/${userId}?${queryString}`);
+		}
+		return new Observable((observer: Observer<any>) => {
+			observer.error(new Error('No current checkin found'));
+			observer.complete();
+		});
 	}
 
 	/**
@@ -245,15 +252,21 @@ export class ApiService {
 	 */
 	getPersonalModeAvailableDocuments(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		const queryParam = {
-			CompanyID: companyID,
-			LocationID: place?.locationID,
-			ProjectID: place?.projectID,
-			InventoryItemID: place?.inventoryItemID,
-			FolderID: folderId,
-		};
-		const queryString = UtilService.convertToQuerystring(queryParam);
-		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?${queryString}`);
+		if (companyID && place && (place.locationID || place.projectID || place.inventoryItemID)) {
+			const queryParam = {
+				CompanyID: companyID,
+				LocationID: place?.locationID,
+				ProjectID: place?.projectID,
+				InventoryItemID: place?.inventoryItemID,
+				FolderID: folderId,
+			};
+			const queryString = UtilService.convertToQuerystring(queryParam);
+			return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableDocuments}/${userId}?${queryString}`);
+		}
+		return new Observable((observer: Observer<any>) => {
+			observer.error(new Error('No current checkin found'));
+			observer.complete();
+		});
 	}
 
 	/**
@@ -263,15 +276,21 @@ export class ApiService {
 	 */
 	getPersonalModeAvailableWorkPermits(userId, companyID, folderId = 0) {
 		const place: CheckedInDetailItem = this.sharedDataService.currentSelectedCheckinPlace;
-		const queryParam = {
-			CompanyID: companyID,
-			LocationID: place?.locationID,
-			ProjectID: place?.projectID,
-			InventoryItemID: place?.inventoryItemID,
-			FormFolderID: folderId,
-		};
-		const queryString = UtilService.convertToQuerystring(queryParam);
-		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?${queryString}`);
+		if (companyID && place && (place.locationID || place.projectID || place.inventoryItemID)) {
+			const queryParam = {
+				CompanyID: companyID,
+				LocationID: place?.locationID,
+				ProjectID: place?.projectID,
+				InventoryItemID: place?.inventoryItemID,
+				FormFolderID: folderId,
+			};
+			const queryString = UtilService.convertToQuerystring(queryParam);
+			return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetPersonalModeAvailableWorkPermits}/${userId}?${queryString}`);
+		}
+		return new Observable((observer: Observer<any>) => {
+			observer.error(new Error('No current checkin found'));
+			observer.complete();
+		});
 	}
 
 	/**
