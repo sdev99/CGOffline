@@ -18,7 +18,6 @@ import { CheckedInDetailItem } from '../_models/checkedInDetailItem';
 import { SignOffFormDetail } from '../_models/signOffFormDetail';
 import { HavAnswerObject } from '../_models/havAnswerObject';
 import { FormAnswerObject } from '../_models/formAnswerObject';
-import { HavExposure } from '../_models/havExposure';
 import { SubmitAnswersObject } from '../_models/submitAnswersObject';
 import { FormGroup } from '@angular/forms';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -190,6 +189,11 @@ export class SharedDataService {
 		const userProfile = localStorage.getItem(EnumService.LocalStorageKeys.USER_PROFILE);
 		if (userProfile) {
 			this.userProfile = JSON.parse(userProfile);
+		}
+
+		const timeZoneList = localStorage.getItem(EnumService.LocalStorageKeys.TIMEZONE_LIST);
+		if (timeZoneList) {
+			this.timeZoneList = JSON.parse(timeZoneList);
 		}
 
 		const checkedInPlaces = localStorage.getItem(EnumService.LocalStorageKeys.CHECKED_IN_PLACES);
@@ -407,6 +411,15 @@ export class SharedDataService {
 	 * checkAutoCheckOutForCurrentCheckin
 	 */
 	public checkAutoCheckOutForCurrentCheckin() {
+		const timeZoneList = this.timeZoneList;
+		let userProfileTimeZone;
+		timeZoneList?.some((item) => {
+			if (item.timeZoneID === this.userProfile?.timeZoneID) {
+				userProfileTimeZone = item;
+				return true;
+			}
+		});
+
 		//Clear previous timeout
 		Object.keys(this.autocheckoutTimeoutRef).map((timeoutRef: any) => {
 			clearTimeout(timeoutRef);
@@ -416,59 +429,50 @@ export class SharedDataService {
 		const currentCheckinList = this.checkedInPlaces;
 		if (currentCheckinList && currentCheckinList.length > 0) {
 			currentCheckinList.map((item) => {
-				let checkInDate = moment(item.checkInDate);
 				let autoCheckoutDateTime;
-
+				const currentCheckinMyTime = moment(item.checkInDate).add(userProfileTimeZone?.timeDifference || 0, 'minutes');
 				let isAutoCheckOut = false;
 
-				if (item.userAutoCheckOutTime && item.userAutoCheckOutTime.indexOf(':') !== -1) {
-					const parts = item.userAutoCheckOutTime.split(':');
+				if ((item.userAutoCheckOutTime && item.userAutoCheckOutTime.indexOf(':') !== -1) || (item.locationAutoCheckOutTime && item.locationAutoCheckOutTime.indexOf(':') !== -1)) {
+					let parts;
+					if (item.userAutoCheckOutTime && item.userAutoCheckOutTime.indexOf(':') !== -1) {
+						parts = item.userAutoCheckOutTime.split(':');
+					} else {
+						parts = item.locationAutoCheckOutTime.split(':');
+					}
 					let hour = parseInt(parts[0]);
 					let minute = parseInt(parts[1]);
-					autoCheckoutDateTime = moment(checkInDate.format('YYYY-MM-DDT' + hour + ':' + minute + ':00.00')).add(checkInDate.utcOffset(), 'minutes');
+					let checkInDate = moment(item.checkInDate);
+					autoCheckoutDateTime = moment(checkInDate.format('YYYY-MM-DDT' + UtilService.appendZero(hour) + ':' + UtilService.appendZero(minute) + ':00.00'));
 
-					// if (dtUserAutoCheckOutTime > checkInDate_Local && dtUserAutoCheckOutTime <= userLocalDate) {
-					// }
 					isAutoCheckOut = true;
 				}
 
 				if (!isAutoCheckOut) {
-					if (item.locationAutoCheckOutTime && item.locationAutoCheckOutTime.indexOf(':') !== -1) {
-						const parts = item.locationAutoCheckOutTime.split(':');
-						let hour = parseInt(parts[0]);
-						let minute = parseInt(parts[1]);
-						autoCheckoutDateTime = moment(checkInDate.format('YYYY-MM-DDT' + UtilService.appendZero(hour) + ':' + UtilService.appendZero(minute) + ':00.00')).add(
-							checkInDate.utcOffset(),
-							'minutes'
-						);
-
-						isAutoCheckOut = true;
-					}
-				}
-
-				if (!isAutoCheckOut) {
 					if (item.locationAutoCheckOutHour > 0) {
-						const checkInDateObj = moment(item.checkInDate);
-						autoCheckoutDateTime = checkInDateObj.add(item.locationAutoCheckOutHour, 'hour');
+						autoCheckoutDateTime = moment(currentCheckinMyTime).add(item.locationAutoCheckOutHour, 'hour');
 						isAutoCheckOut = true;
 					}
 				}
 
 				if (isAutoCheckOut) {
-					const currentDate = moment();
-					if (currentDate < autoCheckoutDateTime) {
-						const seconds = autoCheckoutDateTime.diff(currentDate, 'seconds');
+					const userProfileCurrentDate = moment(item.currentUTCDate).add(userProfileTimeZone?.timeDifference || 0, 'minutes');
+					if (userProfileCurrentDate < autoCheckoutDateTime) {
+						const seconds = autoCheckoutDateTime.diff(userProfileCurrentDate, 'seconds');
 						if (seconds > 0) {
 							this.autocheckoutTimeoutRef[item.userCheckInDetailID] = setTimeout(() => {
 								if (this.checkedInPlaces) {
 									this.checkedInPlaces.some((place, placeIndex) => {
 										if (place.userCheckInDetailID === item.userCheckInDetailID) {
-											this.checkedInPlaces = this.checkedInPlaces.splice(placeIndex, 1);
+											this.checkedInPlaces.splice(placeIndex, 1);
 											this.observablesService.publishSomeData(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT, {});
+											return true;
 										}
 									});
 								}
-								this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
+								setTimeout(() => {
+									this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
+								}, 1000 * 60 * 3);
 							}, seconds * 1000);
 						}
 					}
@@ -666,7 +670,7 @@ export class SharedDataService {
 
 					if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 						this.checkInDetail = res.Result;
-						this.checkInPostData = ({
+						this.checkInPostData = {
 							checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
 							checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
 							isGuestReturning,
@@ -679,7 +683,7 @@ export class SharedDataService {
 							guestLastName: dedicatedModeGuestDetail.guestLastName,
 							guestPhoto: dedicatedModeGuestDetail.guestPhoto,
 							companyID: dedicatedModeDeviceDetailData.companyID,
-						} as unknown) as CheckInPostData;
+						} as unknown as CheckInPostData;
 
 						this.processCheckinDetailsStepInitial(apiService, true);
 					}

@@ -92,6 +92,7 @@ export class EnumService {
 		CURRENT_SELECTED_CHECKIN_PLACE: 'current_selected_checkin_place',
 		GLOBAL_DIRECTORIES: 'global_directories',
 		APP_LANGUAGE: 'app_language',
+		TIMEZONE_LIST: 'timezone_list',
 	};
 
 	static ApiMethods = {

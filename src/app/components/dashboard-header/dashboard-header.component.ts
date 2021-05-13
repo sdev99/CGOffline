@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { SharedDataService } from '../../services/shared-data.service';
 import { ObservablesService } from '../../services/observables.service';
@@ -39,17 +39,21 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		public sharedDataService: SharedDataService,
 		public observablesService: ObservablesService,
 		private accountService: AccountService,
-		private apiService: ApiService
+		private apiService: ApiService,
+		private ngZone: NgZone
 	) {
 		this.user = this.accountService.userValue;
 		this.checkedPlaces = sharedDataService.checkedInPlaces;
+		this.setupCurrentCheckedInPlaces(sharedDataService.checkedInPlaces);
 
 		this.observablesService.getObservable(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT).subscribe(() => {
-			this.checkedPlaces = sharedDataService.checkedInPlaces;
+			this.ngZone.run(() => {
+				this.setupCurrentCheckedInPlaces(sharedDataService.checkedInPlaces);
+			});
 		});
 
 		this.checkedPlaces.map((place, key) => {
-			if (place.userCheckInDetailID === sharedDataService.currentSelectedCheckinPlace.userCheckInDetailID) {
+			if (place.userCheckInDetailID === sharedDataService.currentSelectedCheckinPlace?.userCheckInDetailID) {
 				this.currentCheckinPlaceIndex = key;
 			}
 		});
@@ -70,13 +74,15 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.getUserCurrentCheckinDetails();
+
 		this.refreshCurrentCheckinIntervalRef = setInterval(() => {
 			this.getUserCurrentCheckinDetails();
-		}, 1000 * 60);
+		}, 1000 * 60 * 1);
 
 		this.observablesService.getObservable(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST).subscribe((data) => {
 			this.getUserCurrentCheckinDetails();
 		});
+
 		this.observablesService.getObservable(EnumService.ObserverKeys.NEW_CHECKED_IN).subscribe((data) => {
 			if (data) {
 				this.getUserCurrentCheckinDetails();
@@ -94,39 +100,45 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	setupCurrentCheckedInPlaces = (checkedInPlaces) => {
+		this.checkedPlaces = checkedInPlaces;
+		localStorage.setItem(EnumService.LocalStorageKeys.CHECKED_IN_PLACES, JSON.stringify(checkedInPlaces));
+
+		// Check if selected checkedInPlaces is currently checked or not
+		// if not then select first place from list
+		if (checkedInPlaces && checkedInPlaces.length > 0) {
+			if (this.selectedPlace) {
+				let found = false;
+				checkedInPlaces.map((item: CheckedInDetailItem) => {
+					if (this.selectedPlace.userCheckInDetailID === item.userCheckInDetailID) {
+						found = true;
+						return;
+					}
+				});
+
+				if (!found) {
+					const place = checkedInPlaces && checkedInPlaces.length > 0 ? checkedInPlaces[0] : null;
+					this.placedChange(place);
+				}
+			} else {
+				const place = this.checkedPlaces[0];
+				this.placedChange(place);
+			}
+			this.checkedIn = true;
+		} else {
+			this.checkedIn = false;
+			this.placedChange(null);
+		}
+	};
+
 	getUserCurrentCheckinDetails = () => {
 		this.apiService.getUserCurrentCheckingDetails(this.user?.userId).subscribe((response: Response) => {
 			if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 				const checkedInPlaces = response.Result;
 				this.sharedDataService.checkedInPlaces = checkedInPlaces;
 				this.sharedDataService.checkAutoCheckOutForCurrentCheckin();
-				this.checkedPlaces = checkedInPlaces;
-				localStorage.setItem(EnumService.LocalStorageKeys.CHECKED_IN_PLACES, JSON.stringify(checkedInPlaces));
 
-				// Check if selected checkedInPlaces is currently checked or not
-				// if not then select first place from list
-				if (checkedInPlaces && checkedInPlaces.length > 0) {
-					if (this.selectedPlace) {
-						let found = false;
-						checkedInPlaces.map((item: CheckedInDetailItem) => {
-							if (this.selectedPlace.userCheckInDetailID === item.userCheckInDetailID) {
-								found = true;
-								return;
-							}
-						});
-						if (!found) {
-							const place = checkedInPlaces && checkedInPlaces.length > 0 ? checkedInPlaces[0] : null;
-							this.placedChange(place);
-						}
-					} else {
-						const place = this.checkedPlaces[0];
-						this.placedChange(place);
-					}
-					this.checkedIn = true;
-				} else {
-					this.checkedIn = false;
-					this.placedChange(null);
-				}
+				this.setupCurrentCheckedInPlaces(checkedInPlaces);
 			}
 		});
 	};

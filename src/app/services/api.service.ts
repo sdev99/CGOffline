@@ -28,6 +28,7 @@ export class ApiService {
 				if (data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const list = data.Result;
 					this.sharedDataService.timeZoneList = list;
+					localStorage.setItem(EnumService.LocalStorageKeys.TIMEZONE_LIST, JSON.stringify(list));
 					return list;
 				}
 
