@@ -13,6 +13,7 @@ import { Response, User } from '../../_models';
 import { UtilService } from '../../services/util.service';
 import { ApiService } from '../../services/api.service';
 import { LocationItem } from '../../_models/locationItem';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-form-accident-report',
@@ -67,8 +68,14 @@ export class FormAccidentReportPage {
 		private ngZone: NgZone,
 		public accountService: AccountService,
 		public apiService: ApiService,
-		public utilService: UtilService
+		public utilService: UtilService,
+		public translateService: TranslateService
 	) {
+		this.translateService.get(['PAGE.FORM.ACCIDENT.WHERE_THE_ACCIDENT_HAPPENED', 'PAGE.FORM.ACCIDENT.SELECT_TYPE']).subscribe((res) => {
+			this.accidentAlertOptions.header = res['PAGE.FORM.ACCIDENT.WHERE_THE_ACCIDENT_HAPPENED'];
+			this.typeAlertOptions.header = res['PAGE.FORM.ACCIDENT.SELECT_TYPE'];
+		});
+
 		this.user = accountService.userValue;
 
 		if (this.sharedDataService.dedicatedMode) {
@@ -423,7 +430,9 @@ export class FormAccidentReportPage {
 		this.errorMessage = '';
 
 		if (this.formGroup.valid && !this.isLocationSelected()) {
-			this.errorMessage = 'Please select a location or enter one manually.';
+			this.translateService.get('COMMON.ERRORS.PLEASE_SELECT_LOCATION_OR_ENTER_MANUALLY').subscribe((res) => {
+				this.errorMessage = res;
+			});
 		}
 
 		if (!this.errorMessage) {

@@ -1,27 +1,28 @@
 <ion-header mode="ios">
-    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-                         *ngIf="sharedDataService.dedicatedMode; else personalMode"
-                         [modalSubTitle]="authFor" (closeModal)="onClose()"></app-modal-header-dm>
+	<app-modal-header-dm
+		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+		*ngIf="sharedDataService.dedicatedMode; else personalMode"
+		[modalSubTitle]="authFor?authFor:('PAGE.QR_SCAN.CHECKINOUT_VIA_QR' | translate)"
+		(closeModal)="onClose()"
+	></app-modal-header-dm>
 
-    <ng-template #personalMode>
-        <ion-toolbar mode="ios">
-            <ion-title size="large">QR Scan</ion-title>
-            <ion-buttons slot="end">
-                <ion-button size="small" fill="clear" (click)="onClose()">
-                    <ion-icon class="close-icon" slot="icon-only" name="close"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-        </ion-toolbar>
-    </ng-template>
+	<ng-template #personalMode>
+		<ion-toolbar mode="ios">
+			<ion-title size="large">{{'PAGE.QR_SCAN.QR_SCAN' | translate}}</ion-title>
+			<ion-buttons slot="end">
+				<ion-button size="small" fill="clear" (click)="onClose()">
+					<ion-icon class="close-icon" slot="icon-only" name="close"></ion-icon>
+				</ion-button>
+			</ion-buttons>
+		</ion-toolbar>
+	</ng-template>
 </ion-header>
 
 <ion-content fullscreen class="ion-justify-content-center ion-align-items-center" [ngClass]="{'transparent':isLoaded}">
-    <ng-container *ngIf="isLoaded">
-        <img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content"/>
-        <img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content"/>
+	<ng-container *ngIf="isLoaded">
+		<img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content" />
+		<img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content" />
 
-        <div class="title-text">
-            {{sharedDataService.dedicatedMode ? 'Please show your QR code to the camera' : 'Scan QR Code'}}
-        </div>
-    </ng-container>
+		<div class="title-text">{{sharedDataService.dedicatedMode ? 'Please show your QR code to the camera' : ('PAGE.QR_SCAN.SCAN_QR_CODE' | translate)}}</div>
+	</ng-container>
 </ion-content>

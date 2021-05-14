@@ -17,13 +17,13 @@
 		lines="full"
 	>
 		<ion-list-header lines="full">
-			<ion-label>Available Files</ion-label>
+			<ion-label>{{'PAGE.CURRENT_CHECKIN.AVAILABLE_FILES' | translate}}</ion-label>
 		</ion-list-header>
 
 		<!-- Show folder first -->
 		<ion-item *ngIf="availableWorkPermits && availableWorkPermits?.length>0" (click)="openWorkPermit()">
 			<ion-icon slot="start" [src]="UtilService.FileIcon('folder')"></ion-icon>
-			<ion-label>Work Permit Forms</ion-label>
+			<ion-label>{{'PAGE.CURRENT_CHECKIN.WORK_PERMIT_FORMS' | translate}}</ion-label>
 		</ion-item>
 
 		<ng-container *ngIf="availableForms">
@@ -67,12 +67,8 @@
 	<app-empty-message
 		*ngIf="isCheckedIn && ((availableForms?.length===0) && (availableDocuments?.length===0) && (availableWorkPermits?.length===0))"
 		icon="./assets/icon/empty-files.svg"
-		message="There are no files here."
+		[message]="'PAGE.CURRENT_CHECKIN.NO_FILES' | translate"
 	></app-empty-message>
 
-	<app-empty-message
-		*ngIf="!isCheckedIn"
-		icon="./assets/icon/not-checkedin.svg"
-		message="You need to check in to an entity first if you want to see the files assigned in personal mode"
-	></app-empty-message>
+	<app-empty-message *ngIf="!isCheckedIn" icon="./assets/icon/not-checkedin.svg" [message]="'PAGE.CURRENT_CHECKIN.YOU_NEED_TO_CHECKIN_FIRST_MESSAGE' | translate"></app-empty-message>
 </ion-content>

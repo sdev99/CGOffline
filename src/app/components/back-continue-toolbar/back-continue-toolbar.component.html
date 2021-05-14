@@ -1,17 +1,16 @@
 <ion-toolbar mode="ios">
-    <ion-buttons slot="start">
-        <ion-button class="arrow-button left" fill="outline" (click)="back.emit()">
-            <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
-            Back
-        </ion-button>
-    </ion-buttons>
-    <ion-title class="ion-text-wrap">{{title}}</ion-title>
+	<ion-buttons slot="start">
+		<ion-button class="arrow-button left" fill="outline" (click)="back.emit()">
+			<ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+			{{ 'PAGE.COMMON.BACK' | translate }}
+		</ion-button>
+	</ion-buttons>
+	<ion-title class="ion-text-wrap">{{ title }}</ion-title>
 
-    <ion-buttons slot="end">
-        <ion-button *ngIf="!hideRightBtn" [disabled]="disableRightBtn" class="arrow-button right"
-                    (click)="continue.emit()">
-            <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-            Continue
-        </ion-button>
-    </ion-buttons>
+	<ion-buttons slot="end">
+		<ion-button *ngIf="!hideRightBtn" [disabled]="disableRightBtn" class="arrow-button right" (click)="continue.emit()">
+			<ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+			{{ 'PAGE.COMMON.CONTINUE' | translate }}
+		</ion-button>
+	</ion-buttons>
 </ion-toolbar>

@@ -5,7 +5,9 @@
 	</h6>
 
 	<ion-item *ngIf="note" lines="none" class="ion-no-margin ion-no-padding note-item">
-		<ion-label><span style="font-weight: 600">Note: </span><span [innerText]="note"></span></ion-label>
+		<ion-label
+			><span style="font-weight: 600">{{ 'PAGE.FORM.NOTE' | translate }}: </span><span [innerText]="note"></span
+		></ion-label>
 	</ion-item>
 
 	<ng-container *ngIf="attachments">

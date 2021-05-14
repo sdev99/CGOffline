@@ -8,6 +8,7 @@ import { FormCustomPageRoutingModule } from './form-custom-routing.module';
 
 import { FormCustomPage } from './form-custom.page';
 import {ComponentsModule} from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     imports: [
@@ -16,7 +17,8 @@ import {ComponentsModule} from '../../components/components.module';
         IonicModule,
         FormCustomPageRoutingModule,
         ComponentsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TranslateModule
     ],
   declarations: [FormCustomPage]
 })

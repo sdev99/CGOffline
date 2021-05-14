@@ -1,67 +1,43 @@
 <ion-header mode="ios">
-    <app-modal-header [modalTitle]="'Edit Profile'" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PROFILE.EDIT_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
 
-    <app-warning-component *ngIf="errorMsg && errorMsg.length>0"
-                           [message]="errorMsg"></app-warning-component>
+	<app-warning-component *ngIf="errorMsg && errorMsg.length>0" [message]="errorMsg"></app-warning-component>
 </ion-header>
 
 <ion-content mode="md">
+	<form [formGroup]="profileForm">
+		<ion-list lines="none">
+			<ion-item lines="none">
+				<ion-label position="stacked">{{'COMMON.PROFILE.EMAIL' | translate}}</ion-label>
+				<ion-input disabled [ngClass]="{'error':(isSubmitted && !profileForm.controls.email.valid)}" formControlName="email" autocomplete="email" inputmode="email" type="email"></ion-input>
+			</ion-item>
 
-    <Form [formGroup]="profileForm">
-        <ion-list lines="none">
-            <ion-item lines="none">
-                <ion-label position="stacked">EMAIL</ion-label>
-                <ion-input
-                        disabled
-                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.email.valid)}"
-                        formControlName="email"
-                        autocomplete="email"
-                        inputmode="email"
-                        type="email"
-                ></ion-input>
-            </ion-item>
+			<ion-item lines="none">
+				<ion-label position="stacked">{{'COMMON.PROFILE.PHONE' | translate}}</ion-label>
+				<ion-input disabled [ngClass]="{'error':(isSubmitted && !profileForm.controls.phone.valid)}" formControlName="phone" autocomplete="tel" inputmode="tel" tel="tel"></ion-input>
+			</ion-item>
 
-            <ion-item lines="none">
-                <ion-label position="stacked">PHONE</ion-label>
-                <ion-input
-                        disabled
-                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.phone.valid)}"
-                        formControlName="phone"
-                        autocomplete="tel"
-                        inputmode="tel"
-                        tel="tel"
-                ></ion-input>
-            </ion-item>
+			<ion-item lines="none">
+				<ion-label position="stacked">{{'COMMON.PROFILE.TIMEZONE' | translate}}</ion-label>
+				<ion-select [ngClass]="{'error':(isSubmitted && !profileForm.controls.timezone.valid)}" formControlName="timezone">
+					<ion-select-option *ngFor="let item of timeZones" [value]="item.timeZoneID">{{item.timeZoneName}}</ion-select-option>
+				</ion-select>
+			</ion-item>
 
-            <ion-item lines="none">
-                <ion-label position="stacked">TIMEZONE</ion-label>
-                <ion-select
-                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.timezone.valid)}"
-                        formControlName="timezone"
-                >
-                    <ion-select-option *ngFor="let item of timeZones"
-                                       [value]="item.timeZoneID">{{item.timeZoneName}}</ion-select-option>
-                </ion-select>
-            </ion-item>
+			<ion-item lines="none">
+				<ion-label position="stacked">{{'PAGE.PROFILE.MOBILE_APP_LANGUAGE' | translate}}</ion-label>
+				<ion-select [ngClass]="{'error':(isSubmitted && !profileForm.controls.language.valid)}" formControlName="language">
+					<ion-select-option *ngFor="let item of languages" [value]="item.companyLanguageID">{{item.languageName}}</ion-select-option>
+				</ion-select>
+			</ion-item>
 
-            <ion-item lines="none">
-                <ion-label position="stacked">MOBILE APP LANGUAGE</ion-label>
-                <ion-select
-                        [ngClass]="{'error':(isSubmitted && !profileForm.controls.language.valid)}"
-                        formControlName="language"
-                >
-                    <ion-select-option *ngFor="let item of languages"
-                                       [value]="item.companyLanguageID">{{item.languageName}}</ion-select-option>
-                </ion-select>
-            </ion-item>
+			<div class="update-btn">
+				<ion-button expand="full" fill="clear" (click)="onSubmit()">{{'PAGE.PROFILE.UPDATE' | translate}}</ion-button>
+			</div>
 
-            <div class="update-btn">
-                <ion-button expand="full" fill="clear" (click)="onSubmit()">Update</ion-button>
-            </div>
-
-            <div class="cancel-btn">
-                <ion-button expand="full" fill="clear" (click)="onClose()">Cancel</ion-button>
-            </div>
-        </ion-list>
-    </Form>
+			<div class="cancel-btn">
+				<ion-button expand="full" fill="clear" (click)="onClose()">{{'COMMON.CANCEL' | translate}}</ion-button>
+			</div>
+		</ion-list>
+	</form>
 </ion-content>

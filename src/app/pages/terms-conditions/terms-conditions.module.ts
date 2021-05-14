@@ -7,16 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { TermsConditionsPageRoutingModule } from './terms-conditions-routing.module';
 
 import { TermsConditionsPage } from './terms-conditions.page';
-import {ComponentsModule} from '../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        TermsConditionsPageRoutingModule,
-        ComponentsModule
-    ],
-  declarations: [TermsConditionsPage]
+	imports: [CommonModule, FormsModule, IonicModule, TermsConditionsPageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [TermsConditionsPage],
 })
 export class TermsConditionsPageModule {}

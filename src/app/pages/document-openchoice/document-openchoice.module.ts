@@ -7,16 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { DocumentOpenchoicePageRoutingModule } from './document-openchoice-routing.module';
 
 import { DocumentOpenchoicePage } from './document-openchoice.page';
-import {ComponentsModule} from '../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        DocumentOpenchoicePageRoutingModule,
-        ComponentsModule
-    ],
-  declarations: [DocumentOpenchoicePage]
+	imports: [CommonModule, FormsModule, IonicModule, DocumentOpenchoicePageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [DocumentOpenchoicePage],
 })
 export class DocumentOpenchoicePageModule {}

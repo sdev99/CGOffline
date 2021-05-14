@@ -16,7 +16,7 @@
 		<div class="content-container">
 			<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
 
-			<app-exposure label="Your Current Exposure" [points]="currentExposure" containerClassName="top"></app-exposure>
+			<app-exposure [label]="'PAGE.FORM.HAV.YOUR_CURRENT_EXPOSURE' | translate" [points]="currentExposure" containerClassName="top"></app-exposure>
 
 			<ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
 				<ng-container *ngIf="utilService.shouldShowSection(section)">
@@ -71,12 +71,12 @@
 									</ion-item>
 								</ng-container>
 							</ng-container>
-							<app-exposure label="Calculated Exposure" [points]="calculateExposure(havAssessmentTool)" containerClassName="bottom"></app-exposure>
+							<app-exposure [label]="'PAGE.FORM.HAV.CALCULATED_EXPOSURE' | translate" [points]="calculateExposure(havAssessmentTool)" containerClassName="bottom"></app-exposure>
 						</ng-container>
-						<app-exposure label="Total Exposure Will Be" [points]="totalCalculateExposure(section)"></app-exposure>
+						<app-exposure [label]="'PAGE.FORM.HAV.TOTAL_EXPOSURE_WILL_BE' | translate" [points]="totalCalculateExposure(section)"></app-exposure>
 
 						<ion-item class="add-tool-button-container-item">
-							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">Add Tool</ion-button>
+							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">{{'PAGE.FORM.HAV.ADD_TOOL' | translate}}</ion-button>
 						</ion-item>
 					</ng-container>
 
@@ -106,11 +106,11 @@
 				<div class="hr-line-full ion-margin-top"></div>
 
 				<ion-item class="ion-margin-vertical text-bottom-msg">
-					<ion-label class="ion-text-wrap ion-text-center"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
+					<ion-label class="ion-text-wrap ion-text-center">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
 				</ion-item>
 
 				<ion-item class="ion-margin-vertical ion-padding-bottom">
-					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">Sign-Off</ion-button>
+					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 			<div class="fill-vertical-space"></div>
@@ -118,8 +118,8 @@
 			<!--        End of form -->
 			<ng-container *ngIf="sharedDataService.dedicatedMode">
 				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
-					<ion-button slot="end" class="action-btn" (click)="onSubmit()">Sign-Off</ion-button>
+					<ion-label class="ion-text-wrap ion-padding">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 		</div>

@@ -18,6 +18,7 @@ import { HavAssessmentTool } from 'src/app/_models/havAssessmentTool';
 import { HavAnswerObject } from 'src/app/_models/havAnswerObject';
 import { StaticDataService } from 'src/app/services/static-data.service';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-form-hav',
@@ -57,7 +58,8 @@ export class FormHavPage implements OnInit {
 		public accountService: AccountService,
 		private screenOrientation: ScreenOrientation,
 		private ngZone: NgZone,
-		public utilService: UtilService
+		public utilService: UtilService,
+		public translateService: TranslateService
 	) {
 		this.user = accountService.userValue;
 
@@ -245,13 +247,15 @@ export class FormHavPage implements OnInit {
 	}
 
 	removeHavTool(section, havAssessmentToolsIndex) {
-		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
-			if (status) {
-				try {
-					section.havAssessmentTools.splice(havAssessmentToolsIndex, 1);
-					this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
-				} catch (error) {}
-			}
+		this.translateService.get(['PAGE.FORM.HAV.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGE.FORM.HAV.DELETE_CONFIRMATION']).subscribe((res) => {
+			this.utilService.showConfirmAlert(res['PAGE.FORM.HAV.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'], res['PAGE.FORM.HAV.DELETE_CONFIRMATION'], (status) => {
+				if (status) {
+					try {
+						section.havAssessmentTools.splice(havAssessmentToolsIndex, 1);
+						this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
+					} catch (error) {}
+				}
+			});
 		});
 	}
 
@@ -434,7 +438,9 @@ export class FormHavPage implements OnInit {
 							if (isValueFilled) {
 								havQuestionAnswers.push(havQuestionAnswerObject);
 							} else {
-								this.errorMessage = 'All fields are required to be filled in.';
+								this.translateService.get('COMMON.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
+									this.errorMessage = res;
+								});
 							}
 						});
 
@@ -466,7 +472,9 @@ export class FormHavPage implements OnInit {
 
 							havAssessmentToolsList.push(HavAssessmentToolObject);
 						} else {
-							this.errorMessage = '"Planned time of use" should be greater then zero.';
+							this.translateService.get('COMMON.ERRORS.PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO').subscribe((res) => {
+								this.errorMessage = res;
+							});
 							return true;
 						}
 					});

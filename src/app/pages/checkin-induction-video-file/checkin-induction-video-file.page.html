@@ -1,39 +1,33 @@
 <ion-header>
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Induction'"
-                      (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'PAGE.CHECKINOUT.INDUCTION' | translate" (closeModal)="onClose()"></app-modal-header>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
-                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
-                         (closeModal)="onClose()"></app-modal-header-dm>
+	<app-modal-header-dm
+		*ngIf="sharedDataService.dedicatedMode"
+		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+		[modalSubTitle]="'PAGE.CHECKINOUT.CHECK_IN' | translate"
+		(closeModal)="onClose()"
+	></app-modal-header-dm>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div class="content-container">
+	<div class="content-container">
+		<app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()" (continue)="onContinue()"></app-back-continue-toolbar>
 
-        <app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
-                                   (continue)="onContinue()"></app-back-continue-toolbar>
+		<div class="content">
+			<h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">{{'PAGE.CHECKINOUT.VIDEO' | translate}}</h6>
 
-        <div class="content">
+			<div class="video-view" *ngIf="inductionItem">
+				<video controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
+					<source
+						[src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl"
+						[type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]"
+					/>
+				</video>
+			</div>
+		</div>
 
-            <h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">
-                Video
-            </h6>
-
-            <div class="video-view" *ngIf="inductionItem">
-                <video controls="controls" preload="metadata"
-                       webkit-playsinline="webkit-playsinline" class="videoPlayer">
-                    <source [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl"
-                            [type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]"/>
-                </video>
-            </div>
-        </div>
-
-        <ion-footer  mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
-        </ion-footer>
-    </div>
-
-
+		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'COMMON.CONTINUE' | translate}}</ion-button>
+		</ion-footer>
+	</div>
 </ion-content>
-
-

@@ -1,51 +1,47 @@
 <ion-header mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <ng-container *ngIf="!sharedDataService.dedicatedMode">
-        <app-modal-header [modalTitle]="'Induction'" (closeModal)="onClose()"></app-modal-header>
+	<ng-container *ngIf="!sharedDataService.dedicatedMode">
+		<app-modal-header [modalTitle]="'PAGE.CHECKINOUT.INDUCTION' | translate" (closeModal)="onClose()"></app-modal-header>
 
-        <app-next-prev-toolbar totalCount="42" currentCount="4" (previous)="previous()"
-                               (next)="next()"></app-next-prev-toolbar>
-    </ng-container>
+		<app-next-prev-toolbar totalCount="42" currentCount="4" (previous)="previous()" (next)="next()"></app-next-prev-toolbar>
+	</ng-container>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
-                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Check In"
-                         (closeModal)="onClose()"></app-modal-header-dm>
+	<app-modal-header-dm
+		*ngIf="sharedDataService.dedicatedMode"
+		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+		modalSubTitle="{{'PAGE.CHECKINOUT.CHECK_IN' | translate}}"
+		(closeModal)="onClose()"
+	></app-modal-header-dm>
 
-    <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+	<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
-
-    <app-back-continue-toolbar title="Form Name" *ngIf="sharedDataService.dedicatedMode" (back)="onBack()"
-                               (continue)="onContinue()"></app-back-continue-toolbar>
-
+	<app-back-continue-toolbar [title]="{{'PAGE.FORM.FORM_NAME' | translate}}" *ngIf="sharedDataService.dedicatedMode" (back)="onBack()" (continue)="onContinue()"></app-back-continue-toolbar>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+	<div class="content-container">
+		<ion-list lines="none" mode="ios">
+			<div class="list-item-container" *ngFor="let section of list;let idx=index" [ngClass]="{error:!isValid(idx, section)}">
+				<ion-radio-group [(ngModel)]="section.answer">
+					<ion-list-header lines="full">
+						<h6>
+							<ion-note color="danger" *ngIf="section.required">*</ion-note>
+							{{(idx + 1) + '. ' + section.question}}
+						</h6>
+						<p *ngIf="section.note">{{'PAGE.FORM.NOTE' | translate}}: {{section.note}}</p>
+					</ion-list-header>
+					<div class="hr-line"></div>
+					<ion-item *ngFor="let item of section.options">
+						<ion-label>{{item.title}}</ion-label>
+						<ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
+					</ion-item>
+				</ion-radio-group>
+			</div>
+		</ion-list>
 
-    <div class="content-container">
-        <ion-list lines="none" mode="ios">
-            <div class="list-item-container" *ngFor="let section of list;let idx=index"
-                 [ngClass]="{error:!isValid(idx, section)}">
-                <ion-radio-group [(ngModel)]="section.answer">
-                    <ion-list-header lines="full">
-                        <h6>
-                            <ion-note color="danger" *ngIf="section.required">*</ion-note>
-                            {{(idx + 1) + '. ' + section.question}}
-                        </h6>
-                        <p *ngIf="section.note">Note: {{section.note}}</p>
-                    </ion-list-header>
-                    <div class="hr-line"></div>
-                    <ion-item *ngFor="let item of section.options">
-                        <ion-label>{{item.title}}</ion-label>
-                        <ion-radio mode="md" slot="start" [value]="item.value"></ion-radio>
-                    </ion-item>
-                </ion-radio-group>
-            </div>
-        </ion-list>
+		<div class="fill-vertical-space"></div>
 
-        <div class="fill-vertical-space"></div>
-
-        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
-        </ion-footer>
-    </div>
-
+		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+		</ion-footer>
+	</div>
 </ion-content>

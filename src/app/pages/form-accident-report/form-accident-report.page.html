@@ -34,7 +34,7 @@
 											[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
 											[inputName]="UtilService.FCUniqueName(section, question)"
 											[isError]="isError(section, question)"
-											placeholder="Choose"
+											[placeholder]="'PAGE.FORM.CHOOSE' | translate"
 										></app-date-time-field>
 
 										<div
@@ -83,7 +83,7 @@
 											[listLabelKey]="question.listLabelKey"
 											[listValueKey]="question.listValueKey"
 											[isError]="isError(section, question)"
-											placeholder="Choose"
+											[placeholder]="'PAGE.FORM.CHOOSE' | translate"
 										></app-dropdown-field>
 
 										<div
@@ -97,12 +97,12 @@
 														{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
 														sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
 													</h4>
-													<p class="ion-text-wrap">Note: if the place is not available in the dropdown above, please type location name to the next box below manually.</p>
+													<p class="ion-text-wrap">{{'PAGE.FORM.NOTE' | translate}}:&nbsp;{{'PAGE.FORM.ACCIDENT.MANUAL_LOCATION_SUGGESTION' | translate}}</p>
 												</ion-label>
 												<ion-select
 													[interfaceOptions]="accidentAlertOptions"
 													[formControlName]="UtilService.FCUniqueName(section, question)"
-													placeholder="Choose"
+													[placeholder]="'PAGE.FORM.CHOOSE' | translate"
 													(ionChange)="placeInTheListChange($event)"
 												>
 													<ion-select-option *ngFor="let item of locations" [value]="item.locationID">{{item.locationName}}</ion-select-option>
@@ -115,13 +115,13 @@
 													[formControlName]="EnumService.AccidentCustomLocationControlsName.PlaceNotintheList"
 													(ionChange)="placeNotintheListChange($event,UtilService.FCUniqueName(section, question))"
 												></ion-checkbox>
-												<ion-label>Place not in the list</ion-label>
+												<ion-label>{{'PAGE.FORM.ACCIDENT.PLACE_NOT_IN_THE_LIST' | translate}}</ion-label>
 											</ion-item>
 
 											<ion-item class="input-item" *ngIf="formGroup.controls[EnumService.AccidentCustomLocationControlsName.PlaceNotintheList].value">
 												<ion-label position="stacked">
-													Location Name
-													<ion-note style="font-size: 90%">(if not available in above dropdown) </ion-note>
+													{{'PAGE.FORM.ACCIDENT.LOCATION_NAME' | translate}}
+													<ion-note style="font-size: 90%">({{'PAGE.FORM.ACCIDENT.IF_NOT_AVAILABLE_IN_DROPDOWN' | translate}}) </ion-note>
 												</ion-label>
 												<ion-input [formControlName]="EnumService.AccidentCustomLocationControlsName.LocationName"></ion-input>
 											</ion-item>
@@ -134,7 +134,7 @@
 														{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
 														sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
 														<br />
-														(tap on the effected area to choose)
+														({{'PAGE.FORM.SIGNOFF' | translate}})
 													</h4>
 												</ion-label>
 
@@ -386,7 +386,7 @@
 																	<ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
 																</ion-button>
 															</ion-buttons>
-															<ion-title> {{bodyParts[currentBodyPartIndex].type}} </ion-title>
+															<ion-title> {{'PAGE.FORM.ACCIDENT.BODY_PARTS.'+ bodyParts[currentBodyPartIndex].langkey | translate}} </ion-title>
 															<ion-buttons slot="end">
 																<ion-button class="arrow-button right" size="small" fill="clear" (click)="nextPart()">
 																	<ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
@@ -401,7 +401,7 @@
 																	[formControlName]="UtilService.SubFCName(UtilService.FCUniqueName(section, question),item.id)"
 																	(ionChange)="partSelectChange(item, $event)"
 																></ion-checkbox>
-																<ion-label>{{item.name}}</ion-label>
+																<ion-label>{{'PAGE.FORM.ACCIDENT.BODY_PARTS.'+item.langkey | translate}}</ion-label>
 															</ion-item>
 														</div>
 													</div>
@@ -410,7 +410,7 @@
 												<div class="selected-parts-view">
 													<ng-container *ngFor="let item of selectedBodyParts | keyvalue">
 														<div class="body-part" *ngIf="item.value.checked">
-															<div class="name">{{item.value.name}}</div>
+															<div class="name">{{'PAGE.FORM.ACCIDENT.BODY_PARTS.'+item.value.langkey | translate}}}}</div>
 															<ion-button fill="clear" (click)="removeSelectedBodyPart(item.value)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>
@@ -442,10 +442,10 @@
 						<div class="hr-line-full ion-margin-top"></div>
 
 						<ion-item class="text-bottom-msg">
-							<ion-label class="ion-text-wrap ion-text-center"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
+							<ion-label class="ion-text-wrap ion-text-center">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
 						</ion-item>
 						<ion-item class="ion-margin-vertical ion-padding-bottom">
-							<ion-button expand="full" type="submit" class="action-btn">Sign-Off </ion-button>
+							<ion-button expand="full" type="submit" class="action-btn">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
 						</ion-item>
 					</ng-container>
 				</ion-list>
@@ -454,8 +454,8 @@
 			<!--        End of form -->
 			<ng-container *ngIf="sharedDataService.dedicatedMode">
 				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
-					<ion-button slot="end" (click)="onContinue()" class="action-btn">Sign-Off</ion-button>
+					<ion-label class="ion-text-wrap ion-padding">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-button slot="end" (click)="onContinue()" class="action-btn">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 		</div>

@@ -1,344 +1,367 @@
-import {Component, NgZone, OnInit} from '@angular/core';
-import {IonRouterOutlet, NavController} from '@ionic/angular';
-import {fabric} from 'fabric';
-import {ActivatedRoute} from '@angular/router';
-import {ObservablesService} from '../../services/observables.service';
-import {EnumService} from '../../services/enum.service';
-import {SharedDataService} from '../../services/shared-data.service';
-import {UtilService} from '../../services/util.service';
-import {ApiService} from '../../services/api.service';
-import {Response, User} from '../../_models';
-import {AccountService} from '../../services/account.service';
-import {FilehandlerService} from '../../services/filehandler.service';
-import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import { Component, NgZone, OnInit } from '@angular/core';
+import { IonRouterOutlet, NavController } from '@ionic/angular';
+import { fabric } from 'fabric';
+import { ActivatedRoute } from '@angular/router';
+import { ObservablesService } from '../../services/observables.service';
+import { EnumService } from '../../services/enum.service';
+import { SharedDataService } from '../../services/shared-data.service';
+import { UtilService } from '../../services/util.service';
+import { ApiService } from '../../services/api.service';
+import { Response, User } from '../../_models';
+import { AccountService } from '../../services/account.service';
+import { FilehandlerService } from '../../services/filehandler.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-signoff-digitalink',
-    templateUrl: './signoff-digitalink.page.html',
-    styleUrls: ['./signoff-digitalink.page.scss'],
+	selector: 'app-signoff-digitalink',
+	templateUrl: './signoff-digitalink.page.html',
+	styleUrls: ['./signoff-digitalink.page.scss'],
 })
 export class SignoffDigitalinkPage implements OnInit {
-    screenOrientationSubscribe;
-    errorMessage;
+	screenOrientationSubscribe;
+	errorMessage;
 
-    user: User;
-    isConfirm = false;
-    canvasRef;
+	user: User;
+	isConfirm = false;
+	canvasRef;
 
-    pageTitle = 'Sign-Off';
-    title = 'You are signing-off';
-    subTitle = 'Digital Ink Signature';
-    aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
-    showDigitalInk = false;
+	pageTitle = 'Sign-Off';
+	title = 'You are signing-off';
+	subTitle = 'Digital Ink Signature';
+	aggrementTitle = "I herby confirm that I've read and understood everything I viewed.";
+	showDigitalInk = false;
 
-    type;
+	type;
 
-    constructor(
-        public navCtrl: NavController,
-        public utilService: UtilService,
-        public route: ActivatedRoute,
-        public observablesService: ObservablesService,
-        public sharedDataService: SharedDataService,
-        public apiService: ApiService,
-        private routerOutlet: IonRouterOutlet,
-        private accountService: AccountService,
-        private screenOrientation: ScreenOrientation,
-        private ngZone: NgZone,
-    ) {
-        this.user = this.accountService.userValue;
+	constructor(
+		public navCtrl: NavController,
+		public utilService: UtilService,
+		public route: ActivatedRoute,
+		public observablesService: ObservablesService,
+		public sharedDataService: SharedDataService,
+		public apiService: ApiService,
+		private routerOutlet: IonRouterOutlet,
+		private accountService: AccountService,
+		private screenOrientation: ScreenOrientation,
+		private ngZone: NgZone,
+		private translateService: TranslateService
+	) {
+		const signOffLangKey = 'PAGE.SIGNOFF.SIGNOFF';
+		const signOffAgreementTitleLangKey = 'PAGE.SIGNOFF.SIGNOFF_AGREEMENT_TITLE';
+		const youAreSigningOffLangKey = 'PAGE.SIGNOFF.SIGNOFF_AGREEMENT_TITLE';
+		const digitalInkSingatureLangKey = 'PAGE.SIGNOFF.SIGNOFF_AGREEMENT_TITLE';
+		this.translateService.get([signOffLangKey, signOffAgreementTitleLangKey, youAreSigningOffLangKey, digitalInkSingatureLangKey]).subscribe((res) => {
+			this.pageTitle = res[signOffLangKey];
+			this.title = res[youAreSigningOffLangKey];
+			this.subTitle = res[digitalInkSingatureLangKey];
+			this.aggrementTitle = res[signOffAgreementTitleLangKey];
+		});
 
-        if (sharedDataService.signOffFor) {
-            this.type = sharedDataService.signOffFor;
-        }
-    }
+		this.user = this.accountService.userValue;
 
+		if (sharedDataService.signOffFor) {
+			this.type = sharedDataService.signOffFor;
+		}
+	}
 
-    ionViewDidEnter = () => {
-        this.routerOutlet.swipeGesture = false;
-    };
+	ionViewDidEnter = () => {
+		this.routerOutlet.swipeGesture = false;
+	};
 
-    ionViewWillLeave = () => {
-        this.routerOutlet.swipeGesture = true;
-    };
+	ionViewWillLeave = () => {
+		this.routerOutlet.swipeGesture = true;
+	};
 
-    ngOnInit() {
-        switch (this.type) {
-            case EnumService.SignOffType.INDUCTION:
-                this.aggrementTitle = 'I confirm that I\'ve read the induction.';
-                this.subTitle = 'Induction';
-                if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail.checkInInduction.isSignatureSignOff) {
-                    this.showDigitalInk = true;
-                    this.initialiseDrawing();
-                }
-                break;
+	ngOnInit() {
+		const inductionAgreementTitleLangKey = 'PAGE.SIGNOFF.INDUCTION_AGREEMENT_TITLE';
+		const inductionLangKey = 'PAGE.SIGNOFF.INDUCTION';
+		const documentActivityAgreementTitleLangKey = 'PAGE.SIGNOFF.DOCUMENT_ACTIVITY_AGREEMENT_TITLE';
+		const formActivityAgreementTitleLangKey = 'PAGE.SIGNOFF.FORM_ACTIVITY_AGREEMENT_TITLE';
+		const signOffLangKey = 'PAGE.SIGNOFF.SIGNOFF';
+		const signOffAgreementTitleLangKey = 'PAGE.SIGNOFF.SIGNOFF_AGREEMENT_TITLE';
 
+		this.translateService
+			.get([signOffLangKey, signOffAgreementTitleLangKey, documentActivityAgreementTitleLangKey, formActivityAgreementTitleLangKey, inductionAgreementTitleLangKey, inductionLangKey])
+			.subscribe((res) => {
+				switch (this.type) {
+					case EnumService.SignOffType.INDUCTION:
+						this.aggrementTitle = res[inductionAgreementTitleLangKey];
+						this.subTitle = res[inductionLangKey];
+						if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail.checkInInduction.isSignatureSignOff) {
+							this.showDigitalInk = true;
+							this.initialiseDrawing();
+						}
+						break;
 
-            case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-            case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
-                this.aggrementTitle = 'I confirm that I\'ve read the above document.';
-                if (this.sharedDataService.signOffDocumentDetail) {
-                    this.subTitle = this.sharedDataService.signOffDocumentDetail?.documentTitle;
-                    if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
-                        this.showDigitalInk = true;
-                        this.initialiseDrawing();
-                    }
-                }
-                break;
+					case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+					case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
+						this.aggrementTitle = res[documentActivityAgreementTitleLangKey];
+						if (this.sharedDataService.signOffDocumentDetail) {
+							this.subTitle = this.sharedDataService.signOffDocumentDetail?.documentTitle;
+							if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
+								this.showDigitalInk = true;
+								this.initialiseDrawing();
+							}
+						}
+						break;
 
-            case EnumService.SignOffType.FORM_ACTIVITY:
-            case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
-            case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
-                this.aggrementTitle = 'I confirm that I\'ve filled the above form.';
-                if (this.sharedDataService.signOffFormDetail) {
-                    this.subTitle = this.sharedDataService.signOffFormDetail.formData.formTitle;
-                    if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail.formData.isSignatureSignOff) {
-                        this.showDigitalInk = true;
-                        this.initialiseDrawing();
-                    }
-                }
-                break;
+					case EnumService.SignOffType.FORM_ACTIVITY:
+					case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+					case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
+						this.aggrementTitle = res[formActivityAgreementTitleLangKey];
+						if (this.sharedDataService.signOffFormDetail) {
+							this.subTitle = this.sharedDataService.signOffFormDetail.formData.formTitle;
+							if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail.formData.isSignatureSignOff) {
+								this.showDigitalInk = true;
+								this.initialiseDrawing();
+							}
+						}
+						break;
 
-            case EnumService.SignOffType.DOCUMENT_DM:
-                this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
-                if (this.sharedDataService.signOffDocumentDetail) {
-                    if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
-                        this.showDigitalInk = true;
-                        this.initialiseDrawing();
-                    }
-                }
-                this.pageTitle = 'Sign-Off';
-                this.title = 'Sign-Off';
-                this.subTitle = '';
-                break;
+					case EnumService.SignOffType.DOCUMENT_DM:
+						this.aggrementTitle = res[signOffAgreementTitleLangKey];
+						if (this.sharedDataService.signOffDocumentDetail) {
+							if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isSignatureSignOff) {
+								this.showDigitalInk = true;
+								this.initialiseDrawing();
+							}
+						}
+						this.pageTitle = res[signOffLangKey];
+						this.title = res[signOffLangKey];
+						this.subTitle = '';
+						break;
 
-            case EnumService.SignOffType.FORMS_DM:
-            case EnumService.SignOffType.WORK_PERMIT_DM:
-                this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
-                if (this.sharedDataService.signOffFormDetail) {
-                    this.subTitle = this.sharedDataService.signOffFormDetail?.formData?.formTitle;
-                    if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isSignatureSignOff) {
-                        this.showDigitalInk = true;
-                        this.initialiseDrawing();
-                    }
-                }
-                this.pageTitle = 'Sign-Off';
-                this.title = 'Sign-Off';
-                this.subTitle = '';
-                break;
+					case EnumService.SignOffType.FORMS_DM:
+					case EnumService.SignOffType.WORK_PERMIT_DM:
+						this.aggrementTitle = res[signOffAgreementTitleLangKey];
+						if (this.sharedDataService.signOffFormDetail) {
+							this.subTitle = this.sharedDataService.signOffFormDetail?.formData?.formTitle;
+							if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isSignatureSignOff) {
+								this.showDigitalInk = true;
+								this.initialiseDrawing();
+							}
+						}
+						this.pageTitle = res[signOffLangKey];
+						this.title = res[signOffLangKey];
+						this.subTitle = '';
+						break;
 
+					default:
+						if (UtilService.isLocalHost()) {
+							this.pageTitle = res[signOffLangKey];
+							this.title = res[signOffLangKey];
+							this.aggrementTitle = res[signOffAgreementTitleLangKey];
+							this.showDigitalInk = true;
+							this.initialiseDrawing();
+						}
+				}
+			});
+	}
 
-            default:
-                if ((UtilService.isLocalHost())) {
-                    this.pageTitle = 'Sign-Off';
-                    this.title = 'Sign-Off';
-                    this.aggrementTitle = 'I herby confirm that I\'ve read and understood everything I viewed.';
-                    this.showDigitalInk = true;
-                    this.initialiseDrawing();
-                }
-        }
-    }
+	initialiseDrawing() {
+		setTimeout(() => {
+			if (!this.canvasRef) {
+				const canvasRef = new fabric.Canvas('digital-signature');
+				this.canvasRef = canvasRef;
+			} else {
+				const canvasRef = this.canvasRef;
+				debugger;
+			}
+			if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
+				const ele: any = document.getElementById('digital-signature');
+				this.canvasRef.setDimensions({
+					width: (window.innerHeight * 50) / 100,
+					height: (window.innerHeight * 25) / 100,
+				});
+			} else {
+				this.canvasRef.setDimensions({ width: window.innerWidth - 46, height: (window.innerHeight * 28) / 100 });
+			}
+			this.canvasRef.on('selection:created', () => {});
+			this.canvasRef.on('selection:cleared', () => {});
+			this.canvasRef.freeDrawingBrush.color = '#171538';
+			this.canvasRef.freeDrawingBrush.width = 4;
+			this.canvasRef.isDrawingMode = true;
+		}, 200);
+	}
 
-    initialiseDrawing() {
-        setTimeout(() => {
-            if (!this.canvasRef) {
-                const canvasRef = new fabric.Canvas('digital-signature');
-                this.canvasRef = canvasRef;
-            } else {
-                const canvasRef = this.canvasRef;
-                debugger;
-            }
-            if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
-                const ele: any = document.getElementById('digital-signature');
-                this.canvasRef.setDimensions({
-                    width: (window.innerHeight * 50 / 100),
-                    height: (window.innerHeight * 25 / 100)
-                });
+	ionViewWillEnter() {
+		this.handleOrientation();
+	}
 
-            } else {
-                this.canvasRef.setDimensions({width: window.innerWidth - 46, height: (window.innerHeight * 28 / 100)});
-            }
-            this.canvasRef.on('selection:created', () => {
-            });
-            this.canvasRef.on('selection:cleared', () => {
-            });
-            this.canvasRef.freeDrawingBrush.color = '#171538';
-            this.canvasRef.freeDrawingBrush.width = 4;
-            this.canvasRef.isDrawingMode = true;
-        }, 200);
-    }
+	ionViewDidLeave(): void {
+		if (this.sharedDataService.dedicatedMode) {
+			if (!UtilService.isLocalHost()) {
+				this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+				this.screenOrientationSubscribe.unsubscribe();
+			}
+		}
+	}
 
-    ionViewWillEnter() {
-        this.handleOrientation();
-    }
+	handleOrientation = () => {
+		if (this.sharedDataService.dedicatedMode) {
+			this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
+				this.ngZone.run(() => {
+					if (this.screenOrientation.type.includes('portrait')) {
+					}
+					if (this.screenOrientation.type.includes('landscape')) {
+					}
+					if (this.showDigitalInk) {
+						// this.initialiseDrawing();
+					}
+				});
+			});
+		}
+	};
 
-    ionViewDidLeave(): void {
-        if (this.sharedDataService.dedicatedMode) {
-            if (!UtilService.isLocalHost()) {
-                this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-                this.screenOrientationSubscribe.unsubscribe();
-            }
-        }
-    }
+	isDigitalSignEmpty = () => {
+		if (this.canvasRef) {
+			return this.canvasRef.isEmpty();
+		}
+		return true;
+	};
 
-    handleOrientation = () => {
-        if (this.sharedDataService.dedicatedMode) {
-            this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
-                this.ngZone.run(() => {
-                    if (this.screenOrientation.type.includes('portrait')) {
+	onClose() {
+		if (this.sharedDataService.signOffFor === EnumService.SignOffType.DOCUMENT_DM) {
+			this.navCtrl.navigateBack('/documents-dm');
+		} else if (this.sharedDataService.signOffFor === EnumService.SignOffType.FORMS_DM) {
+			this.navCtrl.navigateBack('/forms-dm');
+		} else if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT_DM) {
+			this.navCtrl.navigateBack('/permits-dm');
+		} else if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
+			if (this.sharedDataService.dedicatedMode) {
+				this.navCtrl.navigateBack('/dashboard-dm');
+			} else {
+				this.navCtrl.navigateBack('/checkinout-confirm');
+			}
+		} else {
+			this.navCtrl.back();
+		}
+	}
 
-                    }
-                    if (this.screenOrientation.type.includes('landscape')) {
-                    }
-                    if (this.showDigitalInk) {
-                        // this.initialiseDrawing();
-                    }
-                });
-            });
-        }
-    };
+	async onContinue() {
+		this.errorMessage = '';
 
-    isDigitalSignEmpty = () => {
-        if (this.canvasRef) {
-            return this.canvasRef.isEmpty();
-        }
-        return true;
-    };
+		if (this.isConfirm) {
+			let downlaodImg;
+			if (this.showDigitalInk) {
+				this.canvasRef.discardActiveObject();
+				downlaodImg = this.canvasRef.toDataURL('jpeg');
 
-    onClose() {
-        if (this.sharedDataService.signOffFor === EnumService.SignOffType.DOCUMENT_DM) {
-            this.navCtrl.navigateBack('/documents-dm');
-        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.FORMS_DM) {
-            this.navCtrl.navigateBack('/forms-dm');
-        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.WORK_PERMIT_DM) {
-            this.navCtrl.navigateBack('/permits-dm');
-        } else if (this.sharedDataService.signOffFor === EnumService.SignOffType.INDUCTION) {
-            if (this.sharedDataService.dedicatedMode) {
-                this.navCtrl.navigateBack('/dashboard-dm');
-            } else {
-                this.navCtrl.navigateBack('/checkinout-confirm');
-            }
-        } else {
-            this.navCtrl.back();
-        }
-    }
+				const fileName = 'signature' + this.utilService.getCurrentTimeStamp() + '.jpeg';
+				const mimeType = 'image/jpeg';
+				this.utilService.presentLoadingWithOptions();
+				this.utilService.dataUriToFile(downlaodImg, fileName, mimeType).then(
+					(file) => {
+						this.apiService.inductionSignatureUpload(file, fileName).subscribe(
+							(res: Response) => {
+								this.utilService.hideLoading();
+								if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+									this.nextStep(res.Result);
+								} else {
+									this.errorMessage = res.Message;
+								}
+							},
+							(error) => {
+								this.utilService.hideLoading();
+								this.errorMessage = error.message ? error.message : error;
+							}
+						);
+					},
+					(error) => {
+						this.utilService.hideLoading();
+					}
+				);
+			} else {
+				this.nextStep();
+			}
+		}
+	}
 
-    async onContinue() {
-        this.errorMessage = '';
+	nextStep(signatureFileName = '') {
+		switch (this.type) {
+			case EnumService.SignOffType.INDUCTION:
+				if (this.showDigitalInk && signatureFileName) {
+					this.sharedDataService.checkInPostData.digitalInkSignature = signatureFileName;
+				}
 
-        if (this.isConfirm) {
-            let downlaodImg;
-            if (this.showDigitalInk) {
-                this.canvasRef.discardActiveObject();
-                downlaodImg = this.canvasRef.toDataURL('jpeg');
+				if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
+					if (this.sharedDataService.dedicatedMode) {
+						this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+					} else {
+						this.navCtrl.navigateForward(['/signoff-photo']);
+					}
+				} else {
+					if (this.sharedDataService.checkInPostData.guestPhone) {
+						this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
+					} else {
+						this.sharedDataService.submitInductionCheckInData(this.apiService);
+					}
+				}
+				break;
 
-                const fileName = 'signature' + this.utilService.getCurrentTimeStamp() + '.jpeg';
-                const mimeType = 'image/jpeg';
-                this.utilService.presentLoadingWithOptions();
-                this.utilService.dataUriToFile(downlaodImg, fileName, mimeType).then((file) => {
-                    this.apiService.inductionSignatureUpload(file, fileName).subscribe((res: Response) => {
-                        this.utilService.hideLoading();
-                        if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-                            this.nextStep(res.Result);
-                        } else {
-                            this.errorMessage = res.Message;
-                        }
-                    }, (error) => {
-                        this.utilService.hideLoading();
-                        this.errorMessage = error.message ? error.message : error;
-                    });
-                }, error => {
-                    this.utilService.hideLoading();
-                });
-            } else {
-                this.nextStep();
-            }
-        }
-    }
+			case EnumService.SignOffType.DOCUMENT_DM:
+			case EnumService.SignOffType.DOCUMENT_ACTIVITY:
+			case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
+				if (this.showDigitalInk && signatureFileName) {
+					this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+				}
 
-    nextStep(signatureFileName = '') {
-        switch (this.type) {
-            case EnumService.SignOffType.INDUCTION:
-                if (this.showDigitalInk && signatureFileName) {
-                    this.sharedDataService.checkInPostData.digitalInkSignature = signatureFileName;
-                }
+				if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
+					if (this.sharedDataService.dedicatedMode) {
+						this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+					} else {
+						this.navCtrl.navigateForward(['/signoff-photo']);
+					}
+				} else {
+					this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+				}
+				break;
 
-                if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
-                    if (this.sharedDataService.dedicatedMode) {
-                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
-                    } else {
-                        this.navCtrl.navigateForward(['/signoff-photo']);
-                    }
-                } else {
-                    if (this.sharedDataService.checkInPostData.guestPhone) {
-                        this.sharedDataService.submitInductionCheckInDataGuest(this.apiService);
-                    } else {
-                        this.sharedDataService.submitInductionCheckInData(this.apiService);
-                    }
-                }
-                break;
+			case EnumService.SignOffType.FORM_ACTIVITY:
+			case EnumService.SignOffType.FORMS_DM:
+			case EnumService.SignOffType.WORK_PERMIT_DM:
+			case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
+			case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
+				if (this.showDigitalInk && signatureFileName) {
+					this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+				}
 
-            case EnumService.SignOffType.DOCUMENT_DM:
-            case EnumService.SignOffType.DOCUMENT_ACTIVITY:
-            case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
-                if (this.showDigitalInk && signatureFileName) {
-                    this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
-                }
+				if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isPhotoSignOff) {
+					if (this.sharedDataService.dedicatedMode) {
+						this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
+						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+					} else {
+						this.navCtrl.navigateForward(['/signoff-photo']);
+					}
+				} else {
+					this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
+				}
+				break;
 
-                if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
-                    if (this.sharedDataService.dedicatedMode) {
-                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
-                    } else {
-                        this.navCtrl.navigateForward(['/signoff-photo']);
-                    }
-                } else {
-                    this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
-                }
-                break;
-
-            case EnumService.SignOffType.FORM_ACTIVITY:
-            case EnumService.SignOffType.FORMS_DM:
-            case EnumService.SignOffType.WORK_PERMIT_DM:
-            case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
-            case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
-                if (this.showDigitalInk && signatureFileName) {
-                    this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
-                }
-
-                if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isPhotoSignOff) {
-                    if (this.sharedDataService.dedicatedMode) {
-                        this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-                        this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
-                    } else {
-                        this.navCtrl.navigateForward(['/signoff-photo']);
-                    }
-                } else {
-                    this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
-                }
-                break;
-
-            default:
-            // if (this.sharedDataService.dedicatedMode) {
-            //     if (UtilService.randomBoolean()) {
-            //         this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-            //             queryParams: {
-            //                 message: 'You have now checked-in',
-            //                 nextPage: 'dashboard-dm'
-            //             }
-            //         });
-            //     } else {
-            //         this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
-            //             queryParams: {
-            //                 failTitle: 'No Qualification',
-            //                 failSubTitle: 'Check in Not Allowed',
-            //                 failMessage: 'This check-in requires to have certain \n' +
-            //                     'qualifications which you do not have.',
-            //                 nextPage: 'dashboard-dm'
-            //             }
-            //         });
-            //     }
-            // }
-        }
-    }
+			default:
+			// if (this.sharedDataService.dedicatedMode) {
+			//     if (UtilService.randomBoolean()) {
+			//         this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+			//             queryParams: {
+			//                 message: 'You have now checked-in',
+			//                 nextPage: 'dashboard-dm'
+			//             }
+			//         });
+			//     } else {
+			//         this.navCtrl.navigateForward(['/checkinout-fail-dm'], {
+			//             queryParams: {
+			//                 failTitle: 'No Qualification',
+			//                 failSubTitle: 'Check in Not Allowed',
+			//                 failMessage: 'This check-in requires to have certain \n' +
+			//                     'qualifications which you do not have.',
+			//                 nextPage: 'dashboard-dm'
+			//             }
+			//         });
+			//     }
+			// }
+		}
+	}
 }

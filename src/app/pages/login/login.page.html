@@ -2,8 +2,8 @@
 	<div class="content-vertically-arrange">
 		<div class="vertically-fill-space"></div>
 
-		<h2 class="page-title">{{'LOGIN.SIGN_IN' | translate}}</h2>
-		<p class="page-description">{{'LOGIN.PAGE_DESCRIPTION' | translate}}</p>
+		<h2 class="page-title">{{'PAGE.LOGIN.SIGN_IN' | translate}}</h2>
+		<p class="page-description">{{'PAGE.LOGIN.PAGE_DESCRIPTION' | translate}}</p>
 
 		<form class="input-form" [formGroup]="loginForm">
 			<div class="app-warning-component">
@@ -11,32 +11,32 @@
 			</div>
 
 			<ion-item class="email-item">
-				<ion-label position="stacked">{{'LOGIN.EMAIL' | translate}}</ion-label>
+				<ion-label position="stacked">{{'PAGE.LOGIN.EMAIL' | translate}}</ion-label>
 				<ion-input
 					formControlName="email"
 					autocapitalize="off"
 					autocomplete="email"
 					inputmode="email"
 					[ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
-					[placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
+					[placeholder]="'PAGE.LOGIN.EMAIL_PLACEHOLDER' | translate"
 					type="email"
 				></ion-input>
 			</ion-item>
 
 			<ion-item class="password-item">
-				<ion-label position="stacked">{{'LOGIN.PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'PAGE.LOGIN.PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="password"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
-					[placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
+					[placeholder]="'PAGE.LOGIN.PASSWORD_PLACEHOLDER' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>
 		</form>
 
-		<ion-button expand="full" class="signin-btn" (click)="onSubmit()">{{'LOGIN.SIGN_IN' | translate}}</ion-button>
-		<ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password"> {{'LOGIN.FORGOT_PASSWORD' | translate}} </ion-button>
+		<ion-button expand="full" class="signin-btn" (click)="onSubmit()">{{'PAGE.LOGIN.SIGN_IN' | translate}}</ion-button>
+		<ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password"> {{'PAGE.LOGIN.FORGOT_PASSWORD' | translate}} </ion-button>
 
 		<div class="vertically-fill-space"></div>
 
@@ -53,7 +53,7 @@
 			</ion-button>
 
 			<ion-text class="device-uid">
-				<span *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0"> DEVICE UID&nbsp;</span>
+				<span *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0"> {{'COMMON.DEVICE_UID' | translate}}&nbsp;</span>
 				<span class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span>
 			</ion-text>
 		</div>

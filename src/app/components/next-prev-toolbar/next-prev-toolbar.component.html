@@ -5,7 +5,7 @@
 		</ion-button>
 	</ion-buttons>
 	<ion-title>
-		Item {{ totalCount > currentCount ? currentCount + 1 : currentCount }} <span class="light">of {{ totalCount }}</span>
+		{{ 'PAGE.FORM.ITEM' | translate }}&nbsp;{{ totalCount > currentCount ? currentCount + 1 : currentCount }} <span class="light">{{ 'PAGE.FORM.OF' | translate }}&nbsp; {{ totalCount }}</span>
 	</ion-title>
 	<ion-buttons slot="end">
 		<ion-button class="arrow-button right" size="small" fill="clear" (click)="next.emit()">

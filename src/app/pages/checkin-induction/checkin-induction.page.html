@@ -1,29 +1,26 @@
 <ion-header>
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'Induction'"
-                      (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'PAGE.CHECKINOUT.INDUCTION' | translate" (closeModal)="onClose()"></app-modal-header>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
-                         [modalTitle]="sharedDataService.dedicatedModeLocationUse.locationName"
-                         modalSubTitle="Check In/Out" (closeModal)="onClose()"></app-modal-header-dm>
+	<app-modal-header-dm
+		*ngIf="sharedDataService.dedicatedMode"
+		[modalTitle]="sharedDataService.dedicatedModeLocationUse.locationName"
+		modalSubTitle="'PAGE.CHECKINOUT.CHECK_IN_OUT' | translate"
+		(closeModal)="onClose()"
+	></app-modal-header-dm>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div class="content-container">
-        <div class="content">
-            <div *ngIf="sharedDataService.dedicatedMode" class="page-title">Induction</div>
+	<div class="content-container">
+		<div class="content">
+			<div *ngIf="sharedDataService.dedicatedMode" class="page-title">{{'PAGE.CHECKINOUT.INDUCTION' | translate}}</div>
 
-            <div class="ion-text-center ion-padding" *ngIf="checkinDetail"
-                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(checkinDetail?.checkInInduction?.introduction)"></div>
+			<div class="ion-text-center ion-padding" *ngIf="checkinDetail" [innerHTML]="sanitizer.bypassSecurityTrustHtml(checkinDetail?.checkInInduction?.introduction)"></div>
 
-            <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="onContinue()">
-                Continue
-            </ion-button>
+			<ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="onContinue()"> {{'COMMON.CONTINUE' | translate}} </ion-button>
+		</div>
 
-        </div>
-
-        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">Continue</ion-button>
-        </ion-footer>
-    </div>
+		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'COMMON.CONTINUE' | translate}}</ion-button>
+		</ion-footer>
+	</div>
 </ion-content>
-

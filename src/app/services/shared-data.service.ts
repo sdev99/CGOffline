@@ -39,6 +39,7 @@ import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOpt
 import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
 import { AuthGuard } from '../helpers/auth.guard';
 import { HavAnswerDetail } from '../_models/havAnswerDetail';
+import { TranslateService } from '@ngx-translate/core';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -153,7 +154,8 @@ export class SharedDataService {
 		private navCtrl: NavController,
 		private observablesService: ObservablesService,
 		public utilService: UtilService,
-		private screenOrientation: ScreenOrientation
+		private screenOrientation: ScreenOrientation,
+		private translateService: TranslateService
 	) {
 		// Set dynamic api url for WebApp based on domain
 		if (environment.isWebApp) {
@@ -521,15 +523,18 @@ export class SharedDataService {
 
 			if (ifAlreadyCheckedinPlace) {
 				this.checkOutForCheckedInDetail = ifAlreadyCheckedinPlace;
-				this.navCtrl.navigateForward(['/checkinout-confirm'], {
-					queryParams: {
-						headerTitle: 'Check Out',
-						title: 'You are checking out',
-						subtitle: ifAlreadyCheckedinPlace.entityName,
-						buttonTitle: 'Check Out Now',
-						locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
-					},
-					replaceUrl: true,
+
+				this.translateService.get(['PAGE.CHECKINOUT.CHECK_OUT', 'PAGE.CHECKINOUT.YOU_ARE_CHECKING_OUT', 'PAGE.CHECKINOUT.CHECK_OUT_NOW']).subscribe((res) => {
+					this.navCtrl.navigateForward(['/checkinout-confirm'], {
+						queryParams: {
+							headerTitle: res['PAGE.CHECKINOUT.CHECK_OUT'],
+							title: res['PAGE.CHECKINOUT.YOU_ARE_CHECKING_OUT'],
+							subtitle: ifAlreadyCheckedinPlace.entityName,
+							buttonTitle: res['PAGE.CHECKINOUT.CHECK_OUT_NOW'],
+							locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
+						},
+						replaceUrl: true,
+					});
 				});
 			} else {
 				this.utilService.presentLoadingWithOptions();
@@ -548,19 +553,21 @@ export class SharedDataService {
 								locationID: this.checkInDetail.checkInEntityDetail.locationID,
 							} as CheckInPostData;
 
-							this.navCtrl.navigateForward(['/checkinout-confirm'], {
-								queryParams: {
-									headerTitle: 'Check In',
-									title: 'You are checking in',
-									subtitle: this.checkInForLocation.locationName,
-									buttonTitle: 'Check In Now',
-									nextPageData: JSON.stringify({
-										locationDetail: JSON.stringify(this.checkInForLocation),
-									}),
-									nextPagePath: '/checkin-induction',
-									locationCheckType: EnumService.ConfirmForCheckType.CheckIn,
-								},
-								replaceUrl: true,
+							this.translateService.get(['PAGE.CHECKINOUT.CHECK_IN', 'PAGE.CHECKINOUT.YOU_ARE_CHECKING_IN', 'PAGE.CHECKINOUT.CHECK_IN_NOW']).subscribe((res) => {
+								this.navCtrl.navigateForward(['/checkinout-confirm'], {
+									queryParams: {
+										headerTitle: res['PAGE.CHECKINOUT.CHECK_IN'],
+										title: res['PAGE.CHECKINOUT.YOU_ARE_CHECKING_IN'],
+										subtitle: this.checkInForLocation.locationName,
+										buttonTitle: res['PAGE.CHECKINOUT.CHECK_IN_NOW'],
+										nextPageData: JSON.stringify({
+											locationDetail: JSON.stringify(this.checkInForLocation),
+										}),
+										nextPagePath: '/checkin-induction',
+										locationCheckType: EnumService.ConfirmForCheckType.CheckIn,
+									},
+									replaceUrl: true,
+								});
 							});
 						}
 					},
@@ -569,25 +576,33 @@ export class SharedDataService {
 
 						this.utilService.hideLoading();
 						if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
-							this.navCtrl.navigateForward(['/checkin-fail'], {
-								queryParams: {
-									title: 'You cannot check-in',
-									errorTitle: 'Simultanious Check-In Not Allowed.',
-									errorMessage: 'You are already checked-in to another place.',
-									nextPage: '/tabs/dashboard',
-								},
-								replaceUrl: true,
-							});
+							this.translateService
+								.get(['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN', 'PAGE.CHECKINOUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED', 'PAGE.CHECKINOUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE'])
+								.subscribe((res) => {
+									this.navCtrl.navigateForward(['/checkin-fail'], {
+										queryParams: {
+											title: res['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN'],
+											errorTitle: res['PAGE.CHECKINOUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED'],
+											errorMessage: res['PAGE.CHECKINOUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE'],
+											nextPage: '/tabs/dashboard',
+										},
+										replaceUrl: true,
+									});
+								});
 						} else {
-							this.navCtrl.navigateForward(['/checkin-fail'], {
-								queryParams: {
-									title: 'You cannot check-in',
-									errorTitle: 'No Qualification',
-									errorMessage: 'You do not have the required qualifications.',
-									nextPage: '/tabs/dashboard',
-								},
-								replaceUrl: true,
-							});
+							this.translateService
+								.get(['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN', 'PAGE.CHECKINOUT.NO_QUALIFICATION', 'PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'])
+								.subscribe((res) => {
+									this.navCtrl.navigateForward(['/checkin-fail'], {
+										queryParams: {
+											title: res['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN'],
+											errorTitle: res['PAGE.CHECKINOUT.NO_QUALIFICATION'],
+											errorMessage: res['PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+											nextPage: '/tabs/dashboard',
+										},
+										replaceUrl: true,
+									});
+								});
 						}
 					}
 				);
@@ -1039,19 +1054,27 @@ export class SharedDataService {
 					this.submitFormAnswers(apiService, formGroup, formBuilderDetail, personalModeLoggedUser, callBack, havAnswerDetail, workPermitAnswer);
 				}
 			} else if (requiredFieldsCount === 0 && filledFieldsCount === 0) {
-				const errorMessage = 'At least one answer to be filled in.';
-				callBack(false, errorMessage);
+				this.translateService.get('COMMON.ERRORS.ATLEAST_ONE_ANSWER_TO_BE_FILLED_IN').subscribe((res) => {
+					const errorMessage = res;
+					callBack(false, errorMessage);
+				});
 			} else if (requiredFieldsValidCount === 0) {
-				const errorMessage = 'All fields are required to be filled in.';
-				callBack(false, errorMessage);
+				this.translateService.get('COMMON.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
+					const errorMessage = res;
+					callBack(false, errorMessage);
+				});
 			} else {
 				const missingFieldCount = requiredFieldsCount - requiredFieldsValidCount;
 				if (missingFieldCount === 0 && filledFieldsCount !== filledFieldsValidCount) {
-					const errorMessage = 'Incorrect data found, please check your answers.';
-					callBack(false, errorMessage);
+					this.translateService.get('COMMON.ERRORS.INCORRECT_DATA_FOUND_PLS_CHECK_ANSWERS').subscribe((res) => {
+						const errorMessage = res;
+						callBack(false, errorMessage);
+					});
 				} else {
-					const errorMessage = missingFieldCount + ' required fields are needed to be filled in.';
-					callBack(false, errorMessage);
+					this.translateService.get('COMMON.ERRORS.REQUIRED_FIELDS_NEED_TO_FILL').subscribe((res) => {
+						const errorMessage = missingFieldCount + ' ' + res;
+						callBack(false, errorMessage);
+					});
 				}
 			}
 		}
@@ -1537,13 +1560,15 @@ export class SharedDataService {
 					this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, response.Result);
 
 					const suucessScreen = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
-					this.navCtrl.navigateForward([suucessScreen], {
-						queryParams: {
-							message: 'You have now checked-in',
-							nextPage: nextScreen,
-							actionBtnTitle: 'Continue',
-						},
-						replaceUrl: true,
+					this.translateService.get(['PAGE.CHECKINOUT.YOU_HAVE_NOW_CHECKEDIN', 'COMMON.CONTINUE']).subscribe((res) => {
+						this.navCtrl.navigateForward([suucessScreen], {
+							queryParams: {
+								message: res['PAGE.CHECKINOUT.YOU_HAVE_NOW_CHECKEDIN'],
+								nextPage: nextScreen,
+								actionBtnTitle: res['COMMON.CONTINUE'],
+							},
+							replaceUrl: true,
+						});
 					});
 				}
 			},
@@ -1567,13 +1592,15 @@ export class SharedDataService {
 				this.utilService.hideLoading();
 
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-						queryParams: {
-							message: 'You have now checked-in',
-							nextPage: nextScreen,
-							actionBtnTitle: 'Continue',
-						},
-						replaceUrl: true,
+					this.translateService.get(['PAGE.CHECKINOUT.YOU_HAVE_NOW_CHECKEDIN', 'COMMON.CONTINUE']).subscribe((res) => {
+						this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+							queryParams: {
+								message: res['PAGE.CHECKINOUT.YOU_HAVE_NOW_CHECKEDIN'],
+								nextPage: nextScreen,
+								actionBtnTitle: res['COMMON.CONTINUE'],
+							},
+							replaceUrl: true,
+						});
 					});
 				}
 			},
@@ -1613,35 +1640,43 @@ export class SharedDataService {
 					replaceUrl: true,
 				});
 			} else if (fieldName === 'Qualification') {
-				this.navCtrl.navigateForward([failScreen], {
-					queryParams: {
-						title: 'You cannot check-in',
-						errorTitle: 'NOT QUALIFIED',
-						errorMessage: 'You do not have the required qualifications.',
-						nextPage: nextScreen,
-					},
-					replaceUrl: true,
-				});
+				this.translateService
+					.get(['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN', 'PAGE.CHECKINOUT.NO_QUALIFICATION', 'PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'])
+					.subscribe((res) => {
+						this.navCtrl.navigateForward([failScreen], {
+							queryParams: {
+								title: res['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN'],
+								errorTitle: res['PAGE.CHECKINOUT.NO_QUALIFICATION'],
+								errorMessage: res['PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+								nextPage: nextScreen,
+							},
+							replaceUrl: true,
+						});
+					});
 			} else {
-				this.navCtrl.navigateForward([failScreen], {
-					queryParams: {
-						title: 'You cannot check-in',
-						errorTitle: fieldName,
-						errorMessage: message,
-						nextPage: nextScreen,
-					},
-					replaceUrl: true,
+				this.translateService.get('PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN').subscribe((res) => {
+					this.navCtrl.navigateForward([failScreen], {
+						queryParams: {
+							title: res,
+							errorTitle: fieldName,
+							errorMessage: message,
+							nextPage: nextScreen,
+						},
+						replaceUrl: true,
+					});
 				});
 			}
 		} else {
-			this.navCtrl.navigateForward([failScreen], {
-				queryParams: {
-					title: 'You cannot check-in',
-					errorTitle: 'NOT QUALIFIED',
-					errorMessage: 'You do not have the required qualifications.',
-					nextPage: nextScreen,
-				},
-				replaceUrl: true,
+			this.translateService.get(['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN', 'PAGE.CHECKINOUT.NO_QUALIFICATION', 'PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS']).subscribe((res) => {
+				this.navCtrl.navigateForward([failScreen], {
+					queryParams: {
+						title: res['PAGE.CHECKINOUT.YOU_CANNOT_CHECKIN'],
+						errorTitle: res['PAGE.CHECKINOUT.NO_QUALIFICATION'],
+						errorMessage: res['PAGE.CHECKINOUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+						nextPage: nextScreen,
+					},
+					replaceUrl: true,
+				});
 			});
 		}
 	}
@@ -1695,59 +1730,69 @@ export class SharedDataService {
 
 					if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
 						if (this.workPermitAnswer.scoreAchieved >= this.workPermitAnswer.totalScore) {
-							this.navCtrl.navigateForward([checkInSuccessPage], {
-								queryParams: {
-									title: 'Passed',
-									message: 'PERMIT ISSUED',
-									description: 'Your work permit is active',
-									nextPage,
-									pageTitle: 'Work Permit',
-								},
-								replaceUrl: true,
+							this.translateService.get(['PAGE.FORM.PASSED', 'PAGE.FORM.PERMIT_ISSUED', 'PAGE.FORM.YOUR_WORK_PERMIT_IS_ACTIVE', 'PAGE.FORM.WORK_PERMIT']).subscribe((res) => {
+								this.navCtrl.navigateForward([checkInSuccessPage], {
+									queryParams: {
+										title: res['PAGE.FORM.PASSED'],
+										message: res['PAGE.FORM.PERMIT_ISSUED'],
+										description: res['PAGE.FORM.YOUR_WORK_PERMIT_IS_ACTIVE'],
+										nextPage,
+										pageTitle: res['PAGE.FORM.WORK_PERMIT'],
+									},
+									replaceUrl: true,
+								});
 							});
 						} else {
-							this.navCtrl.navigateForward([checkInFailPage], {
-								queryParams: {
-									title: 'Not Passed',
-									errorTitle: 'NO PERMIT',
-									errorMessage: 'You were found not eligible for a work permit.',
-									nextPage,
-									pageTitle: 'Work Permit',
-								},
-								replaceUrl: true,
+							this.translateService.get(['PAGE.FORM.NOT_PASSED', 'PAGE.FORM.NO_PERMIT', 'PAGE.FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT', 'PAGE.FORM.WORK_PERMIT']).subscribe((res) => {
+								this.navCtrl.navigateForward([checkInFailPage], {
+									queryParams: {
+										title: res['PAGE.FORM.NOT_PASSED'],
+										errorTitle: res['PAGE.FORM.NO_PERMIT'],
+										errorMessage: res['PAGE.FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT'],
+										nextPage,
+										pageTitle: res['PAGE.FORM.WORK_PERMIT'],
+									},
+									replaceUrl: true,
+								});
 							});
 						}
 					} else {
-						this.navCtrl.navigateForward([checkInSuccessPage], {
-							queryParams: {
-								message: 'You Signed-Off Successfully',
-								nextPage,
-								pageTitle: 'Sign-Off',
-							},
+						this.translateService.get(['PAGE.SIGNOFF.YOU_SIGNOFF_OFF_SUCCESSFULLY', 'PAGE.SIGNOFF.SIGNOFF']).subscribe((res) => {
+							this.navCtrl.navigateForward([checkInSuccessPage], {
+								queryParams: {
+									message: res['PAGE.SIGNOFF.YOU_SIGNOFF_OFF_SUCCESSFULLY'],
+									nextPage,
+									pageTitle: res['PAGE.SIGNOFF.SIGNOFF'],
+								},
+							});
 						});
 					}
 				} else {
 					if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
-						this.navCtrl.navigateForward([checkInFailPage], {
-							queryParams: {
-								title: 'Not Passed',
-								errorTitle: 'NOT PERMIT',
-								errorMessage: 'You were found not eligible for a work permit.',
-								nextPage,
-								pageTitle: 'Work Permit',
-							},
-							replaceUrl: true,
+						this.translateService.get(['PAGE.FORM.NOT_PASSED', 'PAGE.FORM.NO_PERMIT', 'PAGE.FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT', 'PAGE.FORM.WORK_PERMIT']).subscribe((res) => {
+							this.navCtrl.navigateForward([checkInFailPage], {
+								queryParams: {
+									title: res['PAGE.FORM.NOT_PASSED'],
+									errorTitle: res['PAGE.FORM.NO_PERMIT'],
+									errorMessage: res['PAGE.FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT'],
+									nextPage,
+									pageTitle: res['PAGE.FORM.WORK_PERMIT'],
+								},
+								replaceUrl: true,
+							});
 						});
 					} else {
-						this.navCtrl.navigateForward([checkInFailPage], {
-							queryParams: {
-								title: 'You cannot Sign-Off',
-								errorTitle: 'NOT QUALIFIED',
-								errorMessage: response.Message,
-								nextPage,
-								pageTitle: 'Sign-Off',
-							},
-							replaceUrl: true,
+						this.translateService.get(['PAGE.SIGNOFF.YOU_CANNOT_SIGNOFF', 'PAGE.SIGNOFF.NOT_QUALIFIED', 'PAGE.SIGNOFF.SIGNOFF']).subscribe((res) => {
+							this.navCtrl.navigateForward([checkInFailPage], {
+								queryParams: {
+									title: res['PAGE.SIGNOFF.YOU_CANNOT_SIGNOFF'],
+									errorTitle: res['PAGE.SIGNOFF.NOT_QUALIFIED'],
+									errorMessage: response.Message,
+									nextPage,
+									pageTitle: res['PAGE.SIGNOFF.SIGNOFF'],
+								},
+								replaceUrl: true,
+							});
 						});
 					}
 				}
@@ -1755,15 +1800,17 @@ export class SharedDataService {
 			(error) => {
 				this.utilService.hideLoading();
 
-				this.navCtrl.navigateForward([checkInFailPage], {
-					queryParams: {
-						title: 'You cannot Sign-Off',
-						errorTitle: 'NOT QUALIFIED',
-						errorMessage: error.message || error,
-						nextPage,
-						pageTitle: 'Sign-Off',
-					},
-					replaceUrl: true,
+				this.translateService.get(['PAGE.SIGNOFF.YOU_CANNOT_SIGNOFF', 'PAGE.SIGNOFF.NOT_QUALIFIED', 'PAGE.SIGNOFF.SIGNOFF']).subscribe((res) => {
+					this.navCtrl.navigateForward([checkInFailPage], {
+						queryParams: {
+							title: res['PAGE.SIGNOFF.YOU_CANNOT_SIGNOFF'],
+							errorTitle: res['PAGE.SIGNOFF.NOT_QUALIFIED'],
+							errorMessage: error.message || error,
+							nextPage,
+							pageTitle: res['PAGE.SIGNOFF.SIGNOFF'],
+						},
+						replaceUrl: true,
+					});
 				});
 			}
 		);

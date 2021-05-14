@@ -1,81 +1,58 @@
 <ion-toolbar mode="ios" class="part-1">
+	<ion-title size="large">
+		{{ (isCurrentCheckin ? 'COMMON.HEADER.CURRENT_CHECK_IN' : 'COMMON.HEADER.DASHBOARD') | translate }}
+	</ion-title>
 
-    <ion-title size="large">
-        {{isCurrentCheckin ? 'Current Check-In' : 'Dashboard'}}
-    </ion-title>
-
-    <ion-buttons slot="end">
-        <ion-button size="small" fill="clear" (click)="checkByQrCode()">
-            <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/qrscan.svg"></ion-icon>
-        </ion-button>
-    </ion-buttons>
-
+	<ion-buttons slot="end">
+		<ion-button size="small" fill="clear" (click)="checkByQrCode()">
+			<ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/qrscan.svg"></ion-icon>
+		</ion-button>
+	</ion-buttons>
 </ion-toolbar>
 
-<ion-item class="checked-in-status-view" [ngClass]="{'remove-padding':shouldShowNavigationPlaceBtns()}" lines="none"
-          (click)="showCheckedInPlace()">
+<ion-item class="checked-in-status-view" [ngClass]="{ 'remove-padding': shouldShowNavigationPlaceBtns() }" lines="none" (click)="showCheckedInPlace()">
+	<ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="start" class="arrow-button left" size="small" fill="clear" (click)="previousPlace()">
+		<ion-icon *ngIf="shouldShowNavigationPlaceBtns(1)" slot="icon-only" name="chevron-back-outline"></ion-icon>
+	</ion-button>
 
-    <ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="start"
-                class="arrow-button left" size="small" fill="clear"
-                (click)="previousPlace()">
-        <ion-icon *ngIf="shouldShowNavigationPlaceBtns(1)" slot="icon-only" name="chevron-back-outline"></ion-icon>
-    </ion-button>
+	<div slot="start" class="status-circle" [ngClass]="{ 'checked-in': checkedIn }"></div>
 
+	<ion-label>
+		<ng-container *ngIf="checkedIn; else notCheckedIn">
+			{{ 'COMMON.HEADER.CHECKED_IN' | translate }}:
+			<ng-container *ngIf="!isCurrentCheckin"> &nbsp; {{ checkedPlaces.length == 1 ? checkedPlaces[0].entityName : 'to ' + checkedPlaces.length + ' places' }} </ng-container>
 
-    <div slot="start" class="status-circle" [ngClass]="{'checked-in':checkedIn}"></div>
+			<ng-container *ngIf="isCurrentCheckin"> &nbsp; {{ sharedDataService.currentSelectedCheckinPlace?.entityName }} </ng-container>
+		</ng-container>
+		<ng-template #notCheckedIn>{{ 'COMMON.HEADER.YOU_ARENT_CHECKED_IN' | translate }}</ng-template>
+	</ion-label>
 
-    <ion-label>
-        <ng-container *ngIf="checkedIn;else notCheckedIn">
-            Checked-in:
-            <ng-container *ngIf="!isCurrentCheckin">
-                &nbsp; {{checkedPlaces.length == 1 ? checkedPlaces[0].entityName : 'to ' + checkedPlaces.length + ' places'}}
-            </ng-container>
+	<ng-container *ngIf="checkedIn && checkedPlaces.length === 1">
+		<ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="checkoutPlace(checkedPlaces[0], $event)">
+			<ion-icon slot="icon-only" src="./assets/icon/checkout-light.svg"></ion-icon>
+		</ion-button>
+	</ng-container>
 
-            <ng-container *ngIf="isCurrentCheckin">
-                &nbsp; {{sharedDataService.currentSelectedCheckinPlace?.entityName}}
-            </ng-container>
-        </ng-container>
-        <ng-template #notCheckedIn>You aren’t checked in</ng-template>
-    </ion-label>
-
-    <ng-container *ngIf="checkedIn && checkedPlaces.length===1">
-        <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn"
-                    (click)="checkoutPlace(checkedPlaces[0], $event)">
-            <ion-icon slot="icon-only" src="./assets/icon/checkout-light.svg"></ion-icon>
-        </ion-button>
-    </ng-container>
-
-    <ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="end"
-                class="arrow-button right" size="small" fill="clear"
-                (click)="nextPlace()">
-        <ion-icon *ngIf="shouldShowNavigationPlaceBtns(2)" slot="icon-only" name="chevron-forward-outline"></ion-icon>
-    </ion-button>
+	<ion-button *ngIf="shouldShowNavigationPlaceBtns()" slot="end" class="arrow-button right" size="small" fill="clear" (click)="nextPlace()">
+		<ion-icon *ngIf="shouldShowNavigationPlaceBtns(2)" slot="icon-only" name="chevron-forward-outline"></ion-icon>
+	</ion-button>
 </ion-item>
 
-<div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList" (click)="showCheckedInPlacesList=false">
-   <div class="list-container">
-       <ion-list class="check-in-places-list" lines="none"
-                 (click)="$event.stopImmediatePropagation();$event.stopPropagation()">
-           <ion-item *ngFor="let place of checkedPlaces"
-                     [ngClass]="{'selected':(selectedPlace&&selectedPlace.userCheckInDetailID === place.userCheckInDetailID)}"
-                     (click)="placeChoose(place)">
-               <ion-label>{{place.entityName}}</ion-label>
-               <ion-button slot="end" size="small" fill="clear" class="checkin-view-btn"
-                           (click)="checkoutPlace(place, $event)">
-                   <ion-icon slot="icon-only" src="./assets/icon/checkout-dark.svg"></ion-icon>
-               </ion-button>
-           </ion-item>
-       </ion-list>
-   </div>
+<div class="check-in-places-list-container" *ngIf="showCheckedInPlacesList" (click)="showCheckedInPlacesList = false">
+	<div class="list-container">
+		<ion-list class="check-in-places-list" lines="none" (click)="$event.stopImmediatePropagation(); $event.stopPropagation()">
+			<ion-item *ngFor="let place of checkedPlaces" [ngClass]="{ selected: selectedPlace && selectedPlace.userCheckInDetailID === place.userCheckInDetailID }" (click)="placeChoose(place)">
+				<ion-label>{{ place.entityName }}</ion-label>
+				<ion-button slot="end" size="small" fill="clear" class="checkin-view-btn" (click)="checkoutPlace(place, $event)">
+					<ion-icon slot="icon-only" src="./assets/icon/checkout-dark.svg"></ion-icon>
+				</ion-button>
+			</ion-item>
+		</ion-list>
+	</div>
 </div>
 
-
 <div class="checkin-btns" *ngIf="!hideCheckinButton">
-    <ion-button class="left" size="small" fill="clear" (click)="checkByQrCode()">
-        Check In by QR Code
-    </ion-button>
+	<ion-button class="left" size="small" fill="clear" (click)="checkByQrCode()"> {{ 'COMMON.HEADER.CHECKED_IN_BY_QR_CODE' | translate }}</ion-button>
 
-    <ion-button class="right" size="small" fill="clear" (click)="checkInByList()">
-        Check In by List
-    </ion-button>
+	<ion-button class="right" size="small" fill="clear" (click)="checkInByList()">{{ 'COMMON.HEADER.CHECKED_IN_BY_LIST' | translate }} </ion-button>
 </div>

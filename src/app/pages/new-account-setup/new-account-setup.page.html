@@ -1,60 +1,56 @@
 <ion-content fullscreen="true">
+	<div class="content">
+		<div class="fill-vertical-space"></div>
+		<h2 class="page-title">{{'PAGE.NEW_ACCOUNT_SETUP.TITLE' | translate}}</h2>
+		<p class="page-description" *ngIf="userProfile">
+			{{'PAGE.NEW_ACCOUNT_SETUP.HELLO' | translate}}, {{userProfile.userFullName}}.
+			<br />
 
-    <div class="content">
-        <div class="fill-vertical-space"></div>
-        <h2 class="page-title">New Account Setup</h2>
-        <p class="page-description" *ngIf="userProfile">
-            Hello, {{userProfile.userFullName}}.
-            <br/>
-            You're one step away from using the platform.
-            <br/>
-            Please set up your password to start
-        </p>
-        <div class="fill-vertical-space"></div>
+			{{'PAGE.NEW_ACCOUNT_SETUP.DESCRIPTION' | translate}}
+			<br />
+			{{'PAGE.NEW_ACCOUNT_SETUP.SETUP_ACCOUNT_TO_START' | translate}}
+		</p>
+		<div class="fill-vertical-space"></div>
 
-        <div class="input-form">
-            <Form [formGroup]="myForm">
-                <div class="app-warning-component">
-                    <app-warning-component *ngIf="errorMessage && errorMessage.length>0"
-                                           [message]="errorMessage"></app-warning-component>
-                </div>
+		<div class="input-form">
+			<form [formGroup]="myForm">
+				<div class="app-warning-component">
+					<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
+				</div>
 
+				<ion-item class="password-item">
+					<ion-label position="stacked">{{'COMMON.PROFILE.NEW_PASSWORD' | translate}}</ion-label>
+					<ion-input
+						formControlName="password"
+						autocapitalize="off"
+						[ngClass]="{'error': (isSubmitted && !myForm.controls.password.valid)}"
+						[placeholder]="'COMMON.PROFILE.ENTER_NEW_PASSWORD' | translate"
+						type="password"
+					></ion-input>
+				</ion-item>
 
-                <ion-item class="password-item">
-                    <ion-label position="stacked">New Password</ion-label>
-                    <ion-input
-                            formControlName="password"
-                            autocapitalize="off"
-                            [ngClass]="{'error': (isSubmitted && !myForm.controls.password.valid)}"
-                            placeholder="Enter new password"
-                            type="password"
-                    ></ion-input>
-                </ion-item>
+				<ion-item class="password-item">
+					<ion-label position="stacked">{{'COMMON.PROFILE.CONFIRM_NEW_PASSWORD' | translate}}</ion-label>
+					<ion-input
+						formControlName="passwordConfirm"
+						autocapitalize="off"
+						[ngClass]="{'error': (isSubmitted && !myForm.controls.passwordConfirm.valid)}"
+						[placeholder]="'COMMON.PROFILE.CONFIRM_NEW_PASSWORD' | translate"
+						type="password"
+					></ion-input>
+				</ion-item>
+			</form>
 
-                <ion-item class="password-item">
-                    <ion-label position="stacked">Confirm New Password</ion-label>
-                    <ion-input
-                            formControlName="passwordConfirm"
-                            autocapitalize="off"
-                            [ngClass]="{'error': (isSubmitted && !myForm.controls.passwordConfirm.valid)}"
-                            placeholder="Confirm new password"
-                            type="password"
-                    ></ion-input>
-                </ion-item>
+			<ion-item tappable lines="none" class="agree-checkbox">
+				<ion-label class="ion-text-wrap">
+					{{'PAGE.NEW_ACCOUNT_SETUP.I_HAVE_READ_AND_AGREE' | translate}}
+					<a routerLink="/terms-conditions">{{'PAGE.NEW_ACCOUNT_SETUP.TERMS_CONDITIONS' | translate}}</a>
+				</ion-label>
+				<ion-checkbox mode="md" slot="start" [(ngModel)]="isConfirm"></ion-checkbox>
+			</ion-item>
+		</div>
 
-            </Form>
-
-            <ion-item tappable lines="none" class="agree-checkbox">
-                <ion-label class="ion-text-wrap">
-                    I have read and agree with
-                    <a routerLink="/terms-conditions">Terms & Conditions</a>
-                </ion-label>
-                <ion-checkbox mode="md" slot="start" [(ngModel)]="isConfirm"></ion-checkbox>
-            </ion-item>
-
-        </div>
-
-        <ion-button [disabled]="!isConfirm" expand="full" class="signin-btn" (click)="onSubmit()">Sign In</ion-button>
-        <div class="fill-vertical-space"></div>
-    </div>
+		<ion-button [disabled]="!isConfirm" expand="full" class="signin-btn" (click)="onSubmit()">{{'PAGE.NEW_ACCOUNT_SETUP.SIGN_IN' | translate}}</ion-button>
+		<div class="fill-vertical-space"></div>
+	</div>
 </ion-content>

@@ -1,98 +1,73 @@
-<app-portrait-orientation *ngIf="isShowOritationPortrait;else formView"
-                          (close)="isShowOritationPortrait=false"></app-portrait-orientation>
+<app-portrait-orientation *ngIf="isShowOritationPortrait;else formView" (close)="isShowOritationPortrait=false"></app-portrait-orientation>
 
 <ng-template #formView>
-    <ion-header mode="ios">
-        <ng-container *ngIf="sharedDataService.dedicatedMode; else personalMode">
-            <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-                                 (closeModal)="onClose()"
-                                 [modalSubTitle]="formBuilderDetail?.title"></app-modal-header-dm>
-        </ng-container>
+	<ion-header mode="ios">
+		<ng-container *ngIf="sharedDataService.dedicatedMode; else personalMode">
+			<app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" (closeModal)="onClose()" [modalSubTitle]="formBuilderDetail?.title"></app-modal-header-dm>
+		</ng-container>
 
-        <ng-template #personalMode>
-            <app-modal-header [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
+		<ng-template #personalMode>
+			<app-modal-header [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
 
-            <app-next-prev-toolbar [isError]="(errorMessage && errorMessage.length>0)"
-                                   [currentCount]="currentQuestionIndex"
-                                   [totalCount]="questionElementIds.length" (next)="next()"
-                                   (previous)="previous()"></app-next-prev-toolbar>
-        </ng-template>
+			<app-next-prev-toolbar
+				[isError]="(errorMessage && errorMessage.length>0)"
+				[currentCount]="currentQuestionIndex"
+				[totalCount]="questionElementIds.length"
+				(next)="next()"
+				(previous)="previous()"
+			></app-next-prev-toolbar>
+		</ng-template>
 
-        <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+		<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+	</ion-header>
 
-    </ion-header>
+	<ion-content #content [scrollEvents]="true" (ionScrollEnd)="onScrollEnd($event)" (ionScroll)="onScroll($event)" mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+		<div class="content-container">
+			<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+				<ion-list lines="none" mode="ios">
+					<ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index;">
+						<ng-container *ngIf="utilService.shouldShowSection(section)">
+							<app-section-title
+								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
+							>
+							</app-section-title>
 
+							<app-custom-questions-container
+								[sectionIndex]="sectionIndex"
+								[sectionId]="section.sectionId"
+								[questionElementIds]="questionElementIds"
+								[questions]="section.questions"
+								[isSubmitted]="isSubmitted"
+								[formGroup]="formGroup"
+								[section]="section"
+							></app-custom-questions-container>
+						</ng-container>
+					</ng-container>
 
-    <ion-content
-        #content
-        [scrollEvents]="true"
-        (ionScrollEnd)="onScrollEnd($event)"
-        (ionScroll)="onScroll($event)"
-        mode="ios"
-        [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
+					<!--        End of form -->
+					<ng-container *ngIf="!sharedDataService.dedicatedMode">
+						<div class="hr-line-full ion-margin-top"></div>
 
+						<ion-item class="ion-margin-vertical text-bottom-msg">
+							<ion-label class="ion-text-wrap ion-text-center"> {{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}} </ion-label>
+						</ion-item>
 
-        <div class="content-container">
+						<ion-item class="ion-margin-vertical ion-padding-bottom">
+							<ion-button type="submit" expand="full" class="action-btn">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+						</ion-item>
+					</ng-container>
+				</ion-list>
+			</form>
 
-            <Form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+			<div class="fill-vertical-space"></div>
 
-                <ion-list lines="none" mode="ios">
-                    <ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index;">
-                        <ng-container *ngIf="utilService.shouldShowSection(section)">
-                            <app-section-title
-                                    [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle">
-                            </app-section-title>
-
-                            <app-custom-questions-container
-                                    [sectionIndex]="sectionIndex"
-                                    [sectionId]="section.sectionId"
-                                    [questionElementIds]="questionElementIds"
-                                    [questions]="section.questions"
-                                    [isSubmitted]="isSubmitted"
-                                    [formGroup]="formGroup"
-                                    [section]="section"
-                            ></app-custom-questions-container>
-                        </ng-container>
-                    </ng-container>
-
-                    <!--        End of form -->
-                    <ng-container *ngIf="!sharedDataService.dedicatedMode">
-
-                        <div class="hr-line-full ion-margin-top"></div>
-
-                        <ion-item class="ion-margin-vertical text-bottom-msg">
-                            <ion-label class="ion-text-wrap ion-text-center">
-                                You've reached the end of the form.
-                                Please check your answers and sign-off.
-                            </ion-label>
-                        </ion-item>
-
-                        <ion-item class="ion-margin-vertical ion-padding-bottom">
-                            <ion-button type="submit" expand="full" class="action-btn">Sign-Off</ion-button>
-                        </ion-item>
-
-                    </ng-container>
-
-
-                </ion-list>
-            </Form>
-
-            <div class="fill-vertical-space"></div>
-
-            <!--        End of form -->
-            <ng-container *ngIf="sharedDataService.dedicatedMode">
-                <ion-item class="text-bottom-msg" lines="none">
-                    <ion-label class="ion-text-wrap ion-padding">
-                        You've reached the end of the form.
-                        Please check your answers and sign-off.
-                    </ion-label>
-                    <ion-button slot="end" class="action-btn" (click)="onSubmit()">Sign-Off</ion-button>
-                </ion-item>
-            </ng-container>
-        </div>
-
-    </ion-content>
+			<!--        End of form -->
+			<ng-container *ngIf="sharedDataService.dedicatedMode">
+				<ion-item class="text-bottom-msg" lines="none">
+					<ion-label class="ion-text-wrap ion-padding"> {{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}} </ion-label>
+					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+				</ion-item>
+			</ng-container>
+		</div>
+	</ion-content>
 </ng-template>
-
-
-
