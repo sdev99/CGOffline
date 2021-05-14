@@ -146,6 +146,8 @@ export class SharedDataService {
 
 	autocheckoutTimeoutRef = {};
 
+	translateService: TranslateService;
+
 	constructor(
 		private router: Router,
 		private platform: Platform,
@@ -154,8 +156,7 @@ export class SharedDataService {
 		private navCtrl: NavController,
 		private observablesService: ObservablesService,
 		public utilService: UtilService,
-		private screenOrientation: ScreenOrientation,
-		private translateService: TranslateService
+		private screenOrientation: ScreenOrientation //  private translateService: TranslateService
 	) {
 		// Set dynamic api url for WebApp based on domain
 		if (environment.isWebApp) {

@@ -61,6 +61,8 @@ export class AppComponent {
 				this.translateService.use(appLang);
 			}
 
+			this.sharedDataService.translateService = this.translateService;
+
 			Plugins.App.addListener('appRestoredResult', (data: any) => {
 				this.observablesService.publishSomeData(EnumService.ObserverKeys.APP_RESTORED_RESULT, data.data);
 			});
