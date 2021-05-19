@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
@@ -29,7 +29,8 @@ export class MyProfileEditPage implements OnInit {
 		private accountService: AccountService,
 		public sharedDataService: SharedDataService,
 		public utilService: UtilService,
-		public translateService: TranslateService
+		public translateService: TranslateService,
+		public ngZone: NgZone
 	) {
 		this.user = accountService.userValue;
 		this.profile = sharedDataService.userProfile;
@@ -81,15 +82,15 @@ export class MyProfileEditPage implements OnInit {
 						// get updated userprofile detail
 						this.accountService.getUserProfile(this.user?.userId).subscribe(
 							async (profile) => {
-								this.utilService.hideLoading();
-
 								this.profile = profile;
-
-								this.navCtrl.navigateRoot(['checkin-success'], {
-									queryParams: {
-										message: 'Profile Updated',
-										nextPage: '/tabs/my-profile',
-									},
+								this.sharedDataService.getLangFileTranslation(() => {
+									this.utilService.hideLoading();
+									this.navCtrl.navigateRoot(['checkin-success'], {
+										queryParams: {
+											message: 'Profile Updated',
+											nextPage: '/tabs/my-profile',
+										},
+									});
 								});
 							},
 							(error) => {

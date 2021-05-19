@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { DemoDataService } from '../../services/demo-data.service';
 import { NavController } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
@@ -71,10 +71,14 @@ export class DashboardPage implements OnInit, OnDestroy {
 				this.getActivityList();
 			});
 		}
+
+		this.utilService.presentLoadingWithOptions();
+		this.sharedDataService.getLangFileTranslation(() => {
+			this.utilService.hideLoading();
+		});
 	}
 
 	ionViewWillEnter() {
-		console.log('Dashboard ionViewWillEnter');
 		this.accountService.checkForMobileLanguageId();
 		this.observablesService.publishSomeData(EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST, {});
 	}

@@ -147,6 +147,7 @@ export class SharedDataService {
 	autocheckoutTimeoutRef = {};
 
 	translateService: TranslateService;
+	companyLangaugeTranslations = {};
 
 	constructor(
 		private router: Router,
@@ -408,6 +409,26 @@ export class SharedDataService {
 					.subscribe(() => {});
 			}
 		}
+	};
+
+	/**
+	 * GetLangFileTranslation from api
+	 * @param callBack
+	 */
+	getLangFileTranslation = (callBack) => {
+		this.apiServiceRerence.getCompanyLanguageTemplate().subscribe(
+			(response: Response) => {
+				if (response) {
+					this.translateService.setTranslation('en', response, false);
+					this.translateService.use('en');
+					this.companyLangaugeTranslations = response;
+				}
+				callBack && callBack();
+			},
+			(error) => {
+				callBack && callBack();
+			}
+		);
 	};
 
 	/**

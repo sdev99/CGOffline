@@ -1,6 +1,6 @@
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { from, Observable, throwError } from 'rxjs';
-import { map, catchError, mergeMap } from 'rxjs/operators';
+import { map, catchError, mergeMap, share } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { EnumService } from '../services/enum.service';
 import { SharedDataService } from '../services/shared-data.service';
@@ -37,6 +37,13 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 		request = request.clone({
 			headers: request.headers.set('Accept', 'application/json'),
 		});
+
+		if (!this.sharedDataService.dedicatedMode && this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) {
+			const langId = this.sharedDataService.userProfile.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue.mobileAppLanguageID;
+			request = request.clone({
+				headers: request.headers.set('languageID', langId.toString()),
+			});
+		}
 
 		return next.handle(request).pipe(
 			map((event: HttpEvent<any>) => {

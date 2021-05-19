@@ -171,6 +171,7 @@ export class EnumService {
 		GetRiskAssessmentProbabilityOptions: 'GetRiskAssessmentProbabilityOptions', // GET
 		GetRiskItemList: 'GetRiskItemList', // GET
 		GetHazardItemList: 'GetHazardItemList', // GET
+		GetCompanyLanguageTemplate: 'GetCompanyLanguageTemplate', // GET
 	};
 
 	static ApiResponseCode = {

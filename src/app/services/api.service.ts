@@ -51,6 +51,10 @@ export class ApiService {
 		);
 	}
 
+	getCompanyLanguageTemplate() {
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetCompanyLanguageTemplate}`);
+	}
+
 	getEntityByQRCode(qrCode) {
 		let companyID;
 		if (this.sharedDataService.dedicatedMode) {
