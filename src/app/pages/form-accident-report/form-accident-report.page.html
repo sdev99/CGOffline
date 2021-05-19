@@ -410,7 +410,7 @@
 												<div class="selected-parts-view">
 													<ng-container *ngFor="let item of selectedBodyParts | keyvalue">
 														<div class="body-part" *ngIf="item.value.checked">
-															<div class="name">{{'PAGE.FORM.ACCIDENT.BODY_PARTS.'+item.value.langkey | translate}}}}</div>
+															<div class="name">{{'PAGE.FORM.ACCIDENT.BODY_PARTS.'+item.value.langkey | translate}}</div>
 															<ion-button fill="clear" (click)="removeSelectedBodyPart(item.value)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
 															</ion-button>

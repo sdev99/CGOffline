@@ -589,6 +589,11 @@ export class FormRiskassessmentPage implements OnInit {
 		} catch (error) {}
 	};
 
+	createOptionTitleLangKey(title) {
+		const keyTitle = title.replace(' ', '_');
+		return 'PAGE.FORM.RISK_ASSESSMENT.OPTIONS_' + keyTitle.toUpperCase();
+	}
+
 	getRatingTypeAndColor = (rating) => {
 		let color = '';
 		let type = '';

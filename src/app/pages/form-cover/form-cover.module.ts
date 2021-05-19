@@ -8,10 +8,10 @@ import { FormCoverPageRoutingModule } from './form-cover-routing.module';
 
 import { FormCoverPage } from './form-cover.page';
 import { ComponentsModule } from '../../components/components.module';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-	imports: [CommonModule, FormsModule, IonicModule, FormCoverPageRoutingModule, ComponentsModule, TranslateService],
+	imports: [CommonModule, FormsModule, IonicModule, FormCoverPageRoutingModule, ComponentsModule, TranslateModule],
 	declarations: [FormCoverPage],
 })
 export class FormCoverPageModule {}

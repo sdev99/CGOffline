@@ -80,7 +80,8 @@
 															*ngFor="let item of severityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor+' rating'+item.riskAssessmentSeverityOptionId"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + ( createOptionTitleLangKey(item.riskAssessmentSeverityOptionTitle) |
+															translate)}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -100,7 +101,8 @@
 															*ngFor="let item of probabilityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor+' rating'+item.riskAssessmentProbabilityOptionId"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentProbabilityOptionTitle) |
+															translate)}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -169,7 +171,8 @@
 															*ngFor="let item of severityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor+' rating'+item.riskAssessmentSeverityOptionId"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentSeverityOptionTitle) |
+															translate)}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -190,7 +193,8 @@
 															*ngFor="let item of probabilityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor+' rating'+item.riskAssessmentProbabilityOptionId"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentProbabilityOptionTitle) |
+															translate)}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>

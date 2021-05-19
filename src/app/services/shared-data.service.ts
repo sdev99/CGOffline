@@ -419,7 +419,7 @@ export class SharedDataService {
 		this.apiServiceRerence.getCompanyLanguageTemplate().subscribe(
 			(response: Response) => {
 				if (response) {
-					this.translateService.setTranslation('en', response, false);
+					this.translateService.setTranslation('en', response, true);
 					this.translateService.use('en');
 					this.companyLangaugeTranslations = response;
 				}

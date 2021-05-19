@@ -73,7 +73,10 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 					let errorMessage = '';
 					if (error.ResponseException && error.ResponseException.ValidationErrors && error.ResponseException.ValidationErrors.length > 0) {
 						error.ResponseException.ValidationErrors.map((data) => {
-							errorMessage = errorMessage + data.Field + ' : ' + data.Message + '\n';
+							const errorField = this.sharedDataService.companyLangaugeTranslations[data.Field] || data.Field;
+							const errorData = this.sharedDataService.companyLangaugeTranslations[data.Message] || data.Message;
+
+							errorMessage = errorMessage + errorField + ' : ' + errorData + '\n';
 						});
 					}
 

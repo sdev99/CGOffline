@@ -8,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent, HttpLoaderFactory } from './app.component';
 import { ComponentsModule } from './components/components.module';
+import { ModalsModule } from './modals/modals.module';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { Badge } from '@ionic-native/badge/ngx';
 import { PipesModule } from './pipes/pipes.module';
@@ -22,7 +23,6 @@ import { DirectivesModule } from './directives/directives.module';
 import { HTTP } from '@ionic-native/http/ngx';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpConfigInterceptor } from './helpers/httpConfig.interceptor';
-import { SearchLocationPage } from './modals/search-location/search-location.page';
 import { FormsModule } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture/ngx';
@@ -32,7 +32,7 @@ import { environment } from '../environments/environment';
 import { TemplateDropdownComponent } from './components/template-dropdown/template-dropdown.component';
 
 @NgModule({
-	declarations: [AppComponent, SearchLocationPage, TemplateDropdownComponent],
+	declarations: [AppComponent, TemplateDropdownComponent],
 	entryComponents: [TemplateDropdownComponent],
 	imports: [
 		BrowserModule,
@@ -51,6 +51,7 @@ import { TemplateDropdownComponent } from './components/template-dropdown/templa
 		}),
 		AppRoutingModule,
 		ComponentsModule,
+		ModalsModule,
 		CommonModule,
 		PipesModule,
 		DirectivesModule,
