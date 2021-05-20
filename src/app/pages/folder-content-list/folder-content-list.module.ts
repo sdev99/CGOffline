@@ -8,15 +8,10 @@ import { FolderContentListPageRoutingModule } from './folder-content-list-routin
 
 import { FolderContentListPage } from './folder-content-list.page';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    FolderContentListPageRoutingModule,
-    ComponentsModule
-  ],
-  declarations: [FolderContentListPage]
+	imports: [CommonModule, FormsModule, IonicModule, FolderContentListPageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [FolderContentListPage],
 })
 export class FolderContentListPageModule {}

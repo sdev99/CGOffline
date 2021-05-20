@@ -106,6 +106,7 @@
 			"OLD_PASSWORD": "Old Password",
 			"ENTER_OLD_PASSWORD": "Enter Old Password",
 			"NEW_PASSWORD_SET": "New Password Set",
+			"PROFILE_UPDATED": "Profile Updated",
 			"VIEW_UPDATE_SETTINGS": "View / Update Settings",
 			"LOGOUT": "Log Out"
 		},

@@ -85,11 +85,13 @@ export class MyProfileEditPage implements OnInit {
 								this.profile = profile;
 								this.sharedDataService.getLangFileTranslation(() => {
 									this.utilService.hideLoading();
-									this.navCtrl.navigateRoot(['checkin-success'], {
-										queryParams: {
-											message: 'Profile Updated',
-											nextPage: '/tabs/my-profile',
-										},
+									this.translateService.get('PAGE.PROFILE.PROFILE_UPDATED').subscribe((res) => {
+										this.navCtrl.navigateRoot(['checkin-success'], {
+											queryParams: {
+												message: res,
+												nextPage: '/tabs/my-profile',
+											},
+										});
 									});
 								});
 							},

@@ -14,7 +14,7 @@
 
 	<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
-	<app-back-continue-toolbar [title]="{{'PAGE.FORM.FORM_NAME' | translate}}" *ngIf="sharedDataService.dedicatedMode" (back)="onBack()" (continue)="onContinue()"></app-back-continue-toolbar>
+	<app-back-continue-toolbar [title]="'PAGE.FORM.FORM_NAME' | translate" *ngIf="sharedDataService.dedicatedMode" (back)="onBack()" (continue)="onContinue()"></app-back-continue-toolbar>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
