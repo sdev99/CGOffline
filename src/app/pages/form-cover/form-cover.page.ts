@@ -41,9 +41,12 @@ export class FormCoverPage {
 				if (param.formID && param.formVersionID) {
 					if (param.languageID) {
 						sharedDataService.currentLanguageId = param.languageID;
+						sharedDataService.getLangFileTranslation(() => {
+							this.getFormBuilderDetails(param.formType, param.formID, param.formVersionID);
+						});
+					} else {
+						this.getFormBuilderDetails(param.formType, param.formID, param.formVersionID);
 					}
-
-					this.getFormBuilderDetails(param.formType, param.formID, param.formVersionID);
 				}
 			});
 		}

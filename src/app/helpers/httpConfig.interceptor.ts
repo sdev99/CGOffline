@@ -39,7 +39,7 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 		});
 
 		if (!this.sharedDataService.dedicatedMode && this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) {
-			const langId = this.sharedDataService.userProfile.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue.mobileAppLanguageID;
+			const langId = this.sharedDataService.userProfile?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue?.mobileAppLanguageID;
 			request = request.clone({
 				headers: request.headers.set('languageID', langId.toString()),
 			});
