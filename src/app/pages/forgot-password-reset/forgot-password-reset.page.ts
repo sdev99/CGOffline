@@ -8,6 +8,8 @@ import { AccountService } from '../../services/account.service';
 import { Profile } from '../../_models/profile';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiService } from 'src/app/services/api.service';
+import { SharedDataService } from 'src/app/services/shared-data.service';
 
 @Component({
 	selector: 'app-forgot-password-reset',
@@ -21,11 +23,22 @@ export class ForgotPasswordResetPage implements OnInit {
 
 	resetCode;
 
-	constructor(public utilService: UtilService, public navCtrl: NavController, public route: ActivatedRoute, public accountService: AccountService, public translateService: TranslateService) {
+	constructor(
+		public utilService: UtilService,
+		public navCtrl: NavController,
+		public route: ActivatedRoute,
+		public accountService: AccountService,
+		public translateService: TranslateService,
+		public sharedDataService: SharedDataService
+	) {
 		route.queryParams.subscribe((params: any) => {
 			if (params) {
 				if (params.code) {
 					this.resetCode = params.code;
+					this.utilService.presentLoadingWithOptions();
+					this.sharedDataService.getLangFileTranslation(() => {
+						this.utilService.hideLoading();
+					}, this.resetCode);
 				}
 			}
 		});
@@ -66,7 +79,7 @@ export class ForgotPasswordResetPage implements OnInit {
 						}
 					);
 			} else {
-				this.translateService.get('COMMON.ERRORS.PASSWORDS_NOT_MATCHING').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.PASSWORDS_NOT_MATCHING').subscribe((res) => {
 					this.errorMessage = res;
 				});
 			}

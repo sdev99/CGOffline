@@ -1,6 +1,6 @@
 <ion-header mode="ios">
 	<ion-toolbar mode="ios" class="part-1">
-		<ion-title size="large">{{'PAGE.PROFILE.MY_PROFILE' | translate}}</ion-title>
+		<ion-title size="large">{{'PAGESPECIFIC_TEXT.PROFILE.MY_PROFILE' | translate}}</ion-title>
 
 		<ion-buttons slot="end">
 			<ion-button size="small" fill="clear" (click)="scanQrCode()">
@@ -22,8 +22,8 @@
 
 		<ion-img *ngIf="profile&&profile.qrCodeImage;" [src]="'data:image/jpeg;base64,'+ profile.qrCodeImage" class="qr-code"></ion-img>
 
-		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">{{'PAGE.PROFILE.VIEW_UPDATE_SETTINGS' | translate}}</ion-button>
-		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">{{'PAGE.PROFILE.VIEW_MY_SIGNED_DOCUMENTS' | translate}} </ion-button>
+		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_UPDATE_SETTINGS' | translate}}</ion-button>
+		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_MY_SIGNED_DOCUMENTS' | translate}} </ion-button>
 
 		<div class="fill-vertical-space"></div>
 	</div>

@@ -38,7 +38,7 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 			headers: request.headers.set('Accept', 'application/json'),
 		});
 
-		if (!this.sharedDataService.dedicatedMode && this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) {
+		if (!this.sharedDataService.dedicatedMode && ((this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) || this.sharedDataService.currentLanguageId)) {
 			const langId = this.sharedDataService.userProfile?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue?.mobileAppLanguageID;
 			request = request.clone({
 				headers: request.headers.set('languageID', langId.toString()),

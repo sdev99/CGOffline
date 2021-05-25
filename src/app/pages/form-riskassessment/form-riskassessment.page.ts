@@ -188,7 +188,7 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	async openTaskTemplateForTask(event, task) {
-		this.translateService.get('PAGE.FORM.RISK_ASSESSMENT.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
+		this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
 			const popover = await this.popoverController.create({
 				component: TemplateDropdownComponent,
 				cssClass: 'template-dropdown-popover',
@@ -213,7 +213,7 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	async openTaskTemplateForControlMeasure(event, controlMeasure) {
-		this.translateService.get('PAGE.FORM.RISK_ASSESSMENT.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
+		this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
 			const popover = await this.popoverController.create({
 				component: TemplateDropdownComponent,
 				cssClass: 'template-dropdown-popover',
@@ -292,49 +292,76 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	removeTask(section, taskIndex) {
-		this.translateService.get(['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION']).subscribe((res) => {
-			this.utilService.showConfirmAlert(res['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'], res['PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION'], (status) => {
-				if (status) {
-					try {
-						section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
-						section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
-							taskAnswer.taskAnswerDisplayOrder = key + 1;
-						});
-						this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
-					} catch (error) {}
-				}
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
+								section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
+									taskAnswer.taskAnswerDisplayOrder = key + 1;
+								});
+								this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
+							} catch (error) {}
+						}
+					}
+				);
 			});
-		});
 	}
 
 	removeHazard(task, hazardIndex) {
-		this.translateService.get(['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION']).subscribe((res) => {
-			this.utilService.showConfirmAlert(res['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'], res['PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION'], (status) => {
-				if (status) {
-					try {
-						task.hazardAnswers.splice(hazardIndex, 1);
-						task.hazardAnswers.map((hazardAnswer: RAhazardAswerObject, key) => {
-							hazardAnswer.hazardAnswerDisplayOrder = key + 1;
-						});
-					} catch (error) {}
-				}
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								task.hazardAnswers.splice(hazardIndex, 1);
+								task.hazardAnswers.map((hazardAnswer: RAhazardAswerObject, key) => {
+									hazardAnswer.hazardAnswerDisplayOrder = key + 1;
+								});
+							} catch (error) {}
+						}
+					}
+				);
 			});
-		});
 	}
 
 	removeControlMeasure(hazard, controlMeasureIndex) {
-		this.translateService.get(['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION']).subscribe((res) => {
-			this.utilService.showConfirmAlert(res['PAGE.FORM.RISK_ASSESSMENT.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'], res['PAGE.FORM.RISK_ASSESSMENT.DELETE_CONFIRMATION'], (status) => {
-				if (status) {
-					try {
-						hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
-						hazard.controlMeasureAnswers.map((controlMeasureAnswer: RAcontrolMeasureAnswerObject, key) => {
-							controlMeasureAnswer.controlMeasureAnswerDisplayOrder = key + 1;
-						});
-					} catch (error) {}
-				}
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
+								hazard.controlMeasureAnswers.map((controlMeasureAnswer: RAcontrolMeasureAnswerObject, key) => {
+									controlMeasureAnswer.controlMeasureAnswerDisplayOrder = key + 1;
+								});
+							} catch (error) {}
+						}
+					}
+				);
 			});
-		});
 	}
 
 	async getCompanyUserList() {
@@ -501,12 +528,6 @@ export class FormRiskassessmentPage implements OnInit {
 		this.filehandlerService.openFile();
 	}
 
-	addImage(question) {
-		this.photoService.choosePhotoOption((photo) => {
-			this.openImageAnnotation(question, photo);
-		});
-	}
-
 	openImageAnnotation = (question, photo) => {
 		this.sharedDataService.isOpenImageAnnotation = true;
 		this.sharedDataService.setAnnotationImage(photo);
@@ -590,8 +611,11 @@ export class FormRiskassessmentPage implements OnInit {
 	};
 
 	createOptionTitleLangKey(title) {
-		const keyTitle = title.replace(' ', '_');
-		return 'PAGE.FORM.RISK_ASSESSMENT.OPTIONS_' + keyTitle.toUpperCase();
+		if (title.indexOf('_') === -1) {
+			const keyTitle = title.replace(' ', '_');
+			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.OPTIONS_' + keyTitle.toUpperCase();
+		}
+		return title;
 	}
 
 	getRatingTypeAndColor = (rating) => {
@@ -600,16 +624,16 @@ export class FormRiskassessmentPage implements OnInit {
 
 		if (rating >= 1 && rating <= 3) {
 			color = UtilService.getColorForAnswerChoice('green');
-			type = 'Low';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.LOW';
 		} else if (rating >= 4 && rating <= 6) {
 			color = UtilService.getColorForAnswerChoice('yellow');
-			type = 'Moderate';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.MODERATE';
 		} else if (rating >= 8 && rating <= 12) {
 			color = UtilService.getColorForAnswerChoice('orange');
-			type = 'High';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.HIGH';
 		} else if (rating >= 15 && rating <= 25) {
 			color = UtilService.getColorForAnswerChoice('red');
-			type = 'Extreme';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.EXTREME';
 		} else {
 			color = '#ffffff';
 			type = '';

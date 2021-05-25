@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-	<app-modal-header [modalTitle]="'PAGE.PROFILE.EDIT_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.PROFILE.EDIT_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
 <ion-content mode="md">
@@ -8,44 +8,44 @@
 	<form [formGroup]="profileForm">
 		<ion-list lines="none">
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'PAGE.PROFILE.OLD_PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.PROFILE.OLD_PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="oldpassword"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !profileForm.controls.oldpassword.valid)}"
-					[placeholder]="'PAGE.PROFILE.ENTER_OLD_PASSWORD' | translate"
+					[placeholder]="'PAGESPECIFIC_TEXT.PROFILE.ENTER_OLD_PASSWORD' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'COMMON.PROFILE.NEW_PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.NEW_PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="newpassword"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !profileForm.controls.newpassword.valid)}"
-					[placeholder]="'COMMON.PROFILE.ENTER_NEW_PASSWORD' | translate"
+					[placeholder]="'SHARED_TEXT.PROFILE.ENTER_NEW_PASSWORD' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'COMMON.PROFILE.CONFIRM_NEW_PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="confirmnewpassword"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !profileForm.controls.confirmnewpassword.valid)}"
-					[placeholder]="'COMMON.PROFILE.CONFIRM_NEW_PASSWORD' | translate"
+					[placeholder]="'SHARED_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>
 
 			<div class="update-btn">
-				<ion-button expand="full" fill="clear" (click)="onSubmit()">{{'PAGE.PROFILE.CHANGE_PASSWORD' | translate}}</ion-button>
+				<ion-button expand="full" fill="clear" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.PROFILE.CHANGE_PASSWORD' | translate}}</ion-button>
 			</div>
 
 			<div class="cancel-btn">
-				<ion-button expand="full" fill="clear" (click)="onClose()">{{'COMMON.CANCEL' | translate}}</ion-button>
+				<ion-button expand="full" fill="clear" (click)="onClose()">{{'SHARED_TEXT.CANCEL' | translate}}</ion-button>
 			</div>
 		</ion-list>
 	</form>

@@ -5,10 +5,10 @@
 
 		<ion-buttons class="am-pm-btns">
 			<ion-button [ngClass]="{ active: timePeriod === 'am' || !timePeriod }" (click)="timePeriodChange('am')">
-				{{ 'PAGE.FORM.AM' | translate }}
+				{{ 'PAGESPECIFIC_TEXT.FORM_LIST.AM' | translate }}
 			</ion-button>
 			<ion-button [ngClass]="{ active: timePeriod === 'pm' }" (click)="timePeriodChange('pm')">
-				{{ 'PAGE.FORM.PM' | translate }}
+				{{ 'PAGESPECIFIC_TEXT.FORM_LIST.PM' | translate }}
 			</ion-button>
 		</ion-buttons>
 	</div>

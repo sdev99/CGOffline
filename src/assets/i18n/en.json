@@ -1,6 +1,7 @@
 {
-	"COMMON": {
+	"SHARED_TEXT": {
 		"CANCEL": "Cancel",
+		"DONE": "Done",
 		"OK": "Ok",
 		"NO": "No",
 		"YES": "Yes",
@@ -10,9 +11,9 @@
 		"BACK": "Back",
 		"CONTINUE": "Continue",
 		"HEADER": {
-			"CURRENT_CHECK_IN": "Current Check-In",
 			"DASHBOARD": "Dashboard",
 			"CHECKED_IN": "Checked-in",
+			"CURRENT_CHECK_IN": "Current Check-In",
 			"YOU_ARENT_CHECKED_IN": "You aren’t checked in",
 			"CHECKED_IN_BY_QR_CODE": "Check In by QR Code",
 			"CHECKED_IN_BY_LIST": "Check In by List"
@@ -29,10 +30,7 @@
 			"TAKE_PHOTO": "Take a Photo",
 			"CHOOSE_PHOTO": "Choose Photo",
 			"TAKE_PHOTO_VIDEO": "Take a Photo/Video",
-			"CHOOSE_PHOTO_VIDEO": "Choose Photo/Video",
-			"TAKE_PHOTO_FROM": "Take photo from",
-			"CAMERA": "Camera",
-			"GALLERY": "Gallery"
+			"CHOOSE_PHOTO_VIDEO": "Choose Photo/Video"
 		},
 		"ERRORS": {
 			"CAMERA_PERMISSION_PERMANENTLY_DENIED": "Camera permission was permanently denied.",
@@ -54,7 +52,7 @@
 			"REQUIRED_FIELDS_NEED_TO_FILL": "required fields are needed to be filled in."
 		}
 	},
-	"PAGE": {
+	"PAGESPECIFIC_TEXT": {
 		"LOGIN": {
 			"SIGN_IN": "Sign In",
 			"PAGE_DESCRIPTION": "Please enter your credentials to sign in.",
@@ -81,10 +79,6 @@
 			"DESCRIPTION": "Please set up new password for your account",
 			"CONFIRM_MY_NEW_PASSWORD": "Confirm my New password"
 		},
-		"IMAGE_ANNOTATION": {
-			"YOU_ARE_LEAVING": "You are leaving",
-			"YOU_ARE_LEAVING_MESSAGE": "Are you sure to exit without saving?"
-		},
 		"NEW_ACCOUNT_SETUP": {
 			"TITLE": "New Account Setup",
 			"HELLO": "Hello",
@@ -110,7 +104,12 @@
 			"VIEW_UPDATE_SETTINGS": "View / Update Settings",
 			"LOGOUT": "Log Out"
 		},
-		"FORM": {
+		"DOCUMENT_LIST": {
+			"WHAT_DO_YOU_WANT_TO_DO_WITH_THIS_DOCUMENT": "What do you want to do this with this document?",
+			"VIEW_AND_SIGNOFF": "View and Sign-Off",
+			"VIEW_ONLY": "View Only"
+		},
+		"FORM_LIST": {
 			"ITEM": "Item",
 			"OF": "of",
 			"PLEASE_ROTATE_DEVICE_TO_PORTRAIT_MODE": "Please rotate the device to \"Portrait mode\"",
@@ -124,8 +123,6 @@
 			"EXIT_ALERT_EXIT_BUTTON": "Exit Now",
 			"SIGNOFF": "Sign-Off",
 			"FORM_NAME": "Form Name",
-			"WORK_PERMIT_FORMS": "Work Permit Forms",
-			"WORK_PERMIT": "Work Permit",
 			"ENTITY": "Entity",
 			"FORM_TYPE": "Form Type",
 			"SIGNATURE_REJECTED": "Signature Rejected",
@@ -134,101 +131,120 @@
 			"ON": "on",
 			"EXPLANATION": "Explanation",
 			"LAUNCH_THE_FORM": "Launch the Form",
-			"NO_PERMITS_AVAILABLE": "No permits available",
 			"YOU_HAVE_REACHED_END_OF_FORM": "You've reached the end of the form. Please check your answers and sign-off.",
 			"FORM_DETAILS": "Form Details",
-			"PASSED": "Passed",
-			"PERMIT_ISSUED": "PERMIT ISSUED",
-			"YOUR_WORK_PERMIT_IS_ACTIVE": "Your work permit is active",
-			"NOT_PASSED": "Not Passed",
-			"NO_PERMIT": "NO PERMIT",
-			"NOT_ELIGIBLE_FOR_WORK_PERMIT": "You were found not eligible for a work permit.",
-			"ACCIDENT": {
-				"MANUAL_LOCATION_SUGGESTION": "if the place is not available in the dropdown above, please type location name to the next box below manually.",
-				"TAP_ON_AFFECTED_AREA": "tap on the effected area to choose",
-				"PLACE_NOT_IN_THE_LIST": "Place not in the list",
-				"LOCATION_NAME": "Location Name",
-				"IF_NOT_AVAILABLE_IN_DROPDOWN": "if not available in above dropdown",
-				"WHERE_THE_ACCIDENT_HAPPENED": "Where the accident happened ?",
-				"SELECT_TYPE": "Select Type",
-				"BODY_PARTS": {
-					"HEAD": "Head",
-					"HEAD_SOFT_TISSUE": "Head Soft Tissue",
-					"FACE": "Face",
-					"TORSO": "Torso",
-					"ABDOMEN": "Abdomen",
-					"CHEST": "Chest",
-					"NECK": "Neck",
-					"RIBS": "Ribs",
-					"BACK": "Back",
-					"UPPER_BACK": "Upper Back",
-					"LOWER_BACK": "Lower Back",
-					"BUTTOCKS": "Buttocks",
-					"ARMS": "Arms",
-					"SHOULDER_RIGHT": "Shoulder - Right",
-					"SHOULDER_LEFT": "Shoulder - Left",
-					"ELBOW_RIGHT": "Elbow - Right",
-					"ELBOW_LEFT": "Elbow - Left",
-					"LOWER_ARM_RIGHT": "Lower Arm - Right",
-					"LOWER_ARM_LEFT": "Lower Arm - Left",
-					"WRIST_RIGHT": "Wrist - Right",
-					"WRIST_LEFT": "Wrist - Left",
-					"HAND_RIGHT": "Hand - Right",
-					"HAND_LEFT": "Hand - Left",
-					"FINGER_RIGHT": "Finger - Right",
-					"FINGER_LEFT": "Finger - Left",
-					"LEGS": "Legs",
-					"ANKLE_RIGHT": "Ankle - Right",
-					"ANKLE_LEFT": "Ankle - Left",
-					"FOOT_RIGHT": "Foot - Right",
-					"FOOT_LEFT": "Foot - Left",
-					"KNEE_RIGHT": "Knee - Right",
-					"KNEE_LEFT": "Knee - Left",
-					"UPPER_LEG_RIGHT": "Upper Leg - Right",
-					"UPPER_LEG_LEFT": "Upper Leg - Left",
-					"TOE_RIGHT": "Toe - Right",
-					"TOE_LEFT": "Toe - Left"
+			"FORM_TYPES": {
+				"CUSTOM": "Custom",
+				"RISK_ASSESSMENT": "Risk Assessment",
+				"WORK_PERMIT": "Work Permits",
+				"HAV": "HAV Exposure Calculator",
+				"ACCIDENT_REPORT": "Accident Report"
+			},
+			"SPECIFIC_FORMS": {
+				"WORK_PERMIT_FORM": {
+					"WORK_PERMIT_FORMS": "Work Permit Forms",
+					"WORK_PERMIT": "Work Permit",
+					"NO_PERMITS_AVAILABLE": "No permits available",
+					"PASSED": "Passed",
+					"PERMIT_ISSUED": "PERMIT ISSUED",
+					"YOUR_WORK_PERMIT_IS_ACTIVE": "Your work permit is active",
+					"NOT_PASSED": "Not Passed",
+					"NO_PERMIT": "NO PERMIT",
+					"NOT_ELIGIBLE_FOR_WORK_PERMIT": "You were found not eligible for a work permit."
+				},
+				"ACCIDENTREPORT_FORM": {
+					"MANUAL_LOCATION_SUGGESTION": "if the place is not available in the dropdown above, please type location name to the next box below manually.",
+					"TAP_ON_AFFECTED_BODYPART": "tap on the effected area to choose",
+					"PLACE_NOT_IN_THE_LIST": "Place not in the list",
+					"LOCATION_NAME": "Location Name",
+					"IF_NOT_AVAILABLE_IN_DROPDOWN": "if not available in above dropdown",
+					"WHERE_THE_ACCIDENT_HAPPENED": "Where the accident happened ?",
+					"BODY_PARTS": {
+						"HEAD": "Head",
+						"HEAD_SOFT_TISSUE": "Head Soft Tissue",
+						"FACE": "Face",
+						"TORSO": "Torso",
+						"ABDOMEN": "Abdomen",
+						"CHEST": "Chest",
+						"NECK": "Neck",
+						"RIBS": "Ribs",
+						"BACK": "Back",
+						"UPPER_BACK": "Upper Back",
+						"LOWER_BACK": "Lower Back",
+						"BUTTOCKS": "Buttocks",
+						"ARMS": "Arms",
+						"SHOULDER_RIGHT": "Shoulder - Right",
+						"SHOULDER_LEFT": "Shoulder - Left",
+						"ELBOW_RIGHT": "Elbow - Right",
+						"ELBOW_LEFT": "Elbow - Left",
+						"LOWER_ARM_RIGHT": "Lower Arm - Right",
+						"LOWER_ARM_LEFT": "Lower Arm - Left",
+						"WRIST_RIGHT": "Wrist - Right",
+						"WRIST_LEFT": "Wrist - Left",
+						"HAND_RIGHT": "Hand - Right",
+						"HAND_LEFT": "Hand - Left",
+						"FINGER_RIGHT": "Finger - Right",
+						"FINGER_LEFT": "Finger - Left",
+						"LEGS": "Legs",
+						"ANKLE_RIGHT": "Ankle - Right",
+						"ANKLE_LEFT": "Ankle - Left",
+						"FOOT_RIGHT": "Foot - Right",
+						"FOOT_LEFT": "Foot - Left",
+						"KNEE_RIGHT": "Knee - Right",
+						"KNEE_LEFT": "Knee - Left",
+						"UPPER_LEG_RIGHT": "Upper Leg - Right",
+						"UPPER_LEG_LEFT": "Upper Leg - Left",
+						"TOE_RIGHT": "Toe - Right",
+						"TOE_LEFT": "Toe - Left"
+					}
+				},
+				"RISKASSESSMENT_FORM": {
+					"TASK": "Task",
+					"CONTROL_MEASURE": "Control Measure",
+					"HAZARD": "Hazard",
+					"RISK_RATING": "Risk Rating",
+					"SEVERITY": "Severity",
+					"PROBABILITY": "Probability",
+					"CALCULATED_VALUE": "Calculated Value",
+					"ADD_CONTROL_MEASURE": "add control measure",
+					"RESIDUAL_RISK_RATING": "Residual Risk Rating",
+					"PERSONS_EXPOSED": "Persons Exposed",
+					"MEMBERS_OF_THE_WORKFORCE": "Members of the Workforce",
+					"MEMBERS_OF_THE_PUBLIC": "Members of the Public",
+					"PERSONNEL_EXPOSED_NOTIFICATION": "Personnel Exposed Notification",
+					"ADD_HAZARD": "Add Hazard",
+					"ADD_TASK": "Add Task",
+					"NO_TEMPLATES_AVAILABLE": "No templates available",
+					"DO_YOU_WANT_TO_REMOVE_THIS_ITEM": "Do you want to remove this item?",
+					"DELETE_CONFIRMATION": "Delete Confirmation",
+					"LOW": "Low",
+					"MODERATE": "Moderate",
+					"HIGH": "High",
+					"EXTREME": "Extreme",
+					"OPTIONS_RARE": "Rare",
+					"OPTIONS_UNLIKELY": "Unlikely",
+					"OPTIONS_POSSIBLE": "Possible",
+					"OPTIONS_LIKELY": "Likely",
+					"OPTIONS_ALMOST_CERTAIN": "Almost Certain",
+					"OPTIONS_NEGLIGIBLE": "Negligible",
+					"OPTIONS_MINOR": "Minor",
+					"OPTIONS_MODERATE": "Moderate",
+					"OPTIONS_MAJOR": "Major",
+					"OPTIONS_CATASTROPHIC": "Catastrophic"
+				},
+				"HAVs_FORM": {
+					"YOUR_CURRENT_EXPOSURE": "Your Current Exposure",
+					"CALCULATED_EXPOSURE": "Calculated Exposure",
+					"TOTAL_EXPOSURE_WILL_BE": "Total Exposure Will Be",
+					"ADD_TOOL": "Add Tool",
+					"TOOL": "Tool",
+					"POINTS": "points",
+					"DO_YOU_WANT_TO_REMOVE_THIS_ITEM": "Do you want to remove this item?",
+					"DELETE_CONFIRMATION": "Delete Confirmation"
 				}
-			},
-			"RISK_ASSESSMENT": {
-				"TASK": "Task",
-				"RISK_RATING": "Risk Rating",
-				"SEVERITY": "Severity",
-				"PROBABILITY": "Probability",
-				"CALCULATED_VALUE": "Calculated Value",
-				"ADD_CONTROL_MEASURE": "add control measure",
-				"RESIDUAL_RISK_RATING": "Residual Risk Rating",
-				"PERSONS_EXPOSED": "Persons Exposed",
-				"MEMBERS_OF_THE_WORKFORCE": "Members of the Workforce",
-				"MEMBERS_OF_THE_PUBLIC": "Members of the Public",
-				"PERSONNEL_EXPOSED_NOTIFICATION": "Personnel Exposed Notification",
-				"ADD_HAZARD": "Add Hazard",
-				"ADD_TASK": "Add Task",
-				"NO_TEMPLATES_AVAILABLE": "No templates available",
-				"DO_YOU_WANT_TO_REMOVE_THIS_ITEM": "Do you want to remove this item?",
-				"DELETE_CONFIRMATION": "Delete Confirmation",
-				"OPTIONS_RARE": "Rare",
-				"OPTIONS_UNLIKELY": "Unlikely",
-				"OPTIONS_POSSIBLE": "Possible",
-				"OPTIONS_LIKELY": "Likely",
-				"OPTIONS_ALMOST_CERTAIN": "Almost Certain",
-				"OPTIONS_NEGLIGIBLE": "Negligible",
-				"OPTIONS_MINOR": "Minor",
-				"OPTIONS_MODERATE": "Moderate",
-				"OPTIONS_MAJOR": "Major",
-				"OPTIONS_CATASTROPHIC": "Catastrophic"
-			},
-			"HAV": {
-				"YOUR_CURRENT_EXPOSURE": "Your Current Exposure",
-				"CALCULATED_EXPOSURE": "Calculated Exposure",
-				"TOTAL_EXPOSURE_WILL_BE": "Total Exposure Will Be",
-				"ADD_TOOL": "Add Tool",
-				"TOOL": "Tool",
-				"DO_YOU_WANT_TO_REMOVE_THIS_ITEM": "Do you want to remove this item?",
-				"DELETE_CONFIRMATION": "Delete Confirmation"
 			}
 		},
-		"CHECKINOUT": {
+		"CHECK-IN_AND_OUT": {
 			"CHECK_IN": "Check In",
 			"CHECK_OUT": "Check Out",
 			"YOU_ARE_CHECKING_OUT": "You are checking out",
@@ -253,13 +269,13 @@
 			"YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS": "You do not have the required qualifications.",
 			"YOU_HAVE_NOW_CHECKEDIN": "You have now checked-in"
 		},
-		"CURRENT_CHECKIN": {
+		"CURRENT_CHECK-IN": {
 			"AVAILABLE_FILES": "Available Files",
 			"WORK_PERMIT_FORMS": "Work Permit Forms",
 			"NO_FILES": "There are no files here.",
 			"YOU_NEED_TO_CHECKIN_FIRST_MESSAGE": "You need to check in to an entity first if you want to see the files assigned in personal mode"
 		},
-		"SIGNOFF": {
+		"SIGN-OFF": {
 			"SIGNOFF": "Sign-Off",
 			"TAKE_A_NEW_PHOTO": "Take a new photo?",
 			"WE_NEED_YOUR_PHOTO": "We need your photo",
@@ -276,7 +292,7 @@
 			"YOU_CANNOT_SIGNOFF": "You cannot Sign-Off",
 			"NOT_QUALIFIED": "NOT QUALIFIED"
 		},
-		"ACTIVITY": {
+		"ACTIVITIES": {
 			"ACTIVITY": "Activity",
 			"REJECTED": "Rejected",
 			"OVERDUE": "Overdue",
@@ -294,16 +310,15 @@
 			"ALERT_ACTIVITY_CONFIRM_COMPLETION_TITLE": "Confirm Completion",
 			"ALERT_ACTIVITY_CONFIRM_COMPLETION_DESCRIPTION": "You are about to mark this activity as completed. Please confirm."
 		},
-		"QR_SCAN": {
+		"QR_SCANER": {
 			"CHECKINOUT_VIA_QR": "Check In/Out via QR",
 			"QR_SCAN": "QR Scan",
 			"SCAN_QR_CODE": "Scan QR Code",
 			"CHOOSE_PLACE": "Choose Place"
 		},
-		"DOCUMENT": {
-			"WHAT_DO_YOU_WANT_TO_DO_WITH_THIS_DOCUMENT": "What do you want to do this with this document?",
-			"VIEW_AND_SIGNOFF": "View and Sign-Off",
-			"VIEW_ONLY": "View Only"
+		"IMAGE_ANNOTATION": {
+			"YOU_ARE_LEAVING": "You are leaving",
+			"YOU_ARE_LEAVING_MESSAGE": "Are you sure to exit without saving?"
 		}
 	},
 	"API_ERROR_Field_Company_ID": "Company ID",

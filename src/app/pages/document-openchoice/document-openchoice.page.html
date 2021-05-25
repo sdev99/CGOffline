@@ -4,11 +4,11 @@
 
 <ion-content>
 	<div class="content">
-		<div class="text-1">{{'PAGE.DOCUMENT.WHAT_DO_YOU_WANT_TO_DO_WITH_THIS_DOCUMENT' | translate}}</div>
+		<div class="text-1">{{'PAGESPECIFIC_TEXT.DOCUMENT_LIST.WHAT_DO_YOU_WANT_TO_DO_WITH_THIS_DOCUMENT' | translate}}</div>
 		<div class="text-2" *ngIf="document">{{document?.documentTitle}}</div>
 
-		<ion-button class="action-btn" (click)="viewAndSignOff()">{{'PAGE.DOCUMENT.VIEW_AND_SIGNOFF' | translate}} </ion-button>
+		<ion-button class="action-btn" (click)="viewAndSignOff()">{{'PAGESPECIFIC_TEXT.DOCUMENT_LIST.VIEW_AND_SIGNOFF' | translate}} </ion-button>
 
-		<ion-button class="cancel-btn" fill="outline" (click)="viewOnly()"> {{'PAGE.DOCUMENT.VIEW_ONLY' | translate}} </ion-button>
+		<ion-button class="cancel-btn" fill="outline" (click)="viewOnly()"> {{'PAGESPECIFIC_TEXT.DOCUMENT_LIST.VIEW_ONLY' | translate}} </ion-button>
 	</div>
 </ion-content>

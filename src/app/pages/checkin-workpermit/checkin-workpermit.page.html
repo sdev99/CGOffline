@@ -4,12 +4,16 @@
 
 		<ion-toolbar style="padding-top: 0">
 			<ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
-			<ion-title class="ion-text-left">{{pageTitle || ('PAGE.FORM.WORK_PERMIT_FORMS' | translate)}}</ion-title>
+			<ion-title class="ion-text-left">{{pageTitle || ('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT_FORMS' | translate)}}</ion-title>
 		</ion-toolbar>
 	</ng-container>
 
 	<ng-container *ngIf="sharedDataService.dedicatedMode">
-		<app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" [modalSubTitle]="'PAGE.FORM.WORK_PERMIT' | translate" (closeModal)="back()"></app-modal-header-dm>
+		<app-modal-header-dm
+			[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+			[modalSubTitle]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT' | translate"
+			(closeModal)="back()"
+		></app-modal-header-dm>
 
 		<ion-toolbar *ngIf="itemDetail && itemDetail.formFolderID > 0" style="padding-top: 0">
 			<ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
@@ -36,6 +40,6 @@
 	</ion-list>
 
 	<ng-container *ngIf="!availableWorkPermits || availableWorkPermits?.length===0">
-		<app-empty-message [message]="'PAGE.FORM.NO_PERMITS_AVAILABLE' | translate"></app-empty-message>
+		<app-empty-message [message]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMITS_AVAILABLE' | translate"></app-empty-message>
 	</ng-container>
 </ion-content>

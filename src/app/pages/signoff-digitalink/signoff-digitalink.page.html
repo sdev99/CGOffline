@@ -26,9 +26,9 @@
 			<ng-container *ngIf="showDigitalInk">
 				<div class="hr-line" *ngIf="!sharedDataService.isTablet"></div>
 
-				<div class="title-2">{{'PAGE.SIGNOFF.DIGITAL_INK_SIGNATURE' | translate}}</div>
+				<div class="title-2">{{'PAGESPECIFIC_TEXT.SIGN-OFF.DIGITAL_INK_SIGNATURE' | translate}}</div>
 
-				<div class="text-1">{{'PAGE.SIGNOFF.DIGITAL_INK_SIGNATURE_DESCRIPTION' | translate}}</div>
+				<div class="text-1">{{'PAGESPECIFIC_TEXT.SIGN-OFF.DIGITAL_INK_SIGNATURE_DESCRIPTION' | translate}}</div>
 
 				<div class="canvas-container-d-s" id="canvas-container">
 					<canvas id="digital-signature" class="digital-signature"></canvas>
@@ -42,13 +42,13 @@
 				(click)="onContinue()"
 				[disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))"
 			>
-				{{'COMMON.CONTINUE' | translate}}</ion-button
+				{{'SHARED_TEXT.CONTINUE' | translate}}</ion-button
 			>
 		</div>
 
 		<ion-footer mode="ios" *ngIf="!sharedDataService.isTablet">
 			<ion-button expand="full" class="action-btn" (click)="onContinue()" [disabled]="(!showDigitalInk && !isConfirm) || (showDigitalInk &&  (!isConfirm || isDigitalSignEmpty()))">
-				{{'COMMON.CONTINUE' | translate}}
+				{{'SHARED_TEXT.CONTINUE' | translate}}
 			</ion-button>
 		</ion-footer>
 	</div>

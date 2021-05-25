@@ -4,14 +4,14 @@
 	<div class="photo-buttons" *ngIf="!image; else addPhotoTemplate">
 		<ion-button fill="clear" class="left" (click)="choosePhotoVideoOption()">
 			<ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
-			{{ 'COMMON.MEDIA.TAKE_PHOTO_VIDEO' | translate }}
+			{{ 'SHARED_TEXT.MEDIA.TAKE_PHOTO_VIDEO' | translate }}
 		</ion-button>
 
 		<span>Or</span>
 
 		<ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
 			<ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
-			{{ 'COMMON.MEDIA.CHOOSE_PHOTO_VIDEO' | translate }}
+			{{ 'SHARED_TEXT.MEDIA.CHOOSE_PHOTO_VIDEO' | translate }}
 		</ion-button>
 	</div>
 

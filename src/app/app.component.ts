@@ -62,6 +62,7 @@ export class AppComponent {
 			}
 
 			this.sharedDataService.translateService = this.translateService;
+			this.utilService.translateService = this.translateService;
 
 			Plugins.App.addListener('appRestoredResult', (data: any) => {
 				this.observablesService.publishSomeData(EnumService.ObserverKeys.APP_RESTORED_RESULT, data.data);
@@ -77,6 +78,21 @@ export class AppComponent {
 					this.badge.clear();
 				});
 			}, 1500);
+
+			if (UtilService.isLocalHost()) {
+				setTimeout(() => {
+					// this.router.navigate(['new-account-setup'], {
+					// 	queryParams: {
+					// 		userId: 'e243237f-3147-4810-9dbd-6f5ea7bffb30',
+					// 	},
+					// });
+					// this.router.navigate(['forgot-password-reset'], {
+					// 	queryParams: {
+					// 		code: 'HL77BAA8',
+					// 	},
+					// });
+				}, 2000);
+			}
 		});
 	}
 

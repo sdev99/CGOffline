@@ -9,6 +9,7 @@ import { Profile } from '../../_models/profile';
 import { ActivatedRoute } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
 	selector: 'app-new-account-setup',
@@ -29,6 +30,7 @@ export class NewAccountSetupPage implements OnInit {
 		public navCtrl: NavController,
 		public route: ActivatedRoute,
 		public accountService: AccountService,
+		public apiService: ApiService,
 		public sharedDataService: SharedDataService,
 		public translateService: TranslateService
 	) {
@@ -52,7 +54,11 @@ export class NewAccountSetupPage implements OnInit {
 		this.accountService.getUserProfile(this.userId).subscribe(
 			(userProfile) => {
 				this.userProfile = userProfile;
-				this.utilService.hideLoading();
+				this.sharedDataService.getLangFileTranslation(() => {
+					setTimeout(() => {
+						this.utilService.hideLoading();
+					}, 1000);
+				});
 			},
 			(error) => {
 				this.utilService.hideLoading();
@@ -91,7 +97,7 @@ export class NewAccountSetupPage implements OnInit {
 						}
 					);
 			} else {
-				this.translateService.get('COMMON.ERRORS.PASSWORDS_NOT_MATCHING').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.PASSWORDS_NOT_MATCHING').subscribe((res) => {
 					this.errorMessage = res;
 				});
 			}

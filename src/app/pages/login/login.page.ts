@@ -51,7 +51,7 @@ export class LoginPage implements OnInit {
 	}
 
 	async openLanguages() {
-		this.translateService.get('COMMON.CANCEL').subscribe(async (res) => {
+		this.translateService.get('SHARED_TEXT.CANCEL').subscribe(async (res) => {
 			const buttons = [];
 			this.languages.map((item) => {
 				buttons.push({

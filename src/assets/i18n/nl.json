@@ -1,5 +1,5 @@
 {
-	"COMMON": {
+	"SHARED_TEXT": {
 		"CANCEL": "annuleren",
 		"OK": "Ok",
 		"NO": "Nee",
@@ -54,7 +54,7 @@
 			"REQUIRED_FIELDS_NEED_TO_FILL": "required fields are needed to be filled in."
 		}
 	},
-	"PAGE": {
+	"PAGESPECIFIC_TEXT": {
 		"LOGIN": {
 			"SIGN_IN": "Sign In",
 			"PAGE_DESCRIPTION": "Please enter your credentials to sign in.",
@@ -149,7 +149,6 @@
 				"LOCATION_NAME": "Location Name",
 				"IF_NOT_AVAILABLE_IN_DROPDOWN": "if not available in above dropdown",
 				"WHERE_THE_ACCIDENT_HAPPENED": "Where the accident happened ?",
-				"SELECT_TYPE": "Select Type",
 				"BODY_PARTS": {
 					"HEAD": "Head",
 					"HEAD_SOFT_TISSUE": "Head Soft Tissue",

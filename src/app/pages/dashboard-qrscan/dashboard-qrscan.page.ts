@@ -148,15 +148,15 @@ export class DashboardQrscanPage implements OnInit {
 					});
 					this.qrScanner.show();
 				} else if (status.denied) {
-					this.translateService.get(['COMMON.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED', 'COMMON.ERRORS.PERMISSION_DENIED']).subscribe((res) => {
-						this.utilService.showAlert(res['COMMON.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED'], res['COMMON.ERRORS.PERMISSION_DENIED']);
+					this.translateService.get(['SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED', 'SHARED_TEXT.ERRORS.PERMISSION_DENIED']).subscribe((res) => {
+						this.utilService.showAlert(res['SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED'], res['SHARED_TEXT.ERRORS.PERMISSION_DENIED']);
 					});
 					// camera permission was permanently denied
 					// you must use QRScanner.openSettings() method to guide the user to the settings page
 					// then they can grant the permission from there
 				} else {
-					this.translateService.get(['COMMON.ERRORS.CAMERA_PERMISSION_DENIED', 'COMMON.ERRORS.PERMISSION_DENIED']).subscribe((res) => {
-						this.utilService.showAlert(res['COMMON.ERRORS.CAMERA_PERMISSION_DENIED'], res['COMMON.ERRORS.PERMISSION_DENIED'], async () => {
+					this.translateService.get(['SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED', 'SHARED_TEXT.ERRORS.PERMISSION_DENIED']).subscribe((res) => {
+						this.utilService.showAlert(res['SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED'], res['SHARED_TEXT.ERRORS.PERMISSION_DENIED'], async () => {
 							const status1 = await this.requestCameraPermission();
 							if (status1) {
 								this.scan();
@@ -191,7 +191,7 @@ export class DashboardQrscanPage implements OnInit {
 					if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
 						this.openNextScreenForDedicatedMode(userDetail);
 					} else {
-						this.translateService.get('COMMON.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION').subscribe((res) => {
+						this.translateService.get('SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION').subscribe((res) => {
 							this.utilService.showAlert(res, '', () => {
 								this.scan();
 							});
@@ -202,7 +202,7 @@ export class DashboardQrscanPage implements OnInit {
 			(error) => {
 				this.utilService.hideLoading();
 
-				this.translateService.get('COMMON.ERRORS.NOT_FOUND').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
 					this.utilService.showAlert(error.message || error, res, () => {
 						this.scan();
 					});
@@ -222,10 +222,7 @@ export class DashboardQrscanPage implements OnInit {
 					if (locationItem && locationItem.locationID && locationItem.locationName) {
 						this.openNextScreenForPersonalMode(locationItem);
 					} else {
-						this.utilService.showAlert('This QR code is not valid for any records.', '', () => {
-							this.scan();
-						});
-						this.translateService.get('COMMON.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
+						this.translateService.get('SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
 							this.utilService.showAlert(res, '', () => {
 								this.scan();
 							});
@@ -236,7 +233,7 @@ export class DashboardQrscanPage implements OnInit {
 			(error) => {
 				this.utilService.hideLoading();
 
-				this.translateService.get('COMMON.ERRORS.NOT_FOUND').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
 					this.utilService.showAlert(error.message || error, res, () => {
 						this.scan();
 					});
@@ -251,7 +248,7 @@ export class DashboardQrscanPage implements OnInit {
 			case EnumService.DedicatedModeProcessTypes.CheckinOut:
 				this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService, null, ({ ischeckInPersonalQRNotAllowed }) => {
 					if (ischeckInPersonalQRNotAllowed) {
-						this.translateService.get('COMMON.ERRORS.CANNOT_CHECKIN_WITH_PERSONAL_QR_CODE').subscribe((res) => {
+						this.translateService.get('SHARED_TEXT.ERRORS.CANNOT_CHECKIN_WITH_PERSONAL_QR_CODE').subscribe((res) => {
 							this.utilService.showAlert(res, '', () => {
 								this.scan();
 							});
@@ -281,7 +278,7 @@ export class DashboardQrscanPage implements OnInit {
 			if (this.sharedDataService.checkedInPlaces && this.sharedDataService.checkedInPlaces.length > 0) {
 				this.showCheckedInLocations(getEntityIds);
 			} else {
-				this.translateService.get('COMMON.ERRORS.FOR_ACCESS_THIS_ITEM_YOU_NEED_TO_CHECKIN_FIRST').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.FOR_ACCESS_THIS_ITEM_YOU_NEED_TO_CHECKIN_FIRST').subscribe((res) => {
 					this.utilService.showAlert(res, '', () => {
 						this.scan();
 					});
@@ -295,7 +292,7 @@ export class DashboardQrscanPage implements OnInit {
 	};
 
 	async showCheckedInLocations(getEntityIds) {
-		this.translateService.get(['COMMON.CANCEL', 'PAGE.QR_SCAN.CHOOSE_PLACE']).subscribe(async (res) => {
+		this.translateService.get(['SHARED_TEXT.CANCEL', 'PAGESPECIFIC_TEXT.QR_SCANER.CHOOSE_PLACE']).subscribe(async (res) => {
 			const checkedInPlaces = this.sharedDataService.checkedInPlaces;
 			const buttons = [];
 			checkedInPlaces.map((item) => {
@@ -313,7 +310,7 @@ export class DashboardQrscanPage implements OnInit {
 			});
 
 			buttons.push({
-				text: res['COMMON.CANCEL'],
+				text: res['SHARED_TEXT.CANCEL'],
 				role: 'cancel',
 				handler: () => {
 					this.scan();
@@ -321,7 +318,7 @@ export class DashboardQrscanPage implements OnInit {
 			});
 
 			const actionSheet = await this.actionSheetController.create({
-				header: res['PAGE.QR_SCAN.CHOOSE_PLACE'],
+				header: res['PAGESPECIFIC_TEXT.QR_SCANER.CHOOSE_PLACE'],
 				cssClass: 'my-custom-class',
 				buttons,
 			});
@@ -349,7 +346,7 @@ export class DashboardQrscanPage implements OnInit {
 				}
 			},
 			(error) => {
-				this.translateService.get('COMMON.ERRORS.NOT_FOUND').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
 					this.utilService.showAlert(error.message || error, res, () => {
 						this.scan();
 					});
@@ -375,7 +372,7 @@ export class DashboardQrscanPage implements OnInit {
 				}
 			},
 			(error) => {
-				this.translateService.get('COMMON.ERRORS.NOT_FOUND').subscribe((res) => {
+				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
 					this.utilService.showAlert(error.message || error, res, () => {
 						this.scan();
 					});

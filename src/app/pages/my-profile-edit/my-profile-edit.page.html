@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-	<app-modal-header [modalTitle]="'PAGE.PROFILE.EDIT_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.PROFILE.EDIT_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
 
 	<app-warning-component *ngIf="errorMsg && errorMsg.length>0" [message]="errorMsg"></app-warning-component>
 </ion-header>
@@ -8,35 +8,45 @@
 	<form [formGroup]="profileForm">
 		<ion-list lines="none">
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'COMMON.PROFILE.EMAIL' | translate}}</ion-label>
+				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.EMAIL' | translate}}</ion-label>
 				<ion-input disabled [ngClass]="{'error':(isSubmitted && !profileForm.controls.email.valid)}" formControlName="email" autocomplete="email" inputmode="email" type="email"></ion-input>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'COMMON.PROFILE.PHONE' | translate}}</ion-label>
+				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.PHONE' | translate}}</ion-label>
 				<ion-input disabled [ngClass]="{'error':(isSubmitted && !profileForm.controls.phone.valid)}" formControlName="phone" autocomplete="tel" inputmode="tel" tel="tel"></ion-input>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'COMMON.PROFILE.TIMEZONE' | translate}}</ion-label>
-				<ion-select [ngClass]="{'error':(isSubmitted && !profileForm.controls.timezone.valid)}" formControlName="timezone">
+				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.TIMEZONE' | translate}}</ion-label>
+				<ion-select
+					[ngClass]="{'error':(isSubmitted && !profileForm.controls.timezone.valid)}"
+					formControlName="timezone"
+					[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+					[okText]="'SHARED_TEXT.OK' | translate"
+				>
 					<ion-select-option *ngFor="let item of timeZones" [value]="item.timeZoneID">{{item.timeZoneName}}</ion-select-option>
 				</ion-select>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'PAGE.PROFILE.MOBILE_APP_LANGUAGE' | translate}}</ion-label>
-				<ion-select [ngClass]="{'error':(isSubmitted && !profileForm.controls.language.valid)}" formControlName="language">
+				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.PROFILE.MOBILE_APP_LANGUAGE' | translate}}</ion-label>
+				<ion-select
+					[ngClass]="{'error':(isSubmitted && !profileForm.controls.language.valid)}"
+					formControlName="language"
+					[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+					[okText]="'SHARED_TEXT.OK' | translate"
+				>
 					<ion-select-option *ngFor="let item of languages" [value]="item.companyLanguageID">{{item.languageName}}</ion-select-option>
 				</ion-select>
 			</ion-item>
 
 			<div class="update-btn">
-				<ion-button expand="full" fill="clear" (click)="onSubmit()">{{'PAGE.PROFILE.UPDATE' | translate}}</ion-button>
+				<ion-button expand="full" fill="clear" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.PROFILE.UPDATE' | translate}}</ion-button>
 			</div>
 
 			<div class="cancel-btn">
-				<ion-button expand="full" fill="clear" (click)="onClose()">{{'COMMON.CANCEL' | translate}}</ion-button>
+				<ion-button expand="full" fill="clear" (click)="onClose()">{{'SHARED_TEXT.CANCEL' | translate}}</ion-button>
 			</div>
 		</ion-list>
 	</form>

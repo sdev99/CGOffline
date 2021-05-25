@@ -85,7 +85,7 @@ export class MyProfileEditPage implements OnInit {
 								this.profile = profile;
 								this.sharedDataService.getLangFileTranslation(() => {
 									this.utilService.hideLoading();
-									this.translateService.get('PAGE.PROFILE.PROFILE_UPDATED').subscribe((res) => {
+									this.translateService.get('PAGESPECIFIC_TEXT.PROFILE.PROFILE_UPDATED').subscribe((res) => {
 										this.navCtrl.navigateRoot(['checkin-success'], {
 											queryParams: {
 												message: res,
@@ -106,7 +106,7 @@ export class MyProfileEditPage implements OnInit {
 					}
 				);
 		} else {
-			this.translateService.get('COMMON.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
+			this.translateService.get('SHARED_TEXT.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
 				this.errorMsg = res;
 			});
 		}

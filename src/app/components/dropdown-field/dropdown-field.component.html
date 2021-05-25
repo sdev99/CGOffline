@@ -1,9 +1,13 @@
 <ion-item class="question-item drop-down-item" [formGroup]="form">
-    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
-    <ion-select [placeholder]="placeholder" [formControlName]="inputName"
-                [ngClass]="{'error': isError}"
-                (ionChange)="valueChange.emit($event)">
-        <ion-select-option *ngFor="let item of list"
-                           [value]="listValueKey?item[listValueKey]:item">{{listLabelKey ? item[listLabelKey] : item}}</ion-select-option>
-    </ion-select>
+	<ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
+	<ion-select
+		[placeholder]="placeholder"
+		[formControlName]="inputName"
+		[ngClass]="{ error: isError }"
+		[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+		[okText]="'SHARED_TEXT.OK' | translate"
+		(ionChange)="valueChange.emit($event)"
+	>
+		<ion-select-option *ngFor="let item of list" [value]="listValueKey ? item[listValueKey] : item">{{ listLabelKey ? item[listLabelKey] : item }}</ion-select-option>
+	</ion-select>
 </ion-item>

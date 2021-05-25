@@ -164,6 +164,7 @@ export class FormHavPage implements OnInit {
 			},
 			(error) => {
 				this.utilService.hideLoading();
+				this.errorMessage = error.message;
 			}
 		);
 	}
@@ -247,16 +248,22 @@ export class FormHavPage implements OnInit {
 	}
 
 	removeHavTool(section, havAssessmentToolsIndex) {
-		this.translateService.get(['PAGE.FORM.HAV.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGE.FORM.HAV.DELETE_CONFIRMATION']).subscribe((res) => {
-			this.utilService.showConfirmAlert(res['PAGE.FORM.HAV.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'], res['PAGE.FORM.HAV.DELETE_CONFIRMATION'], (status) => {
-				if (status) {
-					try {
-						section.havAssessmentTools.splice(havAssessmentToolsIndex, 1);
-						this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
-					} catch (error) {}
-				}
+		this.translateService
+			.get(['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM', 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.DELETE_CONFIRMATION'])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								section.havAssessmentTools.splice(havAssessmentToolsIndex, 1);
+								this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
+							} catch (error) {}
+						}
+					}
+				);
 			});
-		});
 	}
 
 	isError(question) {
@@ -438,7 +445,7 @@ export class FormHavPage implements OnInit {
 							if (isValueFilled) {
 								havQuestionAnswers.push(havQuestionAnswerObject);
 							} else {
-								this.translateService.get('COMMON.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
+								this.translateService.get('SHARED_TEXT.ERRORS.ALL_FIELDS_REQUIRED').subscribe((res) => {
 									this.errorMessage = res;
 								});
 							}
@@ -472,7 +479,7 @@ export class FormHavPage implements OnInit {
 
 							havAssessmentToolsList.push(HavAssessmentToolObject);
 						} else {
-							this.translateService.get('COMMON.ERRORS.PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO').subscribe((res) => {
+							this.translateService.get('SHARED_TEXT.ERRORS.PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO').subscribe((res) => {
 								this.errorMessage = res;
 							});
 							return true;

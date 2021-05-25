@@ -50,11 +50,11 @@
 						<div class="hr-line-full ion-margin-top"></div>
 
 						<ion-item class="ion-margin-vertical text-bottom-msg">
-							<ion-label class="ion-text-wrap ion-text-center"> {{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}} </ion-label>
+							<ion-label class="ion-text-wrap ion-text-center"> {{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}} </ion-label>
 						</ion-item>
 
 						<ion-item class="ion-margin-vertical ion-padding-bottom">
-							<ion-button type="submit" expand="full" class="action-btn">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+							<ion-button type="submit" expand="full" class="action-btn">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 						</ion-item>
 					</ng-container>
 				</ion-list>
@@ -64,8 +64,8 @@
 			<!--        End of form -->
 			<ng-container *ngIf="sharedDataService.dedicatedMode">
 				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+					<ion-label class="ion-text-wrap ion-padding">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 		</div>

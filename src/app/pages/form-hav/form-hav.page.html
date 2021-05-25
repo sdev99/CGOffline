@@ -16,14 +16,14 @@
 		<div class="content-container">
 			<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
 
-			<app-exposure [label]="'PAGE.FORM.HAV.YOUR_CURRENT_EXPOSURE' | translate" [points]="currentExposure" containerClassName="top"></app-exposure>
+			<app-exposure [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.YOUR_CURRENT_EXPOSURE' | translate" [points]="currentExposure" containerClassName="top"></app-exposure>
 
 			<ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
 				<ng-container *ngIf="utilService.shouldShowSection(section)">
 					<ng-container *ngIf="section.isHAVSection; else customQuestions">
 						<ng-container *ngFor="let havAssessmentTool of section.havAssessmentTools;let havAssessmentToolsIndex = index">
 							<app-section-title
-								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle+(section.havAssessmentTools.length>1?' - Tool '+(havAssessmentToolsIndex+1):'')"
+								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle+(section.havAssessmentTools.length>1?' - '+('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOOL' | translate)+' ' +(havAssessmentToolsIndex+1):'')"
 								[showRemoveIcon]="section.havAssessmentTools.length>1"
 								(onRemove)="removeHavTool(section,havAssessmentToolsIndex)"
 							>
@@ -47,10 +47,12 @@
 											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
 										</ion-label>
 										<ion-select
-											placeholder="Choose"
+											[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 											[(ngModel)]="question.value"
 											[ngClass]="{'error': isError( question)}"
 											(ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
+											[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+											[okText]="'SHARED_TEXT.OK' | translate"
 										>
 											<ng-container *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown ">
 												<ion-select-option *ngFor="let item of toolManufacturers" [value]="item.havManufacturerID"> {{item.havManufacturerName}} </ion-select-option>
@@ -71,12 +73,16 @@
 									</ion-item>
 								</ng-container>
 							</ng-container>
-							<app-exposure [label]="'PAGE.FORM.HAV.CALCULATED_EXPOSURE' | translate" [points]="calculateExposure(havAssessmentTool)" containerClassName="bottom"></app-exposure>
+							<app-exposure
+								[label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.CALCULATED_EXPOSURE' | translate"
+								[points]="calculateExposure(havAssessmentTool)"
+								containerClassName="bottom"
+							></app-exposure>
 						</ng-container>
-						<app-exposure [label]="'PAGE.FORM.HAV.TOTAL_EXPOSURE_WILL_BE' | translate" [points]="totalCalculateExposure(section)"></app-exposure>
+						<app-exposure [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOTAL_EXPOSURE_WILL_BE' | translate" [points]="totalCalculateExposure(section)"></app-exposure>
 
 						<ion-item class="add-tool-button-container-item">
-							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">{{'PAGE.FORM.HAV.ADD_TOOL' | translate}}</ion-button>
+							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.ADD_TOOL' | translate}}</ion-button>
 						</ion-item>
 					</ng-container>
 
@@ -106,11 +112,11 @@
 				<div class="hr-line-full ion-margin-top"></div>
 
 				<ion-item class="ion-margin-vertical text-bottom-msg">
-					<ion-label class="ion-text-wrap ion-text-center">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-label class="ion-text-wrap ion-text-center">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
 				</ion-item>
 
 				<ion-item class="ion-margin-vertical ion-padding-bottom">
-					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 			<div class="fill-vertical-space"></div>
@@ -118,8 +124,8 @@
 			<!--        End of form -->
 			<ng-container *ngIf="sharedDataService.dedicatedMode">
 				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding">{{'PAGE.FORM.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGE.FORM.SIGNOFF' | translate}}</ion-button>
+					<ion-label class="ion-text-wrap ion-padding">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 		</div>

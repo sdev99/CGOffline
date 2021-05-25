@@ -508,31 +508,33 @@ export class ImageAnnotationPage implements OnInit {
 	}
 
 	async onClose() {
-		this.translateService.get(['PAGE.IMAGE_ANNOTATION.YOU_ARE_LEAVING', 'PAGE.IMAGE_ANNOTATION.YOU_ARE_LEAVING_MESSAGE', 'COMMON.YES', 'COMMON.NO']).subscribe(async (res) => {
-			const alert = await this.alertController.create({
-				cssClass: 'my-custom-class',
-				header: res['PAGE.IMAGE_ANNOTATION.YOU_ARE_LEAVING'],
-				message: '<strong>' + res['PAGE.IMAGE_ANNOTATION.YOU_ARE_LEAVING_MESSAGE'] + '</strong>',
-				buttons: [
-					{
-						text: res['COMMON.NO'],
-						role: 'cancel',
-						cssClass: 'secondary',
-						handler: (blah) => {
-							console.log('Confirm Cancel: blah');
+		this.translateService
+			.get(['PAGESPECIFIC_TEXT.IMAGE_ANNOTATION.YOU_ARE_LEAVING', 'PAGESPECIFIC_TEXT.IMAGE_ANNOTATION.YOU_ARE_LEAVING_MESSAGE', 'SHARED_TEXT.YES', 'SHARED_TEXT.NO'])
+			.subscribe(async (res) => {
+				const alert = await this.alertController.create({
+					cssClass: 'my-custom-class',
+					header: res['PAGESPECIFIC_TEXT.IMAGE_ANNOTATION.YOU_ARE_LEAVING'],
+					message: '<strong>' + res['PAGESPECIFIC_TEXT.IMAGE_ANNOTATION.YOU_ARE_LEAVING_MESSAGE'] + '</strong>',
+					buttons: [
+						{
+							text: res['SHARED_TEXT.NO'],
+							role: 'cancel',
+							cssClass: 'secondary',
+							handler: (blah) => {
+								console.log('Confirm Cancel: blah');
+							},
 						},
-					},
-					{
-						text: res['COMMON.YES'],
-						handler: () => {
-							this.navCtrl.back();
+						{
+							text: res['SHARED_TEXT.YES'],
+							handler: () => {
+								this.navCtrl.back();
+							},
 						},
-					},
-				],
-			});
+					],
+				});
 
-			await alert.present();
-		});
+				await alert.present();
+			});
 	}
 
 	onContinue() {

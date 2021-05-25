@@ -1,18 +1,15 @@
 <ion-content fullscreen="true">
-    <div class="content-container">
-        <div class="content">
-            <ion-icon src="./assets/icon/CheckSuccess.svg"></ion-icon>
+	<div class="content-container">
+		<div class="content">
+			<ion-icon src="./assets/icon/CheckSuccess.svg"></ion-icon>
 
-            <div class="title" *ngIf="title">{{title}}</div>
-            <div class="title-1">{{message}}</div>
-            <div class="text-2" *ngIf="description">{{description}}</div>
-        </div>
+			<div class="title" *ngIf="title">{{title | translate}}</div>
+			<div class="title-1">{{message | translate}}</div>
+			<div class="text-2" *ngIf="description">{{description | translate}}</div>
+		</div>
 
-        <ion-footer mode="ios">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">{{actionBtnTitle}}</ion-button>
-        </ion-footer>
-    </div>
+		<ion-footer mode="ios">
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{actionBtnTitle |translate}}</ion-button>
+		</ion-footer>
+	</div>
 </ion-content>
-
-
-

@@ -56,7 +56,7 @@ export class MyProfileChangepassPage implements OnInit {
 						this.utilService.hideLoading();
 
 						if (password === passwordConfirm) {
-							this.translateService.get('PAGE.PROFILE.NEW_PASSWORD_SET').subscribe((res) => {
+							this.translateService.get('PAGESPECIFIC_TEXT.PROFILE.NEW_PASSWORD_SET').subscribe((res) => {
 								this.navCtrl.navigateRoot(['checkin-success'], {
 									queryParams: {
 										message: res,
@@ -65,7 +65,7 @@ export class MyProfileChangepassPage implements OnInit {
 								});
 							});
 						} else {
-							this.translateService.get('COMMON.ERRORS.NEW_PASSWORDS_NOT_MATCHING').subscribe((res) => {
+							this.translateService.get('SHARED_TEXT.ERRORS.NEW_PASSWORDS_NOT_MATCHING').subscribe((res) => {
 								this.errorMsg = res;
 							});
 						}

@@ -39,13 +39,7 @@ export class FormAccidentReportPage {
 	selectedBodyParts = {};
 	accidentImage;
 
-	accidentAlertOptions: any = {
-		header: 'Where the accident happened ?',
-	};
-
-	typeAlertOptions: any = {
-		header: 'Select Type',
-	};
+	accidentAlertOptions: any = {};
 
 	screenOrientationSubscribe;
 	isShowOritationPortrait = false;
@@ -71,9 +65,8 @@ export class FormAccidentReportPage {
 		public utilService: UtilService,
 		public translateService: TranslateService
 	) {
-		this.translateService.get(['PAGE.FORM.ACCIDENT.WHERE_THE_ACCIDENT_HAPPENED', 'PAGE.FORM.ACCIDENT.SELECT_TYPE']).subscribe((res) => {
-			this.accidentAlertOptions.header = res['PAGE.FORM.ACCIDENT.WHERE_THE_ACCIDENT_HAPPENED'];
-			this.typeAlertOptions.header = res['PAGE.FORM.ACCIDENT.SELECT_TYPE'];
+		this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.WHERE_THE_ACCIDENT_HAPPENED').subscribe((res) => {
+			this.accidentAlertOptions.header = res;
 		});
 
 		this.user = accountService.userValue;
@@ -430,7 +423,7 @@ export class FormAccidentReportPage {
 		this.errorMessage = '';
 
 		if (this.formGroup.valid && !this.isLocationSelected()) {
-			this.translateService.get('COMMON.ERRORS.PLEASE_SELECT_LOCATION_OR_ENTER_MANUALLY').subscribe((res) => {
+			this.translateService.get('SHARED_TEXT.ERRORS.PLEASE_SELECT_LOCATION_OR_ENTER_MANUALLY').subscribe((res) => {
 				this.errorMessage = res;
 			});
 		}

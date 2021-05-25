@@ -1,18 +1,18 @@
 <ion-header mode="ios">
-	<app-modal-header [modalTitle]="'PAGE.ACTIVITY.ACTIVITY' | translate" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.ACTIVITIES.ACTIVITY' | translate" (closeModal)="onClose()"></app-modal-header>
 
 	<ion-item lines="none" *ngIf="activityListItem && activityListItem.activityTitle">
 		<ion-label>
 			<h6>{{activityListItem.activityTitle}}</h6>
 			<div class="detail">
-				<ion-badge *ngIf="activityListItem.isOverDue" color="warning" class="overdue">{{'PAGE.ACTIVITY.OVERDUE' | translate}}</ion-badge>
+				<ion-badge *ngIf="activityListItem.isOverDue" color="warning" class="overdue">{{'PAGESPECIFIC_TEXT.ACTIVITIES.OVERDUE' | translate}}</ion-badge>
 				<ng-container *ngIf="activityListItem.isRejected">
 					<!--                    <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>-->
-					<ion-badge color="light" class="rejected">{{'PAGE.ACTIVITY.REJECTED' | translate}}</ion-badge>
+					<ion-badge color="light" class="rejected">{{'PAGESPECIFIC_TEXT.ACTIVITIES.REJECTED' | translate}}</ion-badge>
 				</ng-container>
 				<span class="time" *ngIf="activityListItem.activityTime; else customTime">{{activityListItem.activityTime}}</span>
 				<ng-template #customTime>
-					<span class="time" *ngIf="activityListItem.activityDate === activityListItem.todayDate">{{'PAGE.ACTIVITY.TODAY' | translate}}</span>
+					<span class="time" *ngIf="activityListItem.activityDate === activityListItem.todayDate">{{'PAGESPECIFIC_TEXT.ACTIVITIES.TODAY' | translate}}</span>
 					<span class="time" *ngIf="activityListItem.activityDate !== activityListItem.todayDate">{{activityListItem.activityDate | timeAgo}}</span>
 				</ng-template>
 			</div>
@@ -20,17 +20,17 @@
 			<div class="rejected-view" *ngIf="activityListItem?.isRejected">
 				<div class="detail">
 					<ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-					<ion-label class="rejected">{{'PAGE.ACTIVITY.SIGNATURE_REJECTED' | translate}}</ion-label>
+					<ion-label class="rejected">{{'PAGESPECIFIC_TEXT.ACTIVITIES.SIGNATURE_REJECTED' | translate}}</ion-label>
 				</div>
 
 				<p class="time" *ngIf="activityListItem?.rejectedBy;">
-					{{'PAGE.ACTIVITY.BY' | translate}}&nbsp;{{activityListItem?.rejectedBy}}&nbsp;{{'PAGE.ACTIVITY.ON' | translate}}
+					{{'PAGESPECIFIC_TEXT.ACTIVITIES.BY' | translate}}&nbsp;{{activityListItem?.rejectedBy}}&nbsp;{{'PAGESPECIFIC_TEXT.ACTIVITIES.ON' | translate}}
 					<ng-container *ngIf="activityListItem?.formattedApprovedRejectedDate; else approvedRejectedDate"> {{activityListItem?.formattedApprovedRejectedDate}} </ng-container>
 					<ng-template #approvedRejectedDate> {{activityListItem?.approvedRejectedDate | date:'dd MMM yyyy HH:mm'}} </ng-template>
 				</p>
 
 				<div class="reject-reason" *ngIf="activityListItem?.rejectedReason">
-					<h3>{{'PAGE.ACTIVITY.REJECTION_REASON' | translate}}</h3>
+					<h3>{{'PAGESPECIFIC_TEXT.ACTIVITIES.REJECTION_REASON' | translate}}</h3>
 					<p>{{activityListItem?.rejectedReason}}</p>
 				</div>
 			</div>
@@ -46,7 +46,7 @@
 				<p *ngIf="activityListItem.formattedDescription" [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedDescription)"></p>
 
 				<ng-container *ngIf="activityListItem.formattedExplanation">
-					<h6>{{'PAGE.ACTIVITY.EXPLANATION' | translate}}</h6>
+					<h6>{{'PAGESPECIFIC_TEXT.ACTIVITIES.EXPLANATION' | translate}}</h6>
 					<p [innerHTML]="sanitizer.bypassSecurityTrustHtml(activityListItem.formattedExplanation)"></p>
 				</ng-container>
 			</ion-label>
@@ -63,13 +63,13 @@
 
 		<ion-footer mode="ios" *ngIf="activityListItem">
 			<ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.FORM_SIGNOFF_ACTIVITY" class="action-btn" (click)="openForm()"
-				>{{'PAGE.ACTIVITY.OPEN' | translate}}
+				>{{'PAGESPECIFIC_TEXT.ACTIVITIES.OPEN' | translate}}
 			</ion-button>
 			<ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.DOCUMENT_SIGNOFF_ACTIVITY" class="action-btn" (click)="openDocument()">
-				{{(documentViewed ? 'PAGE.ACTIVITY.SIGNOFF' : 'PAGE.ACTIVITY.OPEN') | translate}}
+				{{(documentViewed ? 'PAGESPECIFIC_TEXT.ACTIVITIES.SIGNOFF' : 'PAGESPECIFIC_TEXT.ACTIVITIES.OPEN') | translate}}
 			</ion-button>
 			<ion-button expand="full" *ngIf="activityListItem.activityType === EnumService.ActivityType.CUSTOM_ACTIVITY" class="action-btn" (click)="markAsCompleted()"
-				>{{'PAGE.ACTIVITY.MARK_AS_COMPLETED' | translate}}
+				>{{'PAGESPECIFIC_TEXT.ACTIVITIES.MARK_AS_COMPLETED' | translate}}
 			</ion-button>
 		</ion-footer>
 	</div>

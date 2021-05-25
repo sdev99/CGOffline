@@ -25,6 +25,8 @@ import { environment } from 'src/environments/environment';
 	styleUrls: ['./form-cover.page.scss'],
 })
 export class FormCoverPage {
+	EnumService = EnumService;
+
 	signOffFormDetail: SignOffFormDetail;
 
 	constructor(

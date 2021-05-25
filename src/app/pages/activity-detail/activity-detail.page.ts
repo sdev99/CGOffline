@@ -190,10 +190,10 @@ export class ActivityDetailPage implements OnInit {
 	 * For custom activity only, Confirm before call api
 	 */
 	async markAsCompleted() {
-		const titleKey = 'PAGE.ACTIVITY.ALERT_ACTIVITY_CONFIRM_COMPLETION_TITLE';
-		const descriptionKey = 'PAGE.ACTIVITY.ALERT_ACTIVITY_CONFIRM_COMPLETION_DESCRIPTION';
-		const cancelKey = 'COMMON.CANCEL';
-		const okKey = 'COMMON.OK';
+		const titleKey = 'PAGESPECIFIC_TEXT.ACTIVITIES.ALERT_ACTIVITY_CONFIRM_COMPLETION_TITLE';
+		const descriptionKey = 'PAGESPECIFIC_TEXT.ACTIVITIES.ALERT_ACTIVITY_CONFIRM_COMPLETION_DESCRIPTION';
+		const cancelKey = 'SHARED_TEXT.CANCEL';
+		const okKey = 'SHARED_TEXT.OK';
 		this.translateService.get([titleKey, descriptionKey, okKey, cancelKey]).subscribe(async (res: any) => {
 			const alert = await this.alertController.create({
 				cssClass: 'my-custom-class',

@@ -20,38 +20,6 @@ export class PhotoService {
 		private translateService: TranslateService
 	) {}
 
-	async choosePhotoOption(callBack) {
-		this.translateService.get(['COMMON.MEDIA.TAKE_PHOTO_FROM', 'COMMON.MEDIA.CAMERA', 'COMMON.MEDIA.GALLERY', 'COMMON.CANCEL']).subscribe(async (res) => {
-			const actionSheet = await this.actionSheetController.create({
-				header: res['COMMON.MEDIA.TAKE_PHOTO_FROM'],
-				cssClass: 'my-custom-class',
-				buttons: [
-					{
-						text: res['COMMON.MEDIA.CAMERA'],
-						icon: 'camera-outline',
-						handler: () => {
-							this.takePhotoFromCamera(callBack);
-						},
-					},
-					{
-						text: res['COMMON.MEDIA.GALLERY'],
-						icon: 'images-outline',
-						handler: () => {
-							this.takePhotoFromGallery(callBack);
-						},
-					},
-					{
-						text: res['COMMON.CANCEL'],
-						icon: 'close',
-						role: 'cancel',
-						handler: () => {},
-					},
-				],
-			});
-			await actionSheet.present();
-		});
-	}
-
 	async takePhotoFromCamera(callBack, isFrontCamera = false, isSquarePhoto = false) {
 		const subscribe = this.observablesService.getObservable(EnumService.ObserverKeys.APP_RESTORED_RESULT).subscribe((data) => {
 			callBack(data.data);

@@ -1,6 +1,6 @@
 <ion-toolbar mode="ios" class="part-1">
 	<ion-title size="large">
-		{{ (isCurrentCheckin ? 'COMMON.HEADER.CURRENT_CHECK_IN' : 'COMMON.HEADER.DASHBOARD') | translate }}
+		{{ (isCurrentCheckin ? 'SHARED_TEXT.HEADER.CURRENT_CHECK_IN' : 'SHARED_TEXT.HEADER.DASHBOARD') | translate }}
 	</ion-title>
 
 	<ion-buttons slot="end">
@@ -19,12 +19,12 @@
 
 	<ion-label>
 		<ng-container *ngIf="checkedIn; else notCheckedIn">
-			{{ 'COMMON.HEADER.CHECKED_IN' | translate }}:
+			{{ 'SHARED_TEXT.HEADER.CHECKED_IN' | translate }}:
 			<ng-container *ngIf="!isCurrentCheckin"> &nbsp; {{ checkedPlaces.length == 1 ? checkedPlaces[0].entityName : 'to ' + checkedPlaces.length + ' places' }} </ng-container>
 
 			<ng-container *ngIf="isCurrentCheckin"> &nbsp; {{ sharedDataService.currentSelectedCheckinPlace?.entityName }} </ng-container>
 		</ng-container>
-		<ng-template #notCheckedIn>{{ 'COMMON.HEADER.YOU_ARENT_CHECKED_IN' | translate }}</ng-template>
+		<ng-template #notCheckedIn>{{ 'SHARED_TEXT.HEADER.YOU_ARENT_CHECKED_IN' | translate }}</ng-template>
 	</ion-label>
 
 	<ng-container *ngIf="checkedIn && checkedPlaces.length === 1">
@@ -52,7 +52,7 @@
 </div>
 
 <div class="checkin-btns" *ngIf="!hideCheckinButton">
-	<ion-button class="left" size="small" fill="clear" (click)="checkByQrCode()"> {{ 'COMMON.HEADER.CHECKED_IN_BY_QR_CODE' | translate }}</ion-button>
+	<ion-button class="left" size="small" fill="clear" (click)="checkByQrCode()"> {{ 'SHARED_TEXT.HEADER.CHECKED_IN_BY_QR_CODE' | translate }}</ion-button>
 
-	<ion-button class="right" size="small" fill="clear" (click)="checkInByList()">{{ 'COMMON.HEADER.CHECKED_IN_BY_LIST' | translate }} </ion-button>
+	<ion-button class="right" size="small" fill="clear" (click)="checkInByList()">{{ 'SHARED_TEXT.HEADER.CHECKED_IN_BY_LIST' | translate }} </ion-button>
 </div>

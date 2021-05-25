@@ -10,6 +10,7 @@ import { UserDetail } from '../_models/userDetail';
 import { environment } from '../../environments/environment';
 import { Capacitor } from '@capacitor/core';
 import { File } from '@ionic-native/file/ngx';
+import { TranslateService } from '@ngx-translate/core';
 
 declare global {
 	interface Array<T> {
@@ -32,6 +33,7 @@ export class UtilService {
 
 	questionElementIds: Array<string>;
 	questionElementIdsUpdate: any; // callback
+	translateService: TranslateService;
 
 	static modifyUDID(udid) {
 		if (!udid || udid.length === 0) {
@@ -251,13 +253,7 @@ export class UtilService {
 		}
 	}
 
-	constructor(
-		private loadingController: LoadingController,
-		private file: File,
-		private alertController: AlertController,
-		private validatorService: ValidatorService,
-		private navCtrl: NavController
-	) {}
+	constructor(private loadingController: LoadingController, private file: File, private alertController: AlertController, private validatorService: ValidatorService) {}
 
 	dataUriToFile(url, filename, mimeType) {
 		return new Promise(async (resolve, reject) => {
@@ -344,47 +340,51 @@ export class UtilService {
 	}
 
 	async showAlert(message = '', title = '', callBack = null) {
-		const alert = await this.alertController.create({
-			cssClass: 'my-custom-class',
-			header: title,
-			message,
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: callBack,
-				},
-			],
-		});
+		this.translateService.get('SHARED_TEXT.CANCEL').subscribe(async (res) => {
+			const alert = await this.alertController.create({
+				cssClass: 'my-custom-class',
+				header: title,
+				message,
+				buttons: [
+					{
+						text: res,
+						role: 'cancel',
+						cssClass: 'secondary',
+						handler: callBack,
+					},
+				],
+			});
 
-		await alert.present();
+			await alert.present();
+		});
 	}
 
 	async showConfirmAlert(message = '', title = '', callBack = null) {
-		const alert = await this.alertController.create({
-			cssClass: 'my-custom-class',
-			header: title,
-			message,
-			buttons: [
-				{
-					text: 'No',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: () => {
-						callBack(false);
+		this.translateService.get(['SHARED_TEXT.NO', 'SHARED_TEXT.YES']).subscribe(async (res) => {
+			const alert = await this.alertController.create({
+				cssClass: 'my-custom-class',
+				header: title,
+				message,
+				buttons: [
+					{
+						text: res['SHARED_TEXT.NO'],
+						role: 'cancel',
+						cssClass: 'secondary',
+						handler: () => {
+							callBack(false);
+						},
 					},
-				},
-				{
-					text: 'Yes',
-					handler: () => {
-						callBack(true);
+					{
+						text: res['SHARED_TEXT.YES'],
+						handler: () => {
+							callBack(true);
+						},
 					},
-				},
-			],
-		});
+				],
+			});
 
-		await alert.present();
+			await alert.present();
+		});
 	}
 
 	getCurrentTimeStamp() {

@@ -1,10 +1,10 @@
 <ion-header>
-	<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'PAGE.CHECKINOUT.INDUCTION' | translate" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.INDUCTION' | translate" (closeModal)="onClose()"></app-modal-header>
 
 	<app-modal-header-dm
 		*ngIf="sharedDataService.dedicatedMode"
 		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-		[modalSubTitle]="'PAGE.CHECKINOUT.CHECK_IN' | translate"
+		[modalSubTitle]="'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_IN' | translate"
 		(closeModal)="onClose()"
 	></app-modal-header-dm>
 </ion-header>
@@ -14,7 +14,7 @@
 		<app-back-continue-toolbar *ngIf="sharedDataService.dedicatedMode" (back)="onBack()" (continue)="onContinue()"></app-back-continue-toolbar>
 
 		<div class="content">
-			<h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">{{'PAGE.CHECKINOUT.IMAGE' | translate}}</h6>
+			<h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">{{'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.IMAGE' | translate}}</h6>
 
 			<div class="image-view" *ngIf="inductionItem">
 				<ion-img [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName" (click)="fullScreenImg()"> </ion-img>
@@ -25,7 +25,7 @@
 		</div>
 
 		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'COMMON.CONTINUE' | translate}}</ion-button>
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'SHARED_TEXT.CONTINUE' | translate}}</ion-button>
 		</ion-footer>
 	</div>
 </ion-content>

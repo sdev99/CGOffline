@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-	<app-modal-header [modalTitle]="'PAGE.PROFILE.MY_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.PROFILE.MY_PROFILE' | translate" (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
 <ion-content mode="ios">
@@ -8,21 +8,21 @@
 			<ion-label> {{profile.userFullName}} </ion-label>
 			<ion-button slot="end" fill="clear" routerLink="/my-profile-edit">
 				<ion-icon slot="start" src="./assets/icon/pencil.svg"></ion-icon>
-				{{'COMMON.EDIT' | translate}}
+				{{'SHARED_TEXT.EDIT' | translate}}
 			</ion-button>
 		</ion-item>
 
 		<ng-container *ngIf="user">
 			<ion-item class="profile-value">
 				<ion-label>
-					<p>{{'COMMON.PROFILE.EMAIL' | translate}}</p>
+					<p>{{'SHARED_TEXT.PROFILE.EMAIL' | translate}}</p>
 					<h3>{{profile.email}}</h3>
 				</ion-label>
 			</ion-item>
 
 			<ion-item class="profile-value">
 				<ion-label>
-					<p>{{'COMMON.PROFILE.PHONE' | translate}}</p>
+					<p>{{'SHARED_TEXT.PROFILE.PHONE' | translate}}</p>
 					<h3>{{profile.phone}}</h3>
 				</ion-label>
 			</ion-item>
@@ -31,14 +31,14 @@
 
 			<ion-item class="profile-value">
 				<ion-label>
-					<p>{{'COMMON.PROFILE.TIMEZONE' | translate}}</p>
+					<p>{{'SHARED_TEXT.PROFILE.TIMEZONE' | translate}}</p>
 					<h3>{{offsetData?.timeZoneName}}</h3>
 				</ion-label>
 			</ion-item>
 
 			<ion-item class="profile-value">
 				<ion-label>
-					<p>{{'PAGE.PROFILE.MOBILE_APP_LANGUAGE' | translate}}</p>
+					<p>{{'PAGESPECIFIC_TEXT.PROFILE.MOBILE_APP_LANGUAGE' | translate}}</p>
 					<h3>{{languageData?.languageName}}</h3>
 				</ion-label>
 			</ion-item>
@@ -48,14 +48,14 @@
 
 		<ion-item class="profile-value">
 			<ion-label>
-				<p *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0">{{'COMMON.DEVICE_UID' | translate}}</p>
+				<p *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0">{{'SHARED_TEXT.DEVICE_UID' | translate}}</p>
 				<h3 class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</h3>
 			</ion-label>
 		</ion-item>
 
 		<ion-button fill="clear" class="change-password-btn" routerLink="/my-profile-changepass">
 			<ion-icon src="./assets/icon/lock.svg"></ion-icon>
-			{{'PAGE.PROFILE.CHANGE_PASSWORD' | translate}}
+			{{'PAGESPECIFIC_TEXT.PROFILE.CHANGE_PASSWORD' | translate}}
 		</ion-button>
 	</ion-list>
 
@@ -64,7 +64,7 @@
 	<div class="ion-text-center">
 		<ion-button fill="clear" class="logout-btn" (click)="logout()">
 			<ion-icon src="./assets/icon/logout.svg"></ion-icon>
-			{{'PAGE.PROFILE.LOGOUT' | translate}}
+			{{'PAGESPECIFIC_TEXT.PROFILE.LOGOUT' | translate}}
 		</ion-button>
 	</div>
 </ion-content>

@@ -94,7 +94,7 @@ export class CheckinInductionFormPage implements OnInit {
 			}
 			this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
 		} else {
-			this.translateService.get('COMMON.ERRORS.REQUIRED_QUESTIONS_EMPTY_MESSAGE').subscribe((res) => {
+			this.translateService.get('SHARED_TEXT.ERRORS.REQUIRED_QUESTIONS_EMPTY_MESSAGE').subscribe((res) => {
 				this.errorMessage = invalidCount + ' ' + res;
 			});
 		}
