@@ -1,4 +1,5 @@
 {
+	"LANGUAGENAME": "English",
 	"SHARED_TEXT": {
 		"CANCEL": "Cancel",
 		"DONE": "Done",
@@ -18,14 +19,6 @@
 			"CHECKED_IN_BY_QR_CODE": "Check In by QR Code",
 			"CHECKED_IN_BY_LIST": "Check In by List"
 		},
-		"PROFILE": {
-			"EMAIL": "EMAIL",
-			"PHONE": "PHONE",
-			"TIMEZONE": "TIMEZONE",
-			"NEW_PASSWORD": "New Password",
-			"ENTER_NEW_PASSWORD": "Enter new password",
-			"CONFIRM_NEW_PASSWORD": "Confirm new password"
-		},
 		"MEDIA": {
 			"TAKE_PHOTO": "Take a Photo",
 			"CHOOSE_PHOTO": "Choose Photo",
@@ -35,29 +28,29 @@
 		"ERRORS": {
 			"CAMERA_PERMISSION_PERMANENTLY_DENIED": "Camera permission was permanently denied.",
 			"CAMERA_PERMISSION_DENIED": "Camera permission was denied.",
-			"PERMISSION_DENIED": "Permission denied!",
-			"REQUIRED_QUESTIONS_EMPTY_MESSAGE": "required questions are not answered yet",
-			"USER_NOT_VALID_FOR_ANY_OPERATION": "This user is not valid for any operation.",
-			"NOT_FOUND": "Not found!",
+			"PERMISSION_DENIED": "Permission denied.",
+			"REQUIRED_QUESTIONS_EMPTY_MESSAGE": "Required questions are not answered yet.",
+			"USER_NOT_VALID_FOR_ANY_OPERATION": "This user is not valid for any operations.",
+			"NOT_FOUND": "Not found.",
 			"QR_CODE_NOT_VALID": "This QR code is not valid for any records.",
 			"CANNOT_CHECKIN_WITH_PERSONAL_QR_CODE": "You cannot check-in here with a personal QR code",
 			"FOR_ACCESS_THIS_ITEM_YOU_NEED_TO_CHECKIN_FIRST": "For accessing this item, you need to check-in first.",
 			"PLEASE_SELECT_LOCATION_OR_ENTER_MANUALLY": "Please select a location or enter one manually.",
 			"PASSWORDS_NOT_MATCHING": "Passwords are not matching. Please check and correct.",
 			"ALL_FIELDS_REQUIRED": "All fields are required to be filled in.",
-			"NEW_PASSWORDS_NOT_MATCHING": "New passwords are not matching. Please check and correct.",
-			"PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO": "\"Planned time of use\" should be greater then zero.",
-			"ATLEAST_ONE_ANSWER_TO_BE_FILLED_IN": "At least one answer to be filled in.",
+			"NEW_PASSWORDS_NOT_MATCHING": "New password do not matching. Please check and correct.",
+			"PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO": "Planned time of use should be greater then zero.",
+			"ATLEAST_ONE_ANSWER_TO_BE_FILLED_IN": "At least one answer needs to be filled in.",
 			"INCORRECT_DATA_FOUND_PLS_CHECK_ANSWERS": "Incorrect data found, please check your answers.",
-			"REQUIRED_FIELDS_NEED_TO_FILL": "required fields are needed to be filled in."
+			"REQUIRED_FIELDS_NEED_TO_FILL": "Required fields are needed to be filled in."
 		}
 	},
 	"PAGESPECIFIC_TEXT": {
 		"LOGIN": {
 			"SIGN_IN": "Sign In",
 			"PAGE_DESCRIPTION": "Please enter your credentials to sign in.",
-			"EMAIL": "Email Address",
-			"EMAIL_PLACEHOLDER": "Enter email address",
+			"EMAIL": "E-mail Address",
+			"EMAIL_PLACEHOLDER": "Enter e-mail address",
 			"PASSWORD": "Password",
 			"PASSWORD_PLACEHOLDER": "Enter password",
 			"FORGOT_PASSWORD": "Forgot Password?",
@@ -65,13 +58,13 @@
 		},
 		"FORGOT_PASSWORD": {
 			"TITLE": "Forgot Password",
-			"DESCRIPTION": "Please enter your registered email address and we will send you a password reset link.",
-			"EMAIL_ADDRESS": "Email Address",
-			"ENTER_EMAIL_ADDRESS": "Enter email address",
-			"SEND_LINK_TO_EMAIL": "Send Link to Email",
+			"DESCRIPTION": "Please enter your registered e-mail address and we will send you a password reset link.",
+			"EMAIL_ADDRESS": "E-mail Address",
+			"ENTER_EMAIL_ADDRESS": "Enter e-mail address",
+			"SEND_LINK_TO_EMAIL": "Send Link to E-mail",
 			"GO_TO_SIGN_IN": "Go to Sign In",
 			"LINK_SENT": "Link Sent",
-			"PLEASE_CHECK_YOUR_INBOX": "Please check your inbox. We have sent a password reset link to your registered email address.",
+			"PLEASE_CHECK_YOUR_INBOX": "Please check your inbox. We have sent a password reset link to your registered e-mail address.",
 			"REMEMBERED_YOUR_PASSWORD": "Remembered your password?"
 		},
 		"FORGOT_PASSWORD_RESET": {
@@ -89,19 +82,25 @@
 			"SIGN_IN": "Sign In"
 		},
 		"PROFILE": {
-			"MY_PROFILE": "My Profile",
+			"EMAIL": "E-MAIL",
+			"PHONE": "PHONE",
+			"TIMEZONE": "TIMEZONE",
 			"MOBILE_APP_LANGUAGE": "MOBILE APP LANGUAGE",
 			"CHANGE_PASSWORD": "Change Password",
-			"UPDATE": "Update",
+			"OLD_PASSWORD": "Old Password",
+			"ENTER_OLD_PASSWORD": "Enter Old Password",
+			"NEW_PASSWORD": "New Password",
+			"ENTER_NEW_PASSWORD": "Enter new password",
+			"CONFIRM_NEW_PASSWORD": "Confirm new password",
+			"NEW_PASSWORD_SET": "New Password Set",
+			"MY_PROFILE": "My Profile",
 			"EDIT_PROFILE": "Edit Profile",
+			"VIEW_UPDATE_SETTINGS": "View / Update Settings",
+			"UPDATE": "Update",
+			"PROFILE_UPDATED": "Profile Updated",
 			"MY_SIGNED_DOCUMENTS": "My Signed Documents",
 			"VIEW_MY_SIGNED_DOCUMENTS": "View My Signed Documents",
 			"NO_SIGNOFF_FILES": "There are no signed-off files.",
-			"OLD_PASSWORD": "Old Password",
-			"ENTER_OLD_PASSWORD": "Enter Old Password",
-			"NEW_PASSWORD_SET": "New Password Set",
-			"PROFILE_UPDATED": "Profile Updated",
-			"VIEW_UPDATE_SETTINGS": "View / Update Settings",
 			"LOGOUT": "Log Out"
 		},
 		"DOCUMENT_LIST": {
@@ -112,7 +111,7 @@
 		"FORM_LIST": {
 			"ITEM": "Item",
 			"OF": "of",
-			"PLEASE_ROTATE_DEVICE_TO_PORTRAIT_MODE": "Please rotate the device to \"Portrait mode\"",
+			"PLEASE_ROTATE_DEVICE_TO_PORTRAIT_MODE": "Please rotate the device to Portrait mode",
 			"NOTE": "Note",
 			"AM": "AM",
 			"PM": "PM",
@@ -158,7 +157,7 @@
 					"PLACE_NOT_IN_THE_LIST": "Place not in the list",
 					"LOCATION_NAME": "Location Name",
 					"IF_NOT_AVAILABLE_IN_DROPDOWN": "if not available in above dropdown",
-					"WHERE_THE_ACCIDENT_HAPPENED": "Where the accident happened ?",
+					"WHERE_THE_ACCIDENT_HAPPENED": "Where the accident happened?",
 					"BODY_PARTS": {
 						"HEAD": "Head",
 						"HEAD_SOFT_TISSUE": "Head Soft Tissue",
@@ -196,6 +195,30 @@
 						"UPPER_LEG_LEFT": "Upper Leg - Left",
 						"TOE_RIGHT": "Toe - Right",
 						"TOE_LEFT": "Toe - Left"
+					},
+					"ACCIDENT_TYPE_DROPDOWN": {
+						"STRUCK_BY": "Struck by",
+						"FALLS_FROM_HEIGHT": "Falls From Height",
+						"CUTS_BRUISES_AND_BUMPS": "Cuts, Bruises and Bumps",
+						"VEHICLE_MOVEMENTS": "Vehicle Movements",
+						"CONFINED_SPACE_ENTRY": "Confined Space Entry",
+						"MEDICAL_INCIDENT": "Medical Incident",
+						"STRAINS_AND_PAINS": "Strains and Pains",
+						"LIFTING_PULLING_AND_PUSHING": "Lifting Pulling and Pushing",
+						"INJURY_FROM_TOOLS": "Injury From Tools",
+						"DROPPED_OBJECTS": "Dropped Objects",
+						"CAUGHT_IN_BETWEEN": "Caught in Between",
+						"ACTS_OF_VIOLENCE": "Acts of Violence",
+						"CONTACTS_WITH_MOVING_PARTS": "Contacts With Moving Parts"
+					},
+					"ACCIDENT_CLASSIFICATION_DROPDOWN": {
+						"DEATH_TO_A_PERSON": "Death to a person",
+						"LOST_TIME_INJURY": "Lost time injury",
+						"RESTRICTED_WORK_CASE": "Restricted work case",
+						"MEDICAL_TREATMENT_CASE": "Medical treatment case",
+						"FIRST_AID_TREATMENT_CASE": "First aid treatment case",
+						"LOSS_OF_CONTAINMENT": "Loss of containment",
+						"NEAR_MISS": "Near miss"
 					}
 				},
 				"RISKASSESSMENT_FORM": {
@@ -204,35 +227,46 @@
 					"HAZARD": "Hazard",
 					"RISK_RATING": "Risk Rating",
 					"SEVERITY": "Severity",
+					"SEVERITY_DROPDOWN": {
+						"NEGLIGIBLE": "Negligible",
+						"MINOR": "Minor",
+						"MODERATE": "Moderate",
+						"MAJOR": "Major",
+						"CATASTROPHIC": "Catastrophic"
+					},
 					"PROBABILITY": "Probability",
+					"PROBABILITY_DROPDOWN": {
+						"RARE": "Rare",
+						"UNLIKELY": "Unlikely",
+						"POSSIBLE": "Possible",
+						"LIKELY": "Likely",
+						"ALMOST_CERTAIN": "Almost Certain"
+					},
 					"CALCULATED_VALUE": "Calculated Value",
-					"ADD_CONTROL_MEASURE": "add control measure",
+					"CALCULATED_VALUE_DROPDOWN": {
+						"LOW": "Low",
+						"MODERATE": "Moderate",
+						"HIGH": "High",
+						"EXTREME": "Extreme"
+					},
+					"ADD_CONTROL_MEASURE": "Add control measure",
+					"ADD_HAZARD": "Add Hazard",
+					"ADD_TASK": "Add Task",
 					"RESIDUAL_RISK_RATING": "Residual Risk Rating",
 					"PERSONS_EXPOSED": "Persons Exposed",
 					"MEMBERS_OF_THE_WORKFORCE": "Members of the Workforce",
+					"MEMBER_OF_THE_WORKSPACE_EXPOSED": "Member of the Workspace Exposed",
 					"MEMBERS_OF_THE_PUBLIC": "Members of the Public",
+					"MEMBER_OF_THE_PUBLIC_EXPOSED": "Member of the Public Exposed",
 					"PERSONNEL_EXPOSED_NOTIFICATION": "Personnel Exposed Notification",
-					"ADD_HAZARD": "Add Hazard",
-					"ADD_TASK": "Add Task",
 					"NO_TEMPLATES_AVAILABLE": "No templates available",
 					"DO_YOU_WANT_TO_REMOVE_THIS_ITEM": "Do you want to remove this item?",
 					"DELETE_CONFIRMATION": "Delete Confirmation",
-					"LOW": "Low",
-					"MODERATE": "Moderate",
-					"HIGH": "High",
-					"EXTREME": "Extreme",
-					"OPTIONS_RARE": "Rare",
-					"OPTIONS_UNLIKELY": "Unlikely",
-					"OPTIONS_POSSIBLE": "Possible",
-					"OPTIONS_LIKELY": "Likely",
-					"OPTIONS_ALMOST_CERTAIN": "Almost Certain",
-					"OPTIONS_NEGLIGIBLE": "Negligible",
-					"OPTIONS_MINOR": "Minor",
-					"OPTIONS_MODERATE": "Moderate",
-					"OPTIONS_MAJOR": "Major",
-					"OPTIONS_CATASTROPHIC": "Catastrophic"
+					"NO_PERSONS_EXPOSED": "No Persons Exposed"
 				},
 				"HAVs_FORM": {
+					"TOTAL_EXPOSURE": "Total Exposure",
+					"INITIAL_EXPOSURE": "Initial Exposure",
 					"YOUR_CURRENT_EXPOSURE": "Your Current Exposure",
 					"CALCULATED_EXPOSURE": "Calculated Exposure",
 					"TOTAL_EXPOSURE_WILL_BE": "Total Exposure Will Be",
@@ -244,7 +278,7 @@
 				}
 			}
 		},
-		"CHECK-IN_AND_OUT": {
+		"CHECK_IN_AND_OUT": {
 			"CHECK_IN": "Check In",
 			"CHECK_OUT": "Check Out",
 			"YOU_ARE_CHECKING_OUT": "You are checking out",
@@ -269,13 +303,13 @@
 			"YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS": "You do not have the required qualifications.",
 			"YOU_HAVE_NOW_CHECKEDIN": "You have now checked-in"
 		},
-		"CURRENT_CHECK-IN": {
+		"CURRENT_CHECK_IN": {
 			"AVAILABLE_FILES": "Available Files",
 			"WORK_PERMIT_FORMS": "Work Permit Forms",
 			"NO_FILES": "There are no files here.",
 			"YOU_NEED_TO_CHECKIN_FIRST_MESSAGE": "You need to check in to an entity first if you want to see the files assigned in personal mode"
 		},
-		"SIGN-OFF": {
+		"SIGN_OFF": {
 			"SIGNOFF": "Sign-Off",
 			"TAKE_A_NEW_PHOTO": "Take a new photo?",
 			"WE_NEED_YOUR_PHOTO": "We need your photo",
@@ -322,26 +356,26 @@
 		}
 	},
 	"API_ERROR_Field_Company_ID": "Company ID",
-	"API_ERROR_Field_Company_ID_Data": "Company id cannot be empty.",
+	"API_ERROR_Field_Company_ID_Data": "Company ID cannot be empty.",
 	"API_ERROR_Field_Manufacturer_ID": "Manufacturer ID",
 	"API_ERROR_Field_Manufacturer_ID_Data": "Manufacturer id cannot be empty.",
 	"API_ERROR_Field_Type_ID": "Type ID",
 	"API_ERROR_Field_Type_ID_Data": "Type id cannot be empty.",
 	"API_ERROR_Field_RiskItem_ID": "RiskItem ID",
-	"API_ERROR_Field_RiskItem_ID_Data": "Risk item id cannot be empty.",
+	"API_ERROR_Field_RiskItem_ID_Data": "Risk item ID cannot be empty.",
 	"API_ERROR_Field_User": "User",
 	"API_ERROR_Field_User_Data": "User cannot be empty.",
 	"API_ERROR_Field_Use_Valid_Data": "Invalid user.",
 	"API_ERROR_Field_Sign_In": "Sign In",
 	"API_ERROR_Field_Sign_In_Data": "Wrong username or password.",
-	"API_ERROR_Field_Email_Address": "Email Address",
-	"API_ERROR_Field_Email_Address_Data": "Email address cannot be empty.",
-	"API_ERROR_Field_Email_Address_Valid_Data": "Please enter a valid email address.",
+	"API_ERROR_Field_Email_Address": "E-mail Address",
+	"API_ERROR_Field_Email_Address_Data": "E-mail address cannot be empty.",
+	"API_ERROR_Field_Email_Address_Valid_Data": "Please enter a valid e-mail address.",
 	"API_ERROR_Field_Password": "Password",
 	"API_ERROR_Field_Password_Data": "Password cannot be empty.",
 	"API_ERROR_Field_Password_Expired_Data": "Please set a new password as this one expired.",
 	"API_ERROR_Field_Forgot_Password": "Forgot Password",
-	"API_ERROR_Field_Forgot_Password_Data": "This email address is not registered in our system. Did you use a different email address?",
+	"API_ERROR_Field_Forgot_Password_Data": "This e-mail address is not registered in our system. Did you use a different email address?",
 	"API_ERROR_Field_Code": "Code",
 	"API_ERROR_Field_Code_Data": "Code cannot be empty.",
 	"API_ERROR_Field_New_Password": "New Password",
@@ -428,5 +462,5 @@
 	"API_ERROR_Field_AccidentReportQuestionAnswers_Data9": "AccidentDescription cannot be empty.",
 	"API_ERROR_Field_FormAnswer": "FormAnswer",
 	"API_ERROR_Field_FormAnswer_Data": "An error occurred while updating the records.",
-	"API_ERROR_Field_FormAnswer_Data1": "No record found for supplied parameters.1"
+	"API_ERROR_Field_FormAnswer_Data1": "No record found for supplied parameters."
 }

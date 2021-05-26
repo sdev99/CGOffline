@@ -19,23 +19,23 @@
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.NEW_PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.PROFILE.NEW_PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="newpassword"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !profileForm.controls.newpassword.valid)}"
-					[placeholder]="'SHARED_TEXT.PROFILE.ENTER_NEW_PASSWORD' | translate"
+					[placeholder]="'PAGESPECIFIC_TEXT.PROFILE.ENTER_NEW_PASSWORD' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>
 
 			<ion-item lines="none">
-				<ion-label position="stacked">{{'SHARED_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate}}</ion-label>
+				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate}}</ion-label>
 				<ion-input
 					formControlName="confirmnewpassword"
 					autocapitalize="off"
 					[ngClass]="{'error': (isSubmitted && !profileForm.controls.confirmnewpassword.valid)}"
-					[placeholder]="'SHARED_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate"
+					[placeholder]="'PAGESPECIFIC_TEXT.PROFILE.CONFIRM_NEW_PASSWORD' | translate"
 					type="password"
 				></ion-input>
 			</ion-item>

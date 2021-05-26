@@ -16,12 +16,12 @@ export class CheckinSuccessPage implements OnInit {
 	description = '';
 
 	constructor(public navCtrl: NavController, public activatedRoute: ActivatedRoute, public translateService: TranslateService) {
-		this.translateService.get(['SHARED_TEXT.CONTINUE', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN']).subscribe((res) => {
+		this.translateService.get(['SHARED_TEXT.CONTINUE', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN']).subscribe((res) => {
 			if (!this.actionBtnTitle) {
 				this.actionBtnTitle = res['SHARED_TEXT.CONTINUE'];
 			}
 			if (!this.message) {
-				this.message = res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'];
+				this.message = res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'];
 			}
 		});
 

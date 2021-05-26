@@ -567,14 +567,14 @@ export class SharedDataService {
 				this.checkOutForCheckedInDetail = ifAlreadyCheckedinPlace;
 
 				this.translateService
-					.get(['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_OUT', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT_NOW'])
+					.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'])
 					.subscribe((res) => {
 						this.navCtrl.navigateForward(['/checkinout-confirm'], {
 							queryParams: {
-								headerTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT'],
-								title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_OUT'],
+								headerTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT'],
+								title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT'],
 								subtitle: ifAlreadyCheckedinPlace.entityName,
-								buttonTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT_NOW'],
+								buttonTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'],
 								locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
 							},
 							replaceUrl: true,
@@ -598,14 +598,14 @@ export class SharedDataService {
 							} as CheckInPostData;
 
 							this.translateService
-								.get(['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_IN', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_IN', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_IN_NOW'])
+								.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_IN', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN_NOW'])
 								.subscribe((res) => {
 									this.navCtrl.navigateForward(['/checkinout-confirm'], {
 										queryParams: {
-											headerTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_IN'],
-											title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_IN'],
+											headerTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN'],
+											title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_IN'],
 											subtitle: this.checkInForLocation.locationName,
-											buttonTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_IN_NOW'],
+											buttonTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN_NOW'],
 											nextPageData: JSON.stringify({
 												locationDetail: JSON.stringify(this.checkInForLocation),
 											}),
@@ -624,16 +624,16 @@ export class SharedDataService {
 						if (errorField.indexOf('SimultaneousCheckIn') !== -1) {
 							this.translateService
 								.get([
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN',
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED',
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE',
 								])
 								.subscribe((res) => {
 									this.navCtrl.navigateForward(['/checkin-fail'], {
 										queryParams: {
-											title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN'],
-											errorTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED'],
-											errorMessage: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE'],
+											title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
+											errorTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.SIMULTANIOUS_CHECKIN_NOT_ALLOWED'],
+											errorMessage: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_ALREADY_CHECKEDIN_TO_ANOTHER_PLACE'],
 											nextPage: '/tabs/dashboard',
 										},
 										replaceUrl: true,
@@ -642,16 +642,16 @@ export class SharedDataService {
 						} else {
 							this.translateService
 								.get([
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN',
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION',
-									'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION',
+									'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
 								])
 								.subscribe((res) => {
 									this.navCtrl.navigateForward(['/checkin-fail'], {
 										queryParams: {
-											title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN'],
-											errorTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION'],
-											errorMessage: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+											title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
+											errorTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION'],
+											errorMessage: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
 											nextPage: '/tabs/dashboard',
 										},
 										replaceUrl: true,
@@ -1606,10 +1606,10 @@ export class SharedDataService {
 					this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, response.Result);
 
 					const suucessScreen = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
-					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
+					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
 						this.navCtrl.navigateForward([suucessScreen], {
 							queryParams: {
-								message: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
+								message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
 								nextPage: nextScreen,
 								actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
 							},
@@ -1638,10 +1638,10 @@ export class SharedDataService {
 				this.utilService.hideLoading();
 
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
+					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
 						this.navCtrl.navigateForward(['/checkinout-success-dm'], {
 							queryParams: {
-								message: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
+								message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
 								nextPage: nextScreen,
 								actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
 							},
@@ -1688,23 +1688,23 @@ export class SharedDataService {
 			} else if (fieldName === 'Qualification') {
 				this.translateService
 					.get([
-						'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN',
-						'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION',
-						'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
+						'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN',
+						'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION',
+						'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
 					])
 					.subscribe((res) => {
 						this.navCtrl.navigateForward([failScreen], {
 							queryParams: {
-								title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN'],
-								errorTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION'],
-								errorMessage: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+								title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
+								errorTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION'],
+								errorMessage: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
 								nextPage: nextScreen,
 							},
 							replaceUrl: true,
 						});
 					});
 			} else {
-				this.translateService.get('PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN').subscribe((res) => {
+				this.translateService.get('PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN').subscribe((res) => {
 					this.navCtrl.navigateForward([failScreen], {
 						queryParams: {
 							title: res,
@@ -1719,16 +1719,16 @@ export class SharedDataService {
 		} else {
 			this.translateService
 				.get([
-					'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN',
-					'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION',
-					'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
+					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN',
+					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION',
+					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
 				])
 				.subscribe((res) => {
 					this.navCtrl.navigateForward([failScreen], {
 						queryParams: {
-							title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECKIN'],
-							errorTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.NO_QUALIFICATION'],
-							errorMessage: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
+							title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
+							errorTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION'],
+							errorMessage: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
 							nextPage: nextScreen,
 						},
 						replaceUrl: true,
@@ -1827,12 +1827,12 @@ export class SharedDataService {
 								});
 						}
 					} else {
-						this.translateService.get(['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY', 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF']).subscribe((res) => {
+						this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
 							this.navCtrl.navigateForward([checkInSuccessPage], {
 								queryParams: {
-									message: res['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY'],
+									message: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY'],
 									nextPage,
-									pageTitle: res['PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF'],
+									pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
 								},
 							});
 						});
@@ -1860,15 +1860,15 @@ export class SharedDataService {
 							});
 					} else {
 						this.translateService
-							.get(['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN-OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF'])
+							.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'])
 							.subscribe((res) => {
 								this.navCtrl.navigateForward([checkInFailPage], {
 									queryParams: {
-										title: res['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_CANNOT_SIGNOFF'],
-										errorTitle: res['PAGESPECIFIC_TEXT.SIGN-OFF.NOT_QUALIFIED'],
+										title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
+										errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
 										errorMessage: response.Message,
 										nextPage,
-										pageTitle: res['PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF'],
+										pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
 									},
 									replaceUrl: true,
 								});
@@ -1879,14 +1879,14 @@ export class SharedDataService {
 			(error) => {
 				this.utilService.hideLoading();
 
-				this.translateService.get(['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN-OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF']).subscribe((res) => {
+				this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
 					this.navCtrl.navigateForward([checkInFailPage], {
 						queryParams: {
-							title: res['PAGESPECIFIC_TEXT.SIGN-OFF.YOU_CANNOT_SIGNOFF'],
-							errorTitle: res['PAGESPECIFIC_TEXT.SIGN-OFF.NOT_QUALIFIED'],
+							title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
+							errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
 							errorMessage: error.message || error,
 							nextPage,
-							pageTitle: res['PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF'],
+							pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
 						},
 						replaceUrl: true,
 					});

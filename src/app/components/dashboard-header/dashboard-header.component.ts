@@ -180,14 +180,14 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		this.sharedDataService.checkOutForCheckedInDetail = place;
 
 		this.translateService
-			.get(['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_OUT', 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT_NOW'])
+			.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'])
 			.subscribe((res) => {
 				this.navCtrl.navigateForward(['/checkinout-confirm'], {
 					queryParams: {
-						headerTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT'],
-						title: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_ARE_CHECKING_OUT'],
+						headerTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT'],
+						title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT'],
 						subtitle: place.entityName,
-						buttonTitle: res['PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.CHECK_OUT_NOW'],
+						buttonTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'],
 						locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
 					},
 				});

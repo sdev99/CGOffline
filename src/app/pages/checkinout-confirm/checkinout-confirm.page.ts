@@ -103,9 +103,9 @@ export class CheckinoutConfirmPage implements OnInit {
 	}
 
 	async onContinue() {
-		const nowCheckoutOutKey = 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_HAVE_NOW_CHECKED_OUT';
+		const nowCheckoutOutKey = 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKED_OUT';
 		const continueKey = 'SHARED_TEXT.CONTINUE';
-		const cannotCheckoutKey = 'PAGESPECIFIC_TEXT.CHECK-IN_AND_OUT.YOU_CANNOT_CHECK_OUT';
+		const cannotCheckoutKey = 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECK_OUT';
 		this.translateService.get([nowCheckoutOutKey, continueKey, cannotCheckoutKey]).subscribe((res) => {
 			if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckOut) {
 				this.utilService.presentLoadingWithOptions();

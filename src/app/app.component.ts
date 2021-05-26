@@ -80,18 +80,18 @@ export class AppComponent {
 			}, 1500);
 
 			if (UtilService.isLocalHost()) {
-				setTimeout(() => {
-					// this.router.navigate(['new-account-setup'], {
-					// 	queryParams: {
-					// 		userId: 'e243237f-3147-4810-9dbd-6f5ea7bffb30',
-					// 	},
-					// });
-					// this.router.navigate(['forgot-password-reset'], {
-					// 	queryParams: {
-					// 		code: 'HL77BAA8',
-					// 	},
-					// });
-				}, 2000);
+				// setTimeout(() => {
+				// this.router.navigate(['new-account-setup'], {
+				// 	queryParams: {
+				// 		userId: 'e243237f-3147-4810-9dbd-6f5ea7bffb30',
+				// 	},
+				// });
+				// this.router.navigate(['forgot-password-reset'], {
+				// 	queryParams: {
+				// 		code: 'HL77BAA8',
+				// 	},
+				// });
+				// }, 2000);
 			}
 		});
 	}

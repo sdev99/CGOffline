@@ -17,13 +17,13 @@
 		lines="full"
 	>
 		<ion-list-header lines="full">
-			<ion-label>{{'PAGESPECIFIC_TEXT.CURRENT_CHECK-IN.AVAILABLE_FILES' | translate}}</ion-label>
+			<ion-label>{{'PAGESPECIFIC_TEXT.CURRENT_CHECK_IN.AVAILABLE_FILES' | translate}}</ion-label>
 		</ion-list-header>
 
 		<!-- Show folder first -->
 		<ion-item *ngIf="availableWorkPermits && availableWorkPermits?.length>0" (click)="openWorkPermit()">
 			<ion-icon slot="start" [src]="UtilService.FileIcon('folder')"></ion-icon>
-			<ion-label>{{'PAGESPECIFIC_TEXT.CURRENT_CHECK-IN.WORK_PERMIT_FORMS' | translate}}</ion-label>
+			<ion-label>{{'PAGESPECIFIC_TEXT.CURRENT_CHECK_IN.WORK_PERMIT_FORMS' | translate}}</ion-label>
 		</ion-item>
 
 		<ng-container *ngIf="availableForms">
@@ -67,8 +67,8 @@
 	<app-empty-message
 		*ngIf="isCheckedIn && ((availableForms?.length===0) && (availableDocuments?.length===0) && (availableWorkPermits?.length===0))"
 		icon="./assets/icon/empty-files.svg"
-		[message]="'PAGESPECIFIC_TEXT.CURRENT_CHECK-IN.NO_FILES' | translate"
+		[message]="'PAGESPECIFIC_TEXT.CURRENT_CHECK_IN.NO_FILES' | translate"
 	></app-empty-message>
 
-	<app-empty-message *ngIf="!isCheckedIn" icon="./assets/icon/not-checkedin.svg" [message]="'PAGESPECIFIC_TEXT.CURRENT_CHECK-IN.YOU_NEED_TO_CHECKIN_FIRST_MESSAGE' | translate"></app-empty-message>
+	<app-empty-message *ngIf="!isCheckedIn" icon="./assets/icon/not-checkedin.svg" [message]="'PAGESPECIFIC_TEXT.CURRENT_CHECK_IN.YOU_NEED_TO_CHECKIN_FIRST_MESSAGE' | translate"></app-empty-message>
 </ion-content>

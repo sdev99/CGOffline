@@ -18,14 +18,14 @@
 
 			<ng-container *ngIf="capturedPhoto; else needPhtoView">
 				<ion-img [src]="capturedPhoto.dataUrl"></ion-img>
-				<ion-button fill="clear" class="retake-btn" (click)="takePhoto()">{{'PAGESPECIFIC_TEXT.SIGN-OFF.TAKE_A_NEW_PHOTO' | translate}}</ion-button>
+				<ion-button fill="clear" class="retake-btn" (click)="takePhoto()">{{'PAGESPECIFIC_TEXT.SIGN_OFF.TAKE_A_NEW_PHOTO' | translate}}</ion-button>
 
 				<ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="continue()"> {{'SHARED_TEXT.CONTINUE' | translate}} </ion-button>
 			</ng-container>
 
 			<ng-template #needPhtoView>
-				<div class="title-1">{{'PAGESPECIFIC_TEXT.SIGN-OFF.WE_NEED_YOUR_PHOTO' | translate}}</div>
-				<div class="text-1">{{'PAGESPECIFIC_TEXT.SIGN-OFF.PHOTO_DESCRIPTION' | translate}}</div>
+				<div class="title-1">{{'PAGESPECIFIC_TEXT.SIGN_OFF.WE_NEED_YOUR_PHOTO' | translate}}</div>
+				<div class="text-1">{{'PAGESPECIFIC_TEXT.SIGN_OFF.PHOTO_DESCRIPTION' | translate}}</div>
 				<ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="takePhoto()">
 					<ion-icon name="camera-outline" slot="start"></ion-icon>
 					{{'SHARED_TEXT.MEDIA.TAKE_PHOTO' | translate}}

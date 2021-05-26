@@ -47,10 +47,10 @@ export class SignoffDigitalinkPage implements OnInit {
 		private ngZone: NgZone,
 		private translateService: TranslateService
 	) {
-		const signOffLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF';
-		const signOffAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF_AGREEMENT_TITLE';
-		const youAreSigningOffLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF_AGREEMENT_TITLE';
-		const digitalInkSingatureLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF_AGREEMENT_TITLE';
+		const signOffLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF';
+		const signOffAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF_AGREEMENT_TITLE';
+		const youAreSigningOffLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF_AGREEMENT_TITLE';
+		const digitalInkSingatureLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF_AGREEMENT_TITLE';
 		this.translateService.get([signOffLangKey, signOffAgreementTitleLangKey, youAreSigningOffLangKey, digitalInkSingatureLangKey]).subscribe((res) => {
 			this.pageTitle = res[signOffLangKey];
 			this.title = res[youAreSigningOffLangKey];
@@ -74,12 +74,12 @@ export class SignoffDigitalinkPage implements OnInit {
 	};
 
 	ngOnInit() {
-		const inductionAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.INDUCTION_AGREEMENT_TITLE';
-		const inductionLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.INDUCTION';
-		const documentActivityAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.DOCUMENT_ACTIVITY_AGREEMENT_TITLE';
-		const formActivityAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.FORM_ACTIVITY_AGREEMENT_TITLE';
-		const signOffLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF';
-		const signOffAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN-OFF.SIGNOFF_AGREEMENT_TITLE';
+		const inductionAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.INDUCTION_AGREEMENT_TITLE';
+		const inductionLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.INDUCTION';
+		const documentActivityAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.DOCUMENT_ACTIVITY_AGREEMENT_TITLE';
+		const formActivityAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.FORM_ACTIVITY_AGREEMENT_TITLE';
+		const signOffLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF';
+		const signOffAgreementTitleLangKey = 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF_AGREEMENT_TITLE';
 
 		this.translateService
 			.get([signOffLangKey, signOffAgreementTitleLangKey, documentActivityAgreementTitleLangKey, formActivityAgreementTitleLangKey, inductionAgreementTitleLangKey, inductionLangKey])
