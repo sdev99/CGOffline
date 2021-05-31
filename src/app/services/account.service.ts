@@ -38,10 +38,10 @@ export class AccountService {
 
 	checkForMobileLanguageId() {
 		if (!this.sharedDataService.dedicatedMode) {
-			if (this.userSubject.value?.mobileAppLanguageID) {
-				this.sharedDataService.currentLanguageId = this.userSubject.value?.mobileAppLanguageID;
-			} else if (this.sharedDataService.userProfile && this.sharedDataService.userProfile?.mobileAppLanguageID) {
+			if (this.sharedDataService.userProfile && this.sharedDataService.userProfile?.mobileAppLanguageID) {
 				this.sharedDataService.currentLanguageId = this.sharedDataService.userProfile?.mobileAppLanguageID;
+			} else if (this.userSubject.value?.mobileAppLanguageID) {
+				this.sharedDataService.currentLanguageId = this.userSubject.value?.mobileAppLanguageID;
 			} else {
 				this.getUserProfile(this.userSubject.value?.userId);
 			}

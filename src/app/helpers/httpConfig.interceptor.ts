@@ -1,6 +1,6 @@
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { from, Observable, throwError } from 'rxjs';
-import { map, catchError, mergeMap } from 'rxjs/operators';
+import { map, catchError, mergeMap, share } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { EnumService } from '../services/enum.service';
 import { SharedDataService } from '../services/shared-data.service';
@@ -38,6 +38,13 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 			headers: request.headers.set('Accept', 'application/json'),
 		});
 
+		if (!this.sharedDataService.dedicatedMode && ((this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) || this.sharedDataService.currentLanguageId)) {
+			const langId = this.sharedDataService.userProfile?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue?.mobileAppLanguageID;
+			request = request.clone({
+				headers: request.headers.set('languageID', langId.toString()),
+			});
+		}
+
 		return next.handle(request).pipe(
 			map((event: HttpEvent<any>) => {
 				if (event instanceof HttpResponse) {
@@ -66,7 +73,10 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 					let errorMessage = '';
 					if (error.ResponseException && error.ResponseException.ValidationErrors && error.ResponseException.ValidationErrors.length > 0) {
 						error.ResponseException.ValidationErrors.map((data) => {
-							errorMessage = errorMessage + data.Field + ' : ' + data.Message + '\n';
+							const errorField = this.sharedDataService.companyLangaugeTranslations[data.Field] || data.Field;
+							const errorData = this.sharedDataService.companyLangaugeTranslations[data.Message] || data.Message;
+
+							errorMessage = errorMessage + errorField + ' : ' + errorData + '\n';
 						});
 					}
 

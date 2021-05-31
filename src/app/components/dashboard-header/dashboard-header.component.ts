@@ -9,6 +9,7 @@ import { Response, User } from '../../_models';
 import { CheckInPostData } from '../../_models/checkInPostData';
 import { CheckedInDetailItem } from '../../_models/checkedInDetailItem';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-dashboard-header',
@@ -40,7 +41,8 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		public observablesService: ObservablesService,
 		private accountService: AccountService,
 		private apiService: ApiService,
-		private ngZone: NgZone
+		private ngZone: NgZone,
+		private translateService: TranslateService
 	) {
 		this.user = this.accountService.userValue;
 		this.checkedPlaces = sharedDataService.checkedInPlaces;
@@ -176,15 +178,20 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		this.showCheckedInPlacesList = false;
 
 		this.sharedDataService.checkOutForCheckedInDetail = place;
-		this.navCtrl.navigateForward(['/checkinout-confirm'], {
-			queryParams: {
-				headerTitle: 'Check Out',
-				title: 'You are checking out',
-				subtitle: place.entityName,
-				buttonTitle: 'Check Out Now',
-				locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
-			},
-		});
+
+		this.translateService
+			.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT', 'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'])
+			.subscribe((res) => {
+				this.navCtrl.navigateForward(['/checkinout-confirm'], {
+					queryParams: {
+						headerTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT'],
+						title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_ARE_CHECKING_OUT'],
+						subtitle: place.entityName,
+						buttonTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_OUT_NOW'],
+						locationCheckType: EnumService.ConfirmForCheckType.CheckOut,
+					},
+				});
+			});
 	}
 
 	checkByQrCode() {

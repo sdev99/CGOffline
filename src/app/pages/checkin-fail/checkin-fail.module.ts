@@ -7,14 +7,10 @@ import { IonicModule } from '@ionic/angular';
 import { CheckinFailPageRoutingModule } from './checkin-fail-routing.module';
 
 import { CheckinFailPage } from './checkin-fail.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    CheckinFailPageRoutingModule
-  ],
-  declarations: [CheckinFailPage]
+	imports: [CommonModule, FormsModule, IonicModule, CheckinFailPageRoutingModule, TranslateModule],
+	declarations: [CheckinFailPage],
 })
 export class CheckinFailPageModule {}

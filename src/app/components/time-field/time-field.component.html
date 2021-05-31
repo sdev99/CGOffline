@@ -1,23 +1,24 @@
 <ion-item class="question-item time-item" [formGroup]="form">
-    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
-    <div class="time-field">
-        <ion-datetime displayFormat="hh : mm" pickerFormat="hh:mm"
-                      placeholder="HH : mm"
-                      [ngClass]="{'error': isError}"
-                      [formControlName]="inputName"
-                      display-timezone="utc"></ion-datetime>
+	<ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
+	<div class="time-field">
+		<ion-datetime
+			[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+			[doneText]="'SHARED_TEXT.DONE' | translate"
+			displayFormat="hh : mm"
+			pickerFormat="hh:mm"
+			placeholder="HH : mm"
+			[ngClass]="{ error: isError }"
+			[formControlName]="inputName"
+			display-timezone="utc"
+		></ion-datetime>
 
-        <ion-buttons class="am-pm-btns">
-            <ion-button
-                    [ngClass]="{'active':(timePeriod==='am') || !timePeriod}"
-                    (click)="timePeriodChange('am')">
-                AM
-            </ion-button>
-            <ion-button
-                    [ngClass]="{'active':(timePeriod==='pm')}"
-                    (click)="timePeriodChange('pm')">
-                PM
-            </ion-button>
-        </ion-buttons>
-    </div>
+		<ion-buttons class="am-pm-btns">
+			<ion-button [ngClass]="{ active: timePeriod === 'am' || !timePeriod }" (click)="timePeriodChange('am')">
+				{{ 'PAGESPECIFIC_TEXT.FORM_LIST.AM' | translate }}
+			</ion-button>
+			<ion-button [ngClass]="{ active: timePeriod === 'pm' }" (click)="timePeriodChange('pm')">
+				{{ 'PAGESPECIFIC_TEXT.FORM_LIST.PM' | translate }}
+			</ion-button>
+		</ion-buttons>
+	</div>
 </ion-item>

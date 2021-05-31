@@ -7,16 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { CheckinInductionFormPageRoutingModule } from './checkin-induction-form-routing.module';
 
 import { CheckinInductionFormPage } from './checkin-induction-form.page';
-import {ComponentsModule} from '../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        CheckinInductionFormPageRoutingModule,
-        ComponentsModule
-    ],
-  declarations: [CheckinInductionFormPage]
+	imports: [CommonModule, FormsModule, IonicModule, CheckinInductionFormPageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [CheckinInductionFormPage],
 })
 export class CheckinInductionFormPageModule {}

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuController, ModalController, NavController } from '@ionic/angular';
 import { SharedDataService } from '../../services/shared-data.service';
-import { HomeExitDmPage } from '../../modals/home-exit-dm/home-exit-dm.page';
 import { ApiService } from '../../services/api.service';
 import { AccountService } from '../../services/account.service';
 import { User } from '../../_models';

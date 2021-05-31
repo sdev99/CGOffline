@@ -7,16 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { CheckinInductionRichTextPageRoutingModule } from './checkin-induction-rich-text-routing.module';
 
 import { CheckinInductionRichTextPage } from './checkin-induction-rich-text.page';
-import {ComponentsModule} from '../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        CheckinInductionRichTextPageRoutingModule,
-        ComponentsModule
-    ],
-  declarations: [CheckinInductionRichTextPage]
+	imports: [CommonModule, FormsModule, IonicModule, CheckinInductionRichTextPageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [CheckinInductionRichTextPage],
 })
 export class CheckinInductionRichTextPageModule {}

@@ -1,15 +1,15 @@
 <ion-content fullscreen="true">
-    <div class="content-container">
-        <div class="content">
-            <ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
+	<div class="content-container">
+		<div class="content">
+			<ion-icon src="./assets/icon/ErrorCheck.svg"></ion-icon>
 
-            <div class="title-1" *ngIf="title">{{title}}</div>
-            <div class="text-1" *ngIf="errorTitle">{{errorTitle}}</div>
-            <div class="text-2" *ngIf="errorMessage">{{errorMessage}}</div>
-        </div>
+			<div class="title-1" *ngIf="title">{{title | translate}}</div>
+			<div class="text-1" *ngIf="errorTitle">{{errorTitle | translate}}</div>
+			<div class="text-2" *ngIf="errorMessage">{{errorMessage | translate}}</div>
+		</div>
 
-        <ion-footer mode="ios">
-            <ion-button expand="full" class="action-btn" (click)="onContinue()">Back to Dashboard</ion-button>
-        </ion-footer>
-    </div>
+		<ion-footer mode="ios">
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.BACK_TO_DASHBOARD' | translate}}</ion-button>
+		</ion-footer>
+	</div>
 </ion-content>

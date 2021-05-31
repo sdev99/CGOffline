@@ -10,12 +10,12 @@
 				</ion-item>
 			</ion-radio-group>
 
-			<ion-button expand="full" [disabled]="!selectedLocation" class="action-btn" (click)="onContinue()">Continue </ion-button>
+			<ion-button expand="full" [disabled]="!selectedLocation" class="action-btn" (click)="onContinue()">{{'SHARED_TEXT.CONTINUE' | translate}}</ion-button>
 		</div>
 
 		<ion-footer mode="ios" class="ion-text-center">
 			<div class="device-uid">
-				<span *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0">DEVICE UID&nbsp;</span>
+				<span *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0">{{'SHARED_TEXT.DEVICE_UID' | translate}}&nbsp;</span>
 				<span class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span>
 			</div>
 		</ion-footer>

@@ -39,6 +39,7 @@ import { CustomIonRefreshLoaderComponent } from './custom-ion-refresh-loader/cus
 import { ModalHeaderComponent } from './modal-header/modal-header.component';
 import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.component';
 import { RaTemplateInputComponent } from './ra-template-input/ra-template-input.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
 	declarations: [
@@ -80,7 +81,7 @@ import { RaTemplateInputComponent } from './ra-template-input/ra-template-input.
 		CustomIonRefreshLoaderComponent,
 		RaTemplateInputComponent,
 	],
-	imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule],
+	imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
 	exports: [
 		WarningComponentComponent,
 		ColorPickerComponent,

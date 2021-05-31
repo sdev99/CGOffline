@@ -40,7 +40,7 @@
 									<app-ra-template-input
 										[templateEnable]="canTemplateEnable"
 										[inputEnable]="canInputEnable"
-										[label]="'Task '+(taskIndex+1)"
+										[label]="('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.TASK' | translate)+' '+(taskIndex+1)"
 										[(ngModel)]="task.taskAnswerTitle"
 										[isInvalid]="isSubmitted && !task.taskAnswerTitle"
 										(openTemplate)="openTaskTemplateForTask($event, task)"
@@ -52,7 +52,7 @@
 											[inputEnable]="true"
 											[isInvalid]="isSubmitted && !hazard.hazardAnswerTitle"
 											labelIcon="./assets/icon/thunder.svg"
-											[label]="'Hazard '+(hazardIndex+1)"
+											[label]="('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.HAZARD' | translate)+' '+(hazardIndex+1)"
 											[(ngModel)]="hazard.hazardAnswerTitle"
 											(onRemove)="removeHazard(task, hazardIndex)"
 										></app-ra-template-input>
@@ -60,17 +60,17 @@
 										<div class="hr-line" style="margin-top: 25px"></div>
 
 										<ion-item class="rating-type-title">
-											<h3>Risk Rating</h3>
+											<h3>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.RISK_RATING' | translate}}</h3>
 										</ion-item>
 
 										<div class="ratings-view-container">
 											<div class="rating-dropdowns">
 												<ion-item class="drop-down-item rating-item" lines="none">
-													<ion-label position="stacked"> Severity </ion-label>
+													<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.SEVERITY' | translate}} </ion-label>
 													<ion-select
 														mode="ios"
 														[(ngModel)]="hazard.riskRatingSeverityID"
-														placeholder="Choose"
+														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingSeverityID)}"
 														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
@@ -86,11 +86,11 @@
 												</ion-item>
 
 												<ion-item class="drop-down-item rating-item" lines="none">
-													<ion-label position="stacked"> Probability </ion-label>
+													<ion-label position="stacked"> {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PROBABILITY' | translate}}</ion-label>
 													<ion-select
 														mode="ios"
 														[(ngModel)]="hazard.riskRatingProbabilityID"
-														placeholder="Choose"
+														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 														[ngClass]="{error:!isRiskRatingValid(task, hazard.riskRatingProbabilityID)}"
 														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
@@ -111,10 +111,10 @@
 													<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
 												</div>
 												<div class="rating-value-view">
-													<ion-text>Calculated Value</ion-text>
+													<ion-text>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE' | translate}}</ion-text>
 													<div class="rating-value" [ngStyle]="{'background-color': getRatingTypeAndColor(hazard.riskRatingCalculatedValue).color}">
 														<h2>{{hazard.riskRatingCalculatedValue}}</h2>
-														<p>{{getRatingTypeAndColor(hazard.riskRatingCalculatedValue).type}}</p>
+														<p>{{getRatingTypeAndColor(hazard.riskRatingCalculatedValue).type | translate}}</p>
 													</div>
 												</div>
 											</ng-container>
@@ -130,7 +130,7 @@
 														[inputEnable]="canInputEnable"
 														[isInvalid]="isSubmitted && !controlMeasure.controlMeasureAnswerTitle"
 														labelIcon="./assets/icon/control-measure.svg"
-														[label]="'Control Measure ' +(controlMeasureIndex+1)"
+														[label]="('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CONTROL_MEASURE' |  translate) +' ' +(controlMeasureIndex+1)"
 														[(ngModel)]="controlMeasure.controlMeasureAnswerTitle"
 														(openTemplate)="openTaskTemplateForControlMeasure($event, controlMeasure)"
 														(onRemove)="removeControlMeasure(hazard, controlMeasureIndex)"
@@ -141,25 +141,24 @@
 											<ion-toolbar [ngClass]="{error:(isSubmitted && (!hazard.controlMeasureAnswers || hazard.controlMeasureAnswers.length===0))}">
 												<ion-button slot="end" fill="clear" class="add-control-measure-btn" (click)="addControlMeasure(hazard)">
 													<ion-icon slot="start" name="add"></ion-icon>
-													add control measure
+													{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.ADD_CONTROL_MEASURE' | translate}}
 												</ion-button>
 											</ion-toolbar>
 										</div>
 
-										<div class="hr-line" style="margin-top: 8px"></div>
-
 										<ion-item class="rating-type-title">
-											<h3>Residual Risk Rating</h3>
+											<h3>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.RESIDUAL_RISK_RATING' | translate}}</h3>
+											<div class="hr-line" style="margin-top: 8px"></div>
 										</ion-item>
 
 										<div class="ratings-view-container">
 											<div class="rating-dropdowns">
 												<ion-item class="drop-down-item rating-item" lines="none">
-													<ion-label position="stacked"> Severity </ion-label>
+													<ion-label position="stacked"> {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.SEVERITY' | translate}} </ion-label>
 													<ion-select
 														mode="ios"
 														[(ngModel)]="hazard.residualRiskRatingSeverityID"
-														placeholder="Choose"
+														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 														[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingSeverityID)}"
 														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
@@ -175,12 +174,12 @@
 												</ion-item>
 
 												<ion-item class="drop-down-item rating-item" lines="none">
-													<ion-label position="stacked"> Probability </ion-label>
+													<ion-label position="stacked"> {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PROBABILITY' | translate}}</ion-label>
 													<ion-select
 														mode="ios"
 														class="riskrating-dropdown"
 														[(ngModel)]="hazard.residualRiskRatingProbabilityID"
-														placeholder="Choose"
+														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 														[ngClass]="{error:!isRiskRatingValid(task, hazard.residualRiskRatingProbabilityID)}"
 														[interfaceOptions]="{'cssClass':'riskrating-dropdown'}"
 														[interface]="ionSelectInterface"
@@ -201,10 +200,10 @@
 													<ion-icon src="./assets/icon/arrow-right.svg"></ion-icon>
 												</div>
 												<div class="rating-value-view">
-													<ion-text>Calculated Value</ion-text>
+													<ion-text>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE' | translate}}</ion-text>
 													<div class="rating-value" [ngStyle]="{'background-color': getRatingTypeAndColor(hazard.residualRiskRatingCalculatedValue).color}">
 														<h2>{{hazard.residualRiskRatingCalculatedValue}}</h2>
-														<p>{{getRatingTypeAndColor(hazard.residualRiskRatingCalculatedValue).type}}</p>
+														<p>{{getRatingTypeAndColor(hazard.residualRiskRatingCalculatedValue).type | translate}}</p>
 													</div>
 												</div>
 											</ng-container>
@@ -214,12 +213,12 @@
 
 										<!-- Persons Exposed -->
 										<div class="radio-input-view">
-											<h2>Persons Exposed</h2>
+											<h2>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PERSONS_EXPOSED' | translate}}</h2>
 
 											<!-- Member of the workforce -->
 											<ng-container>
 												<ion-item>
-													<ion-label>Members of the Workforce</ion-label>
+													<ion-label>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.MEMBERS_OF_THE_WORKFORCE' | translate}}</ion-label>
 													<ion-checkbox mode="md" slot="start" [(ngModel)]="hazard.isMembersOfTheWorkForce"></ion-checkbox>
 												</ion-item>
 
@@ -244,7 +243,7 @@
 															>
 																<ion-select
 																	[interface]="ionSelectInterface"
-																	placeholder="Choose"
+																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 																	[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
 																	[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
 																>
@@ -258,7 +257,7 @@
 																expand="block"
 																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserIDs','memberOfTheWorkForceSelectedUser' )"
 															>
-																Add
+																{{'SHARED_TEXT.ADD' | translate}}
 															</ion-button>
 														</ng-container>
 
@@ -269,7 +268,7 @@
 															>
 																<ion-select
 																	[interface]="ionSelectInterface"
-																	placeholder="Choose"
+																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 																	[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
 																	[(ngModel)]="hazard.memberOfTheWorkForceSelectedGroup"
 																>
@@ -283,7 +282,7 @@
 																expand="block"
 																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserGroupIDs', 'memberOfTheWorkForceSelectedGroup')"
 															>
-																Add
+																{{'SHARED_TEXT.ADD' | translate}}
 															</ion-button>
 														</ng-container>
 													</ion-item>
@@ -316,7 +315,7 @@
 											<!-- Member of the public -->
 											<ng-container>
 												<ion-item>
-													<ion-label>Members of the Public</ion-label>
+													<ion-label>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.MEMBERS_OF_THE_PUBLIC' | translate}}</ion-label>
 													<ion-checkbox mode="md" slot="start" [(ngModel)]="hazard.isMembersOfThePublic"></ion-checkbox>
 												</ion-item>
 
@@ -335,7 +334,7 @@
 												<div class="hr-line" style="margin-top: 8px"></div>
 
 												<ion-item>
-													<ion-label>Personnel Exposed Notification</ion-label>
+													<ion-label>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PERSONNEL_EXPOSED_NOTIFICATION' | translate}}</ion-label>
 													<ion-checkbox mode="md" slot="start" [(ngModel)]="hazard.hasPersonnelExposedNotification"></ion-checkbox>
 												</ion-item>
 
@@ -360,7 +359,7 @@
 															>
 																<ion-select
 																	[interface]="ionSelectInterface"
-																	placeholder="Choose"
+																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 																	[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
 																	[(ngModel)]="hazard.personnelExposedSelectedUser"
 																>
@@ -374,7 +373,7 @@
 																expand="block"
 																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserIDs', 'personnelExposedSelectedUser')"
 															>
-																Add
+																{{'SHARED_TEXT.ADD' | translate}}
 															</ion-button>
 														</ng-container>
 
@@ -385,7 +384,7 @@
 															>
 																<ion-select
 																	[interface]="ionSelectInterface"
-																	placeholder="Choose"
+																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
 																	[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
 																	[(ngModel)]="hazard.personnelExposedSelectedGroup"
 																>
@@ -399,7 +398,7 @@
 																expand="block"
 																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserGroupIDs','personnelExposedSelectedGroup')"
 															>
-																Add
+																{{'SHARED_TEXT.ADD' | translate}}
 															</ion-button>
 														</ng-container>
 													</ion-item>
@@ -444,7 +443,9 @@
 										<ng-container *ngIf="hazardIndex === task.hazardAnswers?.length-1">
 											<div class="hr-line" style="margin-top: 8px"></div>
 											<ion-item>
-												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)">Add Hazard</ion-button>
+												<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)"
+													>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.ADD_HAZARD' | translate}}</ion-button
+												>
 											</ion-item>
 										</ng-container>
 										<!-- End - Add New Hazard Button -->
@@ -453,7 +454,9 @@
 									<div class="risk-assesment-component" *ngIf="!task.hazardAnswers || task.hazardAnswers.length===0">
 										<!-- Add New Hazard Button -->
 										<ion-item>
-											<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)">Add Hazard</ion-button>
+											<ion-button fill="outline" class="add-hazard-button" (click)="addTaskHazard(task)"
+												>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.ADD_HAZARD' | translate}}</ion-button
+											>
 										</ion-item>
 										<!-- End - Add New Hazard Button -->
 									</div>
@@ -461,7 +464,9 @@
 							</ng-container>
 
 							<ion-item *ngIf="allowEndUserToAddHazardsAndCM">
-								<ion-button fill="outline" class="add-hazard-button" (click)="addTask(section)">Add Task</ion-button>
+								<ion-button fill="outline" class="add-hazard-button" (click)="addTask(section)"
+									>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.ADD_TASK' | translate}}</ion-button
+								>
 							</ion-item>
 						</ng-container>
 
@@ -486,10 +491,10 @@
 					<div class="hr-line-full ion-margin-top"></div>
 
 					<ion-item class="text-bottom-msg">
-						<ion-label class="ion-text-wrap ion-text-center"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
+						<ion-label class="ion-text-wrap ion-text-center">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
 					</ion-item>
 					<ion-item class="ion-margin-vertical ion-padding-bottom">
-						<ion-button expand="full" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+						<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 					</ion-item>
 				</ng-container>
 			</ion-list>
@@ -499,8 +504,8 @@
 			<!--        End of form -->
 			<ng-container *ngIf="sharedDataService.dedicatedMode">
 				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding"> You've reached the end of the form. Please check your answers and sign-off. </ion-label>
-					<ion-button slot="end" class="action-btn" (click)="onContinue()">Sign-Off</ion-button>
+					<ion-label class="ion-text-wrap ion-padding"> {{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
+					<ion-button slot="end" class="action-btn" (click)="onContinue()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
 				</ion-item>
 			</ng-container>
 		</div>

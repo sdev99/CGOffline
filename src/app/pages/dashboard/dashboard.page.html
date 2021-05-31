@@ -1,53 +1,48 @@
 <ion-header>
-    <app-dashboard-header></app-dashboard-header>
+	<app-dashboard-header></app-dashboard-header>
 </ion-header>
 
 <ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+		<app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
+	</ion-refresher>
 
-    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
-    </ion-refresher>
+	<ion-list *ngIf="activityList && activityList.length > 0; else emptyMessageComponent" class="activity-list" lines="full">
+		<ion-list-header lines="full" *ngIf="activityOverviewData">
+			<ion-label>{{'PAGESPECIFIC_TEXT.ACTIVITIES.ACTIVITY_LIST' | translate}}</ion-label>
+			<div class="status-badge ion-margin-end" *ngIf="activityOverviewData.rejectedCount>0">
+				<span>{{activityOverviewData.rejectedCount}}</span>
+				<ion-badge color="light" class="rejected">{{'PAGESPECIFIC_TEXT.ACTIVITIES.REJECTED' | translate}}</ion-badge>
+			</div>
+			<div class="status-badge" *ngIf="activityOverviewData.overDueCount>0">
+				<span>{{activityOverviewData.overDueCount}}</span>
+				<ion-badge color="warning" class="overdue">{{'PAGESPECIFIC_TEXT.ACTIVITIES.OVERDUE' | translate}}</ion-badge>
+			</div>
+		</ion-list-header>
 
-    <ion-list *ngIf="activityList && activityList.length > 0; else emptyMessageComponent" class="activity-list"
-              lines="full">
+		<ion-item *ngFor="let activity of activityList" (click)="openActivityDetail(activity)">
+			<div class="alert-icon-container">
+				<ion-icon *ngIf="activity.isHighPriority" name="alert-circle" color="danger"></ion-icon>
+			</div>
+			<ion-label>
+				<h6>{{activity.activityTitle}}</h6>
+				<div class="detail">
+					<ion-badge *ngIf="activity.isOverDue" color="warning" class="overdue">{{'PAGESPECIFIC_TEXT.ACTIVITIES.OVERDUE' | translate}}</ion-badge>
+					<ng-container *ngIf="activity.isRejected">
+						<ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+						<ion-badge color="light" class="rejected">{{'PAGESPECIFIC_TEXT.ACTIVITIES.REJECTED' | translate}}</ion-badge>
+					</ng-container>
+					<span class="time" *ngIf="activity.activityTime; else customTime">{{activity.activityTime}}</span>
+					<ng-template #customTime>
+						<span class="time" *ngIf="activity.activityDate === activity.todayDate">{{'PAGESPECIFIC_TEXT.ACTIVITIES.TODAY' | translate}}</span>
+						<span class="time" *ngIf="activity.activityDate !== activity.todayDate">{{activity.activityDate | timeAgo}}</span>
+					</ng-template>
+				</div>
+			</ion-label>
+		</ion-item>
+	</ion-list>
 
-        <ion-list-header lines="full" *ngIf="activityOverviewData">
-            <ion-label>Activity List</ion-label>
-            <div class="status-badge ion-margin-end" *ngIf="activityOverviewData.rejectedCount>0">
-                <span>{{activityOverviewData.rejectedCount}}</span>
-                <ion-badge  color="light" class="rejected">Rejected</ion-badge>
-            </div>
-            <div class="status-badge" *ngIf="activityOverviewData.overDueCount>0">
-                <span>{{activityOverviewData.overDueCount}}</span>
-                <ion-badge color="warning" class="overdue">Overdue</ion-badge>
-            </div>
-        </ion-list-header>
-
-        <ion-item *ngFor="let activity of activityList" (click)="openActivityDetail(activity)">
-            <div class="alert-icon-container">
-                <ion-icon *ngIf="activity.isHighPriority" name="alert-circle" color="danger"></ion-icon>
-            </div>
-            <ion-label>
-                <h6>{{activity.activityTitle}}</h6>
-                <div class="detail">
-                    <ion-badge *ngIf="activity.isOverDue" color="warning" class="overdue">Overdue</ion-badge>
-                    <ng-container *ngIf="activity.isRejected">
-                        <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-                        <ion-badge color="light" class="rejected">Rejected</ion-badge>
-                    </ng-container>
-                    <span class="time" *ngIf="activity.activityTime; else customTime">{{activity.activityTime}}</span>
-                    <ng-template #customTime>
-                        <span class="time" *ngIf="activity.activityDate === activity.todayDate">Today</span>
-                        <span class="time"
-                              *ngIf="activity.activityDate !== activity.todayDate">{{activity.activityDate | timeAgo}}</span>
-                    </ng-template>
-                </div>
-            </ion-label>
-        </ion-item>
-    </ion-list>
-
-    <ng-template #emptyMessageComponent>
-        <app-empty-message message="You don't have any activities assigned."></app-empty-message>
-    </ng-template>
-
+	<ng-template #emptyMessageComponent>
+		<app-empty-message [message]="'PAGESPECIFIC_TEXT.ACTIVITIES.NO_ACTIVITY_ASSIGNED' | translate "></app-empty-message>
+	</ng-template>
 </ion-content>

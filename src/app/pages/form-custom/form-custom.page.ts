@@ -1,23 +1,18 @@
-import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { IonContent, ModalController, NavController } from '@ionic/angular';
 import { DemoDataService } from '../../services/demo-data.service';
 import { PhotoService } from '../../services/photo.service';
 import { SharedDataService } from '../../services/shared-data.service';
 import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { EnumService } from '../../services/enum.service';
 import { ActivatedRoute } from '@angular/router';
-import { FilehandlerService } from '../../services/filehandler.service';
 import { ObservablesService } from '../../services/observables.service';
-import { Subscription } from 'rxjs';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { AccountService } from '../../services/account.service';
 import { User } from '../../_models';
 import { UtilService } from '../../services/util.service';
-import { HavExposure } from '../../_models/havExposure';
-import { HavModelItem } from '../../_models/havModelItem';
 import { ApiService } from '../../services/api.service';
-import * as moment from 'moment/moment';
 
 @Component({
 	selector: 'app-form-custom',
@@ -56,7 +51,6 @@ export class FormCustomPage {
 		public observablesService: ObservablesService,
 		public modalController: ModalController,
 		public route: ActivatedRoute,
-		private filehandlerService: FilehandlerService,
 		private screenOrientation: ScreenOrientation,
 		private ngZone: NgZone,
 		private apiService: ApiService,

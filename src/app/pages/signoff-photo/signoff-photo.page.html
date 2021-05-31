@@ -1,54 +1,45 @@
 <ion-header mode="ios">
-    <app-modal-header *ngIf="!sharedDataService.dedicatedMode" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header *ngIf="!sharedDataService.dedicatedMode" (closeModal)="onClose()"></app-modal-header>
 
-    <app-modal-header-dm *ngIf="sharedDataService.dedicatedMode"
-                         [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" modalSubTitle="Sign-Off"
-                         (closeModal)="onClose()"></app-modal-header-dm>
+	<app-modal-header-dm
+		*ngIf="sharedDataService.dedicatedMode"
+		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+		[modalSubTitle]="'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate"
+		(closeModal)="onClose()"
+	></app-modal-header-dm>
 </ion-header>
 
 <ion-content [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-    <div class="content-container">
-        <app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
+	<div class="content-container">
+		<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
 
-        <div class="content">
-            <div *ngIf="sharedDataService.dedicatedMode" class="heading-1">Sign-Off</div>
+		<div class="content">
+			<div *ngIf="sharedDataService.dedicatedMode" class="heading-1">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</div>
 
-            <ng-container *ngIf="capturedPhoto; else needPhtoView">
-                <ion-img [src]="capturedPhoto.dataUrl"></ion-img>
-                <ion-button fill="clear" class="retake-btn" (click)="takePhoto()">Take a new photo?</ion-button>
+			<ng-container *ngIf="capturedPhoto; else needPhtoView">
+				<ion-img [src]="capturedPhoto.dataUrl"></ion-img>
+				<ion-button fill="clear" class="retake-btn" (click)="takePhoto()">{{'PAGESPECIFIC_TEXT.SIGN_OFF.TAKE_A_NEW_PHOTO' | translate}}</ion-button>
 
-                <ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn"
-                            (click)="continue()">
-                    Continue
-                </ion-button>
-            </ng-container>
+				<ion-button *ngIf="sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="continue()"> {{'SHARED_TEXT.CONTINUE' | translate}} </ion-button>
+			</ng-container>
 
-            <ng-template #needPhtoView>
-                <div class="title-1">We need your photo</div>
-                <div class="text-1">
-                    To finish the sign-off, you need to take a selfie of your self, using your device camera.
-                </div>
-                <ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn"
-                            (click)="takePhoto()">
-                    <ion-icon name="camera-outline" slot="start"></ion-icon>
-                    Take a Photo
-                </ion-button>
-            </ng-template>
+			<ng-template #needPhtoView>
+				<div class="title-1">{{'PAGESPECIFIC_TEXT.SIGN_OFF.WE_NEED_YOUR_PHOTO' | translate}}</div>
+				<div class="text-1">{{'PAGESPECIFIC_TEXT.SIGN_OFF.PHOTO_DESCRIPTION' | translate}}</div>
+				<ion-button *ngIf="!capturedPhoto && sharedDataService.dedicatedMode" expand="full" class="action-btn" (click)="takePhoto()">
+					<ion-icon name="camera-outline" slot="start"></ion-icon>
+					{{'SHARED_TEXT.MEDIA.TAKE_PHOTO' | translate}}
+				</ion-button>
+			</ng-template>
+		</div>
 
+		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
+			<ion-button *ngIf="!capturedPhoto" expand="full" class="action-btn" (click)="takePhoto()">
+				<ion-icon name="camera-outline" slot="start"></ion-icon>
+				{{'SHARED_TEXT.MEDIA.TAKE_PHOTO' | translate}}
+			</ion-button>
 
-        </div>
-
-
-        <ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-            <ion-button *ngIf="!capturedPhoto" expand="full" class="action-btn" (click)="takePhoto()">
-                <ion-icon name="camera-outline" slot="start"></ion-icon>
-                Take a Photo
-            </ion-button>
-
-            <ion-button *ngIf="capturedPhoto" expand="full" class="action-btn" (click)="continue()">
-                Continue
-            </ion-button>
-        </ion-footer>
-
-    </div>
+			<ion-button *ngIf="capturedPhoto" expand="full" class="action-btn" (click)="continue()"> {{'SHARED_TEXT.CONTINUE' | translate}} </ion-button>
+		</ion-footer>
+	</div>
 </ion-content>

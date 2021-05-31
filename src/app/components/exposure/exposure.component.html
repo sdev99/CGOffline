@@ -1,8 +1,6 @@
 <div class="exposure" [ngClass]="containerClassName">
-    <ion-label>
-        {{label}}
-    </ion-label>
-    <div class="points" [ngStyle]="{backgroundColor:getPointColor()}">
-        {{points}} points
-    </div>
+	<ion-label>
+		{{ label }}
+	</ion-label>
+	<div class="points" [ngStyle]="{ backgroundColor: getPointColor() }">{{ points }} {{ 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.POINTS' | translate }}</div>
 </div>

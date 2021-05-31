@@ -7,16 +7,11 @@ import { IonicModule } from '@ionic/angular';
 import { DashboardQrscanPageRoutingModule } from './dashboard-qrscan-routing.module';
 
 import { DashboardQrscanPage } from './dashboard-qrscan.page';
-import {ComponentsModule} from '../../components/components.module';
+import { ComponentsModule } from '../../components/components.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        DashboardQrscanPageRoutingModule,
-        ComponentsModule
-    ],
-  declarations: [DashboardQrscanPage]
+	imports: [CommonModule, FormsModule, IonicModule, DashboardQrscanPageRoutingModule, ComponentsModule, TranslateModule],
+	declarations: [DashboardQrscanPage],
 })
 export class DashboardQrscanPageModule {}

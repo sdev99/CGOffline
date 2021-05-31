@@ -1,0 +1,685 @@
+{
+	"formId": 541,
+	"formVersionId": 830,
+	"selectedLanguageID": 35,
+	"formTypeId": 4,
+	"userId": "e243237f-3147-4810-9dbd-6f5ea7bffb30",
+	"companyId": 27,
+	"questionAnswers": [],
+	"accidentReportQuestionAnswers": [],
+	"riskAssessmentAnswers": [],
+	"havAnswerDetail": {
+		"initialExposure": 0,
+		"calculatedExposure": 87076653,
+		"totalExposure": 87076653,
+		"havAssessmentTools": [
+			{
+				"displayOrder": 1,
+				"havExposure": { "hAVExposureId": 0, "vibrationMagnitude": 5555.32, "pointsPerHour": 5224599131.271199, "exposurePoints": 87076653 },
+				"havQuestionAnswers": [
+					{ "hAVQuestionAnswerId": 0, "questionID": 5569, "questionTitle": "Date of Usage", "formVersionID": 830, "answerTypeID": 7, "hAVSequence": 1, "dateOfUsage": "2021-05-26" },
+					{ "hAVQuestionAnswerId": 0, "questionID": 5570, "questionTitle": "Manufacturer", "formVersionID": 830, "answerTypeID": 11, "hAVSequence": 2, "hAVManufacturerID": 7 },
+					{ "hAVQuestionAnswerId": 0, "questionID": 5571, "questionTitle": "Type", "formVersionID": 830, "answerTypeID": 11, "hAVSequence": 3, "hAVTypeID": 10 },
+					{ "hAVQuestionAnswerId": 0, "questionID": 5572, "questionTitle": "Model", "formVersionID": 830, "answerTypeID": 11, "hAVSequence": 4, "hAVModelID": 11 },
+					{
+						"hAVQuestionAnswerId": 0,
+						"questionID": 5573,
+						"questionTitle": "Planned Time of Use (in minutes)",
+						"formVersionID": 830,
+						"answerTypeID": 8,
+						"hAVSequence": 5,
+						"plannedTimeOfUse": 1
+					}
+				]
+			}
+		]
+	},
+	"workPermitAnswer": null,
+	"formattedSections": [
+		{
+			"sectionId": 1811,
+			"sectionIsHidden": false,
+			"sectionDisplayOrder": 1,
+			"isRiskAssessmentSection": false,
+			"isHAVSection": true,
+			"isAccidentReportSection": false,
+			"sectionTranslations": [{ "sectionTranslationId": 1953, "sectionTranslationLanguageId": 35, "sectionTranslationTitle": "HAVs Assessment" }],
+			"questions": [
+				{
+					"questionId": 5569,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 7,
+					"questionDisplayOrder": 1,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5841,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Date of Usage",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null
+				},
+				{
+					"questionId": 5570,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 2,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5842,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Manufacturer",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null
+				},
+				{
+					"questionId": 5571,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 3,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5843,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Type",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null
+				},
+				{
+					"questionId": 5572,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 4,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5844,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Model",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null
+				},
+				{
+					"questionId": 5573,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 8,
+					"questionDisplayOrder": 5,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5845,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Planned Time of Use (in minutes)",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null
+				}
+			],
+			"tasks": [],
+			"havAssessmentTools": [
+				{
+					"displayOrder": 1,
+					"questions": [
+						{
+							"questionId": 5569,
+							"questionIsHidden": false,
+							"questionIsRequired": true,
+							"allowInstructionOrNote": false,
+							"allowTextLabel": false,
+							"shouldShowOptionalComment": false,
+							"allowAttachment": false,
+							"allowQuestionLogic": false,
+							"isExistingFile": false,
+							"shouldShowAnswerChoiceTemplate": false,
+							"selectedAnswerTypeId": 7,
+							"questionDisplayOrder": 1,
+							"sectionID": 1811,
+							"questionTranslations": [
+								{
+									"questionTranslationId": 5841,
+									"questionTranslationLanguageId": 35,
+									"questionTranslationTitle": "Date of Usage",
+									"questionTranslationInstructionOrNote": null,
+									"questionTranslationTextLabel": null
+								}
+							],
+							"answerChoiceAttributes": [],
+							"questionLogics": [],
+							"questionAttachments": [],
+							"questionAttachmentIconPath": null,
+							"value": "2021-05-26T17:20:05.665-00:00"
+						},
+						{
+							"questionId": 5570,
+							"questionIsHidden": false,
+							"questionIsRequired": true,
+							"allowInstructionOrNote": false,
+							"allowTextLabel": false,
+							"shouldShowOptionalComment": false,
+							"allowAttachment": false,
+							"allowQuestionLogic": false,
+							"isExistingFile": false,
+							"shouldShowAnswerChoiceTemplate": false,
+							"selectedAnswerTypeId": 11,
+							"questionDisplayOrder": 2,
+							"sectionID": 1811,
+							"questionTranslations": [
+								{
+									"questionTranslationId": 5842,
+									"questionTranslationLanguageId": 35,
+									"questionTranslationTitle": "Manufacturer",
+									"questionTranslationInstructionOrNote": null,
+									"questionTranslationTextLabel": null
+								}
+							],
+							"answerChoiceAttributes": [],
+							"questionLogics": [],
+							"questionAttachments": [],
+							"questionAttachmentIconPath": null,
+							"value": 7
+						},
+						{
+							"questionId": 5571,
+							"questionIsHidden": false,
+							"questionIsRequired": true,
+							"allowInstructionOrNote": false,
+							"allowTextLabel": false,
+							"shouldShowOptionalComment": false,
+							"allowAttachment": false,
+							"allowQuestionLogic": false,
+							"isExistingFile": false,
+							"shouldShowAnswerChoiceTemplate": false,
+							"selectedAnswerTypeId": 11,
+							"questionDisplayOrder": 3,
+							"sectionID": 1811,
+							"questionTranslations": [
+								{
+									"questionTranslationId": 5843,
+									"questionTranslationLanguageId": 35,
+									"questionTranslationTitle": "Type",
+									"questionTranslationInstructionOrNote": null,
+									"questionTranslationTextLabel": null
+								}
+							],
+							"answerChoiceAttributes": [
+								{
+									"havTypeID": 7,
+									"companyID": 27,
+									"havManufacturerID": 7,
+									"havTypeName": "Laptop",
+									"createdDate": "2020-12-09T09:55:58.093",
+									"modifiedDate": "2020-12-09T09:56:46.047",
+									"havManufacturerName": null
+								},
+								{
+									"havTypeID": 10,
+									"companyID": 27,
+									"havManufacturerID": 7,
+									"havTypeName": "Mobiles",
+									"createdDate": "2020-12-09T09:56:37.88",
+									"modifiedDate": "2020-12-09T09:56:37.88",
+									"havManufacturerName": null
+								}
+							],
+							"questionLogics": [],
+							"questionAttachments": [],
+							"questionAttachmentIconPath": null,
+							"listValueKey": "havTypeID",
+							"listLabelKey": "havTypeName",
+							"value": 10
+						},
+						{
+							"questionId": 5572,
+							"questionIsHidden": false,
+							"questionIsRequired": true,
+							"allowInstructionOrNote": false,
+							"allowTextLabel": false,
+							"shouldShowOptionalComment": false,
+							"allowAttachment": false,
+							"allowQuestionLogic": false,
+							"isExistingFile": false,
+							"shouldShowAnswerChoiceTemplate": false,
+							"selectedAnswerTypeId": 11,
+							"questionDisplayOrder": 4,
+							"sectionID": 1811,
+							"questionTranslations": [
+								{
+									"questionTranslationId": 5844,
+									"questionTranslationLanguageId": 35,
+									"questionTranslationTitle": "Model",
+									"questionTranslationInstructionOrNote": null,
+									"questionTranslationTextLabel": null
+								}
+							],
+							"answerChoiceAttributes": [
+								{
+									"havModelID": 20,
+									"companyID": 27,
+									"havTypeID": 10,
+									"model": "iPhone 11",
+									"vibrationValue": "0.00",
+									"kFactor": "0.00",
+									"createdDate": "2021-01-04T05:26:47.027",
+									"modifiedDate": "2021-01-04T05:26:47.027",
+									"havTypeName": null,
+									"havManufacturerID": 0,
+									"havManufacturerName": null
+								},
+								{
+									"havModelID": 11,
+									"companyID": 27,
+									"havTypeID": 10,
+									"model": "iPhone12",
+									"vibrationValue": "5,555.32",
+									"kFactor": "45,555.34",
+									"createdDate": "2020-12-09T09:57:27.5",
+									"modifiedDate": "2020-12-19T04:08:30.353",
+									"havTypeName": null,
+									"havManufacturerID": 0,
+									"havManufacturerName": null
+								}
+							],
+							"questionLogics": [],
+							"questionAttachments": [],
+							"questionAttachmentIconPath": null,
+							"listValueKey": "havModelID",
+							"listLabelKey": "model",
+							"value": 11
+						},
+						{
+							"questionId": 5573,
+							"questionIsHidden": false,
+							"questionIsRequired": true,
+							"allowInstructionOrNote": false,
+							"allowTextLabel": false,
+							"shouldShowOptionalComment": false,
+							"allowAttachment": false,
+							"allowQuestionLogic": false,
+							"isExistingFile": false,
+							"shouldShowAnswerChoiceTemplate": false,
+							"selectedAnswerTypeId": 8,
+							"questionDisplayOrder": 5,
+							"sectionID": 1811,
+							"questionTranslations": [
+								{
+									"questionTranslationId": 5845,
+									"questionTranslationLanguageId": 35,
+									"questionTranslationTitle": "Planned Time of Use (in minutes)",
+									"questionTranslationInstructionOrNote": null,
+									"questionTranslationTextLabel": null
+								}
+							],
+							"answerChoiceAttributes": [],
+							"questionLogics": [],
+							"questionAttachments": [],
+							"questionAttachmentIconPath": null,
+							"value": "1"
+						}
+					]
+				}
+			],
+			"answerData": [
+				{
+					"questionId": 5569,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 7,
+					"questionDisplayOrder": 1,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5841,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Date of Usage",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null,
+					"value": "2021-05-26T17:20:05.665-00:00",
+					"havAnswerData": {
+						"hAVQuestionAnswerId": 0,
+						"questionID": 5569,
+						"questionTitle": "Date of Usage",
+						"formVersionID": 830,
+						"answerTypeID": 7,
+						"hAVSequence": 1,
+						"dateOfUsage": "2021-05-26"
+					}
+				},
+				{
+					"questionId": 5570,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 2,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5842,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Manufacturer",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null,
+					"value": 7,
+					"havAnswerData": {
+						"hAVQuestionAnswerId": 0,
+						"questionID": 5570,
+						"questionTitle": "Manufacturer",
+						"formVersionID": 830,
+						"answerTypeID": 11,
+						"hAVSequence": 2,
+						"hAVManufacturerID": 7
+					}
+				},
+				{
+					"questionId": 5571,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 3,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5843,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Type",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [
+						{
+							"havTypeID": 7,
+							"companyID": 27,
+							"havManufacturerID": 7,
+							"havTypeName": "Laptop",
+							"createdDate": "2020-12-09T09:55:58.093",
+							"modifiedDate": "2020-12-09T09:56:46.047",
+							"havManufacturerName": null
+						},
+						{
+							"havTypeID": 10,
+							"companyID": 27,
+							"havManufacturerID": 7,
+							"havTypeName": "Mobiles",
+							"createdDate": "2020-12-09T09:56:37.88",
+							"modifiedDate": "2020-12-09T09:56:37.88",
+							"havManufacturerName": null
+						}
+					],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null,
+					"listValueKey": "havTypeID",
+					"listLabelKey": "havTypeName",
+					"value": 10,
+					"havAnswerData": { "hAVQuestionAnswerId": 0, "questionID": 5571, "questionTitle": "Type", "formVersionID": 830, "answerTypeID": 11, "hAVSequence": 3, "hAVTypeID": 10 }
+				},
+				{
+					"questionId": 5572,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 11,
+					"questionDisplayOrder": 4,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5844,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Model",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [
+						{
+							"havModelID": 20,
+							"companyID": 27,
+							"havTypeID": 10,
+							"model": "iPhone 11",
+							"vibrationValue": "0.00",
+							"kFactor": "0.00",
+							"createdDate": "2021-01-04T05:26:47.027",
+							"modifiedDate": "2021-01-04T05:26:47.027",
+							"havTypeName": null,
+							"havManufacturerID": 0,
+							"havManufacturerName": null
+						},
+						{
+							"havModelID": 11,
+							"companyID": 27,
+							"havTypeID": 10,
+							"model": "iPhone12",
+							"vibrationValue": "5,555.32",
+							"kFactor": "45,555.34",
+							"createdDate": "2020-12-09T09:57:27.5",
+							"modifiedDate": "2020-12-19T04:08:30.353",
+							"havTypeName": null,
+							"havManufacturerID": 0,
+							"havManufacturerName": null
+						}
+					],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null,
+					"listValueKey": "havModelID",
+					"listLabelKey": "model",
+					"value": 11,
+					"havAnswerData": { "hAVQuestionAnswerId": 0, "questionID": 5572, "questionTitle": "Model", "formVersionID": 830, "answerTypeID": 11, "hAVSequence": 4, "hAVModelID": 11 }
+				},
+				{
+					"questionId": 5573,
+					"questionIsHidden": false,
+					"questionIsRequired": true,
+					"allowInstructionOrNote": false,
+					"allowTextLabel": false,
+					"shouldShowOptionalComment": false,
+					"allowAttachment": false,
+					"allowQuestionLogic": false,
+					"isExistingFile": false,
+					"shouldShowAnswerChoiceTemplate": false,
+					"selectedAnswerTypeId": 8,
+					"questionDisplayOrder": 5,
+					"sectionID": 1811,
+					"questionTranslations": [
+						{
+							"questionTranslationId": 5845,
+							"questionTranslationLanguageId": 35,
+							"questionTranslationTitle": "Planned Time of Use (in minutes)",
+							"questionTranslationInstructionOrNote": null,
+							"questionTranslationTextLabel": null
+						}
+					],
+					"answerChoiceAttributes": [],
+					"questionLogics": [],
+					"questionAttachments": [],
+					"questionAttachmentIconPath": null,
+					"value": "1",
+					"havAnswerData": {
+						"hAVQuestionAnswerId": 0,
+						"questionID": 5573,
+						"questionTitle": "Planned Time of Use (in minutes)",
+						"formVersionID": 830,
+						"answerTypeID": 8,
+						"hAVSequence": 5,
+						"plannedTimeOfUse": 1
+					}
+				}
+			]
+		}
+	],
+	"workPermitDetails": {
+		"workPermitId": 0,
+		"totalScore": null,
+		"hasExpirationDate": false,
+		"hasExpiresOn": false,
+		"expiresOnDate": null,
+		"hasExpiresAfter": false,
+		"durationValue": null,
+		"hasPermitIssuedNotification": false,
+		"hasPermitNotIssuedNotification": false,
+		"operatorTypeID": null,
+		"durationTypeID": null,
+		"permitIssuedNotificationID": null,
+		"permitNotIssuedNotificationID": null,
+		"formVersionID": 0,
+		"permitNotIssuedNotification": {
+			"notifyUser": true,
+			"selectedUserId": "00000000-0000-0000-0000-000000000000",
+			"selectedUsers": [],
+			"notifyGroup": false,
+			"selectedGroupId": 0,
+			"selectedGroups": [],
+			"isSystemNotification": true,
+			"isEmailNotification": false,
+			"isSMSNotification": false,
+			"selectedUsersAndGroups": []
+		},
+		"permitIssuedNotification": {
+			"notifyUser": true,
+			"selectedUserId": "00000000-0000-0000-0000-000000000000",
+			"selectedUsers": [],
+			"notifyGroup": false,
+			"selectedGroupId": 0,
+			"selectedGroups": [],
+			"isSystemNotification": true,
+			"isEmailNotification": false,
+			"isSMSNotification": false,
+			"selectedUsersAndGroups": []
+		},
+		"permitIssuedAvailableUsers": [],
+		"permitIssuedAvailableUserGroups": [],
+		"permitNotIssuedAvailableUsers": [],
+		"permitNotIssuedAvailableUserGroups": []
+	},
+	"accidentReport": {
+		"accidentReportId": 0,
+		"hasAccidentNotification": false,
+		"notificationID": null,
+		"formVersionID": 0,
+		"accidentNotification": {
+			"notifyUser": true,
+			"selectedUserId": "00000000-0000-0000-0000-000000000000",
+			"selectedUsers": [],
+			"notifyGroup": false,
+			"selectedGroupId": 0,
+			"selectedGroups": [],
+			"isSystemNotification": true,
+			"isEmailNotification": false,
+			"isSMSNotification": false,
+			"selectedUsersAndGroups": []
+		},
+		"availableUsers": [],
+		"availableUserGroups": []
+	},
+	"riskAssessmentAnswerDetails": { "taskAnswers": [] }
+}

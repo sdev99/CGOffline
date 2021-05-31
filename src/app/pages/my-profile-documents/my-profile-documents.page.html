@@ -1,34 +1,34 @@
 <ion-header mode="ios">
-    <app-modal-header [modalTitle]="'My Signed Documents'" (closeModal)="onClose()"></app-modal-header>
+	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.PROFILE.MY_SIGNED_DOCUMENTS' | translate" (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
 <ion-content>
-    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-        <app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
-    </ion-refresher>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+		<app-custom-ion-refresh-loader [isRefreshing]="isRefreshing"></app-custom-ion-refresh-loader>
+	</ion-refresher>
 
-    <ng-container *ngIf="list && list.length>0; else emptyMessage">
-        <ion-list lines="none">
-            <ion-item mode="md" lines="full" *ngFor="let item of list" (click)="openFile(item)">
-                <ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
-                <ion-label class="ion-text-wrap">
-                    <h4>{{item.documentTitle}}</h4>
-                    <!--                <p>Expires on {{item.timeDifference | date:'dd MMM yyyy HH:mm'}}</p>-->
-                    <p>{{item.formattedCreatedDate}}</p>
-                </ion-label>
-            </ion-item>
-        </ion-list>
+	<ng-container *ngIf="list && list.length>0; else emptyMessage">
+		<ion-list lines="none">
+			<ion-item mode="md" lines="full" *ngFor="let item of list" (click)="openFile(item)">
+				<ion-icon slot="start" src="./assets/icon/attachment2.svg"></ion-icon>
+				<ion-label class="ion-text-wrap">
+					<h4>{{item.documentTitle}}</h4>
+					<!--                <p>Expires on {{item.timeDifference | date:'dd MMM yyyy HH:mm'}}</p>-->
+					<p>{{item.formattedCreatedDate}}</p>
+				</ion-label>
+			</ion-item>
+		</ion-list>
 
-        <!--        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">-->
-        <!--            <ion-infinite-scroll-content [loadingSpinner]="null">-->
-        <!--                <div class="ion-infinite-custom-loader" *ngIf="isLoadingMoreData">-->
-        <!--                    <ion-icon src="./assets/icon/Loader.svg"></ion-icon>-->
-        <!--                </div>-->
-        <!--            </ion-infinite-scroll-content>-->
-        <!--        </ion-infinite-scroll>-->
-    </ng-container>
+		<!--        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreData($event)">-->
+		<!--            <ion-infinite-scroll-content [loadingSpinner]="null">-->
+		<!--                <div class="ion-infinite-custom-loader" *ngIf="isLoadingMoreData">-->
+		<!--                    <ion-icon src="./assets/icon/Loader.svg"></ion-icon>-->
+		<!--                </div>-->
+		<!--            </ion-infinite-scroll-content>-->
+		<!--        </ion-infinite-scroll>-->
+	</ng-container>
 
-    <ng-template #emptyMessage>
-        <app-empty-message message="There are no signed-off files."></app-empty-message>
-    </ng-template>
+	<ng-template #emptyMessage>
+		<app-empty-message [message]="'PAGESPECIFIC_TEXT.PROFILE.NO_SIGNOFF_FILES' | translate"></app-empty-message>
+	</ng-template>
 </ion-content>

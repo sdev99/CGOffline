@@ -7,14 +7,10 @@ import { IonicModule } from '@ionic/angular';
 import { ChooseLocationPageRoutingModule } from './choose-location-routing.module';
 
 import { ChooseLocationPage } from './choose-location.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ChooseLocationPageRoutingModule
-  ],
-  declarations: [ChooseLocationPage]
+	imports: [CommonModule, FormsModule, IonicModule, ChooseLocationPageRoutingModule, TranslateModule],
+	declarations: [ChooseLocationPage],
 })
 export class ChooseLocationPageModule {}

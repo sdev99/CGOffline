@@ -23,6 +23,7 @@ import { RiskRatingProbabilityOption } from 'src/app/_models/riskRatingProbabili
 import { RAcontrolMeasureTemplateItem } from 'src/app/_models/RAcontrolMeasureTemplateItem';
 import { RAtaskTemplateItem } from 'src/app/_models/RAtaskTemplateItem';
 import { TemplateDropdownComponent } from 'src/app/components/template-dropdown/template-dropdown.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-form-riskassessment',
@@ -99,7 +100,8 @@ export class FormRiskassessmentPage implements OnInit {
 		private ngZone: NgZone,
 		public accountService: AccountService,
 		public photoService: PhotoService,
-		public popoverController: PopoverController
+		public popoverController: PopoverController,
+		public translateService: TranslateService
 	) {
 		this.user = accountService.userValue;
 
@@ -186,48 +188,52 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	async openTaskTemplateForTask(event, task) {
-		const popover = await this.popoverController.create({
-			component: TemplateDropdownComponent,
-			cssClass: 'template-dropdown-popover',
-			event: event,
-			translucent: true,
-			mode: 'md',
-			componentProps: {
-				emptyListText: 'No templates available',
-				showEmptyListIcon: true,
-				titleKey: 'riskItemName',
-				list: this.taskTemplateList,
-			},
+		this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
+			const popover = await this.popoverController.create({
+				component: TemplateDropdownComponent,
+				cssClass: 'template-dropdown-popover',
+				event: event,
+				translucent: true,
+				mode: 'md',
+				componentProps: {
+					emptyListText: res,
+					showEmptyListIcon: true,
+					titleKey: 'riskItemName',
+					list: this.taskTemplateList,
+				},
+			});
+			popover.onWillDismiss().then(({ data }) => {
+				if (data) {
+					task.taskAnswerTitle = data.riskItemName;
+					this.getHazardItemList(data.companyRiskItemID);
+				}
+			});
+			return await popover.present();
 		});
-		popover.onWillDismiss().then(({ data }) => {
-			if (data) {
-				task.taskAnswerTitle = data.riskItemName;
-				this.getHazardItemList(data.companyRiskItemID);
-			}
-		});
-		return await popover.present();
 	}
 
 	async openTaskTemplateForControlMeasure(event, controlMeasure) {
-		const popover = await this.popoverController.create({
-			component: TemplateDropdownComponent,
-			cssClass: 'template-dropdown-popover',
-			event: event,
-			translucent: true,
-			mode: 'md',
-			componentProps: {
-				emptyListText: 'No templates available',
-				showEmptyListIcon: true,
-				titleKey: 'hazardItemName',
-				list: this.controlMeasureTemplateList,
-			},
+		this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.NO_TEMPLATES_AVAILABLE').subscribe(async (res) => {
+			const popover = await this.popoverController.create({
+				component: TemplateDropdownComponent,
+				cssClass: 'template-dropdown-popover',
+				event: event,
+				translucent: true,
+				mode: 'md',
+				componentProps: {
+					emptyListText: res,
+					showEmptyListIcon: true,
+					titleKey: 'hazardItemName',
+					list: this.controlMeasureTemplateList,
+				},
+			});
+			popover.onWillDismiss().then(({ data }) => {
+				if (data) {
+					controlMeasure.controlMeasureAnswerTitle = data.hazardItemName;
+				}
+			});
+			return await popover.present();
 		});
-		popover.onWillDismiss().then(({ data }) => {
-			if (data) {
-				controlMeasure.controlMeasureAnswerTitle = data.hazardItemName;
-			}
-		});
-		return await popover.present();
 	}
 
 	/**
@@ -286,43 +292,76 @@ export class FormRiskassessmentPage implements OnInit {
 	}
 
 	removeTask(section, taskIndex) {
-		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
-			if (status) {
-				try {
-					section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
-					section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
-						taskAnswer.taskAnswerDisplayOrder = key + 1;
-					});
-					this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
-				} catch (error) {}
-			}
-		});
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								section.riskAssessmentAnswerDetails?.taskAnswers.splice(taskIndex, 1);
+								section.riskAssessmentAnswerDetails?.taskAnswers.map((taskAnswer: RAtaskAswerObject, key) => {
+									taskAnswer.taskAnswerDisplayOrder = key + 1;
+								});
+								this.utilService.addFormControlsForVisibleFields(this.formBuilderDetail.sections, this.formGroup);
+							} catch (error) {}
+						}
+					}
+				);
+			});
 	}
 
 	removeHazard(task, hazardIndex) {
-		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
-			if (status) {
-				try {
-					task.hazardAnswers.splice(hazardIndex, 1);
-					task.hazardAnswers.map((hazardAnswer: RAhazardAswerObject, key) => {
-						hazardAnswer.hazardAnswerDisplayOrder = key + 1;
-					});
-				} catch (error) {}
-			}
-		});
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								task.hazardAnswers.splice(hazardIndex, 1);
+								task.hazardAnswers.map((hazardAnswer: RAhazardAswerObject, key) => {
+									hazardAnswer.hazardAnswerDisplayOrder = key + 1;
+								});
+							} catch (error) {}
+						}
+					}
+				);
+			});
 	}
 
 	removeControlMeasure(hazard, controlMeasureIndex) {
-		this.utilService.showConfirmAlert('Do you want to remove this item?', 'Delete Confirmation', (status) => {
-			if (status) {
-				try {
-					hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
-					hazard.controlMeasureAnswers.map((controlMeasureAnswer: RAcontrolMeasureAnswerObject, key) => {
-						controlMeasureAnswer.controlMeasureAnswerDisplayOrder = key + 1;
-					});
-				} catch (error) {}
-			}
-		});
+		this.translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION',
+			])
+			.subscribe((res) => {
+				this.utilService.showConfirmAlert(
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DO_YOU_WANT_TO_REMOVE_THIS_ITEM'],
+					res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.DELETE_CONFIRMATION'],
+					(status) => {
+						if (status) {
+							try {
+								hazard.controlMeasureAnswers.splice(controlMeasureIndex, 1);
+								hazard.controlMeasureAnswers.map((controlMeasureAnswer: RAcontrolMeasureAnswerObject, key) => {
+									controlMeasureAnswer.controlMeasureAnswerDisplayOrder = key + 1;
+								});
+							} catch (error) {}
+						}
+					}
+				);
+			});
 	}
 
 	async getCompanyUserList() {
@@ -489,12 +528,6 @@ export class FormRiskassessmentPage implements OnInit {
 		this.filehandlerService.openFile();
 	}
 
-	addImage(question) {
-		this.photoService.choosePhotoOption((photo) => {
-			this.openImageAnnotation(question, photo);
-		});
-	}
-
 	openImageAnnotation = (question, photo) => {
 		this.sharedDataService.isOpenImageAnnotation = true;
 		this.sharedDataService.setAnnotationImage(photo);
@@ -577,22 +610,38 @@ export class FormRiskassessmentPage implements OnInit {
 		} catch (error) {}
 	};
 
+	createSeverityOptionTitleLangKey(title) {
+		if (title.indexOf('_') === -1) {
+			const keyTitle = title.replace(' ', '_');
+			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.SEVERITY_DROPDOWN.' + keyTitle.toUpperCase();
+		}
+		return title;
+	}
+
+	createProbabilityOptionTitleLangKey(title) {
+		if (title.indexOf('_') === -1) {
+			const keyTitle = title.replace(' ', '_');
+			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PROBABILITY_DROPDOWN.' + keyTitle.toUpperCase();
+		}
+		return title;
+	}
+
 	getRatingTypeAndColor = (rating) => {
 		let color = '';
 		let type = '';
 
 		if (rating >= 1 && rating <= 3) {
 			color = UtilService.getColorForAnswerChoice('green');
-			type = 'Low';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.LOW';
 		} else if (rating >= 4 && rating <= 6) {
 			color = UtilService.getColorForAnswerChoice('yellow');
-			type = 'Moderate';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.MODERATE';
 		} else if (rating >= 8 && rating <= 12) {
 			color = UtilService.getColorForAnswerChoice('orange');
-			type = 'High';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.HIGH';
 		} else if (rating >= 15 && rating <= 25) {
 			color = UtilService.getColorForAnswerChoice('red');
-			type = 'Extreme';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.EXTREME';
 		} else {
 			color = '#ffffff';
 			type = '';
