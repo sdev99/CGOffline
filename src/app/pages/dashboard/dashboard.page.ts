@@ -50,6 +50,8 @@ export class DashboardPage implements OnInit, OnDestroy {
 				(profile) => {
 					if (!profile) {
 						this.accountService.logout(this.accountService.userValue?.userId, true).subscribe(() => {});
+					} else {
+						this.sharedDataService.getLangFileTranslation(() => {});
 					}
 				},
 				(error) => {

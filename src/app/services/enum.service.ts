@@ -172,7 +172,7 @@ export class EnumService {
 		GetRiskItemList: 'GetRiskItemList', // GET
 		GetHazardItemList: 'GetHazardItemList', // GET
 		GetCompanyLanguageTemplate: 'GetCompanyLanguageTemplate', // GET
-		GetCompanyLanguageTemplateByCode: 'GetCompanyLanguageTemplate', // GET
+		GetCompanyLanguageTemplateByCode: 'GetCompanyLanguageTemplateByCode', // GET
 	};
 
 	static ApiResponseCode = {

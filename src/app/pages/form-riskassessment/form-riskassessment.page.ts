@@ -610,10 +610,18 @@ export class FormRiskassessmentPage implements OnInit {
 		} catch (error) {}
 	};
 
-	createOptionTitleLangKey(title) {
+	createSeverityOptionTitleLangKey(title) {
 		if (title.indexOf('_') === -1) {
 			const keyTitle = title.replace(' ', '_');
-			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.OPTIONS_' + keyTitle.toUpperCase();
+			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.SEVERITY_DROPDOWN.' + keyTitle.toUpperCase();
+		}
+		return title;
+	}
+
+	createProbabilityOptionTitleLangKey(title) {
+		if (title.indexOf('_') === -1) {
+			const keyTitle = title.replace(' ', '_');
+			return 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.PROBABILITY_DROPDOWN.' + keyTitle.toUpperCase();
 		}
 		return title;
 	}
@@ -624,16 +632,16 @@ export class FormRiskassessmentPage implements OnInit {
 
 		if (rating >= 1 && rating <= 3) {
 			color = UtilService.getColorForAnswerChoice('green');
-			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.LOW';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.LOW';
 		} else if (rating >= 4 && rating <= 6) {
 			color = UtilService.getColorForAnswerChoice('yellow');
-			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.MODERATE';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.MODERATE';
 		} else if (rating >= 8 && rating <= 12) {
 			color = UtilService.getColorForAnswerChoice('orange');
-			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.HIGH';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.HIGH';
 		} else if (rating >= 15 && rating <= 25) {
 			color = UtilService.getColorForAnswerChoice('red');
-			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.EXTREME';
+			type = 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.CALCULATED_VALUE_DROPDOWN.EXTREME';
 		} else {
 			color = '#ffffff';
 			type = '';

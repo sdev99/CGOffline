@@ -38,7 +38,14 @@
 										>
 										<div class="date-field" [ngClass]="{'error': isError( question)}">
 											<ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
-											<ion-datetime placeholder="Choose" display-timezone="utc" max="2050" [(ngModel)]="question.value"></ion-datetime>
+											<ion-datetime
+												[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+												[doneText]="'SHARED_TEXT.DONE' | translate"
+												placeholder="Choose"
+												display-timezone="utc"
+												max="2050"
+												[(ngModel)]="question.value"
+											></ion-datetime>
 										</div>
 									</ion-item>
 

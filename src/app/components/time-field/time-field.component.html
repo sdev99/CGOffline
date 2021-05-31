@@ -1,7 +1,16 @@
 <ion-item class="question-item time-item" [formGroup]="form">
 	<ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
 	<div class="time-field">
-		<ion-datetime displayFormat="hh : mm" pickerFormat="hh:mm" placeholder="HH : mm" [ngClass]="{ error: isError }" [formControlName]="inputName" display-timezone="utc"></ion-datetime>
+		<ion-datetime
+			[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+			[doneText]="'SHARED_TEXT.DONE' | translate"
+			displayFormat="hh : mm"
+			pickerFormat="hh:mm"
+			placeholder="HH : mm"
+			[ngClass]="{ error: isError }"
+			[formControlName]="inputName"
+			display-timezone="utc"
+		></ion-datetime>
 
 		<ion-buttons class="am-pm-btns">
 			<ion-button [ngClass]="{ active: timePeriod === 'am' || !timePeriod }" (click)="timePeriodChange('am')">

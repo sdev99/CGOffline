@@ -80,8 +80,7 @@
 															*ngFor="let item of severityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor+' rating'+item.riskAssessmentSeverityOptionId"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionId + " - " + ( createOptionTitleLangKey(item.riskAssessmentSeverityOptionTitle) |
-															translate)}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -101,8 +100,7 @@
 															*ngFor="let item of probabilityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor+' rating'+item.riskAssessmentProbabilityOptionId"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentProbabilityOptionTitle) |
-															translate)}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -148,10 +146,9 @@
 											</ion-toolbar>
 										</div>
 
-										<div class="hr-line" style="margin-top: 8px"></div>
-
 										<ion-item class="rating-type-title">
 											<h3>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.RISKASSESSMENT_FORM.RESIDUAL_RISK_RATING' | translate}}</h3>
+											<div class="hr-line" style="margin-top: 8px"></div>
 										</ion-item>
 
 										<div class="ratings-view-container">
@@ -171,8 +168,7 @@
 															*ngFor="let item of severityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentSeverityOptionColor+' rating'+item.riskAssessmentSeverityOptionId"
 															[value]="item.riskAssessmentSeverityOptionId"
-															>{{item.riskAssessmentSeverityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentSeverityOptionTitle) |
-															translate)}}</ion-select-option
+															>{{item.riskAssessmentSeverityOptionId + " - " + item.riskAssessmentSeverityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
@@ -193,8 +189,7 @@
 															*ngFor="let item of probabilityRatings"
 															[class]="'risk-rating-dropdown-option '+item.riskAssessmentProbabilityOptionColor+' rating'+item.riskAssessmentProbabilityOptionId"
 															[value]="item.riskAssessmentProbabilityOptionId"
-															>{{item.riskAssessmentProbabilityOptionId + " - " + (createOptionTitleLangKey(item.riskAssessmentProbabilityOptionTitle) |
-															translate)}}</ion-select-option
+															>{{item.riskAssessmentProbabilityOptionId + " - " + item.riskAssessmentProbabilityOptionTitle}}</ion-select-option
 														>
 													</ion-select>
 												</ion-item>
