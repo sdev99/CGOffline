@@ -1199,6 +1199,7 @@ export class SharedDataService {
 								hAVSequence: question.questionDisplayOrder,
 								[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
 								[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+								[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity]: question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity],
 							};
 
 							let isValueFilled = false;
@@ -1267,6 +1268,7 @@ export class SharedDataService {
 										accidentAnswerSequence: question.questionDisplayOrder,
 										[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
 										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+										[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity]: question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity],
 									};
 
 									switch (questionDisplayOrder) {
@@ -1362,6 +1364,7 @@ export class SharedDataService {
 										multipleChoiceAnswers: [],
 										[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
 										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+										[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity]: question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity],
 									};
 
 									switch (question.selectedAnswerTypeId) {

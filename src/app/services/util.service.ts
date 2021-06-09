@@ -714,6 +714,8 @@ export class UtilService {
 					delete question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
 				} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
 					delete question[EnumService.QuestionLogic.ActionTypeForForm.Notify];
+				} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.CreateNewActivity) {
+					delete question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity];
 				} else {
 					const questionActionOnID = logic.questionActionOnID;
 					const sectionAndQuestionNo = questionActionOnID.split('-');
@@ -835,6 +837,8 @@ export class UtilService {
 			question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed] = true;
 		} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.Notify) {
 			question[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
+		} else if (logic.questionActionTypeID === EnumService.QuestionLogic.ActionType.CreateNewActivity) {
+			question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity] = true;
 		} else {
 			const questionActionTypeID = logic.questionActionTypeID;
 			const questionActionOnID = logic.questionActionOnID;
@@ -962,6 +966,14 @@ export class UtilService {
 					questionObject[EnumService.QuestionLogic.ActionTypeForForm.Notify] = true;
 					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
 				}
+			} else if (questionActionTypeID === EnumService.QuestionLogic.ActionType.CreateNewActivity) {
+				if (sectionObject) {
+					sectionObject[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(sectionObject, logic);
+				} else if (questionObject) {
+					questionObject[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity] = true;
+					this.setUniqueRelationIdOnLogicAndQuestionOrSection(questionObject, logic);
+				}
 			}
 		}
 	}
@@ -971,6 +983,7 @@ export class UtilService {
 		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.ShowForLogic];
 		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed];
 		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.Notify];
+		delete newObject[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity];
 	}
 
 	setUniqueRelationIdOnLogicAndQuestionOrSection(question, logic) {

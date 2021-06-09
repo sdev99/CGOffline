@@ -1,6 +1,6 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { User } from '../../_models';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { DemoDataService } from '../../services/demo-data.service';
 import { IonContent, ModalController, NavController } from '@ionic/angular';
 import { PhotoService } from '../../services/photo.service';
@@ -14,6 +14,8 @@ import { AccountService } from '../../services/account.service';
 import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
 import { WorkPermitAnswer } from '../../_models/workPermitAnswer';
 import { EnumService } from '../../services/enum.service';
+import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-form-workpermit',
@@ -24,6 +26,12 @@ export class FormWorkpermitPage {
 	@ViewChild(IonContent) content: IonContent;
 	UtilService = UtilService;
 	EnumService = EnumService;
+
+	expireDateTypes = [
+		{ title: 'Expires On', type: 'date' },
+		{ title: 'Expires After', type: 'duration' },
+	];
+	selectedExpireDateType = 'date';
 
 	user: User;
 
@@ -46,6 +54,8 @@ export class FormWorkpermitPage {
 	currentQuestionIndex = 0;
 	scrollingDetail: any;
 
+	expireDurationTypes = [];
+
 	constructor(
 		public navCtrl: NavController,
 		public photoService: PhotoService,
@@ -57,8 +67,34 @@ export class FormWorkpermitPage {
 		private ngZone: NgZone,
 		private apiService: ApiService,
 		public utilService: UtilService,
+		public translateService: TranslateService,
 		public accountService: AccountService
 	) {
+		translateService
+			.get([
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.DAYS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WEEKS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.MONTHS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YEARS',
+			])
+			.subscribe((res) => {
+				this.expireDurationTypes.push({
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.DAYS'],
+					id: 1,
+				});
+				this.expireDurationTypes.push({
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WEEKS'],
+					id: 2,
+				});
+				this.expireDurationTypes.push({
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.MONTHS'],
+					id: 3,
+				});
+				this.expireDurationTypes.push({
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YEARS'],
+					id: 4,
+				});
+			});
 		this.user = accountService.userValue;
 
 		if (sharedDataService.formBuilderDetails) {
@@ -66,7 +102,11 @@ export class FormWorkpermitPage {
 		}
 
 		// Add form controls for each type of fields
-		this.formGroup = new FormGroup({});
+		this.formGroup = new FormGroup({
+			expireAfterDuration: new FormControl(30),
+			expireAfterDurationType: new FormControl(1),
+			expireDate: new FormControl(null),
+		});
 		const sections = this.formBuilderDetail.sections;
 		this.utilService.questionElementIdsUpdate = (questionElementIds) => {
 			this.questionElementIds = questionElementIds;
@@ -159,8 +199,6 @@ export class FormWorkpermitPage {
 			if (sections) {
 				sections.map((section, sectionIndex) => {
 					if (this.utilService.shouldShowSection(section)) {
-						const isSectionDuplicate = section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-
 						const questions = section.questions;
 						questions.map((question, questionIndex) => {
 							if (this.utilService.shouldShowQuestion(question)) {
@@ -189,11 +227,41 @@ export class FormWorkpermitPage {
 				});
 			}
 
-			workPermitAnswer = {
+			workPermitAnswer = new WorkPermitAnswer({
 				workPermitId: this.formBuilderDetail.workPermitDetails.workPermitId,
 				scoreAchieved,
 				totalScore: this.formBuilderDetail.workPermitDetails.totalScore,
-			};
+				whoDefinesDateType: this.formBuilderDetail?.workPermitDetails?.whoDefinesDateType,
+			});
+			const isExpireDateUserDefined = this.formBuilderDetail?.workPermitDetails?.whoDefinesDateType === 'UserDefined';
+			if (isExpireDateUserDefined) {
+				if (this.selectedExpireDateType === 'date') {
+					const expireDateControl = this.formGroup.controls['expireDate'];
+					const expireDate = expireDateControl?.value;
+					if (!expireDate) {
+						this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DATE_EMPTY_MSG').subscribe((res) => {
+							this.errorMessage = res;
+						});
+						return;
+					} else {
+						workPermitAnswer.hasExpiresOn = true;
+						workPermitAnswer.expiresOnDate = moment(expireDate).format('YYYY-MM-DD HH:mm:00.000');
+					}
+				} else if (this.selectedExpireDateType === 'duration') {
+					const expireAfterDurationControl = this.formGroup.controls['expireAfterDuration'];
+					const expireAfterDurationTypeControl = this.formGroup.controls['expireAfterDurationType'];
+					if (!expireAfterDurationControl?.value || !expireAfterDurationTypeControl?.value) {
+						this.translateService.get('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DATE_EMPTY_MSG').subscribe((res) => {
+							this.errorMessage = res;
+						});
+						return;
+					} else {
+						workPermitAnswer.hasExpiresAfter = true;
+						workPermitAnswer.durationValue = expireAfterDurationControl.value;
+						workPermitAnswer.durationTypeID = expireAfterDurationTypeControl.value;
+					}
+				}
+			}
 		}
 
 		this.sharedDataService.saveFormAnswers(

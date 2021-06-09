@@ -44,6 +44,42 @@
 						</ng-container>
 					</ng-container>
 
+					<div class="expiration-date-view" *ngIf="formBuilderDetail?.workPermitDetails?.whoDefinesDateType === 'UserDefined'">
+						<h2>Expiration Date</h2>
+						<div class="custom-segment-view" [ngClass]="{error:false}">
+							<ion-button
+								*ngFor="let item of expireDateTypes"
+								mode="ios"
+								fill="clear"
+								[ngClass]="{'active':item.type===selectedExpireDateType}"
+								(click)="selectedExpireDateType=item.type"
+							>
+								{{item.title}}
+							</ion-button>
+						</div>
+
+						<app-date-field
+							*ngIf="selectedExpireDateType === 'date'"
+							[form]="formGroup"
+							inputName="expireDate"
+							[isError]="false"
+							[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+						></app-date-field>
+
+						<div *ngIf="selectedExpireDateType === 'duration'" class="expireduration-field">
+							<ion-input inputmode="numeric" formControlName="expireAfterDuration"></ion-input>
+							<app-dropdown-field
+								listLabelKey="title"
+								listValueKey="id"
+								interface="popover"
+								[form]="formGroup"
+								inputName="expireAfterDurationType"
+								[list]="expireDurationTypes"
+								[isError]="false"
+							></app-dropdown-field>
+						</div>
+					</div>
+
 					<!--        End of form -->
 					<ng-container *ngIf="!sharedDataService.dedicatedMode">
 						<div class="hr-line-full ion-margin-top"></div>

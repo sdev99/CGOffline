@@ -287,6 +287,7 @@ export class EnumService {
 			Duplicate: 3,
 			MarkAsFailed: 4,
 			Notify: 5,
+			CreateNewActivity: 20,
 		},
 		ActionTypeForForm: {
 			ShowForLogic: 'showForLogic',
@@ -294,6 +295,7 @@ export class EnumService {
 			MarkAsFailed: 'isMarkedAsFailed',
 			Duplicate: 'duplicate',
 			Notify: 'isNotify',
+			CreateNewActivity: 'isCreateNewActivity',
 		},
 		SingleMultipleChoiceOperationType: {
 			Selected: 1,

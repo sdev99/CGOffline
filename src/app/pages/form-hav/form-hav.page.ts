@@ -406,6 +406,7 @@ export class FormHavPage implements OnInit {
 								hAVSequence: question.questionDisplayOrder,
 								[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
 								[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
+								[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity]: question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity],
 							};
 
 							let isValueFilled = false;

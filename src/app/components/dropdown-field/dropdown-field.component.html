@@ -2,6 +2,7 @@
 	<ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
 	<ion-select
 		[placeholder]="placeholder"
+		[interface]="interface"
 		[formControlName]="inputName"
 		[ngClass]="{ error: isError }"
 		[cancelText]="'SHARED_TEXT.CANCEL' | translate"

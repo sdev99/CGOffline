@@ -149,7 +149,12 @@
 					"YOUR_WORK_PERMIT_IS_ACTIVE": "Your work permit is active",
 					"NOT_PASSED": "Not Passed",
 					"NO_PERMIT": "NO PERMIT",
-					"NOT_ELIGIBLE_FOR_WORK_PERMIT": "You were found not eligible for a work permit."
+					"NOT_ELIGIBLE_FOR_WORK_PERMIT": "You were found not eligible for a work permit.",
+					"EXPIRATION_DURATION_DAYS": "Days",
+					"EXPIRATION_DURATION_WEEKS": "Weeks",
+					"EXPIRATION_DURATION_MONTHS": "Months",
+					"EXPIRATION_DURATION_YEARS": "Years",
+					"EXPIRATION_DATE_EMPTY_MSG": "Expiration date cannot be empty"
 				},
 				"ACCIDENTREPORT_FORM": {
 					"MANUAL_LOCATION_SUGGESTION": "if the place is not available in the dropdown above, please type location name to the next box below manually.",
