@@ -72,26 +72,26 @@ export class FormWorkpermitPage {
 	) {
 		translateService
 			.get([
-				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.DAYS',
-				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WEEKS',
-				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.MONTHS',
-				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YEARS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_DAYS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_WEEKS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_MONTHS',
+				'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_YEARS',
 			])
 			.subscribe((res) => {
 				this.expireDurationTypes.push({
-					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.DAYS'],
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_DAYS'],
 					id: 1,
 				});
 				this.expireDurationTypes.push({
-					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WEEKS'],
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_WEEKS'],
 					id: 2,
 				});
 				this.expireDurationTypes.push({
-					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.MONTHS'],
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_MONTHS'],
 					id: 3,
 				});
 				this.expireDurationTypes.push({
-					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YEARS'],
+					title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DURATION_YEARS'],
 					id: 4,
 				});
 			});
@@ -103,8 +103,8 @@ export class FormWorkpermitPage {
 
 		// Add form controls for each type of fields
 		this.formGroup = new FormGroup({
-			expireAfterDuration: new FormControl(30),
-			expireAfterDurationType: new FormControl(1),
+			expireAfterDuration: new FormControl(''),
+			expireAfterDurationType: new FormControl(0),
 			expireDate: new FormControl(null),
 		});
 		const sections = this.formBuilderDetail.sections;
