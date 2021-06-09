@@ -150,6 +150,7 @@
 					"NOT_PASSED": "Not Passed",
 					"NO_PERMIT": "NO PERMIT",
 					"NOT_ELIGIBLE_FOR_WORK_PERMIT": "You were found not eligible for a work permit.",
+					"EXPIRATION_DATE": "Expiration Date",
 					"EXPIRATION_DURATION_DAYS": "Days",
 					"EXPIRATION_DURATION_WEEKS": "Weeks",
 					"EXPIRATION_DURATION_MONTHS": "Months",

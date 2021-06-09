@@ -45,7 +45,7 @@
 					</ng-container>
 
 					<div class="expiration-date-view" *ngIf="formBuilderDetail?.workPermitDetails?.whoDefinesDateType === 'UserDefined'">
-						<h2>Expiration Date</h2>
+						<h2>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_DATE' | translate}}</h2>
 						<div class="custom-segment-view" [ngClass]="{error:false}">
 							<ion-button
 								*ngFor="let item of expireDateTypes"
