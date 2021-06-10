@@ -21,7 +21,6 @@
 		<ng-container *ngIf="checkedIn; else notCheckedIn">
 			{{ 'SHARED_TEXT.HEADER.CHECKED_IN' | translate }}:
 			<ng-container *ngIf="!isCurrentCheckin"> &nbsp; {{ checkedPlaces.length == 1 ? checkedPlaces[0].entityName : 'to ' + checkedPlaces.length + ' places' }} </ng-container>
-
 			<ng-container *ngIf="isCurrentCheckin"> &nbsp; {{ sharedDataService.currentSelectedCheckinPlace?.entityName }} </ng-container>
 		</ng-container>
 		<ng-template #notCheckedIn>{{ 'SHARED_TEXT.HEADER.YOU_ARENT_CHECKED_IN' | translate }}</ng-template>

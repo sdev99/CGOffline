@@ -44,10 +44,9 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 		private ngZone: NgZone,
 		private translateService: TranslateService
 	) {
+		this.selectedPlace = sharedDataService.currentSelectedCheckinPlace;
 		this.user = this.accountService.userValue;
 		this.checkedPlaces = sharedDataService.checkedInPlaces;
-		this.setupCurrentCheckedInPlaces(sharedDataService.checkedInPlaces);
-
 		this.observablesService.getObservable(EnumService.ObserverKeys.UPDATE_CURRENT_CHECKIN_LIST_IN_COMPONENT).subscribe(() => {
 			this.ngZone.run(() => {
 				this.setupCurrentCheckedInPlaces(sharedDataService.checkedInPlaces);
@@ -60,18 +59,13 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		if (this.checkedPlaces && this.checkedPlaces.length > 0) {
-			this.checkedIn = true;
-		}
-
 		if (this.checkedIn && this.checkedPlaces) {
 			if (!sharedDataService.currentSelectedCheckinPlace) {
 				const place = this.checkedPlaces[0];
 				this.placedChange(place);
-			} else {
-				this.selectedPlace = sharedDataService.currentSelectedCheckinPlace;
 			}
 		}
+		this.setupCurrentCheckedInPlaces(sharedDataService.checkedInPlaces);
 	}
 
 	ngOnInit() {
@@ -134,6 +128,10 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
 	};
 
 	getUserCurrentCheckinDetails = () => {
+		if (!this.sharedDataService.checkedInPlaces || this.sharedDataService.checkedInPlaces.length === 0) {
+			this.isCurrentCheckin = false;
+			this.checkedPlaces = [];
+		}
 		this.apiService.getUserCurrentCheckingDetails(this.user?.userId).subscribe((response: Response) => {
 			if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 				const checkedInPlaces = response.Result;
