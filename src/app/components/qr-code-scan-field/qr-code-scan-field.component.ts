@@ -18,6 +18,7 @@ import { EntityItem } from 'src/app/_models/entityItem';
 	],
 })
 export class QrCodeScanFieldComponent implements ControlValueAccessor {
+	@Input() formControlName: string;
 	@Input() isError: boolean;
 	@Input() allowedQrCodeTypes: Array<string>;
 
@@ -49,7 +50,7 @@ export class QrCodeScanFieldComponent implements ControlValueAccessor {
 	}
 
 	scanQrCode() {
-		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + this.inputName;
+		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + this.formControlName;
 		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
 			console.log('QR Scan success ', result);
 			this.writeValue(result);

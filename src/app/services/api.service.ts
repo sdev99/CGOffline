@@ -562,7 +562,15 @@ export class ApiService {
 	 *  @param phone phonenumber
 	 */
 	getGuestUserDetailByPhone(phone) {
-		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetGuestUserDetailByPhone}?phone=${phone}`);
+		const dedicatedModeLocationUse: DeviceEntityDetail = this.sharedDataService.dedicatedModeLocationUse;
+		const queryParam = {
+			LocationID: dedicatedModeLocationUse?.locationID,
+			ProjectID: dedicatedModeLocationUse?.projectID,
+			InventoryItemID: dedicatedModeLocationUse?.inventoryItemID,
+			phone: phone,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetGuestUserDetailByPhone}?${queryString}`);
 	}
 
 	/**
