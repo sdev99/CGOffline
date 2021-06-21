@@ -19,6 +19,8 @@ import { DocumentDetail } from '../../_models/documentDetail';
 import { environment } from '../../../environments/environment';
 import { StaticDataService } from '../../services/static-data.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ObservablesService } from 'src/app/services/observables.service';
+import { EntityItem } from 'src/app/_models/entityItem';
 
 const { Camera, Permissions } = Plugins;
 
@@ -33,6 +35,9 @@ export class DashboardQrscanPage implements OnInit {
 	isTablet = false;
 	authFor;
 	isLoaded = false;
+	fromFormCustomQuestion = false;
+	fromFormCustomQuestionCallbackKey = '';
+	fromFormAllowedQrCodeTypes = [];
 
 	constructor(
 		public navCtrl: NavController,
@@ -43,7 +48,8 @@ export class DashboardQrscanPage implements OnInit {
 		public sharedDataService: SharedDataService,
 		public actionSheetController: ActionSheetController,
 		public activatedRoute: ActivatedRoute,
-		public translateService: TranslateService
+		public translateService: TranslateService,
+		public observablesService: ObservablesService
 	) {
 		this.user = this.accountService.userValue;
 		this.isTablet = sharedDataService.isTablet;
@@ -53,6 +59,15 @@ export class DashboardQrscanPage implements OnInit {
 				if (res.authFor) {
 					this.authFor = res.authFor;
 				}
+				if (res.fromFormCustomQuestion) {
+					this.fromFormCustomQuestion = res.fromFormCustomQuestion;
+				}
+				if (res.fromFormAllowedQrCodeTypes) {
+					this.fromFormAllowedQrCodeTypes = res.fromFormAllowedQrCodeTypes;
+				}
+				if (res.fromFormCustomQuestionCallbackKey) {
+					this.fromFormCustomQuestionCallbackKey = res.fromFormCustomQuestionCallbackKey;
+				}
 			}
 		});
 	}
@@ -60,7 +75,7 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'form3';
+		const QrCodeTestingInLocalHostFor: any = 'form';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
@@ -173,11 +188,45 @@ export class DashboardQrscanPage implements OnInit {
 	checkQrCode = async (qrCode) => {
 		this.stopScanning();
 
-		if (this.sharedDataService.dedicatedMode) {
+		if (this.fromFormCustomQuestion) {
+			this.getAnswerChoiceEntityByQRCode(qrCode);
+		} else if (this.sharedDataService.dedicatedMode) {
 			this.getQrDetailForDedicatedMode(qrCode);
 		} else {
 			this.getQrDetailForPersonalMode(qrCode);
 		}
+	};
+
+	getAnswerChoiceEntityByQRCode = (qrCode) => {
+		this.utilService.presentLoadingWithOptions();
+
+		this.apiService.getAnswerChoiceEntityByQRCode(qrCode).subscribe(
+			(response: Response) => {
+				this.utilService.hideLoading();
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					const result: EntityItem = response.Result as EntityItem;
+					if (result && result.entityID && this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1) {
+						this.observablesService.publishSomeData(this.fromFormCustomQuestionCallbackKey, result);
+						this.onClose();
+					} else {
+						this.translateService.get('SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
+							this.utilService.showAlert(res, '', () => {
+								this.scan();
+							});
+						});
+					}
+				}
+			},
+			(error) => {
+				this.utilService.hideLoading();
+
+				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
+					this.utilService.showAlert(error.message || error, res, () => {
+						this.scan();
+					});
+				});
+			}
+		);
 	};
 
 	getQrDetailForDedicatedMode = (qrCode) => {

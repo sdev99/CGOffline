@@ -1,5 +1,3 @@
-import { MultipleChoiceAnswerItem } from './multipleChoiceAnswerItem';
-
 export class FormAnswerObject {
 	questionAnswerId: number;
 	questionID: number;
@@ -21,4 +19,17 @@ export class FormAnswerObject {
 	multipleChoiceAnswers?: any;
 	markAsFailed?: boolean;
 	isNotify?: boolean;
+	selectedQRCodeType?: string;
+	qrCodeLocationID?: number;
+	qrCodeLocationName?: string;
+	qrCodeProjectID?: number;
+	qrCodeProjectName?: string;
+	qrCodeInventoryItemID?: number;
+	qrCodeInventoryItemName?: string;
+	qrCodeDocumentID?: number;
+	qrCodeDocumentName?: string;
+	qrCodeFormID?: number;
+	qrCodeFormTitle?: string;
+	qrCodeUserID?: number;
+	qrCodeUserName?: string;
 }

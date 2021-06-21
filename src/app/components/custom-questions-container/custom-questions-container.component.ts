@@ -41,4 +41,30 @@ export class CustomQuestionsContainerComponent implements OnInit {
 		const controlName = UtilService.FCUniqueName(this.section, question);
 		return this.isSubmitted && !this.formGroup.controls[controlName].valid;
 	}
+
+	getAllowedQrCodeTypes = (question) => {
+		const arr = [];
+		if (question) {
+			if (question.allowQRCodeLocation) {
+				arr.push(EnumService.SelectedQRCodeType.Location);
+			}
+			if (question.allowQRCodeProject) {
+				arr.push(EnumService.SelectedQRCodeType.Project);
+			}
+			if (question.allowQRCodeInventoryItem) {
+				arr.push(EnumService.SelectedQRCodeType.InventoryItem);
+			}
+			if (question.allowQRCodeDocument) {
+				arr.push(EnumService.SelectedQRCodeType.Document);
+			}
+			if (question.allowQRCodeForm) {
+				arr.push(EnumService.SelectedQRCodeType.Form);
+			}
+			if (question.allowQRCodeUser) {
+				arr.push(EnumService.SelectedQRCodeType.User);
+			}
+		}
+
+		return arr;
+	};
 }

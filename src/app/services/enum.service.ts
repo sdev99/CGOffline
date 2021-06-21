@@ -74,6 +74,7 @@ export class EnumService {
 		CURRENT_CHECKED_IN_CHANGED: 'CURRENT_CHECKED_IN_CHANGED',
 		APP_RESTORED_RESULT: 'APP_RESTORED_RESULT',
 		ACTIVITY_COMPLETED: 'ACTIVITY_COMPLETED',
+		QRCODE_SCANNED_RESULT: 'QRCODE_SCANNED_RESULT',
 	};
 
 	static LocalStorageKeys = {
@@ -218,6 +219,15 @@ export class EnumService {
 		Type: 3,
 		Model: 4,
 		PlannedTimeOfUsage: 5,
+	};
+
+	static SelectedQRCodeType = {
+		Location: 'Location',
+		Project: 'Project',
+		InventoryItem: 'InventoryItem',
+		Document: 'Document',
+		Form: 'Form',
+		User: 'User',
 	};
 
 	static AccidentFormFieldOrder = {

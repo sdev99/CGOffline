@@ -46,9 +46,9 @@
 
 			<app-qr-code-scan-field
 				*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ScanQrCodeField"
-				[form]="formGroup"
-				[inputName]="UtilService.FCUniqueName(section, question)"
+				[formControlName]="UtilService.FCUniqueName(section, question)"
 				isError="false"
+				[allowedQrCodeTypes]="getAllowedQrCodeTypes(question)"
 			></app-qr-code-scan-field>
 
 			<app-singleline-text-field

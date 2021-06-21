@@ -40,6 +40,7 @@ import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
 import { AuthGuard } from '../helpers/auth.guard';
 import { HavAnswerDetail } from '../_models/havAnswerDetail';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityItem } from '../_models/entityItem';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -1406,6 +1407,42 @@ export class SharedDataService {
 											if (control.value) {
 												isValueFilled = true;
 												answerObject.isConfirmBoxChecked = true;
+											}
+											break;
+										case EnumService.CustomAnswerType.ScanQrCodeField:
+											if (control.value) {
+												isValueFilled = true;
+												const entityItem: EntityItem = control.value as EntityItem;
+												answerObject.selectedQRCodeType = entityItem.entityType;
+												switch (entityItem.entityType) {
+													case EnumService.SelectedQRCodeType.Location:
+														answerObject.qrCodeLocationID = entityItem.entityID;
+														answerObject.qrCodeLocationName = entityItem.entityName;
+														break;
+													case EnumService.SelectedQRCodeType.Project:
+														answerObject.qrCodeProjectID = entityItem.entityID;
+														answerObject.qrCodeProjectName = entityItem.entityName;
+														break;
+													case EnumService.SelectedQRCodeType.InventoryItem:
+														answerObject.qrCodeInventoryItemID = entityItem.entityID;
+														answerObject.qrCodeInventoryItemName = entityItem.entityName;
+														break;
+													case EnumService.SelectedQRCodeType.Document:
+														answerObject.qrCodeDocumentID = entityItem.entityID;
+														answerObject.qrCodeDocumentName = entityItem.entityName;
+														break;
+													case EnumService.SelectedQRCodeType.Form:
+														answerObject.qrCodeFormID = entityItem.entityID;
+														answerObject.qrCodeFormTitle = entityItem.entityName;
+														break;
+													case EnumService.SelectedQRCodeType.User:
+														answerObject.qrCodeUserID = entityItem.entityID;
+														answerObject.qrCodeUserName = entityItem.entityName;
+														break;
+
+													default:
+														break;
+												}
 											}
 											break;
 										case EnumService.CustomAnswerType.NumberFieldInteger:
