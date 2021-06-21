@@ -173,6 +173,7 @@ export class EnumService {
 		GetHazardItemList: 'GetHazardItemList', // GET
 		GetCompanyLanguageTemplate: 'GetCompanyLanguageTemplate', // GET
 		GetCompanyLanguageTemplateByCode: 'GetCompanyLanguageTemplateByCode', // GET
+		GetAnswerChoiceEntityByQRCode: 'GetAnswerChoiceEntityByQRCode', // GET
 	};
 
 	static ApiResponseCode = {
@@ -201,6 +202,7 @@ export class EnumService {
 		LocationSelection: 12,
 		BodyPartControl: 13,
 		ConfirmationBox: 14,
+		ScanQrCodeField: 15,
 	};
 
 	static RiskAssessmentAnswerEditOptionsType = {

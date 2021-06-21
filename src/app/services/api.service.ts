@@ -69,6 +69,21 @@ export class ApiService {
 		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetEntityByQRCode}?code=${qrCode}&companyID=${companyID}`);
 	}
 
+	getAnswerChoiceEntityByQRCode(qrCode) {
+		let companyID;
+		if (this.sharedDataService.dedicatedMode) {
+			companyID = this.sharedDataService.dedicatedModeDeviceDetailData.companyID;
+		} else {
+			companyID = this.sharedDataService.getLoggedInUser().companyID;
+		}
+		const queryParam = {
+			CompanyID: companyID,
+			code: qrCode,
+		};
+		const queryString = UtilService.convertToQuerystring(queryParam);
+		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetAnswerChoiceEntityByQRCode}?${queryString}`);
+	}
+
 	getLocationItemList(companyId) {
 		return this.http.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetLocationItemList}/${companyId}`).pipe(
 			map((data: Response) => {

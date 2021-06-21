@@ -40,6 +40,7 @@ import { ModalHeaderComponent } from './modal-header/modal-header.component';
 import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.component';
 import { RaTemplateInputComponent } from './ra-template-input/ra-template-input.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { QrCodeScanFieldComponent } from './qr-code-scan-field/qr-code-scan-field.component';
 
 @NgModule({
 	declarations: [
@@ -80,6 +81,7 @@ import { TranslateModule } from '@ngx-translate/core';
 		ArchivedItemComponent,
 		CustomIonRefreshLoaderComponent,
 		RaTemplateInputComponent,
+		QrCodeScanFieldComponent,
 	],
 	imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
 	exports: [
@@ -120,6 +122,7 @@ import { TranslateModule } from '@ngx-translate/core';
 		ArchivedItemComponent,
 		CustomIonRefreshLoaderComponent,
 		RaTemplateInputComponent,
+		QrCodeScanFieldComponent,
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -1,0 +1,16 @@
+<ion-item class="question-item container" [formGroup]="form">
+	<div class="inner">
+		<ion-button fill="clear" (click)="scanQrCode()">
+			<ion-icon slot="start" src="./assets/images/qrcode-scan.svg"></ion-icon>
+			Scan QR Code
+		</ion-button>
+
+		<div class="scanned-result">
+			<div class="title">You Scanned:</div>
+			<div class="result">
+				<ion-icon color="success" name="checkmark-outline"></ion-icon>
+				<p>This is a long Location Name coming from a scanned QR Code.</p>
+			</div>
+		</div>
+	</div>
+</ion-item>
