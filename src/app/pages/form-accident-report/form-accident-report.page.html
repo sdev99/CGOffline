@@ -102,16 +102,24 @@
 														translate}}:&nbsp;{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.MANUAL_LOCATION_SUGGESTION' | translate}}
 													</p>
 												</ion-label>
-												<ion-select
-													[interfaceOptions]="accidentAlertOptions"
-													[formControlName]="UtilService.FCUniqueName(section, question)"
-													[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-													[cancelText]="'SHARED_TEXT.CANCEL' | translate"
-													[okText]="'SHARED_TEXT.OK' | translate"
-													(ionChange)="placeInTheListChange($event)"
-												>
-													<ion-select-option *ngFor="let item of locations" [value]="item.locationID">{{item.locationName}}</ion-select-option>
-												</ion-select>
+												<div class="custom-dropdown-mask">
+													<ion-select
+														[interfaceOptions]="accidentAlertOptions"
+														[formControlName]="UtilService.FCUniqueName(section, question)"
+														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+														[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+														[okText]="'SHARED_TEXT.OK' | translate"
+														(ionChange)="placeInTheListChange($event)"
+													>
+														<ion-select-option *ngFor="let item of locations" [value]="item.locationID">{{item.locationName}}</ion-select-option>
+													</ion-select>
+
+													<div class="qr-scan-btn">
+														<ion-button fill="clear" (click)="scanUserQrCode($event, UtilService.FCUniqueName(section, question))">
+															<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+														</ion-button>
+													</div>
+												</div>
 											</ion-item>
 
 											<ion-item>

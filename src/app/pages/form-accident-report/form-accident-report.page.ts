@@ -14,6 +14,7 @@ import { UtilService } from '../../services/util.service';
 import { ApiService } from '../../services/api.service';
 import { LocationItem } from '../../_models/locationItem';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityItem } from 'src/app/_models/entityItem';
 
 @Component({
 	selector: 'app-form-accident-report',
@@ -221,6 +222,50 @@ export class FormAccidentReportPage {
 				}
 			});
 		}
+	};
+
+	scanUserQrCode = (event, formControlName) => {
+		event.stopPropagation();
+
+		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + formControlName;
+		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
+			const entityItem = result as EntityItem;
+			this.ngZone.run(() => {
+				let locationId = '';
+				switch (entityItem.entityType) {
+					case EnumService.SelectedQRCodeType.Location:
+						locationId = 'L|';
+						break;
+					case EnumService.SelectedQRCodeType.Project:
+						locationId = 'P|';
+						break;
+					case EnumService.SelectedQRCodeType.InventoryItem:
+						locationId = 'I|';
+						break;
+					case EnumService.SelectedQRCodeType.Document:
+						locationId = 'D|';
+						break;
+					case EnumService.SelectedQRCodeType.Form:
+						locationId = 'F|';
+						break;
+					case EnumService.SelectedQRCodeType.User:
+						locationId = 'U|';
+						break;
+					default:
+						break;
+				}
+				this.formGroup.controls[formControlName].setValue(locationId + '' + entityItem.entityID);
+			});
+
+			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
+		});
+		this.navCtrl.navigateForward('/dashboard-qrscan', {
+			queryParams: {
+				fromFormCustomQuestion: true,
+				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
+				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.Location],
+			},
+		});
 	};
 
 	handleOrientation = () => {

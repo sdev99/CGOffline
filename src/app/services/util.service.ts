@@ -187,6 +187,10 @@ export class UtilService {
 		return Math.round(Math.random());
 	}
 
+	static randomNumber() {
+		return Math.floor(Math.random() * 1000000 + 1);
+	}
+
 	static formattedNumberToNumber(formattedNumber) {
 		return Number(formattedNumber.replace(/[^0-9.-]+/g, ''));
 	}

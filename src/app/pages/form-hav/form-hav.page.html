@@ -53,23 +53,32 @@
 										<ion-label position="stacked">
 											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
 										</ion-label>
-										<ion-select
-											[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-											[(ngModel)]="question.value"
-											[ngClass]="{'error': isError( question)}"
-											(ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
-											[cancelText]="'SHARED_TEXT.CANCEL' | translate"
-											[okText]="'SHARED_TEXT.OK' | translate"
-										>
-											<ng-container *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown ">
-												<ion-select-option *ngFor="let item of toolManufacturers" [value]="item.havManufacturerID"> {{item.havManufacturerName}} </ion-select-option>
-											</ng-container>
-											<ng-template #otherDropdown>
-												<ion-select-option *ngFor="let item of question.answerChoiceAttributes" [value]="question.listValueKey?item[question.listValueKey]:item">
-													{{question.listLabelKey ? item[question.listLabelKey] : item}}
-												</ion-select-option>
-											</ng-template>
-										</ion-select>
+
+										<div class="custom-dropdown-mask">
+											<ion-select
+												[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+												[(ngModel)]="question.value"
+												[ngClass]="{'error': isError( question)}"
+												(ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
+												[cancelText]="'SHARED_TEXT.CANCEL' | translate"
+												[okText]="'SHARED_TEXT.OK' | translate"
+											>
+												<ng-container *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown ">
+													<ion-select-option *ngFor="let item of toolManufacturers" [value]="item.havManufacturerID"> {{item.havManufacturerName}} </ion-select-option>
+												</ng-container>
+												<ng-template #otherDropdown>
+													<ion-select-option *ngFor="let item of question.answerChoiceAttributes" [value]="question.listValueKey?item[question.listValueKey]:item">
+														{{question.listLabelKey ? item[question.listLabelKey] : item}}
+													</ion-select-option>
+												</ng-template>
+											</ion-select>
+
+											<div class="qr-scan-btn" *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model">
+												<ion-button fill="clear" (click)="scanUserQrCode($event, question)">
+													<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+												</ion-button>
+											</div>
+										</div>
 									</ion-item>
 
 									<ion-item class="question-item input-item planned-time" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField">

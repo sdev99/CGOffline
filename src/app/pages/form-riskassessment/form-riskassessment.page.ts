@@ -24,6 +24,7 @@ import { RAcontrolMeasureTemplateItem } from 'src/app/_models/RAcontrolMeasureTe
 import { RAtaskTemplateItem } from 'src/app/_models/RAtaskTemplateItem';
 import { TemplateDropdownComponent } from 'src/app/components/template-dropdown/template-dropdown.component';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityItem } from 'src/app/_models/entityItem';
 
 @Component({
 	selector: 'app-form-riskassessment',
@@ -363,6 +364,29 @@ export class FormRiskassessmentPage implements OnInit {
 				);
 			});
 	}
+
+	scanUserQrCode = (event, hazard, valueKey) => {
+		event.stopPropagation();
+
+		const uniqueKey = UtilService.randomNumber();
+
+		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + uniqueKey;
+		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
+			const entityItem = result as EntityItem;
+			this.ngZone.run(() => {
+				hazard[valueKey] = entityItem.entityID;
+			});
+
+			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
+		});
+		this.navCtrl.navigateForward('/dashboard-qrscan', {
+			queryParams: {
+				fromFormCustomQuestion: true,
+				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
+				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.User],
+			},
+		});
+	};
 
 	async getCompanyUserList() {
 		this.utilService.presentLoadingWithOptions();

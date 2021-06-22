@@ -19,6 +19,7 @@ import { HavAnswerObject } from 'src/app/_models/havAnswerObject';
 import { StaticDataService } from 'src/app/services/static-data.service';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityItem } from 'src/app/_models/entityItem';
 
 @Component({
 	selector: 'app-form-hav',
@@ -117,6 +118,29 @@ export class FormHavPage implements OnInit {
 
 		this.getUserTotalHAVExposureForToday();
 	}
+
+	scanUserQrCode = (event, question) => {
+		event.stopPropagation();
+
+		const uniqueKey = UtilService.randomNumber();
+
+		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + uniqueKey;
+		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
+			const entityItem = result as EntityItem;
+			this.ngZone.run(() => {
+				question.value = entityItem.entityID;
+			});
+
+			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
+		});
+		this.navCtrl.navigateForward('/dashboard-qrscan', {
+			queryParams: {
+				fromFormCustomQuestion: true,
+				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
+				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.User],
+			},
+		});
+	};
 
 	getUserTotalHAVExposureForToday() {
 		let userId = this.user?.userId;

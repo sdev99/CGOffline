@@ -283,7 +283,7 @@ ion-content {
 
 				ion-select {
 					height: 42px;
-					--padding-start: 44px;
+					--padding-start: 38px;
 					--padding-end: 8px;
 					--color: #171538;
 					--placeholder-color: #171538;
@@ -316,9 +316,30 @@ ion-content {
 				.custom-dropdown-mask {
 					flex: 1;
 					pointer-events: all;
+					position: relative;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+				}
+				.qr-scan-btn {
+					position: absolute;
+					right: 5px;
+					z-index: 99;
+					padding-left: 8px;
+					background-color: #ffffff;
+
+					ion-button {
+						width: 22px;
+						height: 22px;
+						--padding-start: 0;
+						--padding-end: 0;
+						--padding-top: 0;
+						--padding-bottom: 0;
+						--border-radius: 0;
+					}
 				}
 
-				ion-button {
+				.add-btn {
 					--background: #2a6fdb;
 					--color: #fff;
 					--border-radius: 3px;

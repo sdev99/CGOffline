@@ -249,12 +249,19 @@
 																>
 																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
 																</ion-select>
+
+																<div class="qr-scan-btn">
+																	<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'memberOfTheWorkForceSelectedUser')">
+																		<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+																	</ion-button>
+																</div>
 															</div>
 
 															<ion-button
 																slot="end"
 																size="md"
 																expand="block"
+																class="add-btn"
 																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserIDs','memberOfTheWorkForceSelectedUser' )"
 															>
 																{{'SHARED_TEXT.ADD' | translate}}
@@ -280,6 +287,7 @@
 																slot="end"
 																size="md"
 																expand="block"
+																class="add-btn"
 																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserGroupIDs', 'memberOfTheWorkForceSelectedGroup')"
 															>
 																{{'SHARED_TEXT.ADD' | translate}}
@@ -365,12 +373,19 @@
 																>
 																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
 																</ion-select>
+
+																<div class="qr-scan-btn">
+																	<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'personnelExposedSelectedUser')">
+																		<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+																	</ion-button>
+																</div>
 															</div>
 
 															<ion-button
 																slot="end"
 																size="md"
 																expand="block"
+																class="add-btn"
 																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserIDs', 'personnelExposedSelectedUser')"
 															>
 																{{'SHARED_TEXT.ADD' | translate}}
@@ -395,6 +410,7 @@
 															<ion-button
 																slot="end"
 																size="md"
+																class="add-btn"
 																expand="block"
 																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserGroupIDs','personnelExposedSelectedGroup')"
 															>
