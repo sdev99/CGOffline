@@ -75,7 +75,7 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'form';
+		const QrCodeTestingInLocalHostFor: any = 'inventryitem';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
@@ -107,6 +107,9 @@ export class DashboardQrscanPage implements OnInit {
 						break;
 					case 'user':
 						this.checkQrCode('1b5ee704-21f6-4e91-9544-0f2a6abd7aed');
+						break;
+					case 'inventryitem':
+						this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
 						break;
 				}
 			}, 1000);
@@ -205,7 +208,12 @@ export class DashboardQrscanPage implements OnInit {
 				this.utilService.hideLoading();
 				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					const result: EntityItem = response.Result as EntityItem;
-					if (result && result.entityID && this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1) {
+					if (
+						result &&
+						result.entityID &&
+						this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
+						(result.entityType !== EnumService.SelectedQRCodeType.InventoryItem || (result.entityType === EnumService.SelectedQRCodeType.InventoryItem && result.isHAVSData))
+					) {
 						this.observablesService.publishSomeData(this.fromFormCustomQuestionCallbackKey, result);
 						this.onClose();
 					} else {

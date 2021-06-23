@@ -49,6 +49,8 @@ export class FormHavPage implements OnInit {
 
 	toolManufacturers = [];
 
+	isManuallyValueUpdate = false;
+
 	constructor(
 		public navCtrl: NavController,
 		public modalController: ModalController,
@@ -119,7 +121,7 @@ export class FormHavPage implements OnInit {
 		this.getUserTotalHAVExposureForToday();
 	}
 
-	scanUserQrCode = (event, question) => {
+	scanUserQrCode = (event, havAssessmentTool) => {
 		event.stopPropagation();
 
 		const uniqueKey = UtilService.randomNumber();
@@ -127,9 +129,17 @@ export class FormHavPage implements OnInit {
 		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + uniqueKey;
 		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
 			const entityItem = result as EntityItem;
-			this.ngZone.run(() => {
-				// question.value = entityItem.entityID;
-			});
+			if (entityItem && entityItem.isHAVSData) {
+				this.getTypeList(entityItem.havManufacturerID, havAssessmentTool, () => {
+					this.getModelList(entityItem.havTypeID, havAssessmentTool, () => {
+						this.isManuallyValueUpdate = true;
+						this.setupHavData(havAssessmentTool, entityItem);
+						setTimeout(() => {
+							this.isManuallyValueUpdate = false;
+						}, 500);
+					});
+				});
+			}
 
 			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
 		});
@@ -139,6 +149,20 @@ export class FormHavPage implements OnInit {
 				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
 				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.InventoryItem],
 			},
+		});
+	};
+
+	setupHavData = (havAssessmentTool, entityItem) => {
+		this.ngZone.run(() => {
+			havAssessmentTool.questions.map((questionItem) => {
+				if (questionItem.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
+					questionItem.value = entityItem.havManufacturerID;
+				} else if (questionItem.questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
+					questionItem.value = entityItem.havTypeID;
+				} else if (questionItem.questionDisplayOrder === EnumService.HavFormFieldOrder.Model) {
+					questionItem.value = entityItem.havModelID;
+				}
+			});
 		});
 	};
 
@@ -173,7 +197,7 @@ export class FormHavPage implements OnInit {
 		});
 	};
 
-	async getTypeList(manufacturer, havAssessmentTool) {
+	async getTypeList(manufacturer, havAssessmentTool, callBack = null) {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, []);
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
 
@@ -185,6 +209,7 @@ export class FormHavPage implements OnInit {
 				const toolTypes = response.Result;
 				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, toolTypes);
 				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
+				callBack && callBack();
 			},
 			(error) => {
 				this.utilService.hideLoading();
@@ -193,7 +218,7 @@ export class FormHavPage implements OnInit {
 		);
 	}
 
-	async getModelList(type, havAssessmentTool) {
+	async getModelList(type, havAssessmentTool, callBack = null) {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
 
 		this.utilService.presentLoadingWithOptions();
@@ -203,6 +228,7 @@ export class FormHavPage implements OnInit {
 				this.utilService.hideLoading();
 				const toolModels = response.Result;
 				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, toolModels);
+				callBack && callBack();
 			},
 			(error) => {
 				this.utilService.hideLoading();
@@ -211,11 +237,13 @@ export class FormHavPage implements OnInit {
 	}
 
 	dropDownChange(havAssessmentTool, question, questionIndex) {
-		const questionDisplayOrder = questionIndex + 1;
-		if (questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
-			this.getTypeList(question.value, havAssessmentTool);
-		} else if (questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
-			this.getModelList(question.value, havAssessmentTool);
+		if (!this.isManuallyValueUpdate) {
+			const questionDisplayOrder = questionIndex + 1;
+			if (questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer) {
+				this.getTypeList(question.value, havAssessmentTool);
+			} else if (questionDisplayOrder === EnumService.HavFormFieldOrder.Type) {
+				this.getModelList(question.value, havAssessmentTool);
+			}
 		}
 	}
 

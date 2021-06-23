@@ -225,7 +225,7 @@ export class EnumService {
 	static SelectedQRCodeType = {
 		Location: 'Location',
 		Project: 'Project',
-		InventoryItem: 'InventoryItem',
+		InventoryItem: 'Inventory Item',
 		Document: 'Document',
 		Form: 'Form',
 		User: 'User',

@@ -74,7 +74,7 @@
 											</ion-select>
 
 											<div class="qr-scan-btn" *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model">
-												<ion-button fill="clear" (click)="scanUserQrCode($event, question)">
+												<ion-button fill="clear" (click)="scanUserQrCode($event, havAssessmentTool)">
 													<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
 												</ion-button>
 											</div>
