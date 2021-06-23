@@ -47,9 +47,17 @@
 			<app-qr-code-scan-field
 				*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ScanQrCodeField"
 				[formControlName]="UtilService.FCUniqueName(section, question)"
-				isError="false"
+				[isError]="isError(question, questionIndex)"
 				[allowedQrCodeTypes]="getAllowedQrCodeTypes(question)"
 			></app-qr-code-scan-field>
+
+			<app-matrix-three-d-field
+				*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.Matrix3DField"
+				[formControlName]="UtilService.FCUniqueName(section, question)"
+				[question]="question"
+				[isError]="isError(question, questionIndex)"
+				[allowedQrCodeTypes]="getAllowedQrCodeTypes(question)"
+			></app-matrix-three-d-field>
 
 			<app-singleline-text-field
 				*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleLineText"

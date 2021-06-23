@@ -17,6 +17,7 @@ export class FormAnswerObject {
 	questionDisplayOrder?: number;
 	formVersionID?: number;
 	multipleChoiceAnswers?: any;
+	matrixAnswer?: any;
 	markAsFailed?: boolean;
 	isNotify?: boolean;
 	selectedQRCodeType?: string;

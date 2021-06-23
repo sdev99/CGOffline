@@ -1,0 +1,17 @@
+<div class="container" [ngClass]="{ error: isError }">
+	<div class="inner-container">
+		<div class="row-container">
+			<div class="row-item"></div>
+			<div class="row-item" *ngFor="let colItem of question.matrixColumns">
+				{{ UtilService.findObj(colItem.matrixColumnTranslations, 'matrixColumnTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixColumnTranslationName }}
+			</div>
+		</div>
+
+		<div class="row-container" *ngFor="let rowItem of question.matrixRows; let indexRow = index">
+			<div class="row-item">{{ UtilService.findObj(rowItem.matrixRowTranslations, 'matrixRowTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixRowTranslationName }}</div>
+			<div class="row-item" *ngFor="let colItem of question.matrixColumns; let indexCol = index">
+				<ion-checkbox [(ngModel)]="checkBoxDataNgModel[indexRow + '_' + indexCol]" (ionChange)="onCheckboxChange()"></ion-checkbox>
+			</div>
+		</div>
+	</div>
+</div>

@@ -204,6 +204,7 @@ export class EnumService {
 		BodyPartControl: 13,
 		ConfirmationBox: 14,
 		ScanQrCodeField: 15,
+		Matrix3DField: 16,
 	};
 
 	static RiskAssessmentAnswerEditOptionsType = {

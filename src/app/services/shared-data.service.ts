@@ -1363,6 +1363,7 @@ export class SharedDataService {
 										formVersionID: formVersionId,
 										answerTypeID: question.selectedAnswerTypeId,
 										multipleChoiceAnswers: [],
+										matrixAnswer: {},
 										[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed]: question[EnumService.QuestionLogic.ActionTypeForForm.MarkAsFailed],
 										[EnumService.QuestionLogic.ActionTypeForForm.Notify]: question[EnumService.QuestionLogic.ActionTypeForForm.Notify],
 										[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity]: question[EnumService.QuestionLogic.ActionTypeForForm.CreateNewActivity],
@@ -1442,6 +1443,49 @@ export class SharedDataService {
 
 													default:
 														break;
+												}
+											}
+											break;
+										case EnumService.CustomAnswerType.Matrix3DField:
+											if (control.value) {
+												const matrixSelectedValues = control.value;
+												const matrixRows = question.matrixRows;
+												const matrixColumns = question.matrixColumns;
+												if (matrixRows && matrixColumns && matrixSelectedValues && Object.keys(matrixSelectedValues).length > 0) {
+													isValueFilled = true;
+													const matrixRowsAnswer = [];
+
+													matrixRows.map((rowItem, rowIndex) => {
+														const matrixColsAnswer = [];
+
+														matrixColumns.map((colItem, colIndex) => {
+															const matKey = rowIndex + '_' + colIndex;
+															if (matrixSelectedValues[matKey]) {
+																matrixColsAnswer.push({
+																	matrixColumnId: colItem.matrixColumnId,
+																	matrixColumnName: UtilService.findObj(
+																		colItem.matrixColumnTranslations,
+																		'matrixColumnTranslationLanguageId',
+																		this.getLanguageIdForForm(),
+																		0
+																	).matrixColumnTranslationName,
+																});
+															}
+														});
+
+														if (matrixColsAnswer && matrixColsAnswer.length > 0) {
+															matrixRowsAnswer.push({
+																matrixRowId: rowItem.matrixRowId,
+																matrixRowName: UtilService.findObj(rowItem.matrixRowTranslations, 'matrixRowTranslationLanguageId', this.getLanguageIdForForm(), 0)
+																	.matrixRowTranslationName,
+																matrixColumns: matrixColsAnswer,
+															});
+														}
+													});
+
+													answerObject.matrixAnswer = {
+														matrixRows: matrixRowsAnswer,
+													};
 												}
 											}
 											break;
@@ -1533,10 +1577,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

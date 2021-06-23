@@ -75,7 +75,7 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'location';
+		const QrCodeTestingInLocalHostFor: any = 'form';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {

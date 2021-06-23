@@ -1,4 +1,4 @@
-<ion-item class="question-item container">
+<ion-item class="question-item container" [ngClass]="{ error: isError }">
 	<div class="inner">
 		<ion-button fill="clear" (click)="scanQrCode()">
 			<ion-icon slot="start" src="./assets/images/qrcode-scan.svg"></ion-icon>

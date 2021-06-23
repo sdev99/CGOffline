@@ -41,6 +41,7 @@ import { ConfirmBoxFieldComponent } from './confirm-box-field/confirm-box-field.
 import { RaTemplateInputComponent } from './ra-template-input/ra-template-input.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeScanFieldComponent } from './qr-code-scan-field/qr-code-scan-field.component';
+import { MatrixThreeDFieldComponent } from './matrix-three-d-field/matrix-three-d-field.component';
 
 @NgModule({
 	declarations: [
@@ -82,6 +83,7 @@ import { QrCodeScanFieldComponent } from './qr-code-scan-field/qr-code-scan-fiel
 		CustomIonRefreshLoaderComponent,
 		RaTemplateInputComponent,
 		QrCodeScanFieldComponent,
+		MatrixThreeDFieldComponent,
 	],
 	imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
 	exports: [
@@ -123,6 +125,7 @@ import { QrCodeScanFieldComponent } from './qr-code-scan-field/qr-code-scan-fiel
 		CustomIonRefreshLoaderComponent,
 		RaTemplateInputComponent,
 		QrCodeScanFieldComponent,
+		MatrixThreeDFieldComponent,
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
