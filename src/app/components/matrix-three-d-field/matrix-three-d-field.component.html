@@ -1,17 +1,27 @@
 <div class="container" [ngClass]="{ error: isError }">
-	<div class="inner-container">
-		<div class="row-container">
-			<div class="row-item"></div>
-			<div class="row-item" *ngFor="let colItem of question.matrixColumns">
-				{{ UtilService.findObj(colItem.matrixColumnTranslations, 'matrixColumnTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixColumnTranslationName }}
-			</div>
+	<div class="view-container">
+		<div class="left-view">
+			<div class="col-view" id="{{formControlName}}rowBlankView"></div>
+			<ng-container *ngFor="let rowItem of question.matrixRows; let indexRow = index">
+				<div class="col-view" id="{{ formControlName }}rowItem{{ indexRow }}">
+					{{ UtilService.findObj(rowItem.matrixRowTranslations, 'matrixRowTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixRowTranslationName }}
+				</div>
+			</ng-container>
 		</div>
-
-		<div class="row-container" *ngFor="let rowItem of question.matrixRows; let indexRow = index">
-			<div class="row-item">{{ UtilService.findObj(rowItem.matrixRowTranslations, 'matrixRowTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixRowTranslationName }}</div>
-			<div class="row-item" *ngFor="let colItem of question.matrixColumns; let indexCol = index">
-				<ion-checkbox [(ngModel)]="checkBoxDataNgModel[indexRow + '_' + indexCol]" (ionChange)="onCheckboxChange()"></ion-checkbox>
+		<div class="right-view">
+			<div class="col-row" id="{{formControlName}}colHeadingRow">
+				<div class="col-view" *ngFor="let colItem of question.matrixColumns">
+					{{ UtilService.findObj(colItem.matrixColumnTranslations, 'matrixColumnTranslationLanguageId', sharedDataService.getLanguageIdForForm()).matrixColumnTranslationName }}
+				</div>
 			</div>
+
+			<ng-container *ngFor="let rowItem of question.matrixRows; let indexRow = index">
+				<div class="col-row" id="{{ formControlName }}colRow{{ indexRow }}">
+					<div class="col-view" *ngFor="let colItem of question.matrixColumns; let indexCol = index">
+						<ion-checkbox [(ngModel)]="checkBoxDataNgModel[indexRow + '_' + indexCol]" (ionChange)="onCheckboxChange()"></ion-checkbox>
+					</div>
+				</div>
+			</ng-container>
 		</div>
 	</div>
 </div>

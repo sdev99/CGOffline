@@ -16,7 +16,7 @@ import { UtilService } from 'src/app/services/util.service';
 		},
 	],
 })
-export class MatrixThreeDFieldComponent implements ControlValueAccessor {
+export class MatrixThreeDFieldComponent implements ControlValueAccessor, OnInit {
 	UtilService = UtilService;
 
 	@Input() formControlName: string;
@@ -33,6 +33,23 @@ export class MatrixThreeDFieldComponent implements ControlValueAccessor {
 	checkBoxDataNgModel = {};
 
 	constructor(public navCtrl: NavController, public sharedDataService: SharedDataService) {}
+
+	ngOnInit() {
+		setTimeout(() => {
+			const fromElem = document.getElementById(this.formControlName + 'colHeadingRow');
+			const toElem = document.getElementById(this.formControlName + 'rowBlankView');
+			const height = fromElem.offsetHeight;
+			toElem.style.height = height + 'px';
+
+			this.question.matrixRows.map((item, key) => {
+				const fromElem1 = document.getElementById(this.formControlName + 'rowItem' + key);
+				const toElem1 = document.getElementById(this.formControlName + 'colRow' + key);
+				const height1 = fromElem1.offsetHeight;
+				console.log('height1 ', height1);
+				toElem1.style.height = height1 + 'px';
+			});
+		}, 100);
+	}
 
 	registerOnChange(fn: any): void {
 		this.onChange = fn;
