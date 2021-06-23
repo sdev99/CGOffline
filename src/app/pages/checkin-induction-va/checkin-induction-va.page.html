@@ -19,7 +19,7 @@
 
 <ion-content fullscreen [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
 	<div class="content-container">
-		<div *ngIf="inductionItem.contentDetails" class="va-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
+		<div *ngIf="inductionItem && inductionItem.contentDetails" class="va-content" [innerHTML]="sanitizer.bypassSecurityTrustHtml(inductionItem.contentDetails)"></div>
 
 		<div class="action-btn-container" *ngIf="sharedDataService.dedicatedMode">
 			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.I_AGREE' | translate}}</ion-button>
@@ -28,7 +28,7 @@
 		<div class="fill-vertical-space"></div>
 
 		<ion-footer mode="ios" *ngIf="!sharedDataService.dedicatedMode">
-			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'SHARED_TEXT.SHARED_TEXT' | translate}}</ion-button>
+			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'SHARED_TEXT.CONTINUE' | translate}}</ion-button>
 		</ion-footer>
 	</div>
 </ion-content>

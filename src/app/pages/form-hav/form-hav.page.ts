@@ -128,7 +128,7 @@ export class FormHavPage implements OnInit {
 		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
 			const entityItem = result as EntityItem;
 			this.ngZone.run(() => {
-				question.value = entityItem.entityID;
+				// question.value = entityItem.entityID;
 			});
 
 			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
@@ -137,7 +137,7 @@ export class FormHavPage implements OnInit {
 			queryParams: {
 				fromFormCustomQuestion: true,
 				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
-				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.User],
+				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.InventoryItem],
 			},
 		});
 	};
