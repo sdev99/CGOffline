@@ -35,8 +35,9 @@ export class DashboardQrscanPage implements OnInit {
 	isTablet = false;
 	authFor;
 	isLoaded = false;
-	fromFormCustomQuestion = false;
-	fromFormCustomQuestionCallbackKey = '';
+	fromFormPage = false;
+	isOnlyInventryItemHasHav = false;
+	fromFormCallbackKey = '';
 	fromFormAllowedQrCodeTypes = [];
 
 	constructor(
@@ -59,14 +60,17 @@ export class DashboardQrscanPage implements OnInit {
 				if (res.authFor) {
 					this.authFor = res.authFor;
 				}
-				if (res.fromFormCustomQuestion) {
-					this.fromFormCustomQuestion = res.fromFormCustomQuestion;
+				if (res.fromFormPage) {
+					this.fromFormPage = res.fromFormPage;
 				}
 				if (res.fromFormAllowedQrCodeTypes) {
 					this.fromFormAllowedQrCodeTypes = res.fromFormAllowedQrCodeTypes;
 				}
-				if (res.fromFormCustomQuestionCallbackKey) {
-					this.fromFormCustomQuestionCallbackKey = res.fromFormCustomQuestionCallbackKey;
+				if (res.fromFormCallbackKey) {
+					this.fromFormCallbackKey = res.fromFormCallbackKey;
+				}
+				if (res.isOnlyInventryItemHasHav) {
+					this.isOnlyInventryItemHasHav = res.isOnlyInventryItemHasHav;
 				}
 			}
 		});
@@ -75,7 +79,7 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'inventryitem';
+		const QrCodeTestingInLocalHostFor: any = 'inventryitemHav';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
@@ -108,8 +112,11 @@ export class DashboardQrscanPage implements OnInit {
 					case 'user':
 						this.checkQrCode('1b5ee704-21f6-4e91-9544-0f2a6abd7aed');
 						break;
-					case 'inventryitem':
+					case 'inventryitemHav':
 						this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
+						break;
+					case 'inventryitem':
+						this.checkQrCode('22dfd7f6-414c-4608-9b3a-fcc894487fc5');
 						break;
 				}
 			}, 1000);
@@ -191,7 +198,7 @@ export class DashboardQrscanPage implements OnInit {
 	checkQrCode = async (qrCode) => {
 		this.stopScanning();
 
-		if (this.fromFormCustomQuestion) {
+		if (this.fromFormPage) {
 			this.getAnswerChoiceEntityByQRCode(qrCode);
 		} else if (this.sharedDataService.dedicatedMode) {
 			this.getQrDetailForDedicatedMode(qrCode);
@@ -212,9 +219,9 @@ export class DashboardQrscanPage implements OnInit {
 						result &&
 						result.entityID &&
 						this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
-						(result.entityType !== EnumService.SelectedQRCodeType.InventoryItem || (result.entityType === EnumService.SelectedQRCodeType.InventoryItem && result.isHAVSData))
+						(!this.isOnlyInventryItemHasHav || (result.entityType === EnumService.SelectedQRCodeType.InventoryItem && result.isHAVSData))
 					) {
-						this.observablesService.publishSomeData(this.fromFormCustomQuestionCallbackKey, result);
+						this.observablesService.publishSomeData(this.fromFormCallbackKey, result);
 						this.onClose();
 					} else {
 						this.translateService.get('SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {

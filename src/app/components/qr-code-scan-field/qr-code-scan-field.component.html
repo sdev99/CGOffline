@@ -1,12 +1,17 @@
 <ion-item class="question-item container" [ngClass]="{ error: isError }">
 	<div class="inner">
-		<ion-button fill="clear" (click)="scanQrCode()">
-			<ion-icon slot="start" src="./assets/images/qrcode-scan.svg"></ion-icon>
+		<ion-button class="scan-btn" fill="clear" (click)="scanQrCode()">
+			<ion-icon slot="start" src="./assets/icon/qrcode-scan.svg"></ion-icon>
 			{{ 'PAGESPECIFIC_TEXT.QR_SCANER.SCAN_QR_CODE' | translate }}
 		</ion-button>
 
 		<div class="scanned-result" *ngIf="entityItem">
-			<div class="title">{{ 'PAGESPECIFIC_TEXT.FORM_LIST.YOU_SCANNED' | translate }}:</div>
+			<div class="title-row">
+				<div class="title">{{ 'PAGESPECIFIC_TEXT.FORM_LIST.YOU_SCANNED' | translate }}:</div>
+				<ion-button class="close-btn" size="small" fill="clear" (click)="removeScanResult()">
+					<ion-icon slot="icon-only" src="./assets/icon/ic_close.svg"></ion-icon>
+				</ion-button>
+			</div>
 			<div class="result">
 				<ion-icon color="success" name="checkmark-outline"></ion-icon>
 				<p>{{ entityItem.entityName }}</p>

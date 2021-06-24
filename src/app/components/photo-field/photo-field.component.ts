@@ -145,7 +145,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
 	}
 
 	openImageAnnotation = (photo) => {
-		this.sharedDataService.isOpenImageAnnotation = true;
+		this.sharedDataService.isOpenSubScreen = true;
 		this.sharedDataService.setAnnotationImage(photo);
 		this.sharedDataService.onAnnotationImageDone = (image) => {
 			this.photoAdded(image);

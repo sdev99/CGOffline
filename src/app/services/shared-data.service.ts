@@ -137,7 +137,7 @@ export class SharedDataService {
 	// for use in next screen
 	availableWorkPermits;
 
-	isOpenImageAnnotation = false;
+	isOpenSubScreen = false;
 
 	workPermitAnswer: WorkPermitAnswer;
 
@@ -287,7 +287,7 @@ export class SharedDataService {
 		this.signOffDetailsPostData = null;
 		this.formBuilderDetails = null;
 		this.availableWorkPermits = null;
-		this.isOpenImageAnnotation = false;
+		this.isOpenSubScreen = false;
 		this.workPermitAnswer = null;
 	}
 

@@ -125,9 +125,12 @@ export class FormHavPage implements OnInit {
 		event.stopPropagation();
 
 		const uniqueKey = UtilService.randomNumber();
+		this.sharedDataService.isOpenSubScreen = true;
 
-		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + uniqueKey;
-		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
+		const fromFormCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + uniqueKey;
+		this.observablesService.getObservable(fromFormCallbackKey).subscribe((result) => {
+			this.sharedDataService.isOpenSubScreen = false;
+
 			const entityItem = result as EntityItem;
 			if (entityItem && entityItem.isHAVSData) {
 				this.getTypeList(entityItem.havManufacturerID, havAssessmentTool, () => {
@@ -141,12 +144,13 @@ export class FormHavPage implements OnInit {
 				});
 			}
 
-			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
+			this.observablesService.removeObservable(fromFormCallbackKey);
 		});
 		this.navCtrl.navigateForward('/dashboard-qrscan', {
 			queryParams: {
-				fromFormCustomQuestion: true,
-				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
+				fromFormPage: true,
+				isOnlyInventryItemHasHav: true,
+				fromFormCallbackKey: fromFormCallbackKey,
 				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.InventoryItem],
 			},
 		});

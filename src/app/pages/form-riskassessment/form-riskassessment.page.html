@@ -237,35 +237,37 @@
 
 													<ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
 														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='users'">
-															<div
-																class="custom-dropdown-mask"
-																(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedUser' , 'isMembersOfTheWorkForceUserIDs', users, 'firstAndLastName', 'userId')"
-															>
-																<ion-select
-																	[interface]="ionSelectInterface"
-																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-																	[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
-																	[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
+															<div class="dropdown-container">
+																<div
+																	class="custom-dropdown-mask"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedUser' , 'isMembersOfTheWorkForceUserIDs', users, 'firstAndLastName', 'userId')"
 																>
-																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
-																</ion-select>
+																	<ion-select
+																		[interface]="ionSelectInterface"
+																		[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+																		[ngClass]="{error:!isMemberOfTheWorkForceValid(task, hazard)}"
+																		[(ngModel)]="hazard.memberOfTheWorkForceSelectedUser"
+																	>
+																		<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
+																	</ion-select>
 
-																<div class="qr-scan-btn">
-																	<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'memberOfTheWorkForceSelectedUser')">
-																		<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
-																	</ion-button>
+																	<div class="qr-scan-btn">
+																		<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'memberOfTheWorkForceSelectedUser')">
+																			<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+																		</ion-button>
+																	</div>
 																</div>
-															</div>
 
-															<ion-button
-																slot="end"
-																size="md"
-																expand="block"
-																class="add-btn"
-																(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserIDs','memberOfTheWorkForceSelectedUser' )"
-															>
-																{{'SHARED_TEXT.ADD' | translate}}
-															</ion-button>
+																<ion-button
+																	slot="end"
+																	size="md"
+																	expand="block"
+																	class="add-btn"
+																	(click)="addUserOrGroup(hazard, 'isMembersOfTheWorkForceUserIDs','memberOfTheWorkForceSelectedUser' )"
+																>
+																	{{'SHARED_TEXT.ADD' | translate}}
+																</ion-button>
+															</div>
 														</ng-container>
 
 														<ng-container *ngIf="hazard.memberOfTheWorkForceSelectedUserGroupType && hazard.memberOfTheWorkForceSelectedUserGroupType.id==='groups'">
@@ -361,35 +363,37 @@
 
 													<ion-item class="drop-down-item user-group-add-dropdown item-multiple-inputs">
 														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='users'">
-															<div
-																class="custom-dropdown-mask"
-																(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedUser', 'personnelExposedNotificationUserIDs' , users, 'firstAndLastName', 'userId')"
-															>
-																<ion-select
-																	[interface]="ionSelectInterface"
-																	[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-																	[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
-																	[(ngModel)]="hazard.personnelExposedSelectedUser"
+															<div class="dropdown-container">
+																<div
+																	class="custom-dropdown-mask"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedUser', 'personnelExposedNotificationUserIDs' , users, 'firstAndLastName', 'userId')"
 																>
-																	<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
-																</ion-select>
+																	<ion-select
+																		[interface]="ionSelectInterface"
+																		[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+																		[ngClass]="{error:!hasPersonnelExposedNotificationValid(task, hazard)}"
+																		[(ngModel)]="hazard.personnelExposedSelectedUser"
+																	>
+																		<ion-select-option *ngFor="let item of users" [value]="item.userId">{{item.firstAndLastName}}</ion-select-option>
+																	</ion-select>
 
-																<div class="qr-scan-btn">
-																	<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'personnelExposedSelectedUser')">
-																		<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
-																	</ion-button>
+																	<div class="qr-scan-btn">
+																		<ion-button fill="clear" (click)="scanUserQrCode($event, hazard, 'personnelExposedSelectedUser')">
+																			<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
+																		</ion-button>
+																	</div>
 																</div>
-															</div>
 
-															<ion-button
-																slot="end"
-																size="md"
-																expand="block"
-																class="add-btn"
-																(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserIDs', 'personnelExposedSelectedUser')"
-															>
-																{{'SHARED_TEXT.ADD' | translate}}
-															</ion-button>
+																<ion-button
+																	slot="end"
+																	size="md"
+																	expand="block"
+																	class="add-btn"
+																	(click)="addUserOrGroup(hazard, 'personnelExposedNotificationUserIDs', 'personnelExposedSelectedUser')"
+																>
+																	{{'SHARED_TEXT.ADD' | translate}}
+																</ion-button>
+															</div>
 														</ng-container>
 
 														<ng-container *ngIf="hazard.selectedUserGroupType && hazard.selectedUserGroupType.id==='groups'">

@@ -7,7 +7,7 @@
 		flex-direction: column;
 		width: 100%;
 		align-items: flex-start;
-		ion-button {
+		.scan-btn {
 			--background: #2a6fdb;
 			color: #ffffff;
 			height: 32px;
@@ -28,12 +28,29 @@
 			display: flex;
 			flex-direction: column;
 			margin-top: 12px;
-			.title {
-				font-weight: normal;
-				font-size: 14px;
-				line-height: 18px;
-				color: #171538;
+			width: 100%;
+			.title-row {
+				display: flex;
+				flex-direction: row;
+				width: 100%;
+				align-items: center;
+				.title {
+					flex: 1;
+					font-weight: normal;
+					font-size: 14px;
+					line-height: 18px;
+					color: #171538;
+				}
+				.close-btn {
+					height: auto;
+					--padding-end: 4px;
+					ion-icon {
+						width: 20px;
+						height: 20px;
+					}
+				}
 			}
+
 			.result {
 				margin-top: 0px;
 				display: flex;

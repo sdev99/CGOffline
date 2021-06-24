@@ -143,7 +143,7 @@ export class FormWorkpermitPage {
 	};
 
 	ionViewDidEnter() {
-		this.sharedDataService.isOpenImageAnnotation = false;
+		this.sharedDataService.isOpenSubScreen = false;
 	}
 
 	ionViewWillEnter() {
@@ -152,7 +152,7 @@ export class FormWorkpermitPage {
 
 	ionViewDidLeave(): void {
 		if (this.sharedDataService.dedicatedMode) {
-			if (!this.sharedDataService.isOpenImageAnnotation) {
+			if (!this.sharedDataService.isOpenSubScreen) {
 				if (!UtilService.isLocalHost()) {
 					this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
 					this.screenOrientationSubscribe.unsubscribe();

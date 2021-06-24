@@ -140,7 +140,7 @@ export class FormAccidentReportPage {
 	}
 
 	ionViewDidEnter() {
-		this.sharedDataService.isOpenImageAnnotation = false;
+		this.sharedDataService.isOpenSubScreen = false;
 		this.getLocationItemList();
 		this.getAccidentTypeList();
 		this.getAccidentClassificationList();
@@ -226,9 +226,12 @@ export class FormAccidentReportPage {
 
 	scanUserQrCode = (event, formControlName) => {
 		event.stopPropagation();
+		this.sharedDataService.isOpenSubScreen = true;
 
-		const fromFormCustomQuestionCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + formControlName;
-		this.observablesService.getObservable(fromFormCustomQuestionCallbackKey).subscribe((result) => {
+		const fromFormCallbackKey = EnumService.ObserverKeys.QRCODE_SCANNED_RESULT + '' + formControlName;
+		this.observablesService.getObservable(fromFormCallbackKey).subscribe((result) => {
+			this.sharedDataService.isOpenSubScreen = false;
+
 			const entityItem = result as EntityItem;
 			this.ngZone.run(() => {
 				let locationId = '';
@@ -257,12 +260,12 @@ export class FormAccidentReportPage {
 				this.formGroup.controls[formControlName].setValue(locationId + '' + entityItem.entityID);
 			});
 
-			this.observablesService.removeObservable(fromFormCustomQuestionCallbackKey);
+			this.observablesService.removeObservable(fromFormCallbackKey);
 		});
 		this.navCtrl.navigateForward('/dashboard-qrscan', {
 			queryParams: {
-				fromFormCustomQuestion: true,
-				fromFormCustomQuestionCallbackKey: fromFormCustomQuestionCallbackKey,
+				fromFormPage: true,
+				fromFormCallbackKey: fromFormCallbackKey,
 				fromFormAllowedQrCodeTypes: [EnumService.SelectedQRCodeType.Location],
 			},
 		});
@@ -303,7 +306,7 @@ export class FormAccidentReportPage {
 
 	ionViewDidLeave(): void {
 		if (this.sharedDataService.dedicatedMode) {
-			if (!this.sharedDataService.isOpenImageAnnotation) {
+			if (!this.sharedDataService.isOpenSubScreen) {
 				if (!UtilService.isLocalHost()) {
 					this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
 					this.screenOrientationSubscribe.unsubscribe();
@@ -384,7 +387,7 @@ export class FormAccidentReportPage {
 	}
 
 	openImageAnnotation = (photo) => {
-		this.sharedDataService.isOpenImageAnnotation = true;
+		this.sharedDataService.isOpenSubScreen = true;
 		this.sharedDataService.setAnnotationImage(photo);
 		this.sharedDataService.onAnnotationImageDone = (image) => {
 			this.accidentImage = image;
