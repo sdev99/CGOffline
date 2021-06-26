@@ -1414,7 +1414,7 @@ export class SharedDataService {
 											if (control.value) {
 												isValueFilled = true;
 												const entityItem: EntityItem = control.value as EntityItem;
-												answerObject.selectedQRCodeType = entityItem.entityType;
+												answerObject.selectedQRCodeType = entityItem.entityType.replace(' ', '');
 												switch (entityItem.entityType) {
 													case EnumService.SelectedQRCodeType.Location:
 														answerObject.qrCodeLocationID = entityItem.entityID;
@@ -1577,10 +1577,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(

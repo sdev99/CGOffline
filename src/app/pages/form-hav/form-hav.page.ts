@@ -283,11 +283,9 @@ export class FormHavPage implements OnInit {
 	}
 
 	ionViewDidLeave(): void {
-		if (this.sharedDataService.dedicatedMode) {
-			if (!UtilService.isLocalHost()) {
-				this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-				this.screenOrientationSubscribe.unsubscribe();
-			}
+		if (this.sharedDataService.dedicatedMode && !this.sharedDataService.isOpenSubScreen && !UtilService.isLocalHost()) {
+			this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+			this.screenOrientationSubscribe.unsubscribe();
 		}
 	}
 
@@ -575,7 +573,9 @@ export class FormHavPage implements OnInit {
 		this.content.scrollToTop(200);
 	}
 
-	ionViewDidEnter() {}
+	ionViewDidEnter() {
+		this.sharedDataService.isOpenSubScreen = false;
+	}
 
 	ionViewWillLeave(): void {}
 }

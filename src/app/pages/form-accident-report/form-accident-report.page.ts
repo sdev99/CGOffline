@@ -305,13 +305,9 @@ export class FormAccidentReportPage {
 	}
 
 	ionViewDidLeave(): void {
-		if (this.sharedDataService.dedicatedMode) {
-			if (!this.sharedDataService.isOpenSubScreen) {
-				if (!UtilService.isLocalHost()) {
-					this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-					this.screenOrientationSubscribe.unsubscribe();
-				}
-			}
+		if (this.sharedDataService.dedicatedMode && !this.sharedDataService.isOpenSubScreen && !UtilService.isLocalHost()) {
+			this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+			this.screenOrientationSubscribe.unsubscribe();
 		}
 	}
 
