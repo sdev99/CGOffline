@@ -86,7 +86,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
 		if (UtilService.isLocalHost()) {
 			setTimeout(() => {
-				const testFormType: any = 'riskassessment';
+				const testFormType: any = '';
 
 				switch (testFormType) {
 					case 'hav':

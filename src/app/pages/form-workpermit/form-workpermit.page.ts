@@ -28,8 +28,8 @@ export class FormWorkpermitPage {
 	EnumService = EnumService;
 
 	expireDateTypes = [
-		{ title: 'Expires On', type: 'date' },
-		{ title: 'Expires After', type: 'duration' },
+		{ title: 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_EXPIRES_ON', type: 'date' },
+		{ title: 'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.EXPIRATION_EXPIRES_AFTER', type: 'duration' },
 	];
 	selectedExpireDateType = 'date';
 
