@@ -89,6 +89,7 @@ export class SharedDataService {
 	activityList: Array<ActivityListItem>;
 	activityOverviewData;
 
+	userId: any;
 	userProfile: Profile;
 	timeZoneList;
 	companyLanguageList;
