@@ -33,11 +33,12 @@ export class DashboardDmPage implements OnInit {
 			},
 			(error) => {}
 		);
+
 		this.accountService.activateDevice().subscribe(() => {});
 
 		if (UtilService.isLocalHost()) {
 			setTimeout(() => {
-				const testFormType: any = 'riskassessment';
+				const testFormType: any = '';
 
 				switch (testFormType) {
 					case 'hav':

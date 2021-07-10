@@ -30,6 +30,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { TemplateDropdownComponent } from './components/template-dropdown/template-dropdown.component';
+import { Network } from '@ionic-native/network/ngx';
 
 @NgModule({
 	declarations: [AppComponent, TemplateDropdownComponent],
@@ -73,6 +74,7 @@ import { TemplateDropdownComponent } from './components/template-dropdown/templa
 		MediaCapture,
 		ScreenOrientation,
 		HTTP,
+		Network,
 		RouterOutlet,
 		{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
 		{

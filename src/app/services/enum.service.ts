@@ -175,6 +175,9 @@ export class EnumService {
 		GetCompanyLanguageTemplate: 'GetCompanyLanguageTemplate', // GET
 		GetCompanyLanguageTemplateByCode: 'GetCompanyLanguageTemplateByCode', // GET
 		GetAnswerChoiceEntityByQRCode: 'GetAnswerChoiceEntityByQRCode', // GET
+
+		// Dedicated Mode Offline Api
+		GetDeviceOfflineDetails: 'GetDeviceOfflineDetails',
 	};
 
 	static ApiResponseCode = {
