@@ -1,7 +1,7 @@
 export class DeviceCheckInGuestInductionItemDetail {
 	checkInInductionGuestID: number;
 	checkInInductionGuestItemID: number;
-	contentDetails: any;
+	contentDetails: string;
 	contentType: string;
 	displayOrder: number;
 	documentFileFormat: string;
@@ -9,5 +9,5 @@ export class DeviceCheckInGuestInductionItemDetail {
 	documentID: number;
 	documentTitle: string;
 	formID: number;
-	formType: any;
+	formType: string;
 }

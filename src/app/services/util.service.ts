@@ -169,6 +169,10 @@ export class UtilService {
 		return './assets/icon/' + iconName + '.svg';
 	}
 
+	static isArray(obj) {
+		return !!obj && obj.constructor === Array;
+	}
+
 	static findObj(list, key, value, defaultIndex = 0) {
 		if (list && list.length > 0) {
 			let resultData = list[defaultIndex];

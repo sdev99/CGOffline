@@ -1,4 +1,4 @@
-import { NgModule, Pipe } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy, RouterOutlet } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent, HttpLoaderFactory } from './app.component';
 import { ComponentsModule } from './components/components.module';
 import { ModalsModule } from './modals/modals.module';
-import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
+import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { Badge } from '@ionic-native/badge/ngx';
 import { PipesModule } from './pipes/pipes.module';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -24,13 +24,14 @@ import { HTTP } from '@ionic-native/http/ngx';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpConfigInterceptor } from './helpers/httpConfig.interceptor';
 import { FormsModule } from '@angular/forms';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { MediaCapture } from '@ionic-native/media-capture/ngx';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { TemplateDropdownComponent } from './components/template-dropdown/template-dropdown.component';
 import { Network } from '@ionic-native/network/ngx';
+import { SQLite } from '@ionic-native/sqlite/ngx';
 
 @NgModule({
 	declarations: [AppComponent, TemplateDropdownComponent],
@@ -75,6 +76,7 @@ import { Network } from '@ionic-native/network/ngx';
 		ScreenOrientation,
 		HTTP,
 		Network,
+		SQLite,
 		RouterOutlet,
 		{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
 		{

@@ -1,7 +1,7 @@
 import { DeviceCheckInGuestInductionItemDetail } from './DeviceCheckInGuestInductionItemDetail';
 
 export class DeviceCheckInGuestInductionDetail {
-	checkInInductionGuestID: 8;
+	checkInInductionGuestID: number;
 	guestInductionItems: Array<DeviceCheckInGuestInductionItemDetail>;
 	introduction: string;
 	inventoryItemID: number;

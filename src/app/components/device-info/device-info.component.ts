@@ -4,6 +4,8 @@ import { MenuController, NavController } from '@ionic/angular';
 import { SharedDataService } from '../../services/shared-data.service';
 import { UtilService } from '../../services/util.service';
 import { EnumService } from '../../services/enum.service';
+import { OfflineApiService } from 'src/app/services/offline-api.service';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 const { Network } = Plugins;
 
@@ -16,7 +18,7 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 	isOnline = true;
 	UtilService = UtilService;
 
-	constructor(private menu: MenuController, public navController: NavController, public sharedDataService: SharedDataService) {
+	constructor(private menu: MenuController, public navController: NavController, public sharedDataService: SharedDataService, public offlineManagerService: OfflineManagerService) {
 		this.checkForNetwork();
 	}
 

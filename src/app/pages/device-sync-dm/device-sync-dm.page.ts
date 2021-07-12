@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { EnumService } from '../../services/enum.service';
 import { OfflineApiService } from 'src/app/services/offline-api.service';
 import { SharedDataService } from 'src/app/services/shared-data.service';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
+import { Response } from 'src/app/_models';
 
 @Component({
 	selector: 'app-device-sync-dm',
@@ -24,6 +26,7 @@ export class DeviceSyncDmPage implements OnInit {
 		public activatedRoute: ActivatedRoute,
 		public utilService: UtilService,
 		public offlineApiService: OfflineApiService,
+		public offlineManagerService: OfflineManagerService,
 		public sharedDataService: SharedDataService
 	) {
 		this.activatedRoute.queryParams.subscribe((data) => {
@@ -97,12 +100,12 @@ export class DeviceSyncDmPage implements OnInit {
 
 	callOfflineApi = (callBack) => {
 		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
-			(res) => {
-				debugger;
+			(res: Response) => {
+				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					this.offlineManagerService.insertOfflineData(res.Result);
+				}
 			},
-			(error) => {
-				debugger;
-			}
+			(error) => {}
 		);
 	};
 }
