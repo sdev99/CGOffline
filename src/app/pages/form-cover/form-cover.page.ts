@@ -18,6 +18,7 @@ import { UtilService } from '../../services/util.service';
 import { Response } from '../../_models';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
+import { share } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-form-cover',
@@ -40,6 +41,9 @@ export class FormCoverPage {
 	) {
 		if (environment.isWebApp) {
 			this.route.queryParams.subscribe((param) => {
+				if (param.userId) {
+					sharedDataService.userId = param.userId;
+				}
 				if (param.formID && param.formVersionID) {
 					if (param.languageID) {
 						sharedDataService.currentLanguageId = param.languageID;

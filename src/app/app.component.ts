@@ -55,6 +55,7 @@ export class AppComponent {
 		this.platform.ready().then(async () => {
 			this.statusBar.styleDefault();
 			this.sharedDataService.apiServiceRerence = this.apiService;
+			this.sharedDataService.accountServiceRef = this.accountService;
 
 			const appLang = localStorage.getItem(EnumService.LocalStorageKeys.APP_LANGUAGE);
 			if (appLang) {
@@ -397,3 +398,4 @@ export class AppComponent {
 		}
 	};
 }
+3;

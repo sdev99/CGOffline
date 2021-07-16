@@ -38,12 +38,25 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 			headers: request.headers.set('Accept', 'application/json'),
 		});
 
-		if (!this.sharedDataService.dedicatedMode && ((this.accountService.userValue?.userId && this.accountService.userValue?.mobileAppLanguageID) || this.sharedDataService.currentLanguageId)) {
-			const langId = this.sharedDataService.userProfile?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue?.mobileAppLanguageID;
-			const userId = this.accountService.userValue?.userId;
-			request = request.clone({
-				headers: request.headers.set('languageID', langId.toString()).set('userID', userId),
-			});
+		if (!this.sharedDataService.dedicatedMode) {
+			if (this.accountService.userValue?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.sharedDataService.userProfile?.mobileAppLanguageID) {
+				const langId = this.sharedDataService.userProfile?.mobileAppLanguageID || this.sharedDataService.currentLanguageId || this.accountService.userValue?.mobileAppLanguageID;
+				request = request.clone({
+					headers: request.headers.set('languageID', langId.toString()),
+				});
+			}
+			if (this.accountService.userValue?.userId || this.sharedDataService.userId) {
+				const userId = this.accountService.userValue?.userId || this.sharedDataService.userId;
+				request = request.clone({
+					headers: request.headers.set('userID', userId),
+				});
+			}
+		} else {
+			if (this.sharedDataService.dedicatedModeUserDetail?.userId) {
+				request = request.clone({
+					headers: request.headers.set('userID', this.sharedDataService.dedicatedModeUserDetail.userId),
+				});
+			}
 		}
 
 		return next.handle(request).pipe(

@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { EnumService } from './enum.service';
-import { SharedDataService } from './shared-data.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ValidatorService } from './validator.service';
 import * as moment from 'moment';
 import { StaticDataService } from './static-data.service';
-import { UserDetail } from '../_models/userDetail';
 import { environment } from '../../environments/environment';
 import { Capacitor } from '@capacitor/core';
 import { File } from '@ionic-native/file/ngx';

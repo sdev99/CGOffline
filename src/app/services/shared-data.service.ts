@@ -26,21 +26,21 @@ import { WorkPermitAnswer } from '../_models/workPermitAnswer';
 import { ArAnswerObject } from '../_models/arAnswerObject';
 import { StaticDataService } from './static-data.service';
 import { RiskRatingItem } from '../_models/riskRatingItem';
-import { Router } from '@angular/router';
 import { DedicatedModeDeviceDetailData } from '../_models/dedicatedModeDeviceDetailData';
 import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
 import { DedicatedModeGuestDetail } from '../_models/dedicatedModeGuestDetail';
 import { UserDetail } from '../_models/userDetail';
-import { File } from '@ionic-native/file/ngx';
 import { FileTransfer, FileUploadOptions } from '@ionic-native/file-transfer/ngx';
 import { environment } from '../../environments/environment';
 import { RiskRatingSeverityOption } from '../_models/riskRatingSeverityOption';
 import { RiskRatingProbabilityOption } from '../_models/riskRatingProbabilityOption';
 import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
-import { AuthGuard } from '../helpers/auth.guard';
 import { HavAnswerDetail } from '../_models/havAnswerDetail';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityItem } from '../_models/entityItem';
+import { DeviceEntityData } from '../_models/offline/DeviceEntityData';
+import { DeviceDetailData } from '../_models/offline/DeviceDetailData';
+import { AccountService } from './account.service';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -49,6 +49,7 @@ const { PushNotifications, Permissions } = Plugins;
 })
 export class SharedDataService {
 	apiServiceRerence: ApiService;
+	accountServiceRef: AccountService;
 
 	apiBaseUrl = environment.apiUrl;
 
@@ -73,6 +74,7 @@ export class SharedDataService {
 	pushToken = '000';
 	isTablet = false;
 	dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
+	offlineMode = true;
 	// when open form or document , useful for next screens
 
 	dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;
@@ -89,6 +91,7 @@ export class SharedDataService {
 	activityList: Array<ActivityListItem>;
 	activityOverviewData;
 
+	userId: any;
 	userProfile: Profile;
 	timeZoneList;
 	companyLanguageList;
@@ -151,9 +154,7 @@ export class SharedDataService {
 	companyLangaugeTranslations = {};
 
 	constructor(
-		private router: Router,
-		private platform: Platform,
-		private file: File,
+		platform: Platform,
 		private fileTransfer: FileTransfer,
 		private navCtrl: NavController,
 		private observablesService: ObservablesService,
@@ -219,25 +220,6 @@ export class SharedDataService {
 		const globalDirectories = localStorage.getItem(EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES);
 		if (globalDirectories) {
 			this.globalDirectories = JSON.parse(globalDirectories) as GlobalDirectory;
-		}
-	}
-
-	addDynamicRoute(dynamicPath, component, canActivateAuth = false): void {
-		const appRoutes = [...this.router.config];
-		let alreadyAdded = false;
-		appRoutes.map((route) => {
-			if (route.path === dynamicPath) {
-				alreadyAdded = true;
-			}
-		});
-		const canActivate = [];
-		if (canActivateAuth) {
-			canActivate.push(AuthGuard);
-		}
-		if (!alreadyAdded) {
-			const route = { path: dynamicPath, component, canActivate };
-			appRoutes.push(route);
-			this.router.resetConfig(appRoutes);
 		}
 	}
 

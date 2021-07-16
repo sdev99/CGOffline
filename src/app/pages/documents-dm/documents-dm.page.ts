@@ -9,6 +9,8 @@ import { Response } from '../../_models';
 import { DocumentDetail } from '../../_models/documentDetail';
 import { ArchivedDocumentDetail } from '../../_models/archivedDocumentDetail';
 import { ActivatedRoute } from '@angular/router';
+import { DynamicRouteService } from 'src/app/services/dynamic-route.service';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 @Component({
 	selector: 'app-documents-dm',
@@ -33,10 +35,12 @@ export class DocumentsDmPage implements OnInit {
 	pageTitle = '';
 
 	constructor(
+		private dynamicRouteService: DynamicRouteService,
 		private navCtrl: NavController,
 		private filehandlerService: FilehandlerService,
 		public utilService: UtilService,
 		public sharedDataService: SharedDataService,
+		public offlineManagerService: OfflineManagerService,
 		public apiService: ApiService,
 		public activatedRoute: ActivatedRoute
 	) {
@@ -61,34 +65,46 @@ export class DocumentsDmPage implements OnInit {
 	getDedicatedModeAvailableDocuments() {
 		const folderID = this.itemDetail ? this.itemDetail.folderID : 0;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-		this.isLoadingDocument = true;
-		this.apiService.getDedicatedModeAvailableDocuments(companyID, folderID).subscribe(
-			(response: Response) => {
-				this.isLoadingDocument = false;
-				if (response) {
-					this.availableDocuments = response.Result;
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getAvailableDocuments(folderID).then((res) => {
+				this.availableDocuments = res as any;
+			});
+		} else {
+			this.isLoadingDocument = true;
+			this.apiService.getDedicatedModeAvailableDocuments(companyID, folderID).subscribe(
+				(response: Response) => {
+					this.isLoadingDocument = false;
+					if (response) {
+						this.availableDocuments = response.Result;
+					}
+				},
+				(error) => {
+					this.isLoadingDocument = false;
 				}
-			},
-			(error) => {
-				this.isLoadingDocument = false;
-			}
-		);
+			);
+		}
 	}
 
 	getDedicatedModeArchiveDocuments() {
-		this.isLoadingDocument = true;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-		this.apiService.getDedicatedModeArchiveDocuments(companyID).subscribe(
-			(response: Response) => {
-				this.isLoadingDocument = false;
-				if (response) {
-					this.archivedDocuments = response.Result;
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getArchivedDocuments().then((res) => {
+				this.archivedDocuments = res as any;
+			});
+		} else {
+			this.isLoadingDocument = true;
+			this.apiService.getDedicatedModeArchiveDocuments(companyID).subscribe(
+				(response: Response) => {
+					this.isLoadingDocument = false;
+					if (response) {
+						this.archivedDocuments = response.Result;
+					}
+				},
+				(error) => {
+					this.isLoadingDocument = false;
 				}
-			},
-			(error) => {
-				this.isLoadingDocument = false;
-			}
-		);
+			);
+		}
 	}
 
 	onSearch(search) {
@@ -132,7 +148,7 @@ export class DocumentsDmPage implements OnInit {
 
 	openDocumentFolder(item: DocumentDetail) {
 		const newPath = 'documents-dm/' + item.folderID;
-		this.sharedDataService.addDynamicRoute(newPath, DocumentsDmPage, true);
+		this.dynamicRouteService.addDynamicRoute(newPath, DocumentsDmPage, true);
 		this.navCtrl.navigateForward([newPath], {
 			queryParams: { itemDetail: JSON.stringify(item) },
 		});

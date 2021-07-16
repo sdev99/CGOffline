@@ -14,6 +14,7 @@ import { FormItem } from '../../_models/formItem';
 import { FilehandlerService } from '../../services/filehandler.service';
 import { CheckedInDetailItem } from 'src/app/_models/checkedInDetailItem';
 import { SignOffFormDetail } from 'src/app/_models/signOffFormDetail';
+import { DynamicRouteService } from 'src/app/services/dynamic-route.service';
 
 @Component({
 	selector: 'app-folder-content-list',
@@ -41,6 +42,7 @@ export class FolderContentListPage implements OnInit {
 		public navCtrl: NavController,
 		public photoService: PhotoService,
 		public apiService: ApiService,
+		private dynamicRouteService: DynamicRouteService,
 		public utilService: UtilService,
 		private accountService: AccountService,
 		public observablesService: ObservablesService,
@@ -130,14 +132,14 @@ export class FolderContentListPage implements OnInit {
 
 	openFormFolder(item: FormItem) {
 		const newPath = 'tabs/current-checkin/folder-content-list/' + item.formFolderID;
-		this.sharedDataService.addDynamicRoute(newPath, FolderContentListPage, true);
+		this.dynamicRouteService.addDynamicRoute(newPath, FolderContentListPage, true);
 		this.navCtrl.navigateForward([newPath], {
 			queryParams: { itemType: 'form', itemDetail: JSON.stringify(item) },
 		});
 	}
 	openDocumentFolder(item: DocumentDetail) {
 		const newPath = 'tabs/current-checkin/folder-content-list/' + item.folderID;
-		this.sharedDataService.addDynamicRoute(newPath, FolderContentListPage, true);
+		this.dynamicRouteService.addDynamicRoute(newPath, FolderContentListPage, true);
 		this.navCtrl.navigateForward([newPath], {
 			queryParams: { itemType: 'document', itemDetail: JSON.stringify(item) },
 		});

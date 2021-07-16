@@ -11,6 +11,7 @@ import { ApiService } from '../../services/api.service';
 import { AccountService } from '../../services/account.service';
 import { CheckedInDetailItem } from '../../_models/checkedInDetailItem';
 import { ActivatedRoute } from '@angular/router';
+import { DynamicRouteService } from 'src/app/services/dynamic-route.service';
 
 @Component({
 	selector: 'app-checkin-workpermit',
@@ -30,6 +31,7 @@ export class CheckinWorkpermitPage implements OnInit {
 	constructor(
 		public navController: NavController,
 		public sharedDataService: SharedDataService,
+		public dynamicRouteService: DynamicRouteService,
 		public utilService: UtilService,
 		public apiService: ApiService,
 		public navCtrl: NavController,
@@ -185,7 +187,7 @@ export class CheckinWorkpermitPage implements OnInit {
 
 	openFormFolder(item: FormItem) {
 		const newPath = (this.sharedDataService.dedicatedMode ? 'checkin-workpermit/' : 'tabs/current-checkin/checkin-workpermit/') + item.formFolderID;
-		this.sharedDataService.addDynamicRoute(newPath, CheckinWorkpermitPage, true);
+		this.dynamicRouteService.addDynamicRoute(newPath, CheckinWorkpermitPage, true);
 		this.navCtrl.navigateForward([newPath], {
 			queryParams: { itemDetail: JSON.stringify(item) },
 		});

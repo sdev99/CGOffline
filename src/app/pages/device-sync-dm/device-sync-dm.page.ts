@@ -100,12 +100,14 @@ export class DeviceSyncDmPage implements OnInit {
 
 	callOfflineApi = (callBack) => {
 		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
-			(res: Response) => {
+			async (res: Response) => {
 				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.offlineManagerService.insertOfflineData(res.Result);
+					this.offlineManagerService.insertOfflineData(res.Result, callBack);
 				}
 			},
-			(error) => {}
+			(error) => {
+				callBack && callBack();
+			}
 		);
 	};
 }

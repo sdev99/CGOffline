@@ -9,8 +9,8 @@ import { Response } from '../../_models';
 import { ArchivedDocumentDetail } from '../../_models/archivedDocumentDetail';
 import { FormItem } from '../../_models/formItem';
 import { SignOffFormDetail } from '../../_models/signOffFormDetail';
-import { SignOffDetailsPostData } from '../../_models/signOffDetailsPostData';
 import { ActivatedRoute } from '@angular/router';
+import { DynamicRouteService } from 'src/app/services/dynamic-route.service';
 
 @Component({
 	selector: 'app-forms-dm',
@@ -35,6 +35,7 @@ export class FormsDmPage implements OnInit {
 	pageTitle = '';
 
 	constructor(
+		private dynamicRouteService: DynamicRouteService,
 		private navController: NavController,
 		private filehandlerService: FilehandlerService,
 		public utilService: UtilService,
@@ -141,7 +142,7 @@ export class FormsDmPage implements OnInit {
 
 	openFormFolder(item: FormItem) {
 		const newPath = 'documents-dm/' + item.formFolderID;
-		this.sharedDataService.addDynamicRoute(newPath, FormsDmPage, true);
+		this.dynamicRouteService.addDynamicRoute(newPath, FormsDmPage, true);
 		this.navController.navigateForward([newPath], {
 			queryParams: { itemDetail: JSON.stringify(item) },
 		});

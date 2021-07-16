@@ -35,6 +35,7 @@ import { DeviceHAVTypeDetail } from '../_models/offline/DeviceHAVTypeDetail';
 import { DeviceHAVModelDetail } from '../_models/offline/DeviceHAVModelDetail';
 import { DeviceRiskItemDetail } from '../_models/offline/DeviceRiskItemDetail';
 import { DeviceHazardItemDetail } from '../_models/offline/DeviceHazardItemDetail';
+import { SharedDataService } from './shared-data.service';
 
 declare var window: any;
 
@@ -46,7 +47,7 @@ export class OfflineManagerService {
 	readonly db_name: string = 'compliancegenie.db';
 	readonly db_table: string = 'userTable';
 
-	constructor(private platform: Platform, private sqlite: SQLite, private utilService: UtilService) {
+	constructor(private platform: Platform, private sqlite: SQLite, private sharedDataService: SharedDataService) {
 		this.dbSetUp();
 	}
 
@@ -109,9 +110,7 @@ export class OfflineManagerService {
 				let query = 'CREATE TABLE IF NOT EXISTS ' + data.table_name + ' (' + columnsList.join(', ') + ')';
 
 				this.dbQuery(query, {}).then(
-					(response: any) => {
-						console.log(data.table_name + ' Table Created ', response);
-					},
+					(response: any) => {},
 					(err) => {
 						console.error(data.table_name + ' Unable to execute sql: ', err);
 					}
@@ -120,7 +119,13 @@ export class OfflineManagerService {
 		});
 	};
 
-	insertData = (table, data, condition = {}) => {
+	/**
+	 *
+	 * @param table DB table name
+	 * @param data Data objects to be inserted
+	 * @param condition Insert data if condition not match
+	 */
+	insertData = (table, data = {}, condition = {}) => {
 		let dataCols = [];
 		let dataVals = [];
 		Object.keys(data).map((colName) => {
@@ -155,54 +160,60 @@ export class OfflineManagerService {
 			query = query + ' WHERE NOT EXISTS(SELECT 1 FROM ' + table + ' WHERE ' + condCols.join(' AND ') + ')';
 		}
 
-		this.dbQuery(query, [])
-			.then((res) => {})
-			.catch((error) => {});
+		return this.dbQuery(query, []);
 	};
 
-	insertOfflineData = (offlineData: DeviceOfflineDetailViewModels) => {
+	insertOfflineData = async (offlineData: DeviceOfflineDetailViewModels, callBack) => {
 		// deviceDetailData
 		const deviceDetailData = offlineData.deviceDetailData;
 		const condition: any = { companyID: deviceDetailData.companyID, deviceID: deviceDetailData.deviceID };
-		this.insertData('DeviceDetails', deviceDetailData, condition);
+		await this.insertData('DeviceDetails', deviceDetailData, condition);
 
 		// deviceEntityData
 		const deviceEntityData = offlineData.deviceEntityData;
 		if (deviceEntityData) {
-			deviceEntityData.map((value: DeviceEntityData) => {
+			for (let index = 0; index < deviceEntityData.length; index++) {
+				const value: DeviceEntityData = deviceEntityData[index];
 				const condition: any = { deviceEntityID: value.deviceEntityID, deviceID: value.deviceID };
-				this.insertData('DeviceEntities', value, condition);
-			});
+				await this.insertData('DeviceEntities', value, condition);
+			}
 		}
 
 		// deviceUserList
 		const deviceUserList = offlineData.deviceUserList;
 		if (deviceUserList) {
-			deviceUserList.map((value: DeviceUserDetail) => {
-				this.insertData('DeviceUsers', value);
-			});
+			for (let index = 0; index < deviceUserList.length; index++) {
+				const value: DeviceUserDetail = deviceUserList[index];
+				const condition: any = { userId: value.userId, companyID: value.companyID };
+				await this.insertData('DeviceUsers', value, condition);
+			}
 		}
 
 		// deviceUserQualificationList
 		const deviceUserQualificationList = offlineData.deviceUserQualificationList;
 		if (deviceUserQualificationList) {
-			deviceUserQualificationList.map((value: DeviceUserQualificationDetail) => {
-				this.insertData('DeviceUserQualifications', value);
-			});
+			for (let index = 0; index < deviceUserQualificationList.length; index++) {
+				const value: DeviceUserQualificationDetail = deviceUserQualificationList[index];
+				const condition: any = {};
+				await this.insertData('DeviceUserQualifications', value, condition);
+			}
 		}
 
 		// deviceGuestUserList
 		const deviceGuestUserList = offlineData.deviceGuestUserList;
 		if (deviceGuestUserList) {
-			deviceGuestUserList.map((value: DeviceGuestUserDetail) => {
-				this.insertData('DeviceGuestUsers', value);
-			});
+			for (let index = 0; index < deviceGuestUserList.length; index++) {
+				const value: DeviceGuestUserDetail = deviceGuestUserList[index];
+				const condition: any = { guestPhone: value.guestPhone };
+				await this.insertData('DeviceGuestUsers', value, condition);
+			}
 		}
 
 		// deviceAvailableDocumentList
 		const deviceAvailableDocumentList = offlineData.deviceAvailableDocumentList;
 		if (deviceAvailableDocumentList) {
-			deviceAvailableDocumentList.map((value: DeviceAvailableDocumentDetail) => {
+			for (let index = 0; index < deviceAvailableDocumentList.length; index++) {
+				const value: DeviceAvailableDocumentDetail = deviceAvailableDocumentList[index];
 				const condition: any = {
 					documentID: value.documentID,
 					folderID: value.folderID,
@@ -215,15 +226,15 @@ export class OfflineManagerService {
 				} else if (value.inventoryItemID > 0) {
 					condition.inventoryItemID = value.inventoryItemID;
 				}
-
-				this.insertData('DeviceAvailableDocuments', value, condition);
-			});
+				await this.insertData('DeviceAvailableDocuments', value, condition);
+			}
 		}
 
 		// deviceArchivedDocumentList
 		const deviceArchivedDocumentList = offlineData.deviceArchivedDocumentList;
 		if (deviceArchivedDocumentList) {
-			deviceArchivedDocumentList.map((value: DeviceArchivedDocumentDetail) => {
+			for (let index = 0; index < deviceArchivedDocumentList.length; index++) {
+				const value: DeviceArchivedDocumentDetail = deviceArchivedDocumentList[index];
 				const condition: any = {
 					documentID: value.documentID,
 				};
@@ -234,15 +245,15 @@ export class OfflineManagerService {
 				} else if (value.inventoryItemID > 0) {
 					condition.inventoryItemID = value.inventoryItemID;
 				}
-
-				this.insertData('DeviceArchivedDocuments', value, condition);
-			});
+				await this.insertData('DeviceArchivedDocuments', value, condition);
+			}
 		}
 
 		// deviceAvailableFormList
 		const deviceAvailableFormList = offlineData.deviceAvailableFormList;
 		if (deviceAvailableFormList) {
-			deviceAvailableFormList.map((value: DeviceAvailableFormDetail) => {
+			for (let index = 0; index < deviceAvailableFormList.length; index++) {
+				const value: DeviceAvailableFormDetail = deviceAvailableFormList[index];
 				const condition: any = {
 					formID: value.formID,
 					formFolderID: value.formFolderID,
@@ -255,200 +266,487 @@ export class OfflineManagerService {
 				} else if (value.inventoryItemID > 0) {
 					condition.inventoryItemID = value.inventoryItemID;
 				}
-				this.insertData('DeviceAvailableForms', value, condition);
-			});
+				await this.insertData('DeviceAvailableForms', value, condition);
+			}
 		}
 
 		// deviceArchivedFormList
 		const deviceArchivedFormList = offlineData.deviceArchivedFormList;
 		if (deviceArchivedFormList) {
-			deviceArchivedFormList.map((value: DeviceArchivedFormDetail) => {
-				this.insertData('DeviceArchivedForms', value);
-			});
+			for (let index = 0; index < deviceArchivedFormList.length; index++) {
+				const value: DeviceArchivedFormDetail = deviceArchivedFormList[index];
+				const condition: any = {
+					documentID: value.documentID,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceArchivedForms', value, condition);
+			}
 		}
 
 		// deviceAvailableWorkPermitList
 		const deviceAvailableWorkPermitList = offlineData.deviceAvailableWorkPermitList;
 		if (deviceAvailableWorkPermitList) {
-			deviceAvailableWorkPermitList.map((value: DeviceAvailableWorkPermitDetail) => {
-				this.insertData('DeviceAvailableWorkPermits', value);
-			});
+			for (let index = 0; index < deviceAvailableWorkPermitList.length; index++) {
+				const value: DeviceAvailableWorkPermitDetail = deviceAvailableWorkPermitList[index];
+				const condition: any = {
+					formID: value.formID,
+					formVersionID: value.formVersionID,
+					formVersionNo: value.formVersionNo,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceAvailableWorkPermits', value, condition);
+			}
 		}
 
 		// deviceLiveWorkPermitList
 		const deviceLiveWorkPermitList = offlineData.deviceLiveWorkPermitList;
 		if (deviceLiveWorkPermitList) {
-			deviceLiveWorkPermitList.map((value: DeviceLiveWorkPermitDetail) => {
-				this.insertData('DeviceLiveWorkPermits', value);
-			});
+			for (let index = 0; index < deviceLiveWorkPermitList.length; index++) {
+				const value: DeviceLiveWorkPermitDetail = deviceLiveWorkPermitList[index];
+				const condition: any = {
+					userWorkPermitId: value.userWorkPermitId,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceLiveWorkPermits', value, condition);
+			}
 		}
 
 		// deviceArchivedWorkPermitList
 		const deviceArchivedWorkPermitList = offlineData.deviceArchivedWorkPermitList;
 		if (deviceArchivedWorkPermitList) {
-			deviceArchivedWorkPermitList.map((value: DeviceArchivedWorkPermitDetail) => {
-				this.insertData('DeviceArchivedWorkPermits', value);
-			});
+			for (let index = 0; index < deviceArchivedWorkPermitList.length; index++) {
+				const value: DeviceArchivedWorkPermitDetail = deviceArchivedWorkPermitList[index];
+				const condition: any = {
+					userWorkPermitId: value.userWorkPermitId,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceArchivedWorkPermits', value, condition);
+			}
 		}
 
 		// deviceFormDetailsList
 		const deviceFormDetailsList = offlineData.deviceFormDetailsList;
 		if (deviceFormDetailsList) {
-			deviceFormDetailsList.map((value: DeviceFormDetail) => {
-				this.insertData('DeviceFormDetails', value);
-			});
+			for (let index = 0; index < deviceFormDetailsList.length; index++) {
+				const value: DeviceFormDetail = deviceFormDetailsList[index];
+
+				const condition: any = {
+					formID: value.formID,
+					formVersionID: value.formVersionID,
+					formVersionNo: value.formVersionNo,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceFormDetails', value, condition);
+			}
 		}
 
 		// deviceFormAttachmentList
 		const deviceFormAttachmentList = offlineData.deviceFormAttachmentList;
 		if (deviceFormAttachmentList) {
-			deviceFormAttachmentList.map((value: DeviceFormAttachmentDetail) => {
-				this.insertData('DeviceFormAttachments', value);
-			});
+			for (let index = 0; index < deviceFormAttachmentList.length; index++) {
+				const value: DeviceFormAttachmentDetail = deviceFormAttachmentList[index];
+
+				const condition: any = {
+					formID: value.formID,
+					documentID: value.documentID,
+				};
+
+				await this.insertData('DeviceFormAttachments', value, condition);
+			}
 		}
 
 		// deviceEvacuationList
 		const deviceEvacuationList = offlineData.deviceEvacuationList;
 		if (deviceEvacuationList) {
-			deviceEvacuationList.map((value: DeviceEvacuationDetail) => {
-				this.insertData('DeviceEvacuations', value);
-			});
+			for (let index = 0; index < deviceEvacuationList.length; index++) {
+				const value: DeviceEvacuationDetail = deviceEvacuationList[index];
+
+				const condition: any = {
+					firstAndLastName: value.firstAndLastName,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceEvacuations', value, condition);
+			}
 		}
 
 		// deviceUserCheckInQualificationList
 		const deviceUserCheckInQualificationList = offlineData.deviceUserCheckInQualificationList;
 		if (deviceUserCheckInQualificationList) {
-			deviceUserCheckInQualificationList.map((value: DeviceUserCheckInQualificationDetail) => {
-				this.insertData('DeviceUserCheckInQualifications', value);
-			});
+			for (let index = 0; index < deviceUserCheckInQualificationList.length; index++) {
+				const value: DeviceUserCheckInQualificationDetail = deviceUserCheckInQualificationList[index];
+
+				const condition: any = {
+					qualificationID: value.qualificationID,
+				};
+
+				await this.insertData('DeviceUserCheckInQualifications', value, condition);
+			}
 		}
 
 		// deviceLocationList
 		const deviceLocationList = offlineData.deviceLocationList;
 		if (deviceLocationList) {
-			deviceLocationList.map((value: DeviceLocationDetail) => {
-				this.insertData('DeviceLocations', value);
-			});
+			for (let index = 0; index < deviceLocationList.length; index++) {
+				const value: DeviceLocationDetail = deviceLocationList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					locationID: value.locationID,
+				};
+				await this.insertData('DeviceLocations', value, condition);
+			}
 		}
 
 		// deviceProjectList
 		const deviceProjectList = offlineData.deviceProjectList;
 		if (deviceProjectList) {
-			deviceProjectList.map((value: DeviceProjectDetail) => {
-				this.insertData('DeviceProjects', value);
-			});
+			for (let index = 0; index < deviceProjectList.length; index++) {
+				const value: DeviceProjectDetail = deviceProjectList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					projectID: value.projectID,
+				};
+				await this.insertData('DeviceProjects', value, condition);
+			}
 		}
 
 		// deviceInventoryItemList
 		const deviceInventoryItemList = offlineData.deviceInventoryItemList;
 		if (deviceInventoryItemList) {
-			deviceInventoryItemList.map((value: DeviceInventoryItemDetail) => {
-				this.insertData('DeviceInventoryItems', value);
-			});
+			for (let index = 0; index < deviceInventoryItemList.length; index++) {
+				const value: DeviceInventoryItemDetail = deviceInventoryItemList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					inventoryItemID: value.inventoryItemID,
+				};
+				await this.insertData('DeviceInventoryItems', value, condition);
+			}
 		}
 
 		// deviceUserCheckinDetailList
 		const deviceUserCheckinDetailList = offlineData.deviceUserCheckinDetailList;
 		if (deviceUserCheckinDetailList) {
-			deviceUserCheckinDetailList.map((value: DeviceUserCheckinDetail) => {
-				this.insertData('DeviceUserCheckinDetails', value);
-			});
+			for (let index = 0; index < deviceUserCheckinDetailList.length; index++) {
+				const value: DeviceUserCheckinDetail = deviceUserCheckinDetailList[index];
+				const condition: any = {
+					userCheckInDetailID: value.userCheckInDetailID,
+					userId: value.userId,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceUserCheckinDetails', value, condition);
+			}
 		}
 
 		// deviceCheckInInductionList
 		const deviceCheckInInductionList = offlineData.deviceCheckInInductionList;
 		if (deviceCheckInInductionList) {
-			deviceCheckInInductionList.map((value: DeviceCheckInInductionDetail) => {
-				this.insertData('DeviceCheckInInductions', value);
-			});
+			for (let index = 0; index < deviceCheckInInductionList.length; index++) {
+				const value: DeviceCheckInInductionDetail = deviceCheckInInductionList[index];
+				const condition: any = {
+					checkInInductionID: value.checkInInductionID,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceCheckInInductions', value, condition);
+			}
 		}
 
 		// deviceCheckInInductionItemList
 		const deviceCheckInInductionItemList = offlineData.deviceCheckInInductionItemList;
 		if (deviceCheckInInductionItemList) {
-			deviceCheckInInductionItemList.map((value: DeviceCheckInInductionItemDetail) => {
-				this.insertData('DeviceCheckInInductionItems', value);
-			});
+			for (let index = 0; index < deviceCheckInInductionItemList.length; index++) {
+				const value: DeviceCheckInInductionItemDetail = deviceCheckInInductionItemList[index];
+				const condition: any = {
+					checkInInductionID: value.checkInInductionID,
+					checkInInductionItemID: value.checkInInductionItemID,
+					documentID: value.documentID,
+					formID: value.formID,
+				};
+				await this.insertData('DeviceCheckInInductionItems', value, condition);
+			}
 		}
 
 		// deviceGuestUserCheckinDetailList
 		const deviceGuestUserCheckinDetailList = offlineData.deviceGuestUserCheckinDetailList;
 		if (deviceGuestUserCheckinDetailList) {
-			deviceGuestUserCheckinDetailList.map((value: DeviceGuestUserCheckinDetail) => {
-				this.insertData('DeviceGuestUserCheckinDetails', value);
-			});
+			for (let index = 0; index < deviceGuestUserCheckinDetailList.length; index++) {
+				const value: DeviceGuestUserCheckinDetail = deviceGuestUserCheckinDetailList[index];
+				const condition: any = {
+					userCheckInDetailID: value.userCheckInDetailID,
+					userId: value.userId,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceGuestUserCheckinDetails', value, condition);
+			}
 		}
 
 		// deviceCheckInGuestInductionList
 		const deviceCheckInGuestInductionList = offlineData.deviceCheckInGuestInductionList;
 		if (deviceCheckInGuestInductionList) {
-			deviceCheckInGuestInductionList.map((value: DeviceCheckInGuestInductionDetail) => {
-				this.insertData('DeviceCheckInGuestInductions', value);
-			});
+			for (let index = 0; index < deviceCheckInGuestInductionList.length; index++) {
+				const value: DeviceCheckInGuestInductionDetail = deviceCheckInGuestInductionList[index];
+				const condition: any = {
+					checkInInductionGuestID: value.checkInInductionGuestID,
+				};
+				if (value.locationID > 0) {
+					condition.locationID = value.locationID;
+				} else if (value.projectID > 0) {
+					condition.projectID = value.projectID;
+				} else if (value.inventoryItemID > 0) {
+					condition.inventoryItemID = value.inventoryItemID;
+				}
+				await this.insertData('DeviceCheckInGuestInductions', value, condition);
+			}
 		}
 
 		// deviceCheckInGuestInductionItemList
 		const deviceCheckInGuestInductionItemList = offlineData.deviceCheckInGuestInductionItemList;
 		if (deviceCheckInGuestInductionItemList) {
-			deviceCheckInGuestInductionItemList.map((value: DeviceCheckInGuestInductionItemDetail) => {
-				this.insertData('DeviceCheckInGuestInductionItems', value);
-			});
+			for (let index = 0; index < deviceCheckInGuestInductionItemList.length; index++) {
+				const value: DeviceCheckInGuestInductionItemDetail = deviceCheckInGuestInductionItemList[index];
+
+				const condition: any = {
+					checkInInductionGuestID: value.checkInInductionGuestID,
+					checkInInductionGuestItemID: value.checkInInductionGuestItemID,
+					documentID: value.documentID,
+					formID: value.formID,
+				};
+
+				await this.insertData('DeviceCheckInGuestInductionItems', value, condition);
+			}
 		}
 
 		// deviceCompanyUserList
 		const deviceCompanyUserList = offlineData.deviceCompanyUserList;
 		if (deviceCompanyUserList) {
-			deviceCompanyUserList.map((value: DeviceCompanyUserDetail) => {
-				this.insertData('DeviceCompanyUsers', value);
-			});
+			for (let index = 0; index < deviceCompanyUserList.length; index++) {
+				const value: DeviceCompanyUserDetail = deviceCompanyUserList[index];
+				const condition: any = {
+					userId: value.userId,
+				};
+				await this.insertData('DeviceCompanyUsers', value, condition);
+			}
 		}
 
 		// deviceCompanyUserGroupList
 		const deviceCompanyUserGroupList = offlineData.deviceCompanyUserGroupList;
 		if (deviceCompanyUserGroupList) {
-			deviceCompanyUserGroupList.map((value: DeviceCompanyUserGroupDetail) => {
-				this.insertData('DeviceCompanyUserGroups', value);
-			});
+			for (let index = 0; index < deviceCompanyUserGroupList.length; index++) {
+				const value: DeviceCompanyUserGroupDetail = deviceCompanyUserGroupList[index];
+				const condition: any = {
+					userGroupID: value.userGroupID,
+				};
+				await this.insertData('DeviceCompanyUserGroups', value, condition);
+			}
 		}
 
 		// deviceHAVManufacturerList
 		const deviceHAVManufacturerList = offlineData.deviceHAVManufacturerList;
 		if (deviceHAVManufacturerList) {
-			deviceHAVManufacturerList.map((value: DeviceHAVManufacturerDetail) => {
-				this.insertData('DeviceHAVManufacturers', value);
-			});
+			for (let index = 0; index < deviceHAVManufacturerList.length; index++) {
+				const value: DeviceHAVManufacturerDetail = deviceHAVManufacturerList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					havManufacturerID: value.havManufacturerID,
+				};
+				await this.insertData('DeviceHAVManufacturers', value, condition);
+			}
 		}
 
 		// deviceHAVTypeList
 		const deviceHAVTypeList = offlineData.deviceHAVTypeList;
 		if (deviceHAVTypeList) {
-			deviceHAVTypeList.map((value: DeviceHAVTypeDetail) => {
-				this.insertData('DeviceHAVTypes', value);
-			});
+			for (let index = 0; index < deviceHAVTypeList.length; index++) {
+				const value: DeviceHAVTypeDetail = deviceHAVTypeList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					havManufacturerID: value.havManufacturerID,
+					havTypeID: value.havTypeID,
+				};
+				await this.insertData('DeviceHAVTypes', value, condition);
+			}
 		}
 
 		// deviceHAVModelList
 		const deviceHAVModelList = offlineData.deviceHAVModelList;
 		if (deviceHAVModelList) {
-			deviceHAVModelList.map((value: DeviceHAVModelDetail) => {
-				this.insertData('DeviceHAVModels', value);
-			});
+			for (let index = 0; index < deviceHAVModelList.length; index++) {
+				const value: DeviceHAVModelDetail = deviceHAVModelList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					havManufacturerID: value.havManufacturerID,
+					havTypeID: value.havTypeID,
+					havModelID: value.havModelID,
+				};
+				await this.insertData('DeviceHAVModels', value, condition);
+			}
 		}
 
 		// deviceRiskItemList
 		const deviceRiskItemList = offlineData.deviceRiskItemList;
 		if (deviceRiskItemList) {
-			deviceRiskItemList.map((value: DeviceRiskItemDetail) => {
-				this.insertData('DeviceRiskItems', value);
-			});
+			for (let index = 0; index < deviceRiskItemList.length; index++) {
+				const value: DeviceRiskItemDetail = deviceRiskItemList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					companyRiskItemID: value.companyRiskItemID,
+				};
+				await this.insertData('DeviceRiskItems', value, condition);
+			}
 		}
 
 		// deviceHazardItemList
 		const deviceHazardItemList = offlineData.deviceHazardItemList;
 		if (deviceHazardItemList) {
-			deviceHazardItemList.map((value: DeviceHazardItemDetail) => {
-				this.insertData('DeviceHazardItems', value);
-			});
+			for (let index = 0; index < deviceHazardItemList.length; index++) {
+				const value: DeviceHazardItemDetail = deviceHazardItemList[index];
+				const condition: any = {
+					companyID: value.companyID,
+					companyRiskItemID: value.companyRiskItemID,
+					companyHazardItemID: value.companyHazardItemID,
+				};
+				await this.insertData('DeviceHazardItems', value, condition);
+			}
+		}
+
+		callBack && callBack();
+	};
+
+	appendEntityCondition = () => {
+		if (this.sharedDataService.dedicatedModeLocationUse?.projectID) {
+			return 'projectID = ' + this.sharedDataService.dedicatedModeLocationUse?.projectID;
+		} else if (this.sharedDataService.dedicatedModeLocationUse?.locationID) {
+			return 'locationID = ' + this.sharedDataService.dedicatedModeLocationUse?.locationID;
+		} else if (this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID) {
+			return 'inventoryItemID = ' + this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID;
 		}
 	};
+	/****Get data from db*****/
+
+	getAssignedEnitities() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceEntities';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows);
+					} else {
+						reject(new Error('No entities found'));
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceDetail() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceDetails';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows[0]);
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getAvailableDocuments(folderId) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition();
+			if (folderId) {
+				condition = condition + ' AND folderID=' + folderId;
+			}
+			const query = 'SELECT * FROM DeviceAvailableDocuments' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows);
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getArchivedDocuments() {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition();
+
+			const query = 'SELECT * FROM DeviceArchivedDocuments' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows);
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
 }
