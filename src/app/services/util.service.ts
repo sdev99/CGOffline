@@ -173,7 +173,7 @@ export class UtilService {
 		if (list && list.length > 0) {
 			let resultData = list[defaultIndex];
 			list.some((data) => {
-				if (data[key] === value) {
+				if (data[key] === value || data[key] === parseInt(value)) {
 					resultData = data;
 					return true;
 				}

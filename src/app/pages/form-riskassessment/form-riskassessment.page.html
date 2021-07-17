@@ -240,7 +240,7 @@
 															<div class="dropdown-container">
 																<div
 																	class="custom-dropdown-mask"
-																	(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedUser' , 'isMembersOfTheWorkForceUserIDs', users, 'firstAndLastName', 'userId')"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedUser' , 'isMembersOfTheWorkForceUserIDs', users, 'firstAndLastName', 'userId', false)"
 																>
 																	<ion-select
 																		[interface]="ionSelectInterface"
@@ -274,7 +274,7 @@
 															<div class="dropdown-container">
 																<div
 																	class="custom-dropdown-mask"
-																	(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedGroup' ,'isMembersOfTheWorkForceUserGroupIDs' , groups, 'groupName', 'userGroupID')"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'memberOfTheWorkForceSelectedGroup' ,'isMembersOfTheWorkForceUserGroupIDs' , groups, 'groupName', 'userGroupID', true)"
 																>
 																	<ion-select
 																		[interface]="ionSelectInterface"
@@ -299,7 +299,11 @@
 													</ion-item>
 
 													<ng-container *ngIf="hazard.isMembersOfTheWorkForceUserIDs">
-														<ion-item class="user-group-item" lines="inset" *ngFor="let item of hazard.isMembersOfTheWorkForceUserIDs?.split(','); let userIdIndex=index; ">
+														<ion-item
+															class="user-group-item"
+															lines="inset"
+															*ngFor="let item of convertStringToArray(hazard.isMembersOfTheWorkForceUserIDs, false); let userIdIndex=index; "
+														>
 															<ion-label> {{UtilService.findObj(users, 'userId', item, 0).firstAndLastName}} </ion-label>
 															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,  'isMembersOfTheWorkForceUserIDs',userIdIndex)">
 																<ion-icon slot="icon-only" name="close"></ion-icon>
@@ -311,7 +315,7 @@
 														<ion-item
 															class="user-group-item"
 															lines="inset"
-															*ngFor="let item of hazard.isMembersOfTheWorkForceUserGroupIDs?.split(','); let groupIdIndex=index;"
+															*ngFor="let item of convertStringToArray(hazard.isMembersOfTheWorkForceUserGroupIDs, true); let groupIdIndex=index;"
 														>
 															<ion-label> {{UtilService.findObj(groups, 'userGroupID', item, 0).groupName}} </ion-label>
 															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'isMembersOfTheWorkForceUserGroupIDs',groupIdIndex)">
@@ -367,7 +371,7 @@
 															<div class="dropdown-container">
 																<div
 																	class="custom-dropdown-mask"
-																	(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedUser', 'personnelExposedNotificationUserIDs' , users, 'firstAndLastName', 'userId')"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedUser', 'personnelExposedNotificationUserIDs' , users, 'firstAndLastName', 'userId', false)"
 																>
 																	<ion-select
 																		[interface]="ionSelectInterface"
@@ -401,7 +405,7 @@
 															<div class="dropdown-container">
 																<div
 																	class="custom-dropdown-mask"
-																	(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedGroup','personnelExposedNotificationUserGroupIDs' , groups, 'groupName', 'userGroupID')"
+																	(click)="openDrodownForAddUserGroup($event, hazard,'personnelExposedSelectedGroup','personnelExposedNotificationUserGroupIDs' , groups, 'groupName', 'userGroupID', true)"
 																>
 																	<ion-select
 																		[interface]="ionSelectInterface"
@@ -430,7 +434,7 @@
 														<ion-item
 															class="user-group-item"
 															lines="inset"
-															*ngFor="let item of hazard.personnelExposedNotificationUserIDs?.split(','); let userIdIndex=index;"
+															*ngFor="let item of convertStringToArray(hazard.personnelExposedNotificationUserIDs, false); let userIdIndex=index;"
 														>
 															<ion-label> {{UtilService.findObj(users, 'userId', item, 0).firstAndLastName}} </ion-label>
 															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'personnelExposedNotificationUserIDs',userIdIndex)">
@@ -443,7 +447,7 @@
 														<ion-item
 															class="user-group-item"
 															lines="inset"
-															*ngFor="let item of hazard.personnelExposedNotificationUserGroupIDs?.split(','); let groupIdIndex=index;"
+															*ngFor="let item of convertStringToArray(hazard.personnelExposedNotificationUserGroupIDs, true); let groupIdIndex=index;"
 														>
 															<ion-label> {{UtilService.findObj(groups, 'userGroupID', item, 0).groupName}} </ion-label>
 															<ion-button slot="end" shape="round" (click)="removeUserOrGroup(hazard,'personnelExposedNotificationUserGroupIDs',groupIdIndex)">

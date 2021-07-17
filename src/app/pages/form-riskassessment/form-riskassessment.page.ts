@@ -248,8 +248,8 @@ export class FormRiskassessmentPage implements OnInit {
 	 * @param valueKey
 	 * @returns
 	 */
-	async openDrodownForAddUserGroup(event, hazard, selectionHoldKey, valuesHoldKey, list, titleKey, valueKey) {
-		const valuesList = hazard[valuesHoldKey] ? hazard[valuesHoldKey].split(',') : [];
+	async openDrodownForAddUserGroup(event, hazard, selectionHoldKey, valuesHoldKey, list, titleKey, valueKey, isValueTypeNumber = false) {
+		const valuesList = hazard[valuesHoldKey] ? this.convertStringToArray(hazard[valuesHoldKey], isValueTypeNumber) : [];
 		let filteredList = list.filter((value) => {
 			return valuesList.indexOf(value[valueKey]) === -1;
 		});
@@ -742,6 +742,13 @@ export class FormRiskassessmentPage implements OnInit {
 		return isValid;
 	}
 
+	convertStringToArray = (str, isValueTypeNumber = false) => {
+		if (isValueTypeNumber) {
+			return str?.split(',').map(Number);
+		}
+		return str?.split(',');
+	};
+
 	addUserOrGroup(hazard, listType, selectedIdKey) {
 		let list;
 		if (hazard[listType]) {
@@ -749,7 +756,7 @@ export class FormRiskassessmentPage implements OnInit {
 		} else {
 			list = [];
 		}
-		if (list.indexOf(hazard[selectedIdKey]) === -1) {
+		if (list.indexOf(hazard[selectedIdKey]) === -1 && list.indexOf(parseInt(hazard[selectedIdKey])) === -1) {
 			list.push(hazard[selectedIdKey]);
 		}
 		hazard[listType] = list.join(',');
@@ -763,9 +770,7 @@ export class FormRiskassessmentPage implements OnInit {
 		} else {
 			list = [];
 		}
-		debugger;
 		list.splice(index, 1);
-		debugger;
 		hazard[listType] = list.join(',');
 	}
 
