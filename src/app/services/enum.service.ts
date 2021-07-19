@@ -118,8 +118,8 @@ export class EnumService {
 		GetUserCurrentCheckInDetails: 'GetUserCurrentCheckInDetails', // GET
 		GetEntityByQRCode: 'GetEntityByQRCode', // GET
 		GetCheckInDetails: 'GetCheckInDetails', // GET
-		InsertCheckInDetails: 'InsertCheckInDetails', // POST
 		GetCheckInDetails_Guest: 'GetCheckInDetails_Guest', // GET
+		InsertCheckInDetails: 'InsertCheckInDetails', // POST
 		InsertCheckInDetails_Guest: 'InsertCheckInDetails_Guest', // POST
 		InsertCheckOutDetails: 'InsertCheckOutDetails', // POST
 		InsertCheckOutDetails_Guest: 'InsertCheckOutDetails_Guest', // POST

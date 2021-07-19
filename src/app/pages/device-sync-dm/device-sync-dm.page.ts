@@ -74,23 +74,20 @@ export class DeviceSyncDmPage implements OnInit {
 		this.progress = 0;
 		this.synchProgressState = 'processing';
 		this.callOfflineApi(() => {
-			const interval = setInterval(() => {
-				if (this.progress === 100) {
-					clearInterval(interval);
-					if (UtilService.randomBoolean()) {
-						this.synchProgressState = 'completed';
-						localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
-					} else {
-						if (UtilService.randomBoolean()) {
-							this.synchProgressState = 'failed';
-						} else {
-							this.synchProgressState = 'networkerror';
-						}
-					}
+			if (this.progress === 100) {
+				if (UtilService.randomBoolean()) {
+					this.synchProgressState = 'completed';
+					localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
 				} else {
-					this.progress = this.progress + 5;
+					if (UtilService.randomBoolean()) {
+						this.synchProgressState = 'failed';
+					} else {
+						this.synchProgressState = 'networkerror';
+					}
 				}
-			}, 100);
+			} else {
+				this.progress = this.progress + 5;
+			}
 		});
 	}
 
@@ -101,8 +98,14 @@ export class DeviceSyncDmPage implements OnInit {
 	callOfflineApi = (callBack) => {
 		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
 			async (res: Response) => {
+				this.progress = 1;
 				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.offlineManagerService.insertOfflineData(res.Result, callBack);
+					this.offlineManagerService.insertOfflineData(res.Result, (progress) => {
+						this.progress = progress;
+						if (this.progress === 100) {
+							callBack && callBack();
+						}
+					});
 				}
 			},
 			(error) => {

@@ -74,7 +74,7 @@ export class SharedDataService {
 	pushToken = '000';
 	isTablet = false;
 	dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
-	offlineMode = true;
+	offlineMode = false;
 	// when open form or document , useful for next screens
 
 	dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;

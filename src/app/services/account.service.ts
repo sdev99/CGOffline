@@ -121,7 +121,7 @@ export class AccountService {
 	}
 
 	activateDevice() {
-		const deviceDetailId = this.sharedDataService.dedicatedModeDeviceDetailData.deviceID;
+		const deviceDetailId = this.sharedDataService.dedicatedModeDeviceDetailData?.deviceID;
 		return this.http.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ActivateDevice}?id=${deviceDetailId}`, {});
 	}
 

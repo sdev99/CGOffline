@@ -30,7 +30,6 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { TemplateDropdownComponent } from './components/template-dropdown/template-dropdown.component';
-import { Network } from '@ionic-native/network/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
 
 @NgModule({
@@ -75,7 +74,6 @@ import { SQLite } from '@ionic-native/sqlite/ngx';
 		MediaCapture,
 		ScreenOrientation,
 		HTTP,
-		Network,
 		SQLite,
 		RouterOutlet,
 		{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

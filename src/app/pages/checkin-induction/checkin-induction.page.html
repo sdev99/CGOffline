@@ -4,7 +4,7 @@
 	<app-modal-header-dm
 		*ngIf="sharedDataService.dedicatedMode"
 		[modalTitle]="sharedDataService.dedicatedModeLocationUse.locationName"
-		modalSubTitle="'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN_OUT' | translate"
+		[modalSubTitle]="'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.CHECK_IN_OUT' | translate"
 		(closeModal)="onClose()"
 	></app-modal-header-dm>
 </ion-header>

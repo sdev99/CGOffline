@@ -49,7 +49,7 @@ export class ChooseLocationPage implements OnInit {
 	// };
 
 	getDeviceEntityDetails = () => {
-		if (this.sharedDataService.offlineMode) {
+		if (!this.sharedDataService.offlineMode) {
 			this.offlineManagerService.getAssignedEnitities().then((entities) => {
 				const list = entities as Array<any>;
 				this.sharedDataService.dedicatedModeAssignedEntities = list;

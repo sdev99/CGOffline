@@ -71,7 +71,7 @@ export class OfflineManagerService {
 		}
 	}
 
-	dbQuery = (sql: any, values?: any) => {
+	dbQuery = (sql: any, values: any = []) => {
 		return new Promise((resolve, reject) => {
 			if (!UtilService.isLocalHost()) {
 				this.dbInstance.executeSql(sql, values).then(
@@ -79,6 +79,7 @@ export class OfflineManagerService {
 						resolve(response);
 					},
 					(err) => {
+						debugger;
 						reject(err);
 					}
 				);
@@ -86,11 +87,12 @@ export class OfflineManagerService {
 				this.dbInstance.transaction((tx) => {
 					tx.executeSql(
 						sql,
-						[],
+						values,
 						(tx, results) => {
 							resolve(results);
 						},
 						(tx, err) => {
+							debugger;
 							reject(err);
 						}
 					);
@@ -109,7 +111,7 @@ export class OfflineManagerService {
 
 				let query = 'CREATE TABLE IF NOT EXISTS ' + data.table_name + ' (' + columnsList.join(', ') + ')';
 
-				this.dbQuery(query, {}).then(
+				this.dbQuery(query, []).then(
 					(response: any) => {},
 					(err) => {
 						console.error(data.table_name + ' Unable to execute sql: ', err);
@@ -128,14 +130,17 @@ export class OfflineManagerService {
 	insertData = (table, data = {}, condition = {}) => {
 		let dataCols = [];
 		let dataVals = [];
+		let dataValPlaceHolders = [];
 		Object.keys(data).map((colName) => {
 			const val = data[colName];
-			if (val != null) {
+			if (val != null && val != '') {
 				dataCols.push(colName);
+				dataValPlaceHolders.push('?');
+
 				if (UtilService.isArray(val)) {
-					dataVals.push('"' + JSON.stringify(val) + '"');
+					dataVals.push(escape(JSON.stringify(val)));
 				} else if (typeof val === 'string') {
-					dataVals.push('"' + val + '"');
+					dataVals.push(val);
 				} else {
 					dataVals.push(val);
 				}
@@ -155,12 +160,18 @@ export class OfflineManagerService {
 				condCols.push(condState);
 			}
 		});
-		let query = 'INSERT INTO ' + table + ' (' + dataCols.join(',') + ') select ' + dataVals.join(',') + '';
+		let query = 'INSERT INTO ' + table + ' (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
 		if (condCols.length > 0) {
 			query = query + ' WHERE NOT EXISTS(SELECT 1 FROM ' + table + ' WHERE ' + condCols.join(' AND ') + ')';
 		}
 
-		return this.dbQuery(query, []);
+		return this.dbQuery(query, dataVals);
+	};
+
+	emptyTable = (table, condition = '') => {
+		let query = 'DELETE FROM ' + table + (condition ? ' WHERE ' + condition : '');
+
+		return this.dbQuery(query);
 	};
 
 	insertOfflineData = async (offlineData: DeviceOfflineDetailViewModels, callBack) => {
@@ -168,6 +179,9 @@ export class OfflineManagerService {
 		const deviceDetailData = offlineData.deviceDetailData;
 		const condition: any = { companyID: deviceDetailData.companyID, deviceID: deviceDetailData.deviceID };
 		await this.insertData('DeviceDetails', deviceDetailData, condition);
+
+		callBack && callBack(3);
+		console.log('DeviceDetails Inserted');
 
 		// deviceEntityData
 		const deviceEntityData = offlineData.deviceEntityData;
@@ -178,6 +192,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceEntities', value, condition);
 			}
 		}
+		callBack && callBack(6);
+		console.log('DeviceEntities Inserted');
 
 		// deviceUserList
 		const deviceUserList = offlineData.deviceUserList;
@@ -188,6 +204,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceUsers', value, condition);
 			}
 		}
+		callBack && callBack(9);
+		console.log('DeviceUsers Inserted');
 
 		// deviceUserQualificationList
 		const deviceUserQualificationList = offlineData.deviceUserQualificationList;
@@ -198,6 +216,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceUserQualifications', value, condition);
 			}
 		}
+		callBack && callBack(12);
+		console.log('DeviceUserQualifications Inserted');
 
 		// deviceGuestUserList
 		const deviceGuestUserList = offlineData.deviceGuestUserList;
@@ -208,17 +228,24 @@ export class OfflineManagerService {
 				await this.insertData('DeviceGuestUsers', value, condition);
 			}
 		}
+		callBack && callBack(15);
+		console.log('DeviceGuestUsers Inserted');
 
 		// deviceAvailableDocumentList
+		await this.emptyTable('DeviceAvailableDocuments');
 		const deviceAvailableDocumentList = offlineData.deviceAvailableDocumentList;
 		if (deviceAvailableDocumentList) {
 			for (let index = 0; index < deviceAvailableDocumentList.length; index++) {
 				const value: DeviceAvailableDocumentDetail = deviceAvailableDocumentList[index];
-				const condition: any = {
-					documentID: value.documentID,
-					folderID: value.folderID,
-					documentVersionID: value.documentVersionID,
-				};
+				const condition: any = {};
+				if (value.documentID) {
+					condition['documentID'] = value.documentID;
+					condition['documentVersionID'] = value.documentVersionID;
+					condition['parentFolderID'] = value.documentVersionID;
+				} else if (value.folderID) {
+					condition['folderID'] = value.folderID;
+					condition['parentFolderID'] = value.folderID;
+				}
 				if (value.locationID > 0) {
 					condition.locationID = value.locationID;
 				} else if (value.projectID > 0) {
@@ -229,6 +256,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceAvailableDocuments', value, condition);
 			}
 		}
+		callBack && callBack(18);
+		console.log('DeviceAvailableDocuments Inserted');
 
 		// deviceArchivedDocumentList
 		const deviceArchivedDocumentList = offlineData.deviceArchivedDocumentList;
@@ -248,17 +277,22 @@ export class OfflineManagerService {
 				await this.insertData('DeviceArchivedDocuments', value, condition);
 			}
 		}
+		callBack && callBack(21);
+		console.log('DeviceArchivedDocuments Inserted');
 
 		// deviceAvailableFormList
 		const deviceAvailableFormList = offlineData.deviceAvailableFormList;
 		if (deviceAvailableFormList) {
 			for (let index = 0; index < deviceAvailableFormList.length; index++) {
 				const value: DeviceAvailableFormDetail = deviceAvailableFormList[index];
-				const condition: any = {
-					formID: value.formID,
-					formFolderID: value.formFolderID,
-					formVersionID: value.formVersionID,
-				};
+
+				const condition: any = {};
+				if (value.formID) {
+					condition['formID'] = value.formID;
+					condition['formVersionID'] = value.formVersionID;
+				} else if (value.formFolderID) {
+					condition['formFolderID'] = value.formFolderID;
+				}
 				if (value.locationID > 0) {
 					condition.locationID = value.locationID;
 				} else if (value.projectID > 0) {
@@ -269,6 +303,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceAvailableForms', value, condition);
 			}
 		}
+		callBack && callBack(24);
+		console.log('DeviceAvailableForms Inserted');
 
 		// deviceArchivedFormList
 		const deviceArchivedFormList = offlineData.deviceArchivedFormList;
@@ -288,6 +324,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceArchivedForms', value, condition);
 			}
 		}
+		callBack && callBack(27);
+		console.log('DeviceArchivedForms Inserted');
 
 		// deviceAvailableWorkPermitList
 		const deviceAvailableWorkPermitList = offlineData.deviceAvailableWorkPermitList;
@@ -309,6 +347,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceAvailableWorkPermits', value, condition);
 			}
 		}
+		callBack && callBack(30);
+		console.log('DeviceAvailableWorkPermits Inserted');
 
 		// deviceLiveWorkPermitList
 		const deviceLiveWorkPermitList = offlineData.deviceLiveWorkPermitList;
@@ -328,6 +368,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceLiveWorkPermits', value, condition);
 			}
 		}
+		callBack && callBack(33);
+		console.log('DeviceLiveWorkPermits Inserted');
 
 		// deviceArchivedWorkPermitList
 		const deviceArchivedWorkPermitList = offlineData.deviceArchivedWorkPermitList;
@@ -347,6 +389,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceArchivedWorkPermits', value, condition);
 			}
 		}
+		callBack && callBack(36);
+		console.log('DeviceArchivedWorkPermits Inserted');
 
 		// deviceFormDetailsList
 		const deviceFormDetailsList = offlineData.deviceFormDetailsList;
@@ -369,6 +413,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceFormDetails', value, condition);
 			}
 		}
+		callBack && callBack(39);
+		console.log('DeviceFormDetails Inserted');
 
 		// deviceFormAttachmentList
 		const deviceFormAttachmentList = offlineData.deviceFormAttachmentList;
@@ -384,6 +430,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceFormAttachments', value, condition);
 			}
 		}
+		callBack && callBack(42);
+		console.log('DeviceFormAttachments Inserted');
 
 		// deviceEvacuationList
 		const deviceEvacuationList = offlineData.deviceEvacuationList;
@@ -404,6 +452,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceEvacuations', value, condition);
 			}
 		}
+		callBack && callBack(45);
+		console.log('DeviceEvacuations Inserted');
 
 		// deviceUserCheckInQualificationList
 		const deviceUserCheckInQualificationList = offlineData.deviceUserCheckInQualificationList;
@@ -418,6 +468,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceUserCheckInQualifications', value, condition);
 			}
 		}
+		callBack && callBack(48);
+		console.log('DeviceUserCheckInQualifications Inserted');
 
 		// deviceLocationList
 		const deviceLocationList = offlineData.deviceLocationList;
@@ -431,6 +483,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceLocations', value, condition);
 			}
 		}
+		callBack && callBack(51);
+		console.log('DeviceLocations Inserted');
 
 		// deviceProjectList
 		const deviceProjectList = offlineData.deviceProjectList;
@@ -444,6 +498,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceProjects', value, condition);
 			}
 		}
+		callBack && callBack(54);
+		console.log('DeviceProjects Inserted');
 
 		// deviceInventoryItemList
 		const deviceInventoryItemList = offlineData.deviceInventoryItemList;
@@ -457,6 +513,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceInventoryItems', value, condition);
 			}
 		}
+		callBack && callBack(57);
+		console.log('DeviceInventoryItems Inserted');
 
 		// deviceUserCheckinDetailList
 		const deviceUserCheckinDetailList = offlineData.deviceUserCheckinDetailList;
@@ -477,6 +535,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceUserCheckinDetails', value, condition);
 			}
 		}
+		callBack && callBack(60);
+		console.log('DeviceUserCheckinDetails Inserted');
 
 		// deviceCheckInInductionList
 		const deviceCheckInInductionList = offlineData.deviceCheckInInductionList;
@@ -496,6 +556,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCheckInInductions', value, condition);
 			}
 		}
+		callBack && callBack(63);
+		console.log('DeviceCheckInInductions Inserted');
 
 		// deviceCheckInInductionItemList
 		const deviceCheckInInductionItemList = offlineData.deviceCheckInInductionItemList;
@@ -511,6 +573,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCheckInInductionItems', value, condition);
 			}
 		}
+		callBack && callBack(66);
+		console.log('DeviceCheckInInductionItems Inserted');
 
 		// deviceGuestUserCheckinDetailList
 		const deviceGuestUserCheckinDetailList = offlineData.deviceGuestUserCheckinDetailList;
@@ -531,6 +595,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceGuestUserCheckinDetails', value, condition);
 			}
 		}
+		callBack && callBack(69);
+		console.log('DeviceGuestUserCheckinDetails Inserted');
 
 		// deviceCheckInGuestInductionList
 		const deviceCheckInGuestInductionList = offlineData.deviceCheckInGuestInductionList;
@@ -550,6 +616,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCheckInGuestInductions', value, condition);
 			}
 		}
+		callBack && callBack(72);
+		console.log('DeviceCheckInGuestInductions Inserted');
 
 		// deviceCheckInGuestInductionItemList
 		const deviceCheckInGuestInductionItemList = offlineData.deviceCheckInGuestInductionItemList;
@@ -567,6 +635,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCheckInGuestInductionItems', value, condition);
 			}
 		}
+		callBack && callBack(75);
+		console.log('DeviceCheckInGuestInductionItems Inserted');
 
 		// deviceCompanyUserList
 		const deviceCompanyUserList = offlineData.deviceCompanyUserList;
@@ -579,6 +649,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCompanyUsers', value, condition);
 			}
 		}
+		callBack && callBack(78);
+		console.log('DeviceCompanyUsers Inserted');
 
 		// deviceCompanyUserGroupList
 		const deviceCompanyUserGroupList = offlineData.deviceCompanyUserGroupList;
@@ -591,6 +663,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceCompanyUserGroups', value, condition);
 			}
 		}
+		callBack && callBack(81);
+		console.log('DeviceCompanyUserGroups Inserted');
 
 		// deviceHAVManufacturerList
 		const deviceHAVManufacturerList = offlineData.deviceHAVManufacturerList;
@@ -604,6 +678,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceHAVManufacturers', value, condition);
 			}
 		}
+		callBack && callBack(84);
+		console.log('DeviceHAVManufacturers Inserted');
 
 		// deviceHAVTypeList
 		const deviceHAVTypeList = offlineData.deviceHAVTypeList;
@@ -618,6 +694,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceHAVTypes', value, condition);
 			}
 		}
+		callBack && callBack(87);
+		console.log('DeviceHAVTypes Inserted');
 
 		// deviceHAVModelList
 		const deviceHAVModelList = offlineData.deviceHAVModelList;
@@ -634,6 +712,9 @@ export class OfflineManagerService {
 			}
 		}
 
+		callBack && callBack(90);
+		console.log('DeviceHAVModels Inserted');
+
 		// deviceRiskItemList
 		const deviceRiskItemList = offlineData.deviceRiskItemList;
 		if (deviceRiskItemList) {
@@ -646,6 +727,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceRiskItems', value, condition);
 			}
 		}
+		callBack && callBack(93);
+		console.log('DeviceRiskItems Inserted');
 
 		// deviceHazardItemList
 		const deviceHazardItemList = offlineData.deviceHazardItemList;
@@ -660,8 +743,8 @@ export class OfflineManagerService {
 				await this.insertData('DeviceHazardItems', value, condition);
 			}
 		}
-
-		callBack && callBack();
+		console.log('DeviceHazardItems Inserted');
+		callBack && callBack(100);
 	};
 
 	appendEntityCondition = () => {
@@ -683,7 +766,6 @@ export class OfflineManagerService {
 					if (res.rows?.length > 0) {
 						resolve(res.rows);
 					} else {
-						reject(new Error('No entities found'));
 						resolve([]);
 					}
 				})
@@ -714,12 +796,16 @@ export class OfflineManagerService {
 		return new Promise((resolve, reject) => {
 			let condition = this.appendEntityCondition();
 			if (folderId) {
-				condition = condition + ' AND folderID=' + folderId;
+				condition = condition + ' AND  parentFolderID = ' + folderId;
+			} else {
+				condition = condition + ' AND  parentFolderID = ' + '';
 			}
+
 			const query = 'SELECT * FROM DeviceAvailableDocuments' + (condition ? ' WHERE ' + condition : '');
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
+						debugger;
 						resolve(res.rows);
 					} else {
 						resolve([]);
