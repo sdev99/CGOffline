@@ -1578,10 +1578,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// 	console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// 	return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(
@@ -1964,11 +1964,11 @@ export class SharedDataService {
 			(error) => {
 				this.utilService.hideLoading();
 
-				this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
+				this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
 					this.navCtrl.navigateForward([checkInFailPage], {
 						queryParams: {
 							title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
-							errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
+							errorTitle: '',
 							errorMessage: error.message || error,
 							nextPage,
 							pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
