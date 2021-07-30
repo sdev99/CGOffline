@@ -41,6 +41,7 @@ import { EntityItem } from '../_models/entityItem';
 import { DeviceEntityData } from '../_models/offline/DeviceEntityData';
 import { DeviceDetailData } from '../_models/offline/DeviceDetailData';
 import { AccountService } from './account.service';
+import { OfflineManagerService } from './offline-manager.service';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -74,7 +75,7 @@ export class SharedDataService {
 	pushToken = '000';
 	isTablet = false;
 	dedicatedMode = localStorage.getItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE) === 'true';
-	offlineMode = false;
+	offlineMode = true;
 	// when open form or document , useful for next screens
 
 	dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;
@@ -158,6 +159,7 @@ export class SharedDataService {
 		private fileTransfer: FileTransfer,
 		private navCtrl: NavController,
 		private observablesService: ObservablesService,
+		private offlineManagerService: OfflineManagerService,
 		public utilService: UtilService,
 		private screenOrientation: ScreenOrientation //  private translateService: TranslateService
 	) {
@@ -658,44 +660,48 @@ export class SharedDataService {
 		if (userId && this.dedicatedModeLocationUse) {
 			const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
 
-			this.utilService.presentLoadingWithOptions();
-			apiService.getCheckInDetails(userId, entityId).subscribe(
-				(response: Response) => {
-					this.utilService.hideLoading();
-					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-						let canUserCheckinToLocation = true;
-						if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut && this.checkinoutDmAs === EnumService.CheckInType.QrCode) {
-							const checkinDetail = response.Result as CheckinDetail;
-							if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
-								canUserCheckinToLocation = false;
-								UtilService.fireCallBack(callBack, {
-									ischeckInPersonalQRNotAllowed: true,
-								});
+			if (this.offlineMode) {
+				this.offlineManagerService.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, userId).then((res) => {});
+			} else {
+				this.utilService.presentLoadingWithOptions();
+				apiService.getCheckInDetails(userId, entityId).subscribe(
+					(response: Response) => {
+						this.utilService.hideLoading();
+						if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+							let canUserCheckinToLocation = true;
+							if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut && this.checkinoutDmAs === EnumService.CheckInType.QrCode) {
+								const checkinDetail = response.Result as CheckinDetail;
+								if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
+									canUserCheckinToLocation = false;
+									UtilService.fireCallBack(callBack, {
+										ischeckInPersonalQRNotAllowed: true,
+									});
+								}
+							}
+
+							if (canUserCheckinToLocation) {
+								this.checkInDetail = response.Result as CheckinDetail;
+								this.checkInPostData = {
+									userId,
+									userPhoto,
+									checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
+									checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+									isGuestReturning: false,
+									projectID: this.dedicatedModeLocationUse.projectID,
+									inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
+									locationID: this.dedicatedModeLocationUse.locationID,
+								} as CheckInPostData;
+
+								this.processCheckinDetailsStepInitial(apiService, false);
 							}
 						}
-
-						if (canUserCheckinToLocation) {
-							this.checkInDetail = response.Result as CheckinDetail;
-							this.checkInPostData = {
-								userId,
-								userPhoto,
-								checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-								checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
-								isGuestReturning: false,
-								projectID: this.dedicatedModeLocationUse.projectID,
-								inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-								locationID: this.dedicatedModeLocationUse.locationID,
-							} as CheckInPostData;
-
-							this.processCheckinDetailsStepInitial(apiService, false);
-						}
+					},
+					(error: any) => {
+						this.utilService.hideLoading();
+						this.processCheckInError(error, '/dashboard-dm');
 					}
-				},
-				(error: any) => {
-					this.utilService.hideLoading();
-					this.processCheckInError(error, '/dashboard-dm');
-				}
-			);
+				);
+			}
 		}
 	};
 
@@ -1559,10 +1565,10 @@ export class SharedDataService {
 			riskAssessmentAnswerDetails,
 		};
 
-		if (UtilService.isLocalHost()) {
-			console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-			return;
-		}
+		// if (UtilService.isLocalHost()) {
+		// console.log('Submit Answers', JSON.stringify(submitAnswersObject));
+		// return;
+		// }
 
 		this.utilService.presentLoadingWithOptions();
 		apiService.saveFormAnswers(submitAnswersObject).subscribe(
@@ -1692,35 +1698,37 @@ export class SharedDataService {
 	}
 
 	async submitInductionCheckInDataGuest(apiService: ApiService) {
-		this.utilService.presentLoadingWithOptions();
-
 		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
 
 		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
 		this.checkInPostData.signOffDate = utcDateTime;
 
-		apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
+		if (this.offlineMode) {
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
 
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
-						this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-							queryParams: {
-								message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
-								nextPage: nextScreen,
-								actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
-							},
-							replaceUrl: true,
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
+							this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+								queryParams: {
+									message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
+									nextPage: nextScreen,
+									actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
+								},
+								replaceUrl: true,
+							});
 						});
-					});
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+					this.processCheckInError(error, nextScreen);
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-				this.processCheckInError(error, nextScreen);
-			}
-		);
+			);
+		}
 	}
 
 	processCheckInError(error, nextScreen) {
@@ -1776,6 +1784,7 @@ export class SharedDataService {
 							title: res,
 							errorTitle: fieldName,
 							errorMessage: message,
+
 							nextPage: nextScreen,
 						},
 						replaceUrl: true,
@@ -1807,8 +1816,6 @@ export class SharedDataService {
 	 * This function is use for submit personal mode sign off data
 	 */
 	async submitPersonalModeSignoffData(apiService: ApiService) {
-		this.utilService.presentLoadingWithOptions();
-
 		const checkInSuccessPage = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
 		const checkInFailPage = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
 		let nextPage = this.dedicatedMode ? 'dashboard-dm' : '/tabs/dashboard';
@@ -1836,75 +1843,36 @@ export class SharedDataService {
 			}
 		}
 
-		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
-		this.signOffDetailsPostData.signOffDate = utcDateTime;
+		const onSuccessCallBack = (status, errorMessage = '') => {
+			if (status) {
+				if (this.signOffFor === EnumService.SignOffType.FORM_ACTIVITY || this.signOffFor === EnumService.SignOffType.DOCUMENT_ACTIVITY) {
+					this.observablesService.publishSomeData(EnumService.ObserverKeys.ACTIVITY_COMPLETED, true);
+				}
 
-		apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
+				// show work permit issue success/fail for work permit type form filled from current checkin or activity list
 
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					if (this.signOffFor === EnumService.SignOffType.FORM_ACTIVITY || this.signOffFor === EnumService.SignOffType.DOCUMENT_ACTIVITY) {
-						this.observablesService.publishSomeData(EnumService.ObserverKeys.ACTIVITY_COMPLETED, true);
-					}
-
-					// show work permit issue success/fail for work permit type form filled from current checkin or activity list
-
-					if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
-						if (this.workPermitAnswer.scoreAchieved >= this.workPermitAnswer.totalScore) {
-							this.translateService
-								.get([
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PASSED',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PERMIT_ISSUED',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YOUR_WORK_PERMIT_IS_ACTIVE',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT',
-								])
-								.subscribe((res) => {
-									this.navCtrl.navigateForward([checkInSuccessPage], {
-										queryParams: {
-											title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PASSED'],
-											message: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PERMIT_ISSUED'],
-											description: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YOUR_WORK_PERMIT_IS_ACTIVE'],
-											nextPage,
-											pageTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT'],
-										},
-										replaceUrl: true,
-									});
+				if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
+					if (this.workPermitAnswer.scoreAchieved >= this.workPermitAnswer.totalScore) {
+						this.translateService
+							.get([
+								'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PASSED',
+								'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PERMIT_ISSUED',
+								'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YOUR_WORK_PERMIT_IS_ACTIVE',
+								'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT',
+							])
+							.subscribe((res) => {
+								this.navCtrl.navigateForward([checkInSuccessPage], {
+									queryParams: {
+										title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PASSED'],
+										message: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.PERMIT_ISSUED'],
+										description: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.YOUR_WORK_PERMIT_IS_ACTIVE'],
+										nextPage,
+										pageTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT'],
+									},
+									replaceUrl: true,
 								});
-						} else {
-							this.translateService
-								.get([
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_PASSED',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMIT',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT',
-									'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT',
-								])
-								.subscribe((res) => {
-									this.navCtrl.navigateForward([checkInFailPage], {
-										queryParams: {
-											title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_PASSED'],
-											errorTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMIT'],
-											errorMessage: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT'],
-											nextPage,
-											pageTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT'],
-										},
-										replaceUrl: true,
-									});
-								});
-						}
-					} else {
-						this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
-							this.navCtrl.navigateForward([checkInSuccessPage], {
-								queryParams: {
-									message: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY'],
-									nextPage,
-									pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
-								},
 							});
-						});
-					}
-				} else {
-					if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
+					} else {
 						this.translateService
 							.get([
 								'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_PASSED',
@@ -1919,46 +1887,119 @@ export class SharedDataService {
 										errorTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMIT'],
 										errorMessage: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT'],
 										nextPage,
-										pageTitle: res['PAGESPECIFIC_TEXT.PAGESPECIFIC_TEXT.FORM_LIST'],
-									},
-									replaceUrl: true,
-								});
-							});
-					} else {
-						this.translateService
-							.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'])
-							.subscribe((res) => {
-								this.navCtrl.navigateForward([checkInFailPage], {
-									queryParams: {
-										title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
-										errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
-										errorMessage: response.Message,
-										nextPage,
-										pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
+										pageTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT'],
 									},
 									replaceUrl: true,
 								});
 							});
 					}
-				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-
-				this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
-					this.navCtrl.navigateForward([checkInFailPage], {
-						queryParams: {
-							title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
-							errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
-							errorMessage: error.message || error,
-							nextPage,
-							pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
-						},
-						replaceUrl: true,
+				} else {
+					this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
+						this.navCtrl.navigateForward([checkInSuccessPage], {
+							queryParams: {
+								message: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_SIGNOFF_OFF_SUCCESSFULLY'],
+								nextPage,
+								pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
+							},
+						});
 					});
-				});
+				}
+			} else {
+				if (isWorkPermitCurrentCheckin || isworkPermitActivity) {
+					this.translateService
+						.get([
+							'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_PASSED',
+							'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMIT',
+							'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT',
+							'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.WORK_PERMIT',
+						])
+						.subscribe((res) => {
+							this.navCtrl.navigateForward([checkInFailPage], {
+								queryParams: {
+									title: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_PASSED'],
+									errorTitle: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NO_PERMIT'],
+									errorMessage: res['PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.WORK_PERMIT_FORM.NOT_ELIGIBLE_FOR_WORK_PERMIT'],
+									nextPage,
+									pageTitle: res['PAGESPECIFIC_TEXT.PAGESPECIFIC_TEXT.FORM_LIST'],
+								},
+								replaceUrl: true,
+							});
+						});
+				} else {
+					this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
+						this.navCtrl.navigateForward([checkInFailPage], {
+							queryParams: {
+								title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
+								errorTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.NOT_QUALIFIED'],
+								errorMessage: errorMessage,
+								nextPage,
+								pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
+							},
+							replaceUrl: true,
+						});
+					});
+				}
 			}
-		);
+		};
+
+		const onErrorCallBack = (error) => {
+			this.translateService.get(['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF', 'PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF']).subscribe((res) => {
+				this.navCtrl.navigateForward([checkInFailPage], {
+					queryParams: {
+						title: res['PAGESPECIFIC_TEXT.SIGN_OFF.YOU_CANNOT_SIGNOFF'],
+						errorTitle: '',
+						errorMessage: error.message || error,
+						nextPage,
+						pageTitle: res['PAGESPECIFIC_TEXT.SIGN_OFF.SIGNOFF'],
+					},
+					replaceUrl: true,
+				});
+			});
+		};
+
+		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
+		this.signOffDetailsPostData.signOffDate = utcDateTime;
+
+		if (this.offlineMode) {
+			const signOffData = {
+				userId: this.signOffDetailsPostData.userId,
+				documentID: this.signOffDetailsPostData.documentID,
+				documentVersionID: this.signOffDetailsPostData.documentVersionID,
+				formVersionID: this.signOffDetailsPostData.formVersionID,
+				latitude: this.signOffDetailsPostData.latitude,
+				longitude: this.signOffDetailsPostData.longitude,
+				locationID: this.signOffDetailsPostData.locationID,
+				projectID: this.signOffDetailsPostData.projectID,
+				inventoryItemID: this.signOffDetailsPostData.inventoryItemID,
+				signOffDate: this.signOffDetailsPostData.signOffDate,
+				digitalInkSignatureFileName: this.signOffDetailsPostData.digitalInkSignatureFileName,
+				digitalInkSignatureBinaryFile: this.signOffDetailsPostData.digitalInkSignatureBinaryFile,
+				userSignaturePhotoFileName: this.signOffDetailsPostData.userSignaturePhotoFileName,
+				userSignaturePhotoBinaryFile: this.signOffDetailsPostData.userSignaturePhotoBinaryFile,
+			};
+
+			this.offlineManagerService.insertSignOffDetail(signOffData).then((res) => {
+				onSuccessCallBack(true);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+
+			apiService.insertPersonalModeSignOffDetails(this.signOffDetailsPostData).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						onSuccessCallBack(true);
+					} else {
+						onSuccessCallBack(false, response.Message);
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+					onErrorCallBack(error);
+				}
+			);
+		}
 	}
 
 	/**

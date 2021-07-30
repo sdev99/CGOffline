@@ -35,7 +35,7 @@ import { DeviceHAVTypeDetail } from '../_models/offline/DeviceHAVTypeDetail';
 import { DeviceHAVModelDetail } from '../_models/offline/DeviceHAVModelDetail';
 import { DeviceRiskItemDetail } from '../_models/offline/DeviceRiskItemDetail';
 import { DeviceHazardItemDetail } from '../_models/offline/DeviceHazardItemDetail';
-import { SharedDataService } from './shared-data.service';
+import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
 
 declare var window: any;
 
@@ -47,7 +47,7 @@ export class OfflineManagerService {
 	readonly db_name: string = 'compliancegenie.db';
 	readonly db_table: string = 'userTable';
 
-	constructor(private platform: Platform, private sqlite: SQLite, private sharedDataService: SharedDataService) {
+	constructor(private platform: Platform, private sqlite: SQLite) {
 		this.dbSetUp();
 	}
 
@@ -80,6 +80,7 @@ export class OfflineManagerService {
 					},
 					(err) => {
 						debugger;
+						console.log('QUERY Error ', err);
 						reject(err);
 					}
 				);
@@ -93,6 +94,7 @@ export class OfflineManagerService {
 						},
 						(tx, err) => {
 							debugger;
+							console.log('QUERY Error ', err);
 							reject(err);
 						}
 					);
@@ -121,6 +123,33 @@ export class OfflineManagerService {
 		});
 	};
 
+	convertObjectToColValPlaceholders = (data) => {
+		const dataCols = [];
+		const dataVals = [];
+		const dataValPlaceHolders = [];
+		Object.keys(data).map((colName) => {
+			const val = data[colName];
+			if (val != null && val != '') {
+				dataCols.push(colName);
+				dataValPlaceHolders.push('?');
+
+				if (UtilService.isArray(val)) {
+					dataVals.push(escape(JSON.stringify(val)));
+				} else if (typeof val === 'string') {
+					dataVals.push(val);
+				} else {
+					dataVals.push(val);
+				}
+			}
+		});
+
+		return {
+			dataCols,
+			dataVals,
+			dataValPlaceHolders,
+		};
+	};
+
 	/**
 	 *
 	 * @param table DB table name
@@ -128,9 +157,8 @@ export class OfflineManagerService {
 	 * @param condition Insert data if condition not match
 	 */
 	insertData = (table, data = {}, condition = {}) => {
-		let dataCols = [];
-		let dataVals = [];
-		let dataValPlaceHolders = [];
+		const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
+
 		Object.keys(data).map((colName) => {
 			const val = data[colName];
 			if (val != null && val != '') {
@@ -747,14 +775,31 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 	};
 
-	appendEntityCondition = () => {
-		if (this.sharedDataService.dedicatedModeLocationUse?.projectID) {
-			return 'projectID = ' + this.sharedDataService.dedicatedModeLocationUse?.projectID;
-		} else if (this.sharedDataService.dedicatedModeLocationUse?.locationID) {
-			return 'locationID = ' + this.sharedDataService.dedicatedModeLocationUse?.locationID;
-		} else if (this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID) {
-			return 'inventoryItemID = ' + this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID;
+	appendEntityCondition = (entity: DeviceEntityDetail) => {
+		if (entity?.projectID) {
+			return 'projectID = ' + entity?.projectID;
+		} else if (entity?.locationID) {
+			return 'locationID = ' + entity?.locationID;
+		} else if (entity?.inventoryItemID) {
+			return 'inventoryItemID = ' + entity?.inventoryItemID;
 		}
+	};
+
+	convertToArray = (rows) => {
+		let arr = [];
+		if (rows && rows.item) {
+			for (let index = 0; index < rows.length; index++) {
+				const item = rows.item(index);
+				arr.push(item);
+			}
+		} else {
+			for (let index = 0; index < rows.length; index++) {
+				const item = rows[index];
+				arr.push(item);
+			}
+		}
+
+		return arr;
 	};
 	/****Get data from db*****/
 
@@ -764,7 +809,7 @@ export class OfflineManagerService {
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(res.rows);
+						resolve(this.convertToArray(res.rows));
 					} else {
 						resolve([]);
 					}
@@ -792,21 +837,20 @@ export class OfflineManagerService {
 		});
 	}
 
-	getAvailableDocuments(folderId) {
+	getAvailableDocuments(folderId, entity: DeviceEntityDetail) {
 		return new Promise((resolve, reject) => {
-			let condition = this.appendEntityCondition();
+			let condition = this.appendEntityCondition(entity);
 			if (folderId) {
-				condition = condition + ' AND  parentFolderID = ' + folderId;
+				condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFolderID = ' + folderId;
 			} else {
-				condition = condition + ' AND  parentFolderID = ' + '';
+				condition = condition + ' AND  parentFolderID is NULL';
 			}
 
 			const query = 'SELECT * FROM DeviceAvailableDocuments' + (condition ? ' WHERE ' + condition : '');
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						debugger;
-						resolve(res.rows);
+						resolve(this.convertToArray(res.rows));
 					} else {
 						resolve([]);
 					}
@@ -817,15 +861,15 @@ export class OfflineManagerService {
 		});
 	}
 
-	getArchivedDocuments() {
+	getArchivedDocuments(entity: DeviceEntityDetail) {
 		return new Promise((resolve, reject) => {
-			let condition = this.appendEntityCondition();
+			let condition = this.appendEntityCondition(entity);
 
 			const query = 'SELECT * FROM DeviceArchivedDocuments' + (condition ? ' WHERE ' + condition : '');
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(res.rows);
+						resolve(this.convertToArray(res.rows));
 					} else {
 						resolve([]);
 					}
@@ -835,4 +879,216 @@ export class OfflineManagerService {
 				});
 		});
 	}
+
+	getAvailableForms(folderId, entity: DeviceEntityDetail) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+			if (folderId) {
+				condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFormFolderID = ' + folderId;
+			} else {
+				condition = condition + ' AND  parentFormFolderID is NULL';
+			}
+
+			const query = 'SELECT * FROM DeviceAvailableForms' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getArchivedForms(entity: DeviceEntityDetail) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+
+			const query = 'SELECT * FROM DeviceArchivedForms' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceLiveWorkPermits(entity: DeviceEntityDetail) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+			// if (folderId) {
+			// 	condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFormFolderID = ' + folderId;
+			// } else {
+			// 	condition = condition + ' AND  parentFormFolderID is NULL';
+			// }
+
+			const query = 'SELECT * FROM DeviceLiveWorkPermits' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceArchivedWorkPermits(entity: DeviceEntityDetail) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+
+			const query = 'SELECT * FROM DeviceArchivedWorkPermits' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceEvacuations(entity: DeviceEntityDetail) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+
+			const query = 'SELECT * FROM DeviceEvacuations' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceCompanyUsers(name) {
+		return new Promise((resolve, reject) => {
+			let condition = '';
+			if (name) {
+				condition = condition + "LOWER(firstAndLastName) LIKE LOWER('%" + name + "%')";
+			}
+
+			const query = 'SELECT * FROM DeviceCompanyUsers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getGuestUserDetailByPhone(phone) {
+		return new Promise((resolve, reject) => {
+			let condition = '';
+			if (phone) {
+				condition = condition + "rtrim(guestPhone) LIKE rtrim('%" + phone + "%')";
+			}
+
+			const query = 'SELECT * FROM DeviceGuestUsers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows[0]);
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getUserDetailByQRCode(qrcode) {
+		return new Promise((resolve, reject) => {
+			let condition = '';
+			if (qrcode) {
+				condition = condition + "qrCode = '" + qrcode + "'";
+			}
+
+			const query = 'SELECT * FROM DeviceUsers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(res.rows[0]);
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceUserCheckinDetails(entity: DeviceEntityDetail, userId) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+			if (userId) {
+				condition = condition + ' AND userId=' + userId;
+			}
+			const query = 'SELECT * FROM DeviceUserCheckinDetails' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	/********************************************************************************/
+	/*****************************Insert Data Operations*****************************/
+	/********************************************************************************/
+
+	insertSignOffDetail = (data) => {
+		return new Promise((resolve, reject) => {
+			const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
+
+			let query = 'INSERT INTO SignOffDetails (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
+
+			this.dbQuery(query, dataVals)
+				.then((res: any) => {
+					resolve(res);
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	};
 }

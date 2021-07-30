@@ -1,26 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController, NavController, Platform } from '@ionic/angular';
+import { ActionSheetController, NavController } from '@ionic/angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { DemoDataService } from '../../services/demo-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
 import { EnumService } from '../../services/enum.service';
 import { ApiService } from '../../services/api.service';
 import { UtilService } from '../../services/util.service';
 import { Response, User } from '../../_models';
-import { Capacitor, PermissionType, Plugins } from '@capacitor/core';
+import { PermissionType, Plugins } from '@capacitor/core';
 import { LocationItem } from '../../_models/locationItem';
 import { AccountService } from '../../services/account.service';
 import { UserDetail } from '../../_models/userDetail';
-import { FormItem } from '../../_models/formItem';
 import { CheckedInDetailItem } from '../../_models/checkedInDetailItem';
 import { SignOffFormDetail } from '../../_models/signOffFormDetail';
 import { DocumentDetail } from '../../_models/documentDetail';
-import { environment } from '../../../environments/environment';
 import { StaticDataService } from '../../services/static-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ObservablesService } from 'src/app/services/observables.service';
 import { EntityItem } from 'src/app/_models/entityItem';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
+import { DeviceUserDetail } from 'src/app/_models/offline/DeviceUserDetail';
 
 const { Camera, Permissions } = Plugins;
 
@@ -50,7 +49,8 @@ export class DashboardQrscanPage implements OnInit {
 		public actionSheetController: ActionSheetController,
 		public activatedRoute: ActivatedRoute,
 		public translateService: TranslateService,
-		public observablesService: ObservablesService
+		public observablesService: ObservablesService,
+		public offlineManagerService: OfflineManagerService
 	) {
 		this.user = this.accountService.userValue;
 		this.isTablet = sharedDataService.isTablet;
@@ -79,13 +79,16 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'inventryitemHav';
+		const QrCodeTestingInLocalHostFor: any = 'user';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
 				switch (QrCodeTestingInLocalHostFor) {
 					case 'document':
 						this.checkQrCode('0f75e6e3-8215-4186-92bf-ca0971b337b7');
+						break;
+					case 'document1':
+						this.checkQrCode('711c59e0-e65e-4f6c-99e7-3901400a14d7');
 						break;
 					case 'form':
 						this.checkQrCode('e37f99b2-cda6-4b19-b3e6-ba37a41ffd60');
@@ -245,34 +248,49 @@ export class DashboardQrscanPage implements OnInit {
 	};
 
 	getQrDetailForDedicatedMode = (qrCode) => {
-		this.utilService.presentLoadingWithOptions();
-
-		this.apiService.getUserByQRCode(qrCode).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					const userDetail: UserDetail = response.Result as UserDetail;
-					if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
-						this.openNextScreenForDedicatedMode(userDetail);
-					} else {
-						this.translateService.get('SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION').subscribe((res) => {
-							this.utilService.showAlert(res, '', () => {
-								this.scan();
-							});
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getUserDetailByQRCode(qrCode).then((res) => {
+				const userDetail = res as DeviceUserDetail;
+				if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
+					this.openNextScreenForDedicatedMode(userDetail);
+				} else {
+					this.translateService.get('SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION').subscribe((res) => {
+						this.utilService.showAlert(res, '', () => {
+							this.scan();
 						});
-					}
-				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-
-				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
-					this.utilService.showAlert(error.message || error, res, () => {
-						this.scan();
 					});
-				});
-			}
-		);
+				}
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+
+			this.apiService.getUserByQRCode(qrCode).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						const userDetail: UserDetail = response.Result as UserDetail;
+						if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
+							this.openNextScreenForDedicatedMode(userDetail);
+						} else {
+							this.translateService.get('SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION').subscribe((res) => {
+								this.utilService.showAlert(res, '', () => {
+									this.scan();
+								});
+							});
+						}
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+
+					this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
+						this.utilService.showAlert(error.message || error, res, () => {
+							this.scan();
+						});
+					});
+				}
+			);
+		}
 	};
 
 	getQrDetailForPersonalMode = (qrCode) => {

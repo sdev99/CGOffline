@@ -164,12 +164,8 @@ export class SignoffDigitalinkPage implements OnInit {
 			if (!this.canvasRef) {
 				const canvasRef = new fabric.Canvas('digital-signature');
 				this.canvasRef = canvasRef;
-			} else {
-				const canvasRef = this.canvasRef;
-				debugger;
 			}
 			if (this.sharedDataService.dedicatedMode || this.sharedDataService.isTablet) {
-				const ele: any = document.getElementById('digital-signature');
 				this.canvasRef.setDimensions({
 					width: (window.innerHeight * 50) / 100,
 					height: (window.innerHeight * 25) / 100,
@@ -250,39 +246,52 @@ export class SignoffDigitalinkPage implements OnInit {
 
 				const fileName = 'signature' + this.utilService.getCurrentTimeStamp() + '.jpeg';
 				const mimeType = 'image/jpeg';
-				this.utilService.presentLoadingWithOptions();
-				this.utilService.dataUriToFile(downlaodImg, fileName, mimeType).then(
-					(file) => {
-						this.apiService.inductionSignatureUpload(file, fileName).subscribe(
-							(res: Response) => {
-								this.utilService.hideLoading();
-								if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-									this.nextStep(res.Result);
-								} else {
-									this.errorMessage = res.Message;
+				if (this.sharedDataService.offlineMode) {
+					this.nextStep({ fileName: fileName, binaryFile: downlaodImg });
+				} else {
+					this.utilService.presentLoadingWithOptions();
+					this.utilService.dataUriToFile(downlaodImg, fileName, mimeType).then(
+						(file) => {
+							this.apiService.inductionSignatureUpload(file, fileName).subscribe(
+								(res: Response) => {
+									this.utilService.hideLoading();
+									if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+										this.nextStep({ signatureFileName: res.Result });
+									} else {
+										this.errorMessage = res.Message;
+									}
+								},
+								(error) => {
+									this.utilService.hideLoading();
+									this.errorMessage = error.message ? error.message : error;
 								}
-							},
-							(error) => {
-								this.utilService.hideLoading();
-								this.errorMessage = error.message ? error.message : error;
-							}
-						);
-					},
-					(error) => {
-						this.utilService.hideLoading();
-					}
-				);
+							);
+						},
+						(error) => {
+							this.utilService.hideLoading();
+						}
+					);
+				}
 			} else {
 				this.nextStep();
 			}
 		}
 	}
 
-	nextStep(signatureFileName = '') {
+	nextStep({ signatureFileName, fileName, binaryFile }: { signatureFileName?: string; fileName?: string; binaryFile?: string } = {}) {
 		switch (this.type) {
 			case EnumService.SignOffType.INDUCTION:
-				if (this.showDigitalInk && signatureFileName) {
-					this.sharedDataService.checkInPostData.digitalInkSignature = signatureFileName;
+				if (this.showDigitalInk) {
+					if (this.sharedDataService.offlineMode) {
+						if (fileName && binaryFile) {
+							this.sharedDataService.checkInPostData.digitalInkSignatureFileName = fileName;
+							this.sharedDataService.checkInPostData.digitalInkSignatureBinaryFile = binaryFile;
+						}
+					} else {
+						if (signatureFileName) {
+							this.sharedDataService.checkInPostData.digitalInkSignature = signatureFileName;
+						}
+					}
 				}
 
 				if (this.sharedDataService.checkInDetail && this.sharedDataService.checkInDetail?.checkInInduction?.isPhotoSignOff) {
@@ -304,15 +313,24 @@ export class SignoffDigitalinkPage implements OnInit {
 			case EnumService.SignOffType.DOCUMENT_DM:
 			case EnumService.SignOffType.DOCUMENT_ACTIVITY:
 			case EnumService.SignOffType.DOCUMENT_CURRENT_CHECKIN:
-				if (this.showDigitalInk && signatureFileName) {
-					this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+				if (this.showDigitalInk) {
+					if (this.sharedDataService.offlineMode) {
+						if (fileName && binaryFile) {
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignatureFileName = fileName;
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignatureBinaryFile = binaryFile;
+						}
+					} else {
+						if (signatureFileName) {
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+						}
+					}
 				}
 
 				if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
 					if (this.sharedDataService.dedicatedMode) {
 						this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
 					} else {
+						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
 						this.navCtrl.navigateForward(['/signoff-photo']);
 					}
 				} else {
@@ -325,8 +343,17 @@ export class SignoffDigitalinkPage implements OnInit {
 			case EnumService.SignOffType.WORK_PERMIT_DM:
 			case EnumService.SignOffType.FORM_CURRENT_CHECKIN:
 			case EnumService.SignOffType.WORKPERMIT_FORM_CURRENT_CHECKIN:
-				if (this.showDigitalInk && signatureFileName) {
-					this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+				if (this.showDigitalInk) {
+					if (this.sharedDataService.offlineMode) {
+						if (fileName && binaryFile) {
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignatureFileName = fileName;
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignatureBinaryFile = binaryFile;
+						}
+					} else {
+						if (signatureFileName) {
+							this.sharedDataService.signOffDetailsPostData.digitalInkSignature = signatureFileName;
+						}
+					}
 				}
 
 				if (this.sharedDataService.signOffFormDetail && this.sharedDataService.signOffFormDetail?.formData?.isPhotoSignOff) {

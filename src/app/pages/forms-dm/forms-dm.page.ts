@@ -11,6 +11,7 @@ import { FormItem } from '../../_models/formItem';
 import { SignOffFormDetail } from '../../_models/signOffFormDetail';
 import { ActivatedRoute } from '@angular/router';
 import { DynamicRouteService } from 'src/app/services/dynamic-route.service';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 @Component({
 	selector: 'app-forms-dm',
@@ -41,7 +42,8 @@ export class FormsDmPage implements OnInit {
 		public utilService: UtilService,
 		public sharedDataService: SharedDataService,
 		public apiService: ApiService,
-		public activatedRoute: ActivatedRoute
+		public activatedRoute: ActivatedRoute,
+		public offlineManagerService: OfflineManagerService
 	) {
 		this.activatedRoute.queryParams.subscribe((res) => {
 			if (res) {
@@ -65,33 +67,46 @@ export class FormsDmPage implements OnInit {
 		this.isLoadingForms = true;
 		const folderID = this.itemDetail ? this.itemDetail.formFolderID : 0;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-		this.apiService.getDedicatedModeAvailableForms(companyID, folderID).subscribe(
-			(response: Response) => {
-				this.isLoadingForms = false;
-				if (response) {
-					this.availableForms = response.Result;
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getAvailableForms(folderID, this.sharedDataService.dedicatedModeLocationUse).then((res) => {
+				this.availableForms = res as any;
+			});
+		} else {
+			this.apiService.getDedicatedModeAvailableForms(companyID, folderID).subscribe(
+				(response: Response) => {
+					this.isLoadingForms = false;
+					if (response) {
+						this.availableForms = response.Result;
+					}
+				},
+				(error) => {
+					this.isLoadingForms = false;
 				}
-			},
-			(error) => {
-				this.isLoadingForms = false;
-			}
-		);
+			);
+		}
 	}
 
 	getDedicatedModeArchiveForms() {
 		this.isLoadingForms = true;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-		this.apiService.getDedicatedModeArchiveForms(companyID).subscribe(
-			(response: Response) => {
-				this.isLoadingForms = false;
-				if (response) {
-					this.archivedForms = response.Result;
+
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getArchivedForms(this.sharedDataService.dedicatedModeLocationUse).then((res) => {
+				this.archivedForms = res as any;
+			});
+		} else {
+			this.apiService.getDedicatedModeArchiveForms(companyID).subscribe(
+				(response: Response) => {
+					this.isLoadingForms = false;
+					if (response) {
+						this.archivedForms = response.Result;
+					}
+				},
+				(error) => {
+					this.isLoadingForms = false;
 				}
-			},
-			(error) => {
-				this.isLoadingForms = false;
-			}
-		);
+			);
+		}
 	}
 
 	onSearch(search) {

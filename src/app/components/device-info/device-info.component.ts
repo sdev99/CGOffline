@@ -36,6 +36,9 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 	checkForNetwork = async () => {
 		const ntstatus = await Network.getStatus();
 		this.isOnline = ntstatus.connected;
+		if (!UtilService.isLocalHost()) {
+			this.sharedDataService.offlineMode = !this.isOnline;
+		}
 	};
 
 	lastSyncTime() {

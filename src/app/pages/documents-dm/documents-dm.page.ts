@@ -66,7 +66,7 @@ export class DocumentsDmPage implements OnInit {
 		const folderID = this.itemDetail ? this.itemDetail.folderID : 0;
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
 		if (this.sharedDataService.offlineMode) {
-			this.offlineManagerService.getAvailableDocuments(folderID).then((res) => {
+			this.offlineManagerService.getAvailableDocuments(folderID, this.sharedDataService.dedicatedModeLocationUse).then((res) => {
 				this.availableDocuments = res as any;
 			});
 		} else {
@@ -88,7 +88,7 @@ export class DocumentsDmPage implements OnInit {
 	getDedicatedModeArchiveDocuments() {
 		const companyID = this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
 		if (this.sharedDataService.offlineMode) {
-			this.offlineManagerService.getArchivedDocuments().then((res) => {
+			this.offlineManagerService.getArchivedDocuments(this.sharedDataService.dedicatedModeLocationUse).then((res) => {
 				this.archivedDocuments = res as any;
 			});
 		} else {
@@ -140,7 +140,14 @@ export class DocumentsDmPage implements OnInit {
 
 	openArchivedDocument(item: ArchivedDocumentDetail) {
 		if (item.documentFileName) {
-			this.filehandlerService.openFile(this.sharedDataService.globalDirectories?.documentDirectory + '' + item.documentFileName);
+			if (this.sharedDataService.offlineMode) {
+				const docDetail = item as any;
+				const document_BinaryFile = docDetail.document_BinaryFile;
+				const documentFileName = docDetail.documentFileName;
+				this.filehandlerService.saveAndOpenPdf(document_BinaryFile, documentFileName);
+			} else {
+				this.filehandlerService.openFile(this.sharedDataService.globalDirectories?.documentDirectory + '' + item.documentFileName);
+			}
 		} else {
 			this.utilService.showAlert('This device needs to be synced first in order to show the selected file. Please sync device and try again.', 'File Not Available Yet');
 		}
