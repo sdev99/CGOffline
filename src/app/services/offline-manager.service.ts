@@ -36,6 +36,7 @@ import { DeviceHAVModelDetail } from '../_models/offline/DeviceHAVModelDetail';
 import { DeviceRiskItemDetail } from '../_models/offline/DeviceRiskItemDetail';
 import { DeviceHazardItemDetail } from '../_models/offline/DeviceHazardItemDetail';
 import { DeviceEntityDetail } from '../_models/deviceEntityDetail';
+import { DeviceFormBuilderDetail } from '../_models/offline/DeviceFormBuilderDetail';
 
 declare var window: any;
 
@@ -127,16 +128,18 @@ export class OfflineManagerService {
 		const dataCols = [];
 		const dataVals = [];
 		const dataValPlaceHolders = [];
+
 		Object.keys(data).map((colName) => {
 			const val = data[colName];
+
 			if (val != null && val != '') {
 				dataCols.push(colName);
 				dataValPlaceHolders.push('?');
 
 				if (UtilService.isArray(val)) {
 					dataVals.push(escape(JSON.stringify(val)));
-				} else if (typeof val === 'string') {
-					dataVals.push(val);
+				} else if (UtilService.isObject(val)) {
+					dataVals.push(escape(JSON.stringify(val)));
 				} else {
 					dataVals.push(val);
 				}
@@ -158,22 +161,6 @@ export class OfflineManagerService {
 	 */
 	insertData = (table, data = {}, condition = {}) => {
 		const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
-
-		Object.keys(data).map((colName) => {
-			const val = data[colName];
-			if (val != null && val != '') {
-				dataCols.push(colName);
-				dataValPlaceHolders.push('?');
-
-				if (UtilService.isArray(val)) {
-					dataVals.push(escape(JSON.stringify(val)));
-				} else if (typeof val === 'string') {
-					dataVals.push(val);
-				} else {
-					dataVals.push(val);
-				}
-			}
-		});
 
 		let condCols = [];
 		Object.keys(condition).map((colName) => {
@@ -203,6 +190,8 @@ export class OfflineManagerService {
 	};
 
 	insertOfflineData = async (offlineData: DeviceOfflineDetailViewModels, callBack) => {
+		debugger;
+
 		// deviceDetailData
 		const deviceDetailData = offlineData.deviceDetailData;
 		const condition: any = { companyID: deviceDetailData.companyID, deviceID: deviceDetailData.deviceID };
@@ -772,6 +761,92 @@ export class OfflineManagerService {
 			}
 		}
 		console.log('DeviceHazardItems Inserted');
+
+		callBack && callBack(100);
+		// deviceLocationItemList
+		const deviceLocationItemList = offlineData.deviceLocationItemList;
+		if (deviceLocationItemList) {
+			for (let index = 0; index < deviceLocationItemList.length; index++) {
+				const value: any = deviceLocationItemList[index];
+				const condition: any = {
+					locationID: value.locationID,
+				};
+				await this.insertData('DeviceLocationItems', value, condition);
+			}
+		}
+		console.log('DeviceLocationItems Inserted');
+		callBack && callBack(100);
+
+		// deviceAccidentTypeList
+		const deviceAccidentTypeList = offlineData.deviceAccidentTypeList;
+		if (deviceAccidentTypeList) {
+			for (let index = 0; index < deviceAccidentTypeList.length; index++) {
+				const value: any = deviceAccidentTypeList[index];
+				const condition: any = {
+					accidentTypeId: value.accidentTypeId,
+				};
+				await this.insertData('DeviceAccidentTypes', value, condition);
+			}
+		}
+		console.log('DeviceAccidentTypes Inserted');
+		callBack && callBack(100);
+
+		// deviceAccidentClassificationList
+		const deviceAccidentClassificationList = offlineData.deviceAccidentClassificationList;
+		if (deviceAccidentClassificationList) {
+			for (let index = 0; index < deviceAccidentClassificationList.length; index++) {
+				const value: any = deviceAccidentClassificationList[index];
+				const condition: any = {
+					accidentClassificationId: value.accidentClassificationId,
+				};
+				await this.insertData('DeviceAccidentClassifications', value, condition);
+			}
+		}
+		console.log('DeviceAccidentClassifications Inserted');
+		callBack && callBack(100);
+
+		// deviceRiskAssessmentProbabilityOptions
+		const deviceRiskAssessmentProbabilityOptions = offlineData.deviceRiskAssessmentProbabilityOptions;
+		if (deviceRiskAssessmentProbabilityOptions) {
+			for (let index = 0; index < deviceRiskAssessmentProbabilityOptions.length; index++) {
+				const value: any = deviceRiskAssessmentProbabilityOptions[index];
+				const condition: any = {
+					riskAssessmentProbabilityOptionId: value.riskAssessmentProbabilityOptionId,
+				};
+				await this.insertData('DeviceRiskAssessmentProbabilityOptions', value, condition);
+			}
+		}
+		console.log('DeviceRiskAssessmentProbabilityOptions Inserted');
+		callBack && callBack(100);
+
+		// deviceRiskAssessmentSeverityOptions
+		const deviceRiskAssessmentSeverityOptions = offlineData.deviceRiskAssessmentSeverityOptions;
+		if (deviceRiskAssessmentSeverityOptions) {
+			for (let index = 0; index < deviceRiskAssessmentSeverityOptions.length; index++) {
+				const value: any = deviceRiskAssessmentSeverityOptions[index];
+				const condition: any = {
+					riskAssessmentSeverityOptionId: value.riskAssessmentSeverityOptionId,
+				};
+				await this.insertData('DeviceRiskAssessmentSeverityOptions', value, condition);
+			}
+		}
+		console.log('DeviceRiskAssessmentSeverityOptions Inserted');
+		callBack && callBack(100);
+
+		// deviceFormBuilderDetailsList
+		const deviceFormBuilderDetailsList = offlineData.deviceFormBuilderDetailsList;
+		if (deviceFormBuilderDetailsList) {
+			for (let index = 0; index < deviceFormBuilderDetailsList.length; index++) {
+				const value: DeviceFormBuilderDetail = deviceFormBuilderDetailsList[index];
+				const condition: any = {
+					formId: value.formId,
+					formVersionNo: value.formVersionNo,
+					formVersionId: value.formVersionId,
+				};
+				await this.insertData('DeviceFormBuilderDetails', value, condition);
+			}
+		}
+		console.log('deviceFormBuilderDetailsList Inserted');
 		callBack && callBack(100);
 	};
 
@@ -787,19 +862,30 @@ export class OfflineManagerService {
 
 	convertToArray = (rows) => {
 		let arr = [];
-		if (rows && rows.item) {
+		if (rows) {
 			for (let index = 0; index < rows.length; index++) {
-				const item = rows.item(index);
-				arr.push(item);
-			}
-		} else {
-			for (let index = 0; index < rows.length; index++) {
-				const item = rows[index];
+				let item = this.convertToObject(rows, index);
 				arr.push(item);
 			}
 		}
 
 		return arr;
+	};
+
+	convertToObject = (rows, index = 0) => {
+		let item = null;
+		if (rows?.item) {
+			item = rows.item(index);
+		} else {
+			item = rows[index];
+		}
+
+		Object.keys(item).map((itemKey) => {
+			try {
+				item[itemKey] = JSON.parse(unescape(item[itemKey]));
+			} catch (e) {}
+		});
+		return item;
 	};
 	/****Get data from db*****/
 
@@ -826,7 +912,7 @@ export class OfflineManagerService {
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(res.rows[0]);
+						resolve(this.convertToObject(res.rows));
 					} else {
 						resolve(null);
 					}
@@ -1018,7 +1104,7 @@ export class OfflineManagerService {
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(res.rows[0]);
+						resolve(this.convertToObject(res.rows));
 					} else {
 						resolve(null);
 					}
@@ -1040,7 +1126,7 @@ export class OfflineManagerService {
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(res.rows[0]);
+						resolve(this.convertToObject(res.rows));
 					} else {
 						resolve(null);
 					}
@@ -1055,7 +1141,7 @@ export class OfflineManagerService {
 		return new Promise((resolve, reject) => {
 			let condition = this.appendEntityCondition(entity);
 			if (userId) {
-				condition = condition + ' AND userId=' + userId;
+				condition = condition + ' AND userId="' + userId + '"';
 			}
 			const query = 'SELECT * FROM DeviceUserCheckinDetails' + (condition ? ' WHERE ' + condition : '');
 			this.dbQuery(query, [])
@@ -1064,6 +1150,155 @@ export class OfflineManagerService {
 						resolve(this.convertToArray(res.rows));
 					} else {
 						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getManufacturerList(companyId) {
+		return new Promise((resolve, reject) => {
+			const condition = 'companyID=' + companyId;
+
+			const query = 'SELECT * FROM DeviceHAVManufacturers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+
+	getTypeList(companyId, manufacturerId) {
+		return new Promise((resolve, reject) => {
+			const condition = 'companyID=' + companyId + ' AND havManufacturerID=' + manufacturerId;
+
+			const query = 'SELECT * FROM DeviceHAVTypes' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+
+	getModelList(companyId, typeId) {
+		return new Promise((resolve, reject) => {
+			const condition = 'companyID=' + companyId + ' AND havTypeID=' + typeId;
+
+			const query = 'SELECT * FROM DeviceHAVModels' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+
+	getDeviceAccidentTypeList() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceAccidentTypes';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+	getDeviceAccidentClassificationList() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceAccidentClassifications';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+	getDeviceLocationItemList() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceLocationItems';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	}
+
+	getFormDetail(formId, formVersionId, formVersionNo, folderId = null) {
+		return new Promise((resolve, reject) => {
+			let condition = 'formId = ' + formId + ' AND formVersionId = ' + formVersionId + ' AND formVersionNo = ' + formVersionNo;
+			if (folderId) {
+				condition = ' AND  parentFormFolderID = ' + folderId;
+			} else {
+				condition = condition + ' AND  parentFormFolderID is NULL';
+			}
+			const query = 'SELECT * FROM DeviceFormDetails' + ' WHERE ' + condition;
+
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToObject(res.rows));
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getFormBuilderDetail(formId, formVersionId, formVersionNo) {
+		return new Promise((resolve, reject) => {
+			let condition = 'formId = ' + formId + ' AND formVersionId = ' + formVersionId + ' AND formVersionNo = ' + formVersionNo;
+			const query = 'SELECT * FROM DeviceFormBuilderDetails' + ' WHERE ' + condition;
+
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToObject(res.rows));
+					} else {
+						resolve(null);
 					}
 				})
 				.catch((error) => {

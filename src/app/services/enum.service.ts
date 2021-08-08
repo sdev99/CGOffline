@@ -141,12 +141,9 @@ export class EnumService {
 		DownloadDocument: 'DownloadDocument', // GET
 		GetDeviceEntityDetails: 'GetDeviceEntityDetails', // GET
 		ActivateDevice: 'ActivateDevice', // POST
-		SynchDevice: 'SynchDevice', // POST
-		GetDedicatedModeAssignedItemDetail: 'GetDedicatedModeAssignedItemDetail', // GET
 		GetUserByQRCode: 'GetUserByQRCode', // GET
 		GetUserAutoSuggest: 'GetUserAutoSuggest', // GET
 		GetGuestUserDetailByPhone: 'GetGuestUserDetailByPhone', // GET
-		ChangeAllQRCode: 'ChangeAllQRCode', // GET
 		GetFormBuilderDetails: 'GetFormBuilderDetails', // GET
 		GetCompanyUserList: 'GetCompanyUserList', // GET
 		GetCompanyUserGroupList: 'GetCompanyUserGroupList', // GET

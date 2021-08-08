@@ -20,6 +20,7 @@ import { StaticDataService } from 'src/app/services/static-data.service';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityItem } from 'src/app/_models/entityItem';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 @Component({
 	selector: 'app-form-hav',
@@ -57,6 +58,7 @@ export class FormHavPage implements OnInit {
 		public route: ActivatedRoute,
 		public observablesService: ObservablesService,
 		public sharedDataService: SharedDataService,
+		public offlineManagerService: OfflineManagerService,
 		private apiService: ApiService,
 		public accountService: AccountService,
 		private screenOrientation: ScreenOrientation,
@@ -106,17 +108,23 @@ export class FormHavPage implements OnInit {
 	}
 
 	async ngOnInit() {
-		this.utilService.presentLoadingWithOptions();
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getManufacturerList(this.companyId).then((res: any) => {
+				this.toolManufacturers = res;
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
 
-		this.apiService.getManufacturerList(this.companyId).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				this.toolManufacturers = response.Result;
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			this.apiService.getManufacturerList(this.companyId).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					this.toolManufacturers = response.Result;
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 
 		this.getUserTotalHAVExposureForToday();
 	}
@@ -205,39 +213,56 @@ export class FormHavPage implements OnInit {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, []);
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
 
-		this.utilService.presentLoadingWithOptions();
+		const onSuccess = (toolTypes: any) => {
+			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, toolTypes);
+			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
+			callBack && callBack();
+		};
 
-		this.apiService.getTypeList(this.companyId, manufacturer).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				const toolTypes = response.Result;
-				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, toolTypes);
-				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
-				callBack && callBack();
-			},
-			(error) => {
-				this.utilService.hideLoading();
-				this.errorMessage = error.message;
-			}
-		);
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getTypeList(this.companyId, manufacturer).then((res: any) => {
+				onSuccess(res);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+
+			this.apiService.getTypeList(this.companyId, manufacturer).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					onSuccess(response.Result);
+				},
+				(error) => {
+					this.utilService.hideLoading();
+					this.errorMessage = error.message;
+				}
+			);
+		}
 	}
 
 	async getModelList(type, havAssessmentTool, callBack = null) {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
+		const onSuccess = (toolModels: any) => {
+			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, toolModels);
+			callBack && callBack();
+		};
 
-		this.utilService.presentLoadingWithOptions();
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getModelList(this.companyId, type).then((res: any) => {
+				onSuccess(res);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
 
-		this.apiService.getModelList(this.companyId, type).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				const toolModels = response.Result;
-				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, toolModels);
-				callBack && callBack();
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			this.apiService.getModelList(this.companyId, type).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					onSuccess(response.Result);
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	dropDownChange(havAssessmentTool, question, questionIndex) {

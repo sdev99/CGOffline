@@ -171,6 +171,10 @@ export class UtilService {
 		return !!obj && obj.constructor === Array;
 	}
 
+	static isObject(obj) {
+		return !!obj && obj.constructor === Object;
+	}
+
 	static findObj(list, key, value, defaultIndex = 0) {
 		if (list && list.length > 0) {
 			let resultData = list[defaultIndex];

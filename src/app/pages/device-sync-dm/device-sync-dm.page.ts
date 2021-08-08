@@ -96,21 +96,45 @@ export class DeviceSyncDmPage implements OnInit {
 	}
 
 	callOfflineApi = (callBack) => {
-		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
-			async (res: Response) => {
-				this.progress = 1;
-				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.offlineManagerService.insertOfflineData(res.Result, (progress) => {
-						this.progress = progress;
-						if (this.progress === 100) {
-							callBack && callBack();
-						}
+		this.offlineApiService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res1: Response) => {
+			this.offlineApiService.getAccidentTypeList().subscribe((res2: Response) => {
+				this.offlineApiService.getAccidentClassificationList().subscribe((res3: Response) => {
+					this.offlineApiService.getRiskAssessmentProbabilityOptions().subscribe((res4: Response) => {
+						this.offlineApiService.getRiskAssessmentSeverityOptions().subscribe((res5: Response) => {
+							this.progress = 1;
+							const locationItemList = res1.Result;
+							const accidentTypeList = res2.Result;
+							const accidentClassificationList = res3.Result;
+							const riskAssessmentProbabilityOptions = res4.Result;
+							const riskAssessmentSeverityOptions = res5.Result;
+
+							this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
+								async (res: Response) => {
+									this.progress = 5;
+									if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+										const offlineData = res.Result;
+										offlineData.deviceLocationItemList = locationItemList;
+										offlineData.deviceAccidentTypeList = accidentTypeList;
+										offlineData.deviceAccidentClassificationList = accidentClassificationList;
+										offlineData.deviceRiskAssessmentProbabilityOptions = riskAssessmentProbabilityOptions;
+										offlineData.deviceRiskAssessmentSeverityOptions = riskAssessmentSeverityOptions;
+
+										this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+											this.progress = progress;
+											if (this.progress === 100) {
+												callBack && callBack();
+											}
+										});
+									}
+								},
+								(error) => {
+									callBack && callBack();
+								}
+							);
+						});
 					});
-				}
-			},
-			(error) => {
-				callBack && callBack();
-			}
-		);
+				});
+			});
+		});
 	};
 }

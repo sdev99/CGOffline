@@ -1131,7 +1131,6 @@ export class StaticDataService {
 				{ name: 'riskItemName', type: 'VARCHAR(32)' },
 			],
 		},
-
 		{
 			table_name: 'DeviceHazardItems',
 			columns: [
@@ -1146,6 +1145,109 @@ export class StaticDataService {
 				{ name: 'hazardItemName', type: 'VARCHAR(32)' },
 				{ name: 'modifiedDate', type: 'VARCHAR(32)' },
 				{ name: 'riskItemName', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceAccidentTypes',
+			columns: [
+				{
+					name: 'deviceAccidentTypeId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'accidentTypeId', type: 'INTEGER' },
+				{ name: 'accidentTypeTitle', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceAccidentClassifications',
+			columns: [
+				{
+					name: 'deviceAccidentClassificationId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'accidentClassificationCode', type: 'VARCHAR(32)' },
+				{ name: 'accidentClassificationDescription', type: 'VARCHAR(32)' },
+				{ name: 'accidentClassificationId', type: 'INTEGER' },
+				{ name: 'accidentClassificationTitle', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceLocationItems',
+			columns: [
+				{
+					name: 'deviceLocationItemId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'currentUTCDate', type: 'VARCHAR(32)' },
+				{ name: 'locationAutoCheckOutHour', type: 'VARCHAR(32)' },
+				{ name: 'locationAutoCheckOutTime', type: 'VARCHAR(32)' },
+				{ name: 'locationID', type: 'VARCHAR(32)' },
+				{ name: 'locationName', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceRiskAssessmentProbabilityOptions',
+			columns: [
+				{
+					name: 'deviceRiskAssessmentProbabilityOptionId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'riskAssessmentProbabilityOptionColor', type: 'VARCHAR(32)' },
+				{ name: 'riskAssessmentProbabilityOptionId', type: 'INTEGER' },
+				{ name: 'riskAssessmentProbabilityOptionTitle', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceRiskAssessmentSeverityOptions',
+			columns: [
+				{
+					name: 'deviceRiskAssessmentSeverityOptionId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'riskAssessmentSeverityOptionColor', type: 'VARCHAR(32)' },
+				{ name: 'riskAssessmentSeverityOptionId', type: 'INTEGER' },
+				{ name: 'riskAssessmentSeverityOptionTitle', type: 'VARCHAR(32)' },
+			],
+		},
+		{
+			table_name: 'DeviceFormBuilderDetails',
+			columns: [
+				{
+					name: 'deviceFormBuilderDetailId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'accidentReport', type: 'TEXT' },
+				{ name: 'answerChoiceColors', type: 'TEXT' },
+				{ name: 'answerTypes', type: 'TEXT' },
+				{ name: 'companyId', type: 'INTEGER' },
+				{ name: 'defaultLanguageId', type: 'INTEGER' },
+				{ name: 'description', type: 'TEXT' },
+				{ name: 'folderDocumentList', type: 'TEXT' },
+				{ name: 'folderDocumentTreeList', type: 'TEXT' },
+				{ name: 'formId', type: 'INTEGER' },
+				{ name: 'formTypeID', type: 'INTEGER' },
+				{ name: 'formVersionId', type: 'INTEGER' },
+				{ name: 'formVersionNo', type: 'INTEGER' },
+				{ name: 'groupList', type: 'TEXT' },
+				{ name: 'hourFormats', type: 'TEXT' },
+				{ name: 'isDraft', type: 'BOOLEAN' },
+				{ name: 'isPreview', type: 'BOOLEAN' },
+				{ name: 'modifiedBy', type: 'VARCHAR(32)' },
+				{ name: 'questionActionOnList', type: 'TEXT' },
+				{ name: 'questionActionTypes', type: 'TEXT' },
+				{ name: 'questionActivityTypes', type: 'TEXT' },
+				{ name: 'questionChoiceSetTypes', type: 'TEXT' },
+				{ name: 'questionOperatorTypes', type: 'TEXT' },
+				{ name: 'riskAssessmentDetails', type: 'TEXT' },
+				{ name: 'sections', type: 'TEXT' },
+				{ name: 'selectedLanguage', type: 'VARCHAR(32)' },
+				{ name: 'selectedLanguages', type: 'TEXT' },
+				{ name: 'signedUsers', type: 'TEXT' },
+				{ name: 'supportedLanguages', type: 'TEXT' },
+				{ name: 'taskTemplates', type: 'TEXT' },
+				{ name: 'title', type: 'VARCHAR(32)' },
+				{ name: 'userList', type: 'TEXT' },
+				{ name: 'workPermitDetails', type: 'TEXT' },
 			],
 		},
 		{

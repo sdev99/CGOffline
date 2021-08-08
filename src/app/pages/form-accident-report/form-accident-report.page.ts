@@ -15,6 +15,7 @@ import { ApiService } from '../../services/api.service';
 import { LocationItem } from '../../_models/locationItem';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityItem } from 'src/app/_models/entityItem';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 @Component({
 	selector: 'app-form-accident-report',
@@ -63,6 +64,7 @@ export class FormAccidentReportPage {
 		private ngZone: NgZone,
 		public accountService: AccountService,
 		public apiService: ApiService,
+		public offlineManagerService: OfflineManagerService,
 		public utilService: UtilService,
 		public translateService: TranslateService
 	) {
@@ -149,39 +151,60 @@ export class FormAccidentReportPage {
 	ionViewWillLeave(): void {}
 
 	getAccidentTypeList = () => {
-		this.apiService.getAccidentTypeList().subscribe(
-			(response: Response) => {
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.types = response.Result;
-					this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Type);
-				}
-			},
-			(error) => {}
-		);
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceAccidentTypeList().then((res: any) => {
+				this.types = res;
+				this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Type);
+			});
+		} else {
+			this.apiService.getAccidentTypeList().subscribe(
+				(response: Response) => {
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.types = response.Result;
+						this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Type);
+					}
+				},
+				(error) => {}
+			);
+		}
 	};
 
 	getAccidentClassificationList = () => {
-		this.apiService.getAccidentClassificationList().subscribe(
-			(response: Response) => {
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.classifications = response.Result;
-					this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Classification);
-				}
-			},
-			(error) => {}
-		);
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceAccidentClassificationList().then((res: any) => {
+				this.classifications = res;
+				this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Classification);
+			});
+		} else {
+			this.apiService.getAccidentClassificationList().subscribe(
+				(response: Response) => {
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.classifications = response.Result;
+						this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.Classification);
+					}
+				},
+				(error) => {}
+			);
+		}
 	};
 
 	getLocationItemList = () => {
-		this.apiService.getLocationItemList(this.companyId).subscribe(
-			(res) => {
-				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.locations = res.Result;
-					this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.AccidentLocation);
-				}
-			},
-			(error) => {}
-		);
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceLocationItemList().then((res: any) => {
+				this.locations = res;
+				this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.AccidentLocation);
+			});
+		} else {
+			this.apiService.getLocationItemList(this.companyId).subscribe(
+				(res) => {
+					if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.locations = res.Result;
+						this.setupDynamicChoiceList(EnumService.AccidentFormFieldOrder.AccidentLocation);
+					}
+				},
+				(error) => {}
+			);
+		}
 	};
 
 	// getAccidentBodyPartList = () => {

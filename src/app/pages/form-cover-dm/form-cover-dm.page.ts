@@ -64,6 +64,9 @@ export class FormCoverDmPage implements OnInit {
 		const formData = this.signOffFormDetail?.formData;
 
 		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getFormBuilderDetail(formData.formID, formData.formVersionID, formData.formVersionNo).then((res) => {
+				callBack(res);
+			});
 		} else {
 			this.utilService.presentLoadingWithOptions();
 

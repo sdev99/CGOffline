@@ -30,6 +30,7 @@ import { DeviceCheckInInductionItemDetail } from './DeviceCheckInInductionItemDe
 import { DeviceGuestUserCheckinDetail } from './DeviceGuestUserCheckinDetail';
 import { DeviceArchivedFormDetail } from './DeviceArchivedFormDetail';
 import { DeviceCheckInInductionDetail } from './DeviceCheckInInductionDetail';
+import { DeviceFormBuilderDetail } from './DeviceFormBuilderDetail';
 
 export class DeviceOfflineDetailViewModels {
 	deviceDetailData: DeviceDetailData;
@@ -64,4 +65,10 @@ export class DeviceOfflineDetailViewModels {
 	deviceHAVModelList: Array<DeviceHAVModelDetail>;
 	deviceRiskItemList: Array<DeviceRiskItemDetail>;
 	deviceHazardItemList: Array<DeviceHazardItemDetail>;
+	deviceFormBuilderDetailsList: Array<DeviceFormBuilderDetail>;
+	deviceLocationItemList: Array<any>;
+	deviceAccidentTypeList: Array<any>;
+	deviceAccidentClassificationList: Array<any>;
+	deviceRiskAssessmentProbabilityOptions: Array<any>;
+	deviceRiskAssessmentSeverityOptions: Array<any>;
 }

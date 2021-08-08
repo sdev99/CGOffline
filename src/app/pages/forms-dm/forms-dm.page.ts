@@ -129,22 +129,35 @@ export class FormsDmPage implements OnInit {
 	}
 
 	openForm(item: FormItem) {
-		this.utilService.presentLoadingWithOptions();
-		this.apiService.getDedicatedModeSignOffFormDetail(item.formID).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
-					this.sharedDataService.viewFormFor = EnumService.ViewFormForType.FormDM;
-					this.sharedDataService.signOffFormDetail = response.Result as SignOffFormDetail;
-					this.sharedDataService.dedicatedModeTempAuthFor = EnumService.DedicatedModeTempAuthType.Form;
-					this.navController.navigateForward('/form-open-auth-dm');
+		const callBack = (signOffFormDetail) => {
+			this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
+			this.sharedDataService.viewFormFor = EnumService.ViewFormForType.FormDM;
+			this.sharedDataService.signOffFormDetail = signOffFormDetail;
+			this.sharedDataService.dedicatedModeTempAuthFor = EnumService.DedicatedModeTempAuthType.Form;
+			this.navController.navigateForward('/form-open-auth-dm');
+		};
+
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getFormDetail(item.formID, item.formVersionID, item.formVersionNo, item.formFolderID).then((res) => {
+				if (res) {
+					const signOffFormDetail = { formData: res } as SignOffFormDetail;
+					callBack(signOffFormDetail);
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			this.apiService.getDedicatedModeSignOffFormDetail(item.formID).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						callBack(response.Result as SignOffFormDetail);
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	openArchivedForm(item: ArchivedDocumentDetail) {
