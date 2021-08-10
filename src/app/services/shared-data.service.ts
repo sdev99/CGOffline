@@ -658,42 +658,48 @@ export class SharedDataService {
 	 */
 	public getCheckinDetailsForDedicatedMode = async (userId, apiService: ApiService, userPhoto = null, callBack = null) => {
 		if (userId && this.dedicatedModeLocationUse) {
+			const onSuccess = (result) => {
+				let canUserCheckinToLocation = true;
+				if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut && this.checkinoutDmAs === EnumService.CheckInType.QrCode) {
+					const checkinDetail = result as CheckinDetail;
+					if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
+						canUserCheckinToLocation = false;
+						UtilService.fireCallBack(callBack, {
+							ischeckInPersonalQRNotAllowed: true,
+						});
+					}
+				}
+
+				if (canUserCheckinToLocation) {
+					this.checkInDetail = result as CheckinDetail;
+					this.checkInPostData = {
+						userId,
+						userPhoto,
+						checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
+						checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+						isGuestReturning: false,
+						projectID: this.dedicatedModeLocationUse.projectID,
+						inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
+						locationID: this.dedicatedModeLocationUse.locationID,
+					} as CheckInPostData;
+
+					this.processCheckinDetailsStepInitial(apiService, false);
+				}
+			};
+
 			const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
 
 			if (this.offlineMode) {
-				this.offlineManagerService.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, userId).then((res) => {});
+				this.offlineManagerService.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, userId).then((res) => {
+					onSuccess(res);
+				});
 			} else {
 				this.utilService.presentLoadingWithOptions();
 				apiService.getCheckInDetails(userId, entityId).subscribe(
 					(response: Response) => {
 						this.utilService.hideLoading();
 						if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-							let canUserCheckinToLocation = true;
-							if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut && this.checkinoutDmAs === EnumService.CheckInType.QrCode) {
-								const checkinDetail = response.Result as CheckinDetail;
-								if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
-									canUserCheckinToLocation = false;
-									UtilService.fireCallBack(callBack, {
-										ischeckInPersonalQRNotAllowed: true,
-									});
-								}
-							}
-
-							if (canUserCheckinToLocation) {
-								this.checkInDetail = response.Result as CheckinDetail;
-								this.checkInPostData = {
-									userId,
-									userPhoto,
-									checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-									checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
-									isGuestReturning: false,
-									projectID: this.dedicatedModeLocationUse.projectID,
-									inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-									locationID: this.dedicatedModeLocationUse.locationID,
-								} as CheckInPostData;
-
-								this.processCheckinDetailsStepInitial(apiService, false);
-							}
+							onSuccess(response.Result);
 						}
 					},
 					(error: any) => {

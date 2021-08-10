@@ -193,7 +193,7 @@ export class OfflineManagerService {
 		debugger;
 
 		// deviceDetailData
-		const deviceDetailData = offlineData.deviceDetailData;
+		const deviceDetailData = offlineData.DeviceDetailData;
 		const condition: any = { companyID: deviceDetailData.companyID, deviceID: deviceDetailData.deviceID };
 		await this.insertData('DeviceDetails', deviceDetailData, condition);
 
@@ -201,7 +201,7 @@ export class OfflineManagerService {
 		console.log('DeviceDetails Inserted');
 
 		// deviceEntityData
-		const deviceEntityData = offlineData.deviceEntityData;
+		const deviceEntityData = offlineData.DeviceEntityData;
 		if (deviceEntityData) {
 			for (let index = 0; index < deviceEntityData.length; index++) {
 				const value: DeviceEntityData = deviceEntityData[index];
@@ -213,7 +213,7 @@ export class OfflineManagerService {
 		console.log('DeviceEntities Inserted');
 
 		// deviceUserList
-		const deviceUserList = offlineData.deviceUserList;
+		const deviceUserList = offlineData.DeviceUserList;
 		if (deviceUserList) {
 			for (let index = 0; index < deviceUserList.length; index++) {
 				const value: DeviceUserDetail = deviceUserList[index];
@@ -225,7 +225,7 @@ export class OfflineManagerService {
 		console.log('DeviceUsers Inserted');
 
 		// deviceUserQualificationList
-		const deviceUserQualificationList = offlineData.deviceUserQualificationList;
+		const deviceUserQualificationList = offlineData.DeviceUserQualificationList;
 		if (deviceUserQualificationList) {
 			for (let index = 0; index < deviceUserQualificationList.length; index++) {
 				const value: DeviceUserQualificationDetail = deviceUserQualificationList[index];
@@ -237,7 +237,7 @@ export class OfflineManagerService {
 		console.log('DeviceUserQualifications Inserted');
 
 		// deviceGuestUserList
-		const deviceGuestUserList = offlineData.deviceGuestUserList;
+		const deviceGuestUserList = offlineData.DeviceGuestUserList;
 		if (deviceGuestUserList) {
 			for (let index = 0; index < deviceGuestUserList.length; index++) {
 				const value: DeviceGuestUserDetail = deviceGuestUserList[index];
@@ -250,7 +250,7 @@ export class OfflineManagerService {
 
 		// deviceAvailableDocumentList
 		await this.emptyTable('DeviceAvailableDocuments');
-		const deviceAvailableDocumentList = offlineData.deviceAvailableDocumentList;
+		const deviceAvailableDocumentList = offlineData.DeviceAvailableDocumentList;
 		if (deviceAvailableDocumentList) {
 			for (let index = 0; index < deviceAvailableDocumentList.length; index++) {
 				const value: DeviceAvailableDocumentDetail = deviceAvailableDocumentList[index];
@@ -277,7 +277,7 @@ export class OfflineManagerService {
 		console.log('DeviceAvailableDocuments Inserted');
 
 		// deviceArchivedDocumentList
-		const deviceArchivedDocumentList = offlineData.deviceArchivedDocumentList;
+		const deviceArchivedDocumentList = offlineData.DeviceArchivedDocumentList;
 		if (deviceArchivedDocumentList) {
 			for (let index = 0; index < deviceArchivedDocumentList.length; index++) {
 				const value: DeviceArchivedDocumentDetail = deviceArchivedDocumentList[index];
@@ -298,7 +298,7 @@ export class OfflineManagerService {
 		console.log('DeviceArchivedDocuments Inserted');
 
 		// deviceAvailableFormList
-		const deviceAvailableFormList = offlineData.deviceAvailableFormList;
+		const deviceAvailableFormList = offlineData.DeviceAvailableFormList;
 		if (deviceAvailableFormList) {
 			for (let index = 0; index < deviceAvailableFormList.length; index++) {
 				const value: DeviceAvailableFormDetail = deviceAvailableFormList[index];
@@ -324,7 +324,7 @@ export class OfflineManagerService {
 		console.log('DeviceAvailableForms Inserted');
 
 		// deviceArchivedFormList
-		const deviceArchivedFormList = offlineData.deviceArchivedFormList;
+		const deviceArchivedFormList = offlineData.DeviceArchivedFormList;
 		if (deviceArchivedFormList) {
 			for (let index = 0; index < deviceArchivedFormList.length; index++) {
 				const value: DeviceArchivedFormDetail = deviceArchivedFormList[index];
@@ -345,7 +345,7 @@ export class OfflineManagerService {
 		console.log('DeviceArchivedForms Inserted');
 
 		// deviceAvailableWorkPermitList
-		const deviceAvailableWorkPermitList = offlineData.deviceAvailableWorkPermitList;
+		const deviceAvailableWorkPermitList = offlineData.DeviceAvailableWorkPermitList;
 		if (deviceAvailableWorkPermitList) {
 			for (let index = 0; index < deviceAvailableWorkPermitList.length; index++) {
 				const value: DeviceAvailableWorkPermitDetail = deviceAvailableWorkPermitList[index];
@@ -368,7 +368,7 @@ export class OfflineManagerService {
 		console.log('DeviceAvailableWorkPermits Inserted');
 
 		// deviceLiveWorkPermitList
-		const deviceLiveWorkPermitList = offlineData.deviceLiveWorkPermitList;
+		const deviceLiveWorkPermitList = offlineData.DeviceLiveWorkPermitList;
 		if (deviceLiveWorkPermitList) {
 			for (let index = 0; index < deviceLiveWorkPermitList.length; index++) {
 				const value: DeviceLiveWorkPermitDetail = deviceLiveWorkPermitList[index];
@@ -389,7 +389,7 @@ export class OfflineManagerService {
 		console.log('DeviceLiveWorkPermits Inserted');
 
 		// deviceArchivedWorkPermitList
-		const deviceArchivedWorkPermitList = offlineData.deviceArchivedWorkPermitList;
+		const deviceArchivedWorkPermitList = offlineData.DeviceArchivedWorkPermitList;
 		if (deviceArchivedWorkPermitList) {
 			for (let index = 0; index < deviceArchivedWorkPermitList.length; index++) {
 				const value: DeviceArchivedWorkPermitDetail = deviceArchivedWorkPermitList[index];
@@ -410,7 +410,7 @@ export class OfflineManagerService {
 		console.log('DeviceArchivedWorkPermits Inserted');
 
 		// deviceFormDetailsList
-		const deviceFormDetailsList = offlineData.deviceFormDetailsList;
+		const deviceFormDetailsList = offlineData.DeviceFormDetailsList;
 		if (deviceFormDetailsList) {
 			for (let index = 0; index < deviceFormDetailsList.length; index++) {
 				const value: DeviceFormDetail = deviceFormDetailsList[index];
@@ -434,7 +434,7 @@ export class OfflineManagerService {
 		console.log('DeviceFormDetails Inserted');
 
 		// deviceFormAttachmentList
-		const deviceFormAttachmentList = offlineData.deviceFormAttachmentList;
+		const deviceFormAttachmentList = offlineData.DeviceFormAttachmentList;
 		if (deviceFormAttachmentList) {
 			for (let index = 0; index < deviceFormAttachmentList.length; index++) {
 				const value: DeviceFormAttachmentDetail = deviceFormAttachmentList[index];
@@ -451,7 +451,7 @@ export class OfflineManagerService {
 		console.log('DeviceFormAttachments Inserted');
 
 		// deviceEvacuationList
-		const deviceEvacuationList = offlineData.deviceEvacuationList;
+		const deviceEvacuationList = offlineData.DeviceEvacuationList;
 		if (deviceEvacuationList) {
 			for (let index = 0; index < deviceEvacuationList.length; index++) {
 				const value: DeviceEvacuationDetail = deviceEvacuationList[index];
@@ -473,7 +473,7 @@ export class OfflineManagerService {
 		console.log('DeviceEvacuations Inserted');
 
 		// deviceUserCheckInQualificationList
-		const deviceUserCheckInQualificationList = offlineData.deviceUserCheckInQualificationList;
+		const deviceUserCheckInQualificationList = offlineData.DeviceUserCheckInQualificationList;
 		if (deviceUserCheckInQualificationList) {
 			for (let index = 0; index < deviceUserCheckInQualificationList.length; index++) {
 				const value: DeviceUserCheckInQualificationDetail = deviceUserCheckInQualificationList[index];
@@ -489,7 +489,7 @@ export class OfflineManagerService {
 		console.log('DeviceUserCheckInQualifications Inserted');
 
 		// deviceLocationList
-		const deviceLocationList = offlineData.deviceLocationList;
+		const deviceLocationList = offlineData.DeviceLocationList;
 		if (deviceLocationList) {
 			for (let index = 0; index < deviceLocationList.length; index++) {
 				const value: DeviceLocationDetail = deviceLocationList[index];
@@ -504,7 +504,7 @@ export class OfflineManagerService {
 		console.log('DeviceLocations Inserted');
 
 		// deviceProjectList
-		const deviceProjectList = offlineData.deviceProjectList;
+		const deviceProjectList = offlineData.DeviceProjectList;
 		if (deviceProjectList) {
 			for (let index = 0; index < deviceProjectList.length; index++) {
 				const value: DeviceProjectDetail = deviceProjectList[index];
@@ -519,7 +519,7 @@ export class OfflineManagerService {
 		console.log('DeviceProjects Inserted');
 
 		// deviceInventoryItemList
-		const deviceInventoryItemList = offlineData.deviceInventoryItemList;
+		const deviceInventoryItemList = offlineData.DeviceInventoryItemList;
 		if (deviceInventoryItemList) {
 			for (let index = 0; index < deviceInventoryItemList.length; index++) {
 				const value: DeviceInventoryItemDetail = deviceInventoryItemList[index];
@@ -534,7 +534,7 @@ export class OfflineManagerService {
 		console.log('DeviceInventoryItems Inserted');
 
 		// deviceUserCheckinDetailList
-		const deviceUserCheckinDetailList = offlineData.deviceUserCheckinDetailList;
+		const deviceUserCheckinDetailList = offlineData.DeviceUserCheckinDetailList;
 		if (deviceUserCheckinDetailList) {
 			for (let index = 0; index < deviceUserCheckinDetailList.length; index++) {
 				const value: DeviceUserCheckinDetail = deviceUserCheckinDetailList[index];
@@ -556,7 +556,7 @@ export class OfflineManagerService {
 		console.log('DeviceUserCheckinDetails Inserted');
 
 		// deviceCheckInInductionList
-		const deviceCheckInInductionList = offlineData.deviceCheckInInductionList;
+		const deviceCheckInInductionList = offlineData.DeviceCheckInInductionList;
 		if (deviceCheckInInductionList) {
 			for (let index = 0; index < deviceCheckInInductionList.length; index++) {
 				const value: DeviceCheckInInductionDetail = deviceCheckInInductionList[index];
@@ -577,7 +577,7 @@ export class OfflineManagerService {
 		console.log('DeviceCheckInInductions Inserted');
 
 		// deviceCheckInInductionItemList
-		const deviceCheckInInductionItemList = offlineData.deviceCheckInInductionItemList;
+		const deviceCheckInInductionItemList = offlineData.DeviceCheckInInductionItemList;
 		if (deviceCheckInInductionItemList) {
 			for (let index = 0; index < deviceCheckInInductionItemList.length; index++) {
 				const value: DeviceCheckInInductionItemDetail = deviceCheckInInductionItemList[index];
@@ -594,7 +594,7 @@ export class OfflineManagerService {
 		console.log('DeviceCheckInInductionItems Inserted');
 
 		// deviceGuestUserCheckinDetailList
-		const deviceGuestUserCheckinDetailList = offlineData.deviceGuestUserCheckinDetailList;
+		const deviceGuestUserCheckinDetailList = offlineData.DeviceGuestUserCheckinDetailList;
 		if (deviceGuestUserCheckinDetailList) {
 			for (let index = 0; index < deviceGuestUserCheckinDetailList.length; index++) {
 				const value: DeviceGuestUserCheckinDetail = deviceGuestUserCheckinDetailList[index];
@@ -616,7 +616,7 @@ export class OfflineManagerService {
 		console.log('DeviceGuestUserCheckinDetails Inserted');
 
 		// deviceCheckInGuestInductionList
-		const deviceCheckInGuestInductionList = offlineData.deviceCheckInGuestInductionList;
+		const deviceCheckInGuestInductionList = offlineData.DeviceCheckInGuestInductionList;
 		if (deviceCheckInGuestInductionList) {
 			for (let index = 0; index < deviceCheckInGuestInductionList.length; index++) {
 				const value: DeviceCheckInGuestInductionDetail = deviceCheckInGuestInductionList[index];
@@ -637,7 +637,7 @@ export class OfflineManagerService {
 		console.log('DeviceCheckInGuestInductions Inserted');
 
 		// deviceCheckInGuestInductionItemList
-		const deviceCheckInGuestInductionItemList = offlineData.deviceCheckInGuestInductionItemList;
+		const deviceCheckInGuestInductionItemList = offlineData.DeviceCheckInGuestInductionItemList;
 		if (deviceCheckInGuestInductionItemList) {
 			for (let index = 0; index < deviceCheckInGuestInductionItemList.length; index++) {
 				const value: DeviceCheckInGuestInductionItemDetail = deviceCheckInGuestInductionItemList[index];
@@ -656,7 +656,7 @@ export class OfflineManagerService {
 		console.log('DeviceCheckInGuestInductionItems Inserted');
 
 		// deviceCompanyUserList
-		const deviceCompanyUserList = offlineData.deviceCompanyUserList;
+		const deviceCompanyUserList = offlineData.DeviceCompanyUserList;
 		if (deviceCompanyUserList) {
 			for (let index = 0; index < deviceCompanyUserList.length; index++) {
 				const value: DeviceCompanyUserDetail = deviceCompanyUserList[index];
@@ -670,7 +670,7 @@ export class OfflineManagerService {
 		console.log('DeviceCompanyUsers Inserted');
 
 		// deviceCompanyUserGroupList
-		const deviceCompanyUserGroupList = offlineData.deviceCompanyUserGroupList;
+		const deviceCompanyUserGroupList = offlineData.DeviceCompanyUserGroupList;
 		if (deviceCompanyUserGroupList) {
 			for (let index = 0; index < deviceCompanyUserGroupList.length; index++) {
 				const value: DeviceCompanyUserGroupDetail = deviceCompanyUserGroupList[index];
@@ -684,7 +684,7 @@ export class OfflineManagerService {
 		console.log('DeviceCompanyUserGroups Inserted');
 
 		// deviceHAVManufacturerList
-		const deviceHAVManufacturerList = offlineData.deviceHAVManufacturerList;
+		const deviceHAVManufacturerList = offlineData.DeviceHAVManufacturerList;
 		if (deviceHAVManufacturerList) {
 			for (let index = 0; index < deviceHAVManufacturerList.length; index++) {
 				const value: DeviceHAVManufacturerDetail = deviceHAVManufacturerList[index];
@@ -699,7 +699,7 @@ export class OfflineManagerService {
 		console.log('DeviceHAVManufacturers Inserted');
 
 		// deviceHAVTypeList
-		const deviceHAVTypeList = offlineData.deviceHAVTypeList;
+		const deviceHAVTypeList = offlineData.DeviceHAVTypeList;
 		if (deviceHAVTypeList) {
 			for (let index = 0; index < deviceHAVTypeList.length; index++) {
 				const value: DeviceHAVTypeDetail = deviceHAVTypeList[index];
@@ -715,7 +715,7 @@ export class OfflineManagerService {
 		console.log('DeviceHAVTypes Inserted');
 
 		// deviceHAVModelList
-		const deviceHAVModelList = offlineData.deviceHAVModelList;
+		const deviceHAVModelList = offlineData.DeviceHAVModelList;
 		if (deviceHAVModelList) {
 			for (let index = 0; index < deviceHAVModelList.length; index++) {
 				const value: DeviceHAVModelDetail = deviceHAVModelList[index];
@@ -733,7 +733,7 @@ export class OfflineManagerService {
 		console.log('DeviceHAVModels Inserted');
 
 		// deviceRiskItemList
-		const deviceRiskItemList = offlineData.deviceRiskItemList;
+		const deviceRiskItemList = offlineData.DeviceRiskItemList;
 		if (deviceRiskItemList) {
 			for (let index = 0; index < deviceRiskItemList.length; index++) {
 				const value: DeviceRiskItemDetail = deviceRiskItemList[index];
@@ -748,7 +748,7 @@ export class OfflineManagerService {
 		console.log('DeviceRiskItems Inserted');
 
 		// deviceHazardItemList
-		const deviceHazardItemList = offlineData.deviceHazardItemList;
+		const deviceHazardItemList = offlineData.DeviceHazardItemList;
 		if (deviceHazardItemList) {
 			for (let index = 0; index < deviceHazardItemList.length; index++) {
 				const value: DeviceHazardItemDetail = deviceHazardItemList[index];
@@ -764,7 +764,7 @@ export class OfflineManagerService {
 
 		callBack && callBack(100);
 		// deviceLocationItemList
-		const deviceLocationItemList = offlineData.deviceLocationItemList;
+		const deviceLocationItemList = offlineData.DeviceLocationItemList;
 		if (deviceLocationItemList) {
 			for (let index = 0; index < deviceLocationItemList.length; index++) {
 				const value: any = deviceLocationItemList[index];
@@ -778,7 +778,7 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 
 		// deviceAccidentTypeList
-		const deviceAccidentTypeList = offlineData.deviceAccidentTypeList;
+		const deviceAccidentTypeList = offlineData.DeviceAccidentTypeList;
 		if (deviceAccidentTypeList) {
 			for (let index = 0; index < deviceAccidentTypeList.length; index++) {
 				const value: any = deviceAccidentTypeList[index];
@@ -792,7 +792,7 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 
 		// deviceAccidentClassificationList
-		const deviceAccidentClassificationList = offlineData.deviceAccidentClassificationList;
+		const deviceAccidentClassificationList = offlineData.DeviceAccidentClassificationList;
 		if (deviceAccidentClassificationList) {
 			for (let index = 0; index < deviceAccidentClassificationList.length; index++) {
 				const value: any = deviceAccidentClassificationList[index];
@@ -806,7 +806,7 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 
 		// deviceRiskAssessmentProbabilityOptions
-		const deviceRiskAssessmentProbabilityOptions = offlineData.deviceRiskAssessmentProbabilityOptions;
+		const deviceRiskAssessmentProbabilityOptions = offlineData.DeviceRiskAssessmentProbabilityOptionList;
 		if (deviceRiskAssessmentProbabilityOptions) {
 			for (let index = 0; index < deviceRiskAssessmentProbabilityOptions.length; index++) {
 				const value: any = deviceRiskAssessmentProbabilityOptions[index];
@@ -820,7 +820,7 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 
 		// deviceRiskAssessmentSeverityOptions
-		const deviceRiskAssessmentSeverityOptions = offlineData.deviceRiskAssessmentSeverityOptions;
+		const deviceRiskAssessmentSeverityOptions = offlineData.DeviceRiskAssessmentSeverityOptionList;
 		if (deviceRiskAssessmentSeverityOptions) {
 			for (let index = 0; index < deviceRiskAssessmentSeverityOptions.length; index++) {
 				const value: any = deviceRiskAssessmentSeverityOptions[index];
@@ -834,7 +834,7 @@ export class OfflineManagerService {
 		callBack && callBack(100);
 
 		// deviceFormBuilderDetailsList
-		const deviceFormBuilderDetailsList = offlineData.deviceFormBuilderDetailsList;
+		const deviceFormBuilderDetailsList = offlineData.DeviceFormBuilderDetailsList;
 		if (deviceFormBuilderDetailsList) {
 			for (let index = 0; index < deviceFormBuilderDetailsList.length; index++) {
 				const value: DeviceFormBuilderDetail = deviceFormBuilderDetailsList[index];
@@ -1147,7 +1147,7 @@ export class OfflineManagerService {
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(this.convertToArray(res.rows));
+						resolve(this.convertToObject(res.rows));
 					} else {
 						resolve([]);
 					}

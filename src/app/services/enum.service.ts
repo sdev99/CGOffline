@@ -175,6 +175,7 @@ export class EnumService {
 
 		// Dedicated Mode Offline Api
 		GetDeviceOfflineDetails: 'GetDeviceOfflineDetails',
+		GetDeviceOfflineFile: 'GetDeviceOfflineFile',
 	};
 
 	static ApiResponseCode = {
