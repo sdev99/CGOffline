@@ -20,6 +20,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { StaticDataService } from './services/static-data.service';
+import { OfflineManagerService } from './services/offline-manager.service';
 
 const { Geolocation, Permissions, App, SplashScreen } = Plugins;
 
@@ -41,6 +42,7 @@ export class AppComponent {
 		public sharedDataService: SharedDataService,
 		public utilService: UtilService,
 		private observablesService: ObservablesService,
+		private offlineManagerService: OfflineManagerService,
 		private navController: NavController,
 		private screenOrientation: ScreenOrientation,
 		private accountService: AccountService,

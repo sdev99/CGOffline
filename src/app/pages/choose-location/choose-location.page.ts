@@ -28,12 +28,28 @@ export class ChooseLocationPage implements OnInit {
 		public offlineManagerService: OfflineManagerService
 	) {
 		this.locations = sharedDataService.dedicatedModeAssignedEntities;
+		this.offlineManagerService
+			.getAssignedEnitities()
+			.then((entities: any) => {
+				if (entities && entities.length > 0) {
+					const list = entities as Array<any>;
+					this.sharedDataService.dedicatedModeAssignedEntities = list;
+					this.locations = this.sharedDataService.dedicatedModeAssignedEntities;
+					localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(list));
+					this.sharedDataService.offlineMode = true;
+				} else {
+					this.sharedDataService.offlineMode = false;
+				}
+				this.getDeviceEntityDetails();
+			})
+			.catch(() => {
+				this.sharedDataService.offlineMode = false;
+			});
 	}
 
 	ngOnInit() {}
 
 	ionViewDidEnter() {
-		this.getDeviceEntityDetails();
 		this.accountService.activateDevice().subscribe(() => {});
 	}
 
@@ -49,13 +65,7 @@ export class ChooseLocationPage implements OnInit {
 	// };
 
 	getDeviceEntityDetails = () => {
-		if (!this.sharedDataService.offlineMode) {
-			this.offlineManagerService.getAssignedEnitities().then((entities) => {
-				const list = entities as Array<any>;
-				this.sharedDataService.dedicatedModeAssignedEntities = list;
-				this.locations = this.sharedDataService.dedicatedModeAssignedEntities;
-				localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(list));
-			});
+		if (this.sharedDataService.offlineMode) {
 			this.offlineManagerService
 				.getDeviceDetail()
 				.then((deviceDetail) => {
