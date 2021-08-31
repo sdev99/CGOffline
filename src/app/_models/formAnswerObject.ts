@@ -11,6 +11,7 @@ export class FormAnswerObject {
 	timeValue?: string;
 	dateTimeValue?: string;
 	imageVideoFileName?: string;
+	imageVideoFileId?: string; // For offline mode only , Id of ImageVideFiles table
 	questionComment?: string;
 	multipleChoiceValueIDs?: string;
 	isConfirmBoxChecked?: boolean;

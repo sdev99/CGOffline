@@ -79,11 +79,14 @@ export class DashboardQrscanPage implements OnInit {
 	ionViewWillEnter() {}
 
 	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'user';
+		const QrCodeTestingInLocalHostFor: any = 'inventryitemHav';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
 				switch (QrCodeTestingInLocalHostFor) {
+					case 'project':
+						this.checkQrCode('mCucrGcxCBTXwWCuKq/sMN6kgl0a1SVlOudJdHCHZHrMpc9RYv5JLo1AqRvdjcW/');
+						break;
 					case 'document':
 						this.checkQrCode('0f75e6e3-8215-4186-92bf-ca0971b337b7');
 						break;
@@ -104,7 +107,7 @@ export class DashboardQrscanPage implements OnInit {
 						this.checkQrCode('87b71cae-476a-4c08-9c63-f24ef7970f89\n');
 						break;
 					case 'location':
-						this.checkQrCode('e165d1a3-a0a9-4b95-a543-8049b440c56d');
+						this.checkQrCode('rrBma4qkHkaOb0YemnKavm+0xJcQ8EBkiITKUBWwQfgfhXMy3dlZJln3ndeOh48p');
 						break;
 					case 'location2':
 						this.checkQrCode('78312786-35ab-4c9e-969e-6f7673ed7a5e');
@@ -116,7 +119,11 @@ export class DashboardQrscanPage implements OnInit {
 						this.checkQrCode('1b5ee704-21f6-4e91-9544-0f2a6abd7aed');
 						break;
 					case 'inventryitemHav':
-						this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
+						if (this.sharedDataService.offlineMode) {
+							this.checkQrCode('pfnCeoTyyI7n6gwDRbUmT759i65qtDPZtkaDYafTw0kvPrNmVFDtq27ccTciimN+');
+						} else {
+							this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
+						}
 						break;
 					case 'inventryitem':
 						this.checkQrCode('22dfd7f6-414c-4608-9b3a-fcc894487fc5');
@@ -211,46 +218,65 @@ export class DashboardQrscanPage implements OnInit {
 	};
 
 	getAnswerChoiceEntityByQRCode = (qrCode) => {
-		this.utilService.presentLoadingWithOptions();
-
-		this.apiService.getAnswerChoiceEntityByQRCode(qrCode).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					const result: EntityItem = response.Result as EntityItem;
-					if (
-						result &&
-						result.entityID &&
-						this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
-						(!this.isOnlyInventryItemHasHav || (result.entityType === EnumService.SelectedQRCodeType.InventoryItem && result.isHAVSData))
-					) {
-						this.observablesService.publishSomeData(this.fromFormCallbackKey, result);
-						this.onClose();
-					} else {
-						this.translateService.get('SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
-							this.utilService.showAlert(res, '', () => {
-								this.scan();
-							});
-						});
-					}
-				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-
-				this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
-					this.utilService.showAlert(error.message || error, res, () => {
+		const onSuccess = (res) => {
+			const result: EntityItem = res as EntityItem;
+			if (
+				result &&
+				result.entityID &&
+				this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
+				(!this.isOnlyInventryItemHasHav || (result.entityType === EnumService.SelectedQRCodeType.InventoryItem && result.isHAVSData))
+			) {
+				this.observablesService.publishSomeData(this.fromFormCallbackKey, result);
+				this.onClose();
+			} else {
+				this.translateService.get('SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
+					this.utilService.showAlert(res, '', () => {
 						this.scan();
 					});
 				});
 			}
-		);
+		};
+
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getAnswerChoiceEntityByQRCode(qrCode, this.sharedDataService.dedicatedModeDeviceDetailData?.companyID).then((res) => {
+				if (res) {
+					onSuccess(res);
+				} else {
+					this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND', 'SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
+						this.utilService.showAlert(res['SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID'], res['SHARED_TEXT.ERRORS.NOT_FOUND'], () => {
+							this.scan();
+						});
+					});
+				}
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+
+			this.apiService.getAnswerChoiceEntityByQRCode(qrCode).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						onSuccess(response.Result);
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+
+					this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND').subscribe((res) => {
+						this.utilService.showAlert(error.message || error, res, () => {
+							this.scan();
+						});
+					});
+				}
+			);
+		}
 	};
 
 	getQrDetailForDedicatedMode = (qrCode) => {
 		if (this.sharedDataService.offlineMode) {
 			this.offlineManagerService.getUserDetailByQRCode(qrCode).then((res) => {
 				const userDetail = res as DeviceUserDetail;
+				console.log('USER DETAIL', userDetail);
 				if (userDetail?.userId && userDetail?.userId !== StaticDataService.userDefaultGuid) {
 					this.openNextScreenForDedicatedMode(userDetail);
 				} else {

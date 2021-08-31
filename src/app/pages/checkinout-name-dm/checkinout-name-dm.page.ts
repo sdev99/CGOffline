@@ -84,7 +84,7 @@ export class CheckinoutNameDmPage implements OnInit {
 	getUserAutoSuggest = () => {
 		if (this.sharedDataService.dedicatedModeDeviceDetailData && this.name) {
 			if (this.sharedDataService.offlineMode) {
-				this.offlineManagerService.getDeviceCompanyUsers(this.name).then((res) => {
+				this.offlineManagerService.getDeviceUsers(this.name).then((res) => {
 					this.items = res as any;
 				});
 			} else {

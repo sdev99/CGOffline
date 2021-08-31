@@ -16,8 +16,8 @@
 		<div class="content">
 			<h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">{{'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.IMAGE' | translate}}</h6>
 
-			<div class="image-view" *ngIf="inductionItem">
-				<ion-img [src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName" (click)="fullScreenImg()"> </ion-img>
+			<div class="image-view" *ngIf="inductionItem && imageUrl">
+				<ion-img [src]="imageUrl" (click)="fullScreenImg()"> </ion-img>
 				<ion-button color="medium" fill="clear" class="full-screen-btn" (click)="fullScreenImg()">
 					<ion-icon slot="icon-only" name="scan-circle-sharp"></ion-icon>
 				</ion-button>

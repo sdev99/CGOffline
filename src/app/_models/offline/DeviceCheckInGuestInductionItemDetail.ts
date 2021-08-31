@@ -8,6 +8,7 @@ export class DeviceCheckInGuestInductionItemDetail {
 	documentFileName: string;
 	documentID: number;
 	documentTitle: string;
+	document_BinaryFile: string;
 	formID: number;
 	formType: string;
 }

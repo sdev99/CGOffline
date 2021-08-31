@@ -19,6 +19,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
+import { StaticDataService } from './services/static-data.service';
 
 const { Geolocation, Permissions, App, SplashScreen } = Plugins;
 
@@ -148,9 +149,9 @@ export class AppComponent {
 					//     }, 7000);
 					//   }
 
-					//   if (localStorage.getItem(StaticDataService.isDeviceTestTablet)) {
-					//     this.sharedDataService.isTablet = true;
-					//   }
+					if (localStorage.getItem(StaticDataService.isDeviceTestTablet)) {
+						this.sharedDataService.isTablet = true;
+					}
 					// end
 
 					if (!environment.isWebApp) {

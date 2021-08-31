@@ -8,6 +8,7 @@ import { SharedDataService } from 'src/app/services/shared-data.service';
 import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 import { Response } from 'src/app/_models';
 import { DeviceOfflineDetailViewModels } from 'src/app/_models/offline/DeviceOfflineDetailViewModels';
+import { FilehandlerService } from 'src/app/services/filehandler.service';
 
 @Component({
 	selector: 'app-device-sync-dm',
@@ -28,6 +29,7 @@ export class DeviceSyncDmPage implements OnInit {
 		public utilService: UtilService,
 		public offlineApiService: OfflineApiService,
 		public offlineManagerService: OfflineManagerService,
+		public filehandlerService: FilehandlerService,
 		public sharedDataService: SharedDataService
 	) {
 		this.activatedRoute.queryParams.subscribe((data) => {
@@ -76,16 +78,13 @@ export class DeviceSyncDmPage implements OnInit {
 		this.synchProgressState = 'processing';
 		this.callOfflineApi(() => {
 			if (this.progress === 100) {
-				if (UtilService.randomBoolean()) {
-					this.synchProgressState = 'completed';
-					localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
-				} else {
-					if (UtilService.randomBoolean()) {
-						this.synchProgressState = 'failed';
-					} else {
-						this.synchProgressState = 'networkerror';
-					}
-				}
+				this.synchProgressState = 'completed';
+				localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
+				// if (UtilService.randomBoolean()) {
+				// 	this.synchProgressState = 'failed';
+				// } else {
+				// 	this.synchProgressState = 'networkerror';
+				// }
 			} else {
 				this.progress = this.progress + 5;
 			}
@@ -97,32 +96,36 @@ export class DeviceSyncDmPage implements OnInit {
 	}
 
 	callOfflineApi = (callBack) => {
+		// Need to check device storage
+		// Need to check internet
+		// Need to check file size
+		// Delete all old files
+		// Clear storage
+		// Check all file download success and all file insert success or not, if not then clear and redownload
+
 		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
 			async (res: Response) => {
 				this.progress = 5;
 				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					const offlineData = res.Result;
-					const jsonFileName = offlineData?.jsonFileName;
-					if (jsonFileName) {
+					if (res.Result) {
 						this.offlineApiService
-							.getDeviceOfflineFile(jsonFileName)
-							.then(async (offlineData: DeviceOfflineDetailViewModels) => {
-								this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
-									this.progress = progress;
-									if (this.progress === 100) {
-										callBack && callBack();
-									}
+							.getDeviceOfflineFile(res.Result)
+							.then(async (filesLocalPaths: any) => {
+								filesLocalPaths.map((filePath) => {
+									this.filehandlerService.readJsonFile(filePath).subscribe((offlineData: DeviceOfflineDetailViewModels) => {
+										this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+											this.progress = progress;
+											if (this.progress === 100) {
+												callBack && callBack();
+											}
+										});
+									});
 								});
 							})
 							.catch((error) => {
 								debugger;
 							});
 					}
-					// offlineData.deviceLocationItemList = locationItemList;
-					// offlineData.deviceAccidentTypeList = accidentTypeList;
-					// offlineData.deviceAccidentClassificationList = accidentClassificationList;
-					// offlineData.deviceRiskAssessmentProbabilityOptions = riskAssessmentProbabilityOptions;
-					// offlineData.deviceRiskAssessmentSeverityOptions = riskAssessmentSeverityOptions;
 				}
 			},
 			(error) => {

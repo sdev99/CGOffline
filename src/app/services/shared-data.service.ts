@@ -38,10 +38,9 @@ import { RAtaskTemplateItem } from '../_models/RAtaskTemplateItem';
 import { HavAnswerDetail } from '../_models/havAnswerDetail';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityItem } from '../_models/entityItem';
-import { DeviceEntityData } from '../_models/offline/DeviceEntityData';
-import { DeviceDetailData } from '../_models/offline/DeviceDetailData';
 import { AccountService } from './account.service';
 import { OfflineManagerService } from './offline-manager.service';
+import { DeviceUserDetail } from '../_models/offline/DeviceUserDetail';
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -662,7 +661,7 @@ export class SharedDataService {
 				let canUserCheckinToLocation = true;
 				if (this.dedicatedModeProcessType === EnumService.DedicatedModeProcessTypes.CheckinOut && this.checkinoutDmAs === EnumService.CheckInType.QrCode) {
 					const checkinDetail = result as CheckinDetail;
-					if (!checkinDetail.checkInEntityDetail.checkInPersonalQR) {
+					if (checkinDetail && !checkinDetail.checkInEntityDetail.checkInPersonalQR) {
 						canUserCheckinToLocation = false;
 						UtilService.fireCallBack(callBack, {
 							ischeckInPersonalQRNotAllowed: true,
@@ -681,6 +680,7 @@ export class SharedDataService {
 						projectID: this.dedicatedModeLocationUse.projectID,
 						inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
 						locationID: this.dedicatedModeLocationUse.locationID,
+						companyID: this.dedicatedModeDeviceDetailData.companyID as any,
 					} as CheckInPostData;
 
 					this.processCheckinDetailsStepInitial(apiService, false);
@@ -690,9 +690,14 @@ export class SharedDataService {
 			const entityId = this.utilService.getEntityIdFromId(this.dedicatedModeLocationUse);
 
 			if (this.offlineMode) {
-				this.offlineManagerService.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, userId).then((res) => {
-					onSuccess(res);
-				});
+				this.offlineManagerService
+					.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, userId)
+					.then(async (response: any) => {
+						onSuccess(response);
+					})
+					.catch((error) => {
+						this.processCheckInError(error, '/dashboard-dm');
+					});
 			} else {
 				this.utilService.presentLoadingWithOptions();
 				apiService.getCheckInDetails(userId, entityId).subscribe(
@@ -719,44 +724,59 @@ export class SharedDataService {
 		const dedicatedModeGuestDetail = this.dedicatedModeGuestDetail;
 		const dedicatedModeLocationUse = this.dedicatedModeLocationUse;
 
-		this.utilService.presentLoadingWithOptions();
-		apiService
-			.getCheckInDetails_Guest(
-				dedicatedModeGuestDetail.guestPhone || '',
-				dedicatedModeGuestDetail.guestFirsName || '',
-				dedicatedModeGuestDetail.guestMiddleName || '',
-				dedicatedModeGuestDetail.guestLastName || '',
-				entityId
-			)
-			.subscribe(
-				(res: Response) => {
-					this.utilService.hideLoading();
+		const onSuccess = (data) => {
+			this.checkInDetail = data;
+			this.checkInPostData = {
+				checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
+				checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+				isGuestReturning,
+				projectID: dedicatedModeLocationUse.projectID,
+				inventoryItemID: dedicatedModeLocationUse.inventoryItemID,
+				locationID: dedicatedModeLocationUse.locationID,
+				guestPhone: dedicatedModeGuestDetail.guestPhone,
+				guestFirsName: dedicatedModeGuestDetail.guestFirsName,
+				guestMiddleName: dedicatedModeGuestDetail.guestMiddleName,
+				guestLastName: dedicatedModeGuestDetail.guestLastName,
+				guestPhoto: dedicatedModeGuestDetail.guestPhoto,
+				companyID: dedicatedModeDeviceDetailData.companyID,
+			} as unknown as CheckInPostData;
 
-					if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-						this.checkInDetail = res.Result;
-						this.checkInPostData = {
-							checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-							checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
-							isGuestReturning,
-							projectID: dedicatedModeLocationUse.projectID,
-							inventoryItemID: dedicatedModeLocationUse.inventoryItemID,
-							locationID: dedicatedModeLocationUse.locationID,
-							guestPhone: dedicatedModeGuestDetail.guestPhone,
-							guestFirsName: dedicatedModeGuestDetail.guestFirsName,
-							guestMiddleName: dedicatedModeGuestDetail.guestMiddleName,
-							guestLastName: dedicatedModeGuestDetail.guestLastName,
-							guestPhoto: dedicatedModeGuestDetail.guestPhoto,
-							companyID: dedicatedModeDeviceDetailData.companyID,
-						} as unknown as CheckInPostData;
+			this.processCheckinDetailsStepInitial(apiService, true);
+		};
 
-						this.processCheckinDetailsStepInitial(apiService, true);
-					}
-				},
-				(error) => {
-					this.utilService.hideLoading();
+		if (this.offlineMode) {
+			this.offlineManagerService
+				.getDeviceUserCheckinDetails(this.dedicatedModeLocationUse, dedicatedModeGuestDetail.guestPhone, true)
+				.then(async (response: any) => {
+					onSuccess(response);
+				})
+				.catch((error) => {
 					this.processCheckInError(error, nextScreen);
-				}
-			);
+				});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			apiService
+				.getCheckInDetails_Guest(
+					dedicatedModeGuestDetail.guestPhone || '',
+					dedicatedModeGuestDetail.guestFirsName || '',
+					dedicatedModeGuestDetail.guestMiddleName || '',
+					dedicatedModeGuestDetail.guestLastName || '',
+					entityId
+				)
+				.subscribe(
+					(res: Response) => {
+						this.utilService.hideLoading();
+
+						if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+							onSuccess(res.Result);
+						}
+					},
+					(error) => {
+						this.utilService.hideLoading();
+						this.processCheckInError(error, nextScreen);
+					}
+				);
+		}
 	};
 
 	/**
@@ -764,7 +784,7 @@ export class SharedDataService {
 	 * @param apiService ApiService Refrence
 	 * @param isGuest is CHeckin Type Guest User
 	 */
-	processCheckinDetailsStepInitial(apiService, isGuest) {
+	processCheckinDetailsStepInitial = (apiService, isGuest) => {
 		if (
 			(this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST && this.checkInDetail?.checkInEntityDetail?.checkInGuestPhoto) ||
 			(this.checkinoutDmAs === EnumService.CheckInType.MY_NAME && this.checkInDetail?.checkInEntityDetail?.checkInPersonalPhoto)
@@ -783,25 +803,25 @@ export class SharedDataService {
 		} else {
 			this.processCheckinDetailsStepInduction(apiService, isGuest);
 		}
-	}
+	};
 
-	processCheckinDetailsStepInduction(apiService, isGuest) {
+	processCheckinDetailsStepInduction = (apiService, isGuest) => {
 		if (this.checkInDetail?.checkInEntityDetail?.processInduction && this.checkInDetail?.checkInInductionItems?.length > 0) {
 			this.navCtrl.navigateForward(['checkin-induction']);
 		} else {
 			this.processCheckinDetailsStepSubmit(apiService, isGuest);
 		}
-	}
+	};
 
-	processCheckinDetailsStepSubmit(apiService, isGuest) {
+	processCheckinDetailsStepSubmit = (apiService, isGuest) => {
 		if (isGuest) {
 			this.submitInductionCheckInDataGuest(apiService);
 		} else {
 			this.submitInductionCheckInData(apiService);
 		}
-	}
+	};
 
-	uploadVideo(selectedVideo, mimeType, callBack, progress) {
+	uploadVideo = (selectedVideo, mimeType, callBack, progress) => {
 		const accessID = this.deviceUID;
 		const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
 
@@ -836,7 +856,7 @@ export class SharedDataService {
 			const uploadPercent = Math.round((data.loaded / data.total) * 100);
 			UtilService.fireCallBack(progress, uploadPercent);
 		});
-	}
+	};
 
 	public async saveFormAnswers(
 		apiService: ApiService,
@@ -997,101 +1017,129 @@ export class SharedDataService {
 											fileName = control.value.substr(control.value.lastIndexOf('/') + 1);
 											mimeType = StaticDataService.fileMimeTypes[control.value.split('.').pop().toLowerCase()];
 										}
+										if (this.offlineMode) {
+											this.offlineManagerService
+												.insertImageVideoFile({
+													fileName: fileName,
+													mimeType: mimeType,
+													isVideo: isVideo,
+													binaryFile: control.value,
+												})
+												.then((res) => {
+													attachemtUploaded[question.questionId] = res;
+													attachmentUploadedCount++;
+													if (attachmentCount === attachmentUploadedCount) {
+														loading = false;
+														this.utilService.hideLoading();
+														this.submitFormAnswers(
+															apiService,
+															formGroup,
+															formBuilderDetail,
+															personalModeLoggedUser,
+															callBack,
+															havAnswerDetail,
+															workPermitAnswer,
+															attachemtUploaded
+														);
+													}
+												})
+												.catch((error) => {});
+										} else {
+											this.utilService
+												.dataUriToFile(control.value, fileName, mimeType)
+												.then(async (file) => {
+													if (!loading) {
+														this.utilService.presentLoadingWithOptions();
+														loading = true;
+													}
 
-										this.utilService
-											.dataUriToFile(control.value, fileName, mimeType)
-											.then(async (file) => {
-												if (!loading) {
-													this.utilService.presentLoadingWithOptions();
-													loading = true;
-												}
-
-												if (isVideo) {
-													this.uploadVideo(
-														file,
-														mimeType,
-														(response) => {
-															console.log('Uploaded ' + ' ' + fileName + '' + response);
-															if (response.status) {
-																attachemtUploaded[question.questionId] = response.result.Result;
+													if (isVideo) {
+														this.uploadVideo(
+															file,
+															mimeType,
+															(response) => {
+																console.log('Uploaded ' + ' ' + fileName + '' + response);
+																if (response.status) {
+																	attachemtUploaded[question.questionId] = response.result.Result;
+																}
+																attachmentUploadedCount++;
+																if (attachmentCount === attachmentUploadedCount) {
+																	loading = false;
+																	this.utilService.hideLoading();
+																	this.submitFormAnswers(
+																		apiService,
+																		formGroup,
+																		formBuilderDetail,
+																		personalModeLoggedUser,
+																		callBack,
+																		havAnswerDetail,
+																		workPermitAnswer,
+																		attachemtUploaded
+																	);
+																}
+															},
+															(progress) => {
+																console.log('Progress ' + ' ' + fileName + '' + progress);
 															}
-															attachmentUploadedCount++;
-															if (attachmentCount === attachmentUploadedCount) {
-																loading = false;
-																this.utilService.hideLoading();
-																this.submitFormAnswers(
-																	apiService,
-																	formGroup,
-																	formBuilderDetail,
-																	personalModeLoggedUser,
-																	callBack,
-																	havAnswerDetail,
-																	workPermitAnswer,
-																	attachemtUploaded
-																);
+														);
+													} else {
+														apiService.formPhotoOrVideoUpload(file, fileName).subscribe(
+															(response: Response) => {
+																attachemtUploaded[question.questionId] = response.Result;
+																attachmentUploadedCount++;
+																if (attachmentCount === attachmentUploadedCount) {
+																	loading = false;
+																	this.utilService.hideLoading();
+																	this.submitFormAnswers(
+																		apiService,
+																		formGroup,
+																		formBuilderDetail,
+																		personalModeLoggedUser,
+																		callBack,
+																		havAnswerDetail,
+																		workPermitAnswer,
+																		attachemtUploaded
+																	);
+																}
+															},
+															(error) => {
+																attachmentUploadedCount++;
+																if (attachmentCount === attachmentUploadedCount) {
+																	loading = false;
+																	this.utilService.hideLoading();
+																	this.submitFormAnswers(
+																		apiService,
+																		formGroup,
+																		formBuilderDetail,
+																		personalModeLoggedUser,
+																		callBack,
+																		havAnswerDetail,
+																		workPermitAnswer,
+																		attachemtUploaded
+																	);
+																}
 															}
-														},
-														(progress) => {
-															console.log('Progress ' + ' ' + fileName + '' + progress);
-														}
-													);
-												} else {
-													apiService.formPhotoOrVideoUpload(file, fileName).subscribe(
-														(response: Response) => {
-															attachemtUploaded[question.questionId] = response.Result;
-															attachmentUploadedCount++;
-															if (attachmentCount === attachmentUploadedCount) {
-																loading = false;
-																this.utilService.hideLoading();
-																this.submitFormAnswers(
-																	apiService,
-																	formGroup,
-																	formBuilderDetail,
-																	personalModeLoggedUser,
-																	callBack,
-																	havAnswerDetail,
-																	workPermitAnswer,
-																	attachemtUploaded
-																);
-															}
-														},
-														(error) => {
-															attachmentUploadedCount++;
-															if (attachmentCount === attachmentUploadedCount) {
-																loading = false;
-																this.utilService.hideLoading();
-																this.submitFormAnswers(
-																	apiService,
-																	formGroup,
-																	formBuilderDetail,
-																	personalModeLoggedUser,
-																	callBack,
-																	havAnswerDetail,
-																	workPermitAnswer,
-																	attachemtUploaded
-																);
-															}
-														}
-													);
-												}
-											})
-											.catch(() => {
-												attachmentUploadedCount++;
-												if (attachmentCount === attachmentUploadedCount) {
-													loading = false;
-													this.utilService.hideLoading();
-													this.submitFormAnswers(
-														apiService,
-														formGroup,
-														formBuilderDetail,
-														personalModeLoggedUser,
-														callBack,
-														havAnswerDetail,
-														workPermitAnswer,
-														attachemtUploaded
-													);
-												}
-											});
+														);
+													}
+												})
+												.catch(() => {
+													attachmentUploadedCount++;
+													if (attachmentCount === attachmentUploadedCount) {
+														loading = false;
+														this.utilService.hideLoading();
+														this.submitFormAnswers(
+															apiService,
+															formGroup,
+															formBuilderDetail,
+															personalModeLoggedUser,
+															callBack,
+															havAnswerDetail,
+															workPermitAnswer,
+															attachemtUploaded
+														);
+													}
+												});
+										}
 									}
 								}
 							}
@@ -1340,7 +1388,11 @@ export class SharedDataService {
 										case EnumService.AccidentFormFieldOrder.Attachment:
 											if (attachemtUploaded[question.questionId]) {
 												isValueFilled = true;
-												answerObject.accidentAttachmentFileName = attachemtUploaded[question.questionId];
+												if (this.offlineMode) {
+													answerObject.accidentAttachmentFileId = attachemtUploaded[question.questionId];
+												} else {
+													answerObject.accidentAttachmentFileName = attachemtUploaded[question.questionId];
+												}
 											}
 											break;
 									}
@@ -1516,7 +1568,11 @@ export class SharedDataService {
 										case EnumService.CustomAnswerType.PhotoVideoUpload:
 											if (attachemtUploaded[question.questionId]) {
 												isValueFilled = true;
-												answerObject.imageVideoFileName = attachemtUploaded[question.questionId];
+												if (this.offlineMode) {
+													answerObject.imageVideoFileId = attachemtUploaded[question.questionId];
+												} else {
+													answerObject.imageVideoFileName = attachemtUploaded[question.questionId];
+												}
 											}
 											break;
 									}
@@ -1576,36 +1632,59 @@ export class SharedDataService {
 		// return;
 		// }
 
-		this.utilService.presentLoadingWithOptions();
-		apiService.saveFormAnswers(submitAnswersObject).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (
-					this.viewFormFor === EnumService.ViewFormForType.Activity ||
-					this.viewFormFor === EnumService.ViewFormForType.CurrentCheckin ||
-					this.viewFormFor === EnumService.ViewFormForType.CurrentCheckinWorkPermit ||
-					this.viewFormFor === EnumService.ViewFormForType.FormDM ||
-					this.viewFormFor === EnumService.ViewFormForType.WorkPermitDM
-				) {
-					this.workPermitAnswer = workPermitAnswer;
-					this.startFormSignOffProcess(userId, apiService, response.Result);
-				} else if (this.viewFormFor === EnumService.ViewFormForType.Induction) {
-					if (this.checkInPostData) {
-						this.checkInPostData.inductionFormContent = response.Result.formAnswerHtmlString;
-						this.checkInPostData.answerNotificationList = response.Result.answerNotificationList;
+		const saveFormSuccess = (result) => {
+			if (
+				this.viewFormFor === EnumService.ViewFormForType.Activity ||
+				this.viewFormFor === EnumService.ViewFormForType.CurrentCheckin ||
+				this.viewFormFor === EnumService.ViewFormForType.CurrentCheckinWorkPermit ||
+				this.viewFormFor === EnumService.ViewFormForType.FormDM ||
+				this.viewFormFor === EnumService.ViewFormForType.WorkPermitDM
+			) {
+				this.workPermitAnswer = workPermitAnswer;
+				this.startFormSignOffProcess(userId, apiService, result);
+			} else if (this.viewFormFor === EnumService.ViewFormForType.Induction) {
+				if (this.checkInPostData) {
+					if (this.offlineMode) {
+						const formSubmitDataId = result;
+						this.checkInPostData.formSubmitDataId = formSubmitDataId;
+					} else {
+						this.checkInPostData.inductionFormContent = result.formAnswerHtmlString;
+						this.checkInPostData.answerNotificationList = result.answerNotificationList;
 					}
-					this.inductionNavigationProcess(userId, this.inductionContentItemIndex);
 				}
-				callBack(true, response.Result);
-			},
-			(error) => {
-				callBack(false, error.message);
-				this.utilService.hideLoading();
+				this.inductionNavigationProcess(userId, this.inductionContentItemIndex);
 			}
-		);
+			callBack(true, result);
+		};
+
+		this.utilService.presentLoadingWithOptions();
+
+		if (this.offlineMode) {
+			this.offlineManagerService
+				.insertFormSubmitData(submitAnswersObject)
+				.then((formSubmitDataId) => {
+					this.utilService.hideLoading();
+					saveFormSuccess(formSubmitDataId);
+				})
+				.catch((error) => {
+					callBack(false, error.message);
+					this.utilService.hideLoading();
+				});
+		} else {
+			apiService.saveFormAnswers(submitAnswersObject).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					saveFormSuccess(response.Result);
+				},
+				(error) => {
+					callBack(false, error.message);
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	};
 
-	private startFormSignOffProcess(userId, apiService: ApiService, saveAnswerResult) {
+	private startFormSignOffProcess = (userId, apiService: ApiService, saveAnswerResult) => {
 		const signOffFormDetail = this.signOffFormDetail;
 
 		if (this.dedicatedMode) {
@@ -1617,9 +1696,14 @@ export class SharedDataService {
 				locationID: this.dedicatedModeLocationUse?.locationID,
 				projectID: this.dedicatedModeLocationUse?.projectID,
 				inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
-				formContent: saveAnswerResult.formAnswerHtmlString,
-				answerNotificationList: saveAnswerResult.answerNotificationList,
 			} as SignOffDetailsPostData;
+			if (this.offlineMode) {
+				const formSubmitDataId = saveAnswerResult;
+				this.signOffDetailsPostData.formSubmitDataId = formSubmitDataId;
+			} else {
+				this.signOffDetailsPostData.formContent = saveAnswerResult.formAnswerHtmlString;
+				this.signOffDetailsPostData.answerNotificationList = saveAnswerResult.answerNotificationList;
+			}
 		} else {
 			this.signOffDetailsPostData = {
 				userId,
@@ -1667,66 +1751,85 @@ export class SharedDataService {
 		} else {
 			this.submitPersonalModeSignoffData(apiService);
 		}
-	}
+	};
 
-	submitInductionCheckInData(apiService: ApiService) {
-		this.utilService.presentLoadingWithOptions();
+	submitInductionCheckInData = async (apiService: ApiService) => {
 		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
-
 		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
-		this.checkInPostData.signOffDate = utcDateTime;
 
-		apiService.insertCheckInDetails(this.checkInPostData).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
+		const onSuccess = (data) => {
+			this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, data);
 
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.observablesService.publishSomeData(EnumService.ObserverKeys.NEW_CHECKED_IN, response.Result);
-
-					const suucessScreen = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
-					this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
-						this.navCtrl.navigateForward([suucessScreen], {
-							queryParams: {
-								message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
-								nextPage: nextScreen,
-								actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
-							},
-							replaceUrl: true,
-						});
-					});
-				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-				this.processCheckInError(error, nextScreen);
-			}
-		);
-	}
-
-	async submitInductionCheckInDataGuest(apiService: ApiService) {
-		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
-
-		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
-		this.checkInPostData.signOffDate = utcDateTime;
+			const successScreen = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
+			this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
+				this.navCtrl.navigateForward([successScreen], {
+					queryParams: {
+						message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
+						nextPage: nextScreen,
+						actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
+					},
+					replaceUrl: true,
+				});
+			});
+		};
 
 		if (this.offlineMode) {
+			let entityData: any;
+			if (this.dedicatedModeLocationUse.locationID) {
+				entityData = await this.offlineManagerService.getDeviceLocationDetail(this.dedicatedModeLocationUse.locationID);
+			} else if (this.dedicatedModeLocationUse.projectID) {
+				entityData = await this.offlineManagerService.getDeviceProjectDetail(this.dedicatedModeLocationUse.projectID);
+			} else if (this.dedicatedModeLocationUse.inventoryItemID) {
+				entityData = await this.offlineManagerService.getDeviceInventoryItemDetail(this.dedicatedModeLocationUse.inventoryItemID);
+			}
+
+			const dedicatedModeUserDetail: DeviceUserDetail = this.dedicatedModeUserDetail as any;
+
+			const checkinData = {
+				checkInDate: utcDateTime,
+				checkInLatitude: this.checkInPostData.checkInLatitude,
+				checkInLongitude: this.checkInPostData.checkInLongitude,
+				companyID: this.checkInPostData.companyID,
+				currentUTCDate: utcDateTime,
+				digitalInkSignatureFileName: this.checkInPostData.digitalInkSignatureFileName,
+				digitalInkSignatureBinaryFile: this.checkInPostData.digitalInkSignatureBinaryFile,
+				entityName: this.dedicatedModeLocationUse.projectName || this.dedicatedModeLocationUse.locationName || this.dedicatedModeLocationUse.itemName,
+				firstAndLastName: dedicatedModeUserDetail?.firstName + ' ' + dedicatedModeUserDetail?.lastName,
+				firstName: dedicatedModeUserDetail?.firstName,
+				lastName: dedicatedModeUserDetail?.lastName,
+				isOfflineDone: true,
+				isSimultaneousCheckIn: entityData.isSimultaneousCheckIn,
+				inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
+				projectID: this.dedicatedModeLocationUse.projectID,
+				locationID: this.dedicatedModeLocationUse.locationID,
+				userDetailPhoto: dedicatedModeUserDetail.userPhoto,
+				userId: this.checkInPostData.userId,
+				userPhotoFileName: this.checkInPostData.userPhotoFileName,
+				userPhotoBinaryFile: this.checkInPostData.userPhotoBinaryFile,
+				locationAutoCheckOutHour: entityData.autoCheckOutHour,
+				locationAutoCheckOutTime: entityData.autoCheckOutTime,
+				userAutoCheckOutTime: dedicatedModeUserDetail?.userAutoCheckOutTime,
+				formSubmitDataId: this.checkInPostData?.formSubmitDataId,
+			};
+
+			this.offlineManagerService
+				.insertCheckinDetails(checkinData)
+				.then((res) => {
+					onSuccess(checkinData);
+				})
+				.catch((error) => {
+					this.processCheckInError(error, nextScreen);
+				});
 		} else {
 			this.utilService.presentLoadingWithOptions();
-			apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
+			this.checkInPostData.signOffDate = utcDateTime;
+
+			apiService.insertCheckInDetails(this.checkInPostData).subscribe(
 				(response: Response) => {
 					this.utilService.hideLoading();
 
 					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-						this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
-							this.navCtrl.navigateForward(['/checkinout-success-dm'], {
-								queryParams: {
-									message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
-									nextPage: nextScreen,
-									actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
-								},
-								replaceUrl: true,
-							});
-						});
+						onSuccess(response.Result);
 					}
 				},
 				(error) => {
@@ -1735,9 +1838,89 @@ export class SharedDataService {
 				}
 			);
 		}
-	}
+	};
 
-	processCheckInError(error, nextScreen) {
+	submitInductionCheckInDataGuest = async (apiService: ApiService) => {
+		const nextScreen = this.dedicatedMode ? '/dashboard-dm' : '/tabs/dashboard';
+
+		const utcDateTime = moment().utc(false).format('DD.MM.YYYY HH:mm:ss');
+		this.checkInPostData.signOffDate = utcDateTime;
+
+		const onSuccess = () => {
+			this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN', 'SHARED_TEXT.CONTINUE']).subscribe((res) => {
+				this.navCtrl.navigateForward(['/checkinout-success-dm'], {
+					queryParams: {
+						message: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_HAVE_NOW_CHECKEDIN'],
+						nextPage: nextScreen,
+						actionBtnTitle: res['SHARED_TEXT.CONTINUE'],
+					},
+					replaceUrl: true,
+				});
+			});
+		};
+
+		if (this.offlineMode) {
+			let entityData: any;
+			if (this.dedicatedModeLocationUse.locationID) {
+				entityData = await this.offlineManagerService.getDeviceLocationDetail(this.dedicatedModeLocationUse.locationID);
+			} else if (this.dedicatedModeLocationUse.projectID) {
+				entityData = await this.offlineManagerService.getDeviceProjectDetail(this.dedicatedModeLocationUse.projectID);
+			} else if (this.dedicatedModeLocationUse.inventoryItemID) {
+				entityData = await this.offlineManagerService.getDeviceInventoryItemDetail(this.dedicatedModeLocationUse.inventoryItemID);
+			}
+
+			const checkinData = {
+				checkInDate: utcDateTime,
+				checkInLatitude: this.checkInPostData.checkInLatitude,
+				checkInLongitude: this.checkInPostData.checkInLongitude,
+				companyID: this.checkInPostData.companyID,
+				currentUTCDate: utcDateTime,
+				digitalInkSignatureFileName: this.checkInPostData.digitalInkSignatureFileName,
+				digitalInkSignatureBinaryFile: this.checkInPostData.digitalInkSignatureBinaryFile,
+				entityName: this.dedicatedModeLocationUse.projectName || this.dedicatedModeLocationUse.locationName || this.dedicatedModeLocationUse.itemName,
+				guestPhone: this.checkInPostData.guestPhone.toString(),
+				guestFirsName: this.checkInPostData.guestFirsName,
+				guestLastName: this.checkInPostData.guestLastName,
+				guestMiddleName: this.checkInPostData.guestMiddleName,
+				guestPhotoFileName: this.checkInPostData.guestPhotoFileName,
+				guestPhotoBinaryFile: this.checkInPostData.guestPhotoBinaryFile,
+				isOfflineDone: true,
+				isGuestReturning: this.checkInPostData.isGuestReturning,
+				isSimultaneousCheckIn: entityData.isSimultaneousCheckIn,
+				inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
+				projectID: this.dedicatedModeLocationUse.projectID,
+				locationID: this.dedicatedModeLocationUse.locationID,
+				locationAutoCheckOutHour: entityData.autoCheckOutHour,
+				locationAutoCheckOutTime: entityData.autoCheckOutTime,
+			};
+
+			this.offlineManagerService
+				.insertGuestCheckinDetails(checkinData)
+				.then((res) => {
+					onSuccess();
+				})
+				.catch((error) => {
+					this.processCheckInError(error, nextScreen);
+				});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						onSuccess();
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+					this.processCheckInError(error, nextScreen);
+				}
+			);
+		}
+	};
+
+	processCheckInError = (error, nextScreen) => {
 		const exception = error.error as Response;
 		const failScreen = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
 
@@ -1790,7 +1973,6 @@ export class SharedDataService {
 							title: res,
 							errorTitle: fieldName,
 							errorMessage: message,
-
 							nextPage: nextScreen,
 						},
 						replaceUrl: true,
@@ -1798,30 +1980,24 @@ export class SharedDataService {
 				});
 			}
 		} else {
-			this.translateService
-				.get([
-					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN',
-					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION',
-					'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS',
-				])
-				.subscribe((res) => {
-					this.navCtrl.navigateForward([failScreen], {
-						queryParams: {
-							title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
-							errorTitle: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.NO_QUALIFICATION'],
-							errorMessage: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_DO_NOT_HAVE_THE_REQUIRED_QUALIFICATIONS'],
-							nextPage: nextScreen,
-						},
-						replaceUrl: true,
-					});
+			this.translateService.get(['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN']).subscribe((res) => {
+				this.navCtrl.navigateForward([failScreen], {
+					queryParams: {
+						title: res['PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.YOU_CANNOT_CHECKIN'],
+						errorTitle: '',
+						errorMessage: exception?.ResponseException?.ExceptionMessage || exception?.Message,
+						nextPage: nextScreen,
+					},
+					replaceUrl: true,
 				});
+			});
 		}
-	}
+	};
 
 	/**
 	 * This function is use for submit personal mode sign off data
 	 */
-	async submitPersonalModeSignoffData(apiService: ApiService) {
+	submitPersonalModeSignoffData = async (apiService: ApiService) => {
 		const checkInSuccessPage = this.dedicatedMode ? '/checkinout-success-dm' : '/checkin-success';
 		const checkInFailPage = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
 		let nextPage = this.dedicatedMode ? 'dashboard-dm' : '/tabs/dashboard';
@@ -1982,6 +2158,7 @@ export class SharedDataService {
 				digitalInkSignatureBinaryFile: this.signOffDetailsPostData.digitalInkSignatureBinaryFile,
 				userSignaturePhotoFileName: this.signOffDetailsPostData.userSignaturePhotoFileName,
 				userSignaturePhotoBinaryFile: this.signOffDetailsPostData.userSignaturePhotoBinaryFile,
+				formSubmitDataId: this.signOffDetailsPostData.formSubmitDataId,
 			};
 
 			this.offlineManagerService.insertSignOffDetail(signOffData).then((res) => {
@@ -2006,7 +2183,7 @@ export class SharedDataService {
 				}
 			);
 		}
-	}
+	};
 
 	/**
 	 * Navigate to the induction item type screen
@@ -2014,33 +2191,43 @@ export class SharedDataService {
 	 * @param inductionContentItemIndex index of induction item
 	 */
 
-	inductionNavigationProcess(userId = null, inductionContentItemIndex) {
+	inductionNavigationProcess = (userId = null, inductionContentItemIndex) => {
 		if (this.checkInDetail) {
 			const inductionItems = this.checkInDetail.checkInInductionItems;
 			if (inductionItems && inductionContentItemIndex < inductionItems.length - 1) {
 				const inductionContentItem = inductionItems[inductionContentItemIndex + 1];
 				if (inductionContentItem.contentType === EnumService.InductionContentTypes.FORM) {
 					if (this.dedicatedMode) {
-						this.utilService.presentLoadingWithOptions();
-						this.apiServiceRerence.getDedicatedModeSignOffFormDetail(inductionContentItem.formID).subscribe(
-							(response: Response) => {
-								this.utilService.hideLoading();
-								if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-									this.viewFormFor = EnumService.ViewFormForType.Induction;
-									this.signOffFormDetail = response.Result as SignOffFormDetail;
-									this.inductionContentItemIndex = inductionContentItemIndex + 1;
-									this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType, this.dedicatedMode), {
-										queryParams: {
-											inductionContentItemIndex: this.inductionContentItemIndex,
-										},
-										replaceUrl: true,
-									});
+						const onSuccess = (result) => {
+							this.viewFormFor = EnumService.ViewFormForType.Induction;
+							this.signOffFormDetail = result as SignOffFormDetail;
+							this.inductionContentItemIndex = inductionContentItemIndex + 1;
+							this.navCtrl.navigateForward(UtilService.InductionContentTypeScreenIdentify(inductionContentItem.contentType, this.dedicatedMode), {
+								queryParams: {
+									inductionContentItemIndex: this.inductionContentItemIndex,
+								},
+								replaceUrl: true,
+							});
+						};
+
+						if (this.offlineMode) {
+							this.offlineManagerService.getSignOffFormDetail(inductionContentItem.formID).then((response) => {
+								onSuccess(response);
+							});
+						} else {
+							this.utilService.presentLoadingWithOptions();
+							this.apiServiceRerence.getDedicatedModeSignOffFormDetail(inductionContentItem.formID).subscribe(
+								(response: Response) => {
+									this.utilService.hideLoading();
+									if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+										onSuccess(response.Result);
+									}
+								},
+								(error) => {
+									this.utilService.hideLoading();
 								}
-							},
-							(error) => {
-								this.utilService.hideLoading();
-							}
-						);
+							);
+						}
 					} else {
 						const entityIds = this.utilService.getRelevantEntityId(this.checkInForLocation?.locationID);
 						const LocationID = entityIds.LocationID;
@@ -2101,9 +2288,9 @@ export class SharedDataService {
 				this.submitInductionCheckInData(this.apiServiceRerence);
 			}
 		}
-	}
+	};
 
-	dedicatedModeDocumentSignOffProcess(photoName = null) {
+	dedicatedModeDocumentSignOffProcess = (photoName = null) => {
 		this.signOffDetailsPostData.userId = this.dedicatedModeUserDetail?.userId;
 		if (this.signOffDocumentDetail.isDigitalSignOff || this.signOffDocumentDetail.isSignatureSignOff) {
 			this.navCtrl.navigateForward(['/signoff-digitalink']);
@@ -2113,13 +2300,13 @@ export class SharedDataService {
 		} else {
 			this.submitPersonalModeSignoffData(this.apiServiceRerence);
 		}
-	}
+	};
 
-	dedicatedModeFormSignOffProcess(photoName = null) {
+	dedicatedModeFormSignOffProcess = (photoName = null) => {
 		this.navCtrl.navigateForward(['/form-cover-dm']);
-	}
+	};
 
-	dedicatedModeWorkPermitSignOffProcess(photoName = null) {
+	dedicatedModeWorkPermitSignOffProcess = (photoName = null) => {
 		this.navCtrl.navigateForward(['/form-cover-dm']);
-	}
+	};
 }

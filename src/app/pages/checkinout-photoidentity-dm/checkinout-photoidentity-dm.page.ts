@@ -232,7 +232,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
 							} else {
 								this.sharedDataService.dedicatedModeGuestDetail.guestPhoto = photoName;
 							}
-							this.sharedDataService.getCheckinDetailsGuest(this.apiService, true);
+							const isGuestReturning = true;
+							this.sharedDataService.getCheckinDetailsGuest(this.apiService, isGuestReturning);
 							break;
 						case EnumService.CheckInType.MY_NAME:
 							this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService, photoName);

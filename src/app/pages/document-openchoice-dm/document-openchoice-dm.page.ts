@@ -50,7 +50,7 @@ export class DocumentOpenchoiceDmPage implements OnInit {
 			const docDetail = this.documentDetail as any;
 			const document_BinaryFile = docDetail.document_BinaryFile;
 			const documentFileName = docDetail.documentFileName;
-			this.filehandlerService.saveAndOpenPdf(document_BinaryFile, documentFileName);
+			this.filehandlerService.saveAndOpenFile(document_BinaryFile, documentFileName);
 		} else {
 			this.filehandlerService.openFile(this.sharedDataService.globalDirectories?.documentDirectory + '' + this.documentDetail?.documentFileName);
 		}

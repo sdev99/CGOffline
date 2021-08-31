@@ -16,12 +16,9 @@
 		<div class="content">
 			<h6 class="text-title-1" *ngIf="!sharedDataService.dedicatedMode">{{'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.VIDEO' | translate}}</h6>
 
-			<div class="video-view" *ngIf="inductionItem">
+			<div class="video-view" *ngIf="inductionItem && videoUrl">
 				<video controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
-					<source
-						[src]="sharedDataService.globalDirectories.documentDirectory+inductionItem.documentFileName | safeurl"
-						[type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]"
-					/>
+					<source [src]="videoUrl | safeurl" [type]="StaticDataService.fileMimeTypes[inductionItem.documentFileName.split('.')?.pop()?.toLowerCase()]" />
 				</video>
 			</div>
 		</div>

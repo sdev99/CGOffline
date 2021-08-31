@@ -14,6 +14,7 @@ export class ArAnswerObject {
 	accidentBodyPartIDs?: string;
 	accidentDescription?: string;
 	accidentAttachmentFileName?: string;
+	accidentAttachmentFileId?: string; // For offline mode , id of ImageVideoFiles table
 	accidentAnswerSequence?: any;
 	formVersionID?: number;
 	markAsFailed?: boolean;

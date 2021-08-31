@@ -45,6 +45,7 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
 			const phoneNumber = this.formGroup.controls.phoneNumber.value;
 			if (this.sharedDataService.dedicatedModeDeviceDetailData) {
 				this.utilService.presentLoadingWithOptions();
+
 				if (this.sharedDataService.offlineMode) {
 					this.offlineManagerService
 						.getGuestUserDetailByPhone(phoneNumber)
@@ -60,7 +61,7 @@ export class CheckinoutGuestPhoneDmPage implements OnInit {
 								});
 							} else {
 								this.sharedDataService.dedicatedModeGuestDetail = {
-									guestPhone: phoneNumber,
+									guestPhone: phoneNumber.toString(),
 								};
 								this.navController.navigateForward('checkinout-guest-dm');
 							}

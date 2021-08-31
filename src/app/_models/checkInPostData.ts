@@ -25,6 +25,7 @@ export class CheckInPostData {
 	userSignaturePhotoFileName?: string; //For offline mode
 	userSignaturePhotoBinaryFile?: string; //For offline mode
 	inductionFormContent: string;
+	formSubmitDataId: string; // For offline mode
 	answerNotificationList: string;
 	signOffDate: string;
 }

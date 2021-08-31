@@ -102,7 +102,8 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
 			case EnumService.DedicatedModeProcessTypes.CheckinOut: {
 				switch (this.sharedDataService.checkinoutDmAs) {
 					case EnumService.CheckInType.AS_GUEST:
-						this.sharedDataService.getCheckinDetailsGuest(this.apiService, true);
+						const isGuestReturning = true;
+						this.sharedDataService.getCheckinDetailsGuest(this.apiService, isGuestReturning);
 						break;
 					case EnumService.CheckInType.MY_NAME:
 						this.sharedDataService.getCheckinDetailsForDedicatedMode(this.sharedDataService.dedicatedModeUserDetail.userId, this.apiService);

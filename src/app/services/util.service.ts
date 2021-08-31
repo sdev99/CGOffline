@@ -198,7 +198,7 @@ export class UtilService {
 	}
 
 	static formattedNumberToNumber(formattedNumber) {
-		return Number(formattedNumber.replace(/[^0-9.-]+/g, ''));
+		return formattedNumber ? Number(formattedNumber.replace(/[^0-9.-]+/g, '')) : 0;
 	}
 
 	static FCUniqueName(section, question) {

@@ -141,13 +141,15 @@ export class FormHavPage implements OnInit {
 
 			const entityItem = result as EntityItem;
 			if (entityItem && entityItem.isHAVSData) {
-				this.getTypeList(entityItem.havManufacturerID, havAssessmentTool, () => {
-					this.getModelList(entityItem.havTypeID, havAssessmentTool, () => {
-						this.isManuallyValueUpdate = true;
-						this.setupHavData(havAssessmentTool, entityItem);
-						setTimeout(() => {
-							this.isManuallyValueUpdate = false;
-						}, 500);
+				this.ngZone.run(() => {
+					this.getTypeList(entityItem.havManufacturerID, havAssessmentTool, () => {
+						this.getModelList(entityItem.havTypeID, havAssessmentTool, () => {
+							this.isManuallyValueUpdate = true;
+							this.setupHavData(havAssessmentTool, entityItem);
+							setTimeout(() => {
+								this.isManuallyValueUpdate = false;
+							}, 500);
+						});
 					});
 				});
 			}
@@ -214,9 +216,11 @@ export class FormHavPage implements OnInit {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
 
 		const onSuccess = (toolTypes: any) => {
-			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, toolTypes);
-			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
-			callBack && callBack();
+			this.ngZone.run(() => {
+				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Type, toolTypes);
+				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
+				callBack && callBack();
+			});
 		};
 
 		if (this.sharedDataService.offlineMode) {
@@ -242,8 +246,10 @@ export class FormHavPage implements OnInit {
 	async getModelList(type, havAssessmentTool, callBack = null) {
 		this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, []);
 		const onSuccess = (toolModels: any) => {
-			this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, toolModels);
-			callBack && callBack();
+			this.ngZone.run(() => {
+				this.setupDynamicChoiceListForHavAssessmentTool(havAssessmentTool, EnumService.HavFormFieldOrder.Model, toolModels);
+				callBack && callBack();
+			});
 		};
 
 		if (this.sharedDataService.offlineMode) {

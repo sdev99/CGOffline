@@ -22,60 +22,61 @@ export class OfflineApiService {
 		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineDetails}/${deviceId}`);
 	}
 
-	getDeviceOfflineFile(fileName) {
+	getDeviceOfflineFile(files) {
 		return new Promise((resolve, reject) => {
-			const readJsonFile = (filePath) => {
-				this.httpClient.get(filePath, {}).subscribe(
-					(res) => {
-						resolve(res);
-					},
-					(error) => {
-						reject(error);
-					}
-				);
+			const downloadedJsonFilesPath = [];
+
+			const onFileDownloaded = (jsonFilePath) => {
+				downloadedJsonFilesPath.push(Capacitor.convertFileSrc(jsonFilePath));
+				if (downloadedJsonFilesPath.length === files.length) {
+					resolve(downloadedJsonFilesPath);
+				}
 			};
 
 			if (UtilService.isLocalHost()) {
-				readJsonFile('./assets/202108101317573870376.json');
+				downloadedJsonFilesPath.push('./assets/202108101317573870376.json');
+				resolve(downloadedJsonFilesPath);
 			} else {
-				const fileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
-				const localFilePath = this.file.dataDirectory + fileName;
-
 				const accessID = this.sharedDataService.deviceUID;
 				const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
 				let headers = {};
-				// Authentication by setting header with token value
 				if (accessID && token) {
 					headers = { accessID, token };
 				}
 
-				return this.http
-					.downloadFile(fileUrl, {}, headers, localFilePath)
-					.then(async (response) => {
-						await this.zip
-							.unZip(
-								{
-									source: localFilePath,
-									destination: this.file.dataDirectory,
-									overwrite: true, // Optional default true
-								},
-								(progress) => {
-									console.log('Progress', progress);
-								}
-							)
-							.then((zipResponse) => {
-								console.log('Zip Completed ');
-								const jsonFilePath = zipResponse.value + fileName.replace('zip', 'json');
+				files.map((obj: any) => {
+					const fileName = obj.jsonFileName;
+					const fileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
+					const localFilePath = this.file.dataDirectory + fileName;
 
-								readJsonFile(Capacitor.convertFileSrc(jsonFilePath));
-							})
-							.catch((error) => {
-								console.log('Zip error ', error);
-							});
-					})
-					.catch((error) => {
-						console.log('File Download Error ', error);
-					});
+					this.http
+						.downloadFile(fileUrl, {}, headers, localFilePath)
+						.then(async (response) => {
+							console.log('File Download Completed ', response);
+							await this.zip
+								.unZip(
+									{
+										source: localFilePath,
+										destination: this.file.dataDirectory,
+										overwrite: true, // Optional default true
+									},
+									(progress) => {
+										console.log('Progress', progress);
+									}
+								)
+								.then((zipResponse) => {
+									console.log('UnZip Completed ');
+									const jsonFilePath = zipResponse.value + fileName.replace('zip', 'json');
+									onFileDownloaded(jsonFilePath);
+								})
+								.catch((error) => {
+									console.log('UnZip error ', error);
+								});
+						})
+						.catch((error) => {
+							console.log('File Download Error ', error);
+						});
+				});
 			}
 		});
 	}

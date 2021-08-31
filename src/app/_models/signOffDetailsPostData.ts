@@ -23,6 +23,7 @@ export class SignOffDetailsPostData {
 	approvedRejectedBy: string;
 	createdDate: string;
 	formContent: string;
+	formSubmitDataId?: string; // For offline mode
 	answerNotificationList: string;
 	signOffDate: string;
 }
