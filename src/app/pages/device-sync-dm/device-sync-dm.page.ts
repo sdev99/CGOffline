@@ -29,8 +29,8 @@ export class DeviceSyncDmPage implements OnInit {
 		public utilService: UtilService,
 		public offlineApiService: OfflineApiService,
 		public offlineManagerService: OfflineManagerService,
-		public filehandlerService: FilehandlerService,
-		public sharedDataService: SharedDataService
+		public sharedDataService: SharedDataService,
+		public filehandlerService: FilehandlerService
 	) {
 		this.activatedRoute.queryParams.subscribe((data) => {
 			if (data && data.startSync) {
@@ -110,16 +110,25 @@ export class DeviceSyncDmPage implements OnInit {
 					if (res.Result) {
 						this.offlineApiService
 							.getDeviceOfflineFile(res.Result)
-							.then(async (filesLocalPaths: any) => {
-								filesLocalPaths.map((filePath) => {
-									this.filehandlerService.readJsonFile(filePath).subscribe((offlineData: DeviceOfflineDetailViewModels) => {
-										this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+							.then(async (jsonFiles: any) => {
+								jsonFiles.map((jsonFile, isJsonData) => {
+									if (isJsonData) {
+										this.offlineManagerService.insertOfflineData(jsonFile, (progress) => {
 											this.progress = progress;
 											if (this.progress === 100) {
 												callBack && callBack();
 											}
 										});
-									});
+									} else {
+										this.filehandlerService.readJsonFile(jsonFile).subscribe((offlineData: any) => {
+											this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+												this.progress = progress;
+												if (this.progress === 100) {
+													callBack && callBack();
+												}
+											});
+										});
+									}
 								});
 							})
 							.catch((error) => {
