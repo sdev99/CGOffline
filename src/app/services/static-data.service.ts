@@ -5,6 +5,8 @@ import { EnumService } from './enum.service';
 	providedIn: 'root',
 })
 export class StaticDataService {
+	static OfflineModeSyncMinDays = 7;
+
 	static dateTimeFormat = 'YYYY-MM-DD HH:mm:00.000';
 	static dateTimeFormatAMPM = 'YYYY-MM-DD hh:mm A';
 	static dateFormat = 'YYYY-MM-DD';

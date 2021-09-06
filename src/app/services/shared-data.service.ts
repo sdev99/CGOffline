@@ -737,6 +737,7 @@ export class SharedDataService {
 				guestFirsName: dedicatedModeGuestDetail.guestFirsName,
 				guestMiddleName: dedicatedModeGuestDetail.guestMiddleName,
 				guestLastName: dedicatedModeGuestDetail.guestLastName,
+				guestPhotoBinaryFile: dedicatedModeGuestDetail.guestPhoto_BinaryImage || dedicatedModeGuestDetail.guestPhotoFileName,
 				guestPhoto: dedicatedModeGuestDetail.guestPhoto,
 				companyID: dedicatedModeDeviceDetailData.companyID,
 			} as unknown as CheckInPostData;
@@ -1794,7 +1795,7 @@ export class SharedDataService {
 				digitalInkSignatureFileName: this.checkInPostData.digitalInkSignatureFileName,
 				digitalInkSignatureBinaryFile: this.checkInPostData.digitalInkSignatureBinaryFile,
 				entityName: this.dedicatedModeLocationUse.projectName || this.dedicatedModeLocationUse.locationName || this.dedicatedModeLocationUse.itemName,
-				firstAndLastName: dedicatedModeUserDetail?.firstName + ' ' + dedicatedModeUserDetail?.lastName,
+				firstAndLastName: dedicatedModeUserDetail?.firstName + ' ' + (dedicatedModeUserDetail?.middleName ? dedicatedModeUserDetail?.middleName + ' ' : '') + dedicatedModeUserDetail?.lastName,
 				firstName: dedicatedModeUserDetail?.firstName,
 				lastName: dedicatedModeUserDetail?.lastName,
 				isOfflineDone: true,
@@ -1805,13 +1806,13 @@ export class SharedDataService {
 				userDetailPhoto: dedicatedModeUserDetail.userPhoto,
 				userId: this.checkInPostData.userId,
 				userPhotoFileName: this.checkInPostData.userPhotoFileName,
-				userPhotoBinaryFile: this.checkInPostData.userPhotoBinaryFile,
+				userPhotoBinaryFile: this.checkInPostData.userPhotoBinaryFile || dedicatedModeUserDetail.photo_BinaryImage || dedicatedModeUserDetail.userPhoto_BinaryImage,
 				locationAutoCheckOutHour: entityData.autoCheckOutHour,
 				locationAutoCheckOutTime: entityData.autoCheckOutTime,
 				userAutoCheckOutTime: dedicatedModeUserDetail?.userAutoCheckOutTime,
 				formSubmitDataId: this.checkInPostData?.formSubmitDataId,
 			};
-
+			debugger;
 			this.offlineManagerService
 				.insertCheckinDetails(checkinData)
 				.then((res) => {
@@ -1883,7 +1884,7 @@ export class SharedDataService {
 				guestLastName: this.checkInPostData.guestLastName,
 				guestMiddleName: this.checkInPostData.guestMiddleName,
 				guestPhotoFileName: this.checkInPostData.guestPhotoFileName,
-				guestPhotoBinaryFile: this.checkInPostData.guestPhotoBinaryFile,
+				guestPhotoBinaryFile: this.checkInPostData.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhoto_BinaryImage,
 				isOfflineDone: true,
 				isGuestReturning: this.checkInPostData.isGuestReturning,
 				isSimultaneousCheckIn: entityData.isSimultaneousCheckIn,
@@ -1923,7 +1924,6 @@ export class SharedDataService {
 	processCheckInError = (error, nextScreen) => {
 		const exception = error.error as Response;
 		const failScreen = this.dedicatedMode ? '/checkinout-fail-dm' : '/checkin-fail';
-
 		if (exception?.ResponseException?.ValidationErrors?.length > 0) {
 			const fieldsInfo = exception.ResponseException.ValidationErrors[0].Field.split('#');
 			const fieldName = fieldsInfo[0];

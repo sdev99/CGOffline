@@ -60,6 +60,8 @@ export class AppComponent {
 			this.sharedDataService.apiServiceRerence = this.apiService;
 			this.sharedDataService.accountServiceRef = this.accountService;
 
+			this.sharedDataService.offlineMode = localStorage.getItem('is_offline_mode') === 'true' ? true : false;
+
 			const appLang = localStorage.getItem(EnumService.LocalStorageKeys.APP_LANGUAGE);
 			if (appLang) {
 				this.translateService.use(appLang);

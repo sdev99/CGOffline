@@ -329,8 +329,8 @@ export class SignoffDigitalinkPage implements OnInit {
 				if (this.sharedDataService.signOffDocumentDetail && this.sharedDataService.signOffDocumentDetail?.isPhotoSignOff) {
 					if (this.sharedDataService.dedicatedMode) {
 						this.sharedDataService.dedicatedModeCapturePhotoFor = EnumService.DedicatedModeCapturePhotoForType.Signoff;
-					} else {
 						this.navCtrl.navigateForward(['/checkinout-photoidentity-dm']);
+					} else {
 						this.navCtrl.navigateForward(['/signoff-photo']);
 					}
 				} else {

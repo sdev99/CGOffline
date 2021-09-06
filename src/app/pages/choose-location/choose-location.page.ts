@@ -40,9 +40,8 @@ export class ChooseLocationPage implements OnInit {
 				} else {
 					this.sharedDataService.offlineMode = false;
 				}
-				this.getDeviceEntityDetails();
 			})
-			.catch(() => {
+			.catch((error) => {
 				this.sharedDataService.offlineMode = false;
 			});
 	}
@@ -51,6 +50,7 @@ export class ChooseLocationPage implements OnInit {
 
 	ionViewDidEnter() {
 		this.accountService.activateDevice().subscribe(() => {});
+		this.getDeviceEntityDetails();
 	}
 
 	// getLocationItemList = () => {

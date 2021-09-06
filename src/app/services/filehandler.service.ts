@@ -30,8 +30,11 @@ export class FilehandlerService {
 				})
 				.catch(() => {
 					console.error('Error writing pdf file');
+					callBack(false);
 				});
-		} catch (error) {}
+		} catch (error) {
+			callBack(false);
+		}
 	}
 
 	removeSavedFile(fileName) {
@@ -45,7 +48,9 @@ export class FilehandlerService {
 
 	saveAndOpenFile(base64File: string, fileName: string) {
 		this.saveBinaryFileOnDevice(base64File, fileName, (url) => {
-			this.openFile(url);
+			if (url) {
+				this.openFile(url);
+			}
 		});
 	}
 

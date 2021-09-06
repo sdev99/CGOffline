@@ -41,20 +41,18 @@ export class EvacuationDmPage implements OnInit {
 	}
 
 	getEvacuationList() {
-		this.utilService.presentLoadingWithOptions();
 		if (this.sharedDataService.offlineMode) {
 			this.offlineManagerService
 				.getDeviceEvacuations(this.sharedDataService.dedicatedModeLocationUse)
 				.then((res) => {
-					this.utilService.hideLoading();
 					if (res) {
 						this.evacuationList = res as any;
 					}
 				})
-				.catch(() => {
-					this.utilService.hideLoading();
-				});
+				.catch(() => {});
 		} else {
+			this.utilService.presentLoadingWithOptions();
+
 			this.apiService.getEvacuationList().subscribe(
 				(response: Response) => {
 					this.utilService.hideLoading();
@@ -70,11 +68,20 @@ export class EvacuationDmPage implements OnInit {
 	}
 
 	getUserPhoto(evacuationUserDetail: EvacuationUserDetail) {
-		if (evacuationUserDetail.userPhoto) {
-			return this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + evacuationUserDetail.userPhoto;
-		} else if (evacuationUserDetail.userDetailPhoto) {
-			return this.sharedDataService.globalDirectories?.userDirectory + '' + evacuationUserDetail.userDetailPhoto;
+		if (this.sharedDataService.offlineMode) {
+			if (evacuationUserDetail.userPhoto_BinaryImage) {
+				return 'data:image/png;base64,' + evacuationUserDetail.userPhoto_BinaryImage;
+			} else if (evacuationUserDetail.userDetailPhoto_BinaryImage) {
+				return 'data:image/png;base64,' + evacuationUserDetail.userDetailPhoto_BinaryImage;
+			}
+		} else {
+			if (evacuationUserDetail.userPhoto) {
+				return this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory + '' + evacuationUserDetail.userPhoto;
+			} else if (evacuationUserDetail.userDetailPhoto) {
+				return this.sharedDataService.globalDirectories?.userDirectory + '' + evacuationUserDetail.userDetailPhoto;
+			}
 		}
+
 		return './assets/images/ProfileNone.png';
 	}
 

@@ -40,6 +40,7 @@ import { DeviceFormBuilderDetail } from '../_models/offline/DeviceFormBuilderDet
 import { EntityItem } from '../_models/entityItem';
 import { EnumService } from './enum.service';
 import * as moment from 'moment';
+import { CheckinDetail } from '../_models/checkinDetail';
 
 declare var window: any;
 
@@ -156,6 +157,23 @@ export class OfflineManagerService {
 		};
 	};
 
+	convertObjectToConditionString(obj) {
+		let condition = '';
+		Object.keys(obj).map((item, key) => {
+			if (key > 0) {
+				condition = condition + ' AND';
+			}
+			let conditionValue;
+			if (typeof obj[item] === 'string') {
+				conditionValue = '"' + obj[item] + '"';
+			} else if (typeof obj[item] === 'number') {
+				conditionValue = obj[item];
+			}
+			condition = condition + ' ' + item + ' = ' + conditionValue;
+		});
+		return condition;
+	}
+
 	/**
 	 *
 	 * @param table DB table name
@@ -190,6 +208,52 @@ export class OfflineManagerService {
 		let query = 'DELETE FROM ' + table + (condition ? ' WHERE ' + condition : '');
 
 		return this.dbQuery(query);
+	};
+
+	emptyAllTables = async (callBack) => {
+		await this.emptyTable('DeviceDetails');
+		await this.emptyTable('DeviceEntities');
+		await this.emptyTable('DeviceUsers');
+		await this.emptyTable('DeviceUserQualifications');
+		await this.emptyTable('DeviceGuestUsers');
+		await this.emptyTable('DeviceAvailableDocuments');
+		await this.emptyTable('DeviceArchivedDocuments');
+		await this.emptyTable('DeviceAvailableForms');
+		await this.emptyTable('DeviceArchivedForms');
+		await this.emptyTable('DeviceAvailableWorkPermits');
+		await this.emptyTable('DeviceLiveWorkPermits');
+		await this.emptyTable('DeviceArchivedWorkPermits');
+		await this.emptyTable('DeviceFormDetails');
+		await this.emptyTable('DeviceFormAttachments');
+		await this.emptyTable('DeviceEvacuations');
+		await this.emptyTable('DeviceUserCheckInQualifications');
+		await this.emptyTable('DeviceLocations');
+		await this.emptyTable('DeviceProjects');
+		await this.emptyTable('DeviceInventoryItems');
+		await this.emptyTable('DeviceUserCheckinDetails');
+		await this.emptyTable('DeviceCheckInInductions');
+		await this.emptyTable('DeviceCheckInInductionItems');
+		await this.emptyTable('DeviceGuestUserCheckinDetails');
+		await this.emptyTable('DeviceCheckInGuestInductions');
+		await this.emptyTable('DeviceCheckInGuestInductionItems');
+		await this.emptyTable('DeviceCompanyUsers');
+		await this.emptyTable('DeviceCompanyUserGroups');
+		await this.emptyTable('DeviceHAVManufacturers');
+		await this.emptyTable('DeviceHAVTypes');
+		await this.emptyTable('DeviceHAVModels');
+		await this.emptyTable('DeviceRiskItems');
+		await this.emptyTable('DeviceHazardItems');
+		await this.emptyTable('DeviceAccidentTypes');
+		await this.emptyTable('DeviceAccidentClassifications');
+		await this.emptyTable('DeviceLocationItems');
+		await this.emptyTable('DeviceRiskAssessmentProbabilityOptions');
+		await this.emptyTable('DeviceRiskAssessmentSeverityOptions');
+		await this.emptyTable('DeviceFormBuilderDetails');
+		await this.emptyTable('FormSubmitData');
+		await this.emptyTable('ImageVideoFiles');
+		await this.emptyTable('SignOffDetails');
+
+		callBack && callBack();
 	};
 
 	insertOfflineData = async (offlineData: DeviceOfflineDetailViewModels, callBack) => {
@@ -257,7 +321,6 @@ export class OfflineManagerService {
 		}
 
 		// deviceAvailableDocumentList
-		await this.emptyTable('DeviceAvailableDocuments');
 		const deviceAvailableDocumentList = offlineData.deviceAvailableDocumentList;
 		if (deviceAvailableDocumentList) {
 			for (let index = 0; index < deviceAvailableDocumentList.length; index++) {
@@ -942,7 +1005,7 @@ export class OfflineManagerService {
 			if (folderId) {
 				condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFolderID = ' + folderId;
 			} else {
-				condition = condition + ' AND  parentFolderID is NULL';
+				condition = condition + ' AND  (parentFolderID is NULL OR parentFolderID = 0)';
 			}
 
 			const query = 'SELECT * FROM DeviceAvailableDocuments' + (condition ? ' WHERE ' + condition : '');
@@ -985,7 +1048,7 @@ export class OfflineManagerService {
 			if (folderId) {
 				condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFormFolderID = ' + folderId;
 			} else {
-				condition = condition + ' AND  (parentFormFolderID is NULL OR parentFormFolderID=0)';
+				condition = condition + ' AND  (parentFormFolderID is NULL OR parentFormFolderID = 0)';
 			}
 
 			const query = 'SELECT * FROM DeviceAvailableForms' + (condition ? ' WHERE ' + condition : '');
@@ -1079,7 +1142,7 @@ export class OfflineManagerService {
 		});
 	}
 
-	getDeviceCompanyUsers(name) {
+	getDeviceCompanyUsers(name = '') {
 		return new Promise((resolve, reject) => {
 			let condition = '';
 			if (name) {
@@ -1087,6 +1150,23 @@ export class OfflineManagerService {
 			}
 
 			const query = 'SELECT * FROM DeviceCompanyUsers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceCompanyUserGroups() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceCompanyUserGroups';
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
@@ -1110,6 +1190,80 @@ export class OfflineManagerService {
 
 			const query =
 				'SELECT *, firstName || " " || lastName as firstAndLastName, firstName || " " || middleName || " " || lastName as fullName FROM DeviceUsers' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceHazardItems(companyId, companyRiskItemID) {
+		return new Promise((resolve, reject) => {
+			let conitionObj = {
+				companyID: companyId,
+				companyRiskItemID: companyRiskItemID,
+			};
+			let condition = this.convertObjectToConditionString(conitionObj);
+
+			const query = 'SELECT * FROM DeviceHazardItems' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceRiskAssessmentSeverityOptions() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceRiskAssessmentSeverityOptions';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceRiskAssessmentProbabilityOptions() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceRiskAssessmentProbabilityOptions';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
+	getDeviceRiskItems() {
+		return new Promise((resolve, reject) => {
+			const query = 'SELECT * FROM DeviceRiskItems';
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
@@ -1356,22 +1510,8 @@ export class OfflineManagerService {
 							// let entityData: any;
 							let Field = '';
 							let Message = '';
-							let entityId = currentCheckinLocation.deviceUserCheckinDetailId;
+							let entityId = isGuest ? currentCheckinLocation.deviceGuestUserCheckinDetailId : currentCheckinLocation.deviceUserCheckinDetailId;
 							let entityName = currentCheckinLocation.entityName;
-
-							// if (currentCheckinLocation.locationID) {
-							// 	entityData = await this.getDeviceLocationDetail(currentCheckinLocation.locationID);
-							// 	entityId = currentCheckinLocation.locationID;
-							// 	entityName = currentCheckinLocation.locationName;
-							// } else if (currentCheckinLocation.projectID) {
-							// 	entityData = await this.getDeviceProjectDetail(currentCheckinLocation.projectID);
-							// 	entityId = currentCheckinLocation.projectID;
-							// 	entityName = currentCheckinLocation.projectName;
-							// } else if (currentCheckinLocation.inventoryItemID) {
-							// 	entityData = await this.getDeviceInventoryItemDetail(currentCheckinLocation.inventoryItemID);
-							// 	entityId = currentCheckinLocation.inventoryItemID;
-							// 	entityName = currentCheckinLocation.locationName;
-							// }
 
 							if (isAlreadyCheckinToThisEntity) {
 								Field = 'Location#' + entityId;
@@ -1850,6 +1990,35 @@ export class OfflineManagerService {
 
 				this.dbQuery(query, dataVals)
 					.then((res: any) => {
+						// Insert user checkin detail to Evacuation List
+						const evacuationData = {
+							firstAndLastName: data.firstAndLastName,
+							firstName: data.firstName,
+							inventoryItemID: data.inventoryItemID,
+							lastName: data.lastName,
+							locationID: data.locationID,
+							projectID: data.projectID,
+							userDetailPhoto: data.userDetailPhoto,
+							userDetailPhoto_BinaryImage: data.userPhotoBinaryFile || null,
+							userPhoto: data.userPhoto,
+							userPhoto_BinaryImage: data.userPhotoBinaryFile || null,
+						};
+						debugger;
+
+						let evacCondition = {};
+						if (data.inventoryItemID) {
+							evacCondition['inventoryItemID'] = data.inventoryItemID;
+						} else if (data.locationID) {
+							evacCondition['locationID'] = data.locationID;
+						} else if (data.projectID) {
+							evacCondition['projectID'] = data.projectID;
+						}
+
+						if (data.firstAndLastName) {
+							evacCondition['firstAndLastName'] = data.firstAndLastName;
+						}
+						this.insertData('DeviceEvacuations', evacuationData, evacCondition);
+
 						resolve(res);
 					})
 					.catch((error) => {
@@ -1908,6 +2077,33 @@ export class OfflineManagerService {
 
 			this.dbQuery(query, dataVals)
 				.then((res: any) => {
+					// Insert user checkin detail to Evacuation List
+					const evacuationData = {
+						firstAndLastName: data.guestFirsName + ' ' + (data.guestMiddleName ? data.guestMiddleName + ' ' : '') + data.guestLastName,
+						firstName: data.guestFirsName,
+						inventoryItemID: data.inventoryItemID,
+						lastName: data.guestLastName,
+						locationID: data.locationID,
+						projectID: data.projectID,
+						userDetailPhoto: data.guestPhotoFileName,
+						userDetailPhoto_BinaryImage: data.guestPhotoBinaryFile || null,
+						userPhoto: data.guestPhotoFileName,
+						userPhoto_BinaryImage: data.guestPhotoBinaryFile || null,
+					};
+
+					let evacCondition = {};
+					if (evacuationData.inventoryItemID) {
+						evacCondition['inventoryItemID'] = evacuationData.inventoryItemID;
+					} else if (evacuationData.locationID) {
+						evacCondition['locationID'] = evacuationData.locationID;
+					} else if (evacuationData.projectID) {
+						evacCondition['projectID'] = evacuationData.projectID;
+					}
+
+					if (evacuationData.firstAndLastName) {
+						evacCondition['firstAndLastName'] = evacuationData.firstAndLastName;
+					}
+					this.insertData('DeviceEvacuations', evacuationData, evacCondition);
 					resolve(res);
 				})
 				.catch((error) => {
@@ -1925,7 +2121,65 @@ export class OfflineManagerService {
 			let query = 'UPDATE DeviceUserCheckinDetails SET ' + dataCols.join(' = ?,') + ' = ? WHERE ' + condition;
 
 			this.dbQuery(query, dataVals)
-				.then((res: any) => {
+				.then(async (res: any) => {
+					//Get checkin details
+					const checinDetailQuery = 'SELECT * FROM DeviceUserCheckinDetails WHERE ' + condition;
+					// If user checkout then remove it from Evacuation list
+					const checkinDetails: any = await this.dbQuery(checinDetailQuery);
+
+					if (checkinDetails && checkinDetails.rows.length > 0) {
+						const checkinDetail = this.convertToObject(checkinDetails.rows);
+
+						let removeCondition = this.appendEntityCondition({
+							inventoryItemID: checkinDetail.inventoryItemID,
+							locationID: checkinDetail.locationID,
+							projectID: checkinDetail.projectID,
+						} as DeviceEntityDetail);
+
+						if (checkinDetail.firstAndLastName) {
+							removeCondition = removeCondition + ' AND firstAndLastName = "' + checkinDetail.firstAndLastName + '"';
+						}
+						let removeQuery = 'DELETE from DeviceEvacuations WHERE ' + removeCondition;
+						this.dbQuery(removeQuery);
+					}
+
+					resolve(res);
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	};
+	insertCheckOutDetails_Guest = (data, cond: any = {}) => {
+		const userCheckInDetailID = cond.userCheckInDetailID;
+
+		return new Promise((resolve, reject) => {
+			const { dataCols, dataVals } = this.convertObjectToColValPlaceholders(data);
+			let condition = 'deviceGuestUserCheckinDetailId = ' + userCheckInDetailID;
+			let query = 'UPDATE DeviceGuestUserCheckinDetails SET ' + dataCols.join(' = ?,') + ' = ? WHERE ' + condition;
+
+			this.dbQuery(query, dataVals)
+				.then(async (res: any) => {
+					//Get checkin details
+					const checinDetailQuery = 'SELECT * FROM DeviceGuestUserCheckinDetails WHERE ' + condition;
+					// If user checkout then remove it from Evacuation list
+					const checkinDetails: any = await this.dbQuery(checinDetailQuery);
+
+					if (checkinDetails && checkinDetails.rows.length > 0) {
+						const checkinDetail = this.convertToObject(checkinDetails.rows);
+
+						let removeCondition = this.appendEntityCondition({
+							inventoryItemID: checkinDetail.inventoryItemID,
+							locationID: checkinDetail.locationID,
+							projectID: checkinDetail.projectID,
+						} as DeviceEntityDetail);
+
+						const firstAndLastName = checkinDetail.guestFirsName + ' ' + (checkinDetail.guestMiddleName ? checkinDetail.guestMiddleName + ' ' : '') + checkinDetail.guestLastName;
+						removeCondition = removeCondition + ' AND firstAndLastName = "' + firstAndLastName + '"';
+						let removeQuery = 'DELETE from DeviceEvacuations WHERE ' + removeCondition;
+						this.dbQuery(removeQuery);
+					}
+
 					resolve(res);
 				})
 				.catch((error) => {

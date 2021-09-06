@@ -76,10 +76,8 @@ export class DashboardQrscanPage implements OnInit {
 		});
 	}
 
-	ionViewWillEnter() {}
-
-	ngOnInit() {
-		const QrCodeTestingInLocalHostFor: any = 'inventryitemHav';
+	ionViewWillEnter() {
+		const QrCodeTestingInLocalHostFor: any = 'location2';
 
 		if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
 			setTimeout(() => {
@@ -106,9 +104,7 @@ export class DashboardQrscanPage implements OnInit {
 					case 'form_othercompany':
 						this.checkQrCode('87b71cae-476a-4c08-9c63-f24ef7970f89\n');
 						break;
-					case 'location':
-						this.checkQrCode('rrBma4qkHkaOb0YemnKavm+0xJcQ8EBkiITKUBWwQfgfhXMy3dlZJln3ndeOh48p');
-						break;
+
 					case 'location2':
 						this.checkQrCode('78312786-35ab-4c9e-969e-6f7673ed7a5e');
 						break;
@@ -118,12 +114,11 @@ export class DashboardQrscanPage implements OnInit {
 					case 'user':
 						this.checkQrCode('1b5ee704-21f6-4e91-9544-0f2a6abd7aed');
 						break;
+					case 'user_demo_three':
+						this.checkQrCode('4d0dd7ba-905e-4f2f-9bb7-afd17e6809bc');
+						break;
 					case 'inventryitemHav':
-						if (this.sharedDataService.offlineMode) {
-							this.checkQrCode('pfnCeoTyyI7n6gwDRbUmT759i65qtDPZtkaDYafTw0kvPrNmVFDtq27ccTciimN+');
-						} else {
-							this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
-						}
+						this.checkQrCode('49a1b038-a7cf-4298-9992-86b322e14982');
 						break;
 					case 'inventryitem':
 						this.checkQrCode('22dfd7f6-414c-4608-9b3a-fcc894487fc5');
@@ -133,9 +128,13 @@ export class DashboardQrscanPage implements OnInit {
 		}
 	}
 
+	ngOnInit() {}
+
 	ionViewWillLeave() {
 		console.log('ionViewWillLeave');
-		this.stopScanning();
+		if (!UtilService.isLocalHost()) {
+			this.stopScanning();
+		}
 	}
 
 	ionViewDidEnter() {
@@ -206,7 +205,9 @@ export class DashboardQrscanPage implements OnInit {
 	};
 
 	checkQrCode = async (qrCode) => {
-		this.stopScanning();
+		if (!UtilService.isLocalHost()) {
+			this.stopScanning();
+		}
 
 		if (this.fromFormPage) {
 			this.getAnswerChoiceEntityByQRCode(qrCode);
@@ -242,8 +243,8 @@ export class DashboardQrscanPage implements OnInit {
 				if (res) {
 					onSuccess(res);
 				} else {
-					this.translateService.get('SHARED_TEXT.ERRORS.NOT_FOUND', 'SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID').subscribe((res) => {
-						this.utilService.showAlert(res['SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID'], res['SHARED_TEXT.ERRORS.NOT_FOUND'], () => {
+					this.translateService.get(['SHARED_TEXT.ERRORS.NOT_FOUND', 'SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID']).subscribe((transRes) => {
+						this.utilService.showAlert(transRes['SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID'], transRes['SHARED_TEXT.ERRORS.NOT_FOUND'], () => {
 							this.scan();
 						});
 					});

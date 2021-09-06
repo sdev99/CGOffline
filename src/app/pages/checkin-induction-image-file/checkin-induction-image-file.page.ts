@@ -9,6 +9,7 @@ import { EnumService } from '../../services/enum.service';
 import { AccountService } from '../../services/account.service';
 import { User } from '../../_models';
 import { FilehandlerService } from '../../services/filehandler.service';
+import { StaticDataService } from 'src/app/services/static-data.service';
 
 @Component({
 	selector: 'app-checkin-induction-image-file',
@@ -42,7 +43,13 @@ export class CheckinInductionImageFilePage implements OnInit {
 					if (this.inductionItem.document_BinaryFile) {
 						this.filehandlerService.saveBinaryFileOnDevice(this.inductionItem.document_BinaryFile, this.inductionItem.documentFileName, (url) => {
 							this.ngZone.run(() => {
-								this.imageUrl = url;
+								if (url) {
+									this.imageUrl = url;
+								} else {
+									const extension = this.inductionItem.documentFileName.split('.').pop();
+									const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
+									this.imageUrl = 'data:' + mimeType + ';base64,' + this.inductionItem.document_BinaryFile;
+								}
 							});
 						});
 					}

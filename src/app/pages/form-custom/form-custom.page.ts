@@ -139,7 +139,11 @@ export class FormCustomPage {
 
 	onBack() {
 		if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
-			this.navCtrl.navigateBack('/checkinout-confirm');
+			if (this.sharedDataService.dedicatedMode) {
+				this.navCtrl.navigateBack('/checkinout-option-dm');
+			} else {
+				this.navCtrl.navigateBack('/checkinout-confirm');
+			}
 		} else {
 			this.navCtrl.back();
 		}

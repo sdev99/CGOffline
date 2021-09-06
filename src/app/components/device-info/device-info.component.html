@@ -30,7 +30,7 @@
 				</ion-item>
 			</ion-list>
 
-			<app-sync-warning-msg *ngIf="isOnline"></app-sync-warning-msg>
+			<app-sync-warning-msg *ngIf="UtilService.isOfflineSycronizarionNeeded()"></app-sync-warning-msg>
 
 			<ion-button [disabled]="!isOnline" class="action-btn" (click)="syncClick()"> Synch Now </ion-button>
 		</div>

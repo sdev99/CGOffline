@@ -285,6 +285,7 @@ export class FormAccidentReportPage {
 
 			this.observablesService.removeObservable(fromFormCallbackKey);
 		});
+
 		this.navCtrl.navigateForward('/dashboard-qrscan', {
 			queryParams: {
 				fromFormPage: true,

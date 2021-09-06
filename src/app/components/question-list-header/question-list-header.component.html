@@ -12,11 +12,7 @@
 
 	<ng-container *ngIf="attachments">
 		<ng-container *ngFor="let attachment of attachments">
-			<ion-img
-				class="question-content-img"
-				*ngIf="UtilService.IsFileImageType(attachment.fileExtension)"
-				[src]="sharedDataService.globalDirectories.documentDirectory + '' + attachment.fileName"
-			></ion-img>
+			<ion-img class="question-content-img" *ngIf="UtilService.IsFileImageType(attachment.fileExtension)" [src]="getImageTypeFile(attachment)"></ion-img>
 		</ng-container>
 
 		<ng-container *ngFor="let attachment of attachments">

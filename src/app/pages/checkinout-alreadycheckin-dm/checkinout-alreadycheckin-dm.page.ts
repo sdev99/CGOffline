@@ -55,20 +55,21 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 
 	onContinue() {
 		if (this.sharedDataService.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
-			this.utilService.presentLoadingWithOptions();
-			this.apiService
-				.insertCheckOutDetails_Guest({
-					userCheckInDetailID: this.locationId,
-					guestPhone: this.sharedDataService.dedicatedModeGuestDetail.guestPhone,
-					guestFirsName: this.sharedDataService.dedicatedModeGuestDetail.guestFirsName,
-					guestMiddleName: this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName,
-					guestLastName: this.sharedDataService.dedicatedModeGuestDetail.guestLastName,
-					checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
-					checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
-				})
-				.subscribe(
-					() => {
-						this.utilService.hideLoading();
+			debugger;
+			if (this.sharedDataService.offlineMode) {
+				this.offlineManagerService
+					.insertCheckOutDetails_Guest(
+						{
+							guestPhone: this.sharedDataService.dedicatedModeGuestDetail.guestPhone,
+							guestFirsName: this.sharedDataService.dedicatedModeGuestDetail.guestFirsName,
+							guestMiddleName: this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName,
+							guestLastName: this.sharedDataService.dedicatedModeGuestDetail.guestLastName,
+							checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
+							checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
+						},
+						{ userCheckInDetailID: this.locationId }
+					)
+					.then(() => {
 						this.navController.navigateForward(['/checkinout-success-dm'], {
 							queryParams: {
 								message: 'You have now checked-out',
@@ -76,9 +77,8 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 								actionBtnTitle: 'Continue',
 							},
 						});
-					},
-					(error) => {
-						this.utilService.hideLoading();
+					})
+					.catch((error) => {
 						const exception = error.error as Response;
 						this.navController.navigateForward(['/checkinout-fail-dm'], {
 							queryParams: {
@@ -88,8 +88,44 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 								nextPage: '/dashboard-dm',
 							},
 						});
-					}
-				);
+					});
+			} else {
+				this.utilService.presentLoadingWithOptions();
+				this.apiService
+					.insertCheckOutDetails_Guest({
+						userCheckInDetailID: this.locationId,
+						guestPhone: this.sharedDataService.dedicatedModeGuestDetail.guestPhone,
+						guestFirsName: this.sharedDataService.dedicatedModeGuestDetail.guestFirsName,
+						guestMiddleName: this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName,
+						guestLastName: this.sharedDataService.dedicatedModeGuestDetail.guestLastName,
+						checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
+						checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
+					})
+					.subscribe(
+						() => {
+							this.utilService.hideLoading();
+							this.navController.navigateForward(['/checkinout-success-dm'], {
+								queryParams: {
+									message: 'You have now checked-out',
+									nextPage: '/dashboard-dm',
+									actionBtnTitle: 'Continue',
+								},
+							});
+						},
+						(error) => {
+							this.utilService.hideLoading();
+							const exception = error.error as Response;
+							this.navController.navigateForward(['/checkinout-fail-dm'], {
+								queryParams: {
+									title: 'You cannot check-out',
+									errorTitle: exception.ResponseException.ValidationErrors[0].Field,
+									errorMessage: exception.ResponseException.ValidationErrors[0].Message,
+									nextPage: '/dashboard-dm',
+								},
+							});
+						}
+					);
+			}
 		} else {
 			const onSuccess = (response) => {
 				this.navController.navigateForward(['/checkinout-success-dm'], {

@@ -9,6 +9,7 @@ import { OfflineManagerService } from 'src/app/services/offline-manager.service'
 import { Response } from 'src/app/_models';
 import { DeviceOfflineDetailViewModels } from 'src/app/_models/offline/DeviceOfflineDetailViewModels';
 import { FilehandlerService } from 'src/app/services/filehandler.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
 	selector: 'app-device-sync-dm',
@@ -16,6 +17,7 @@ import { FilehandlerService } from 'src/app/services/filehandler.service';
 	styleUrls: ['./device-sync-dm.page.scss'],
 })
 export class DeviceSyncDmPage implements OnInit {
+	UtilService = UtilService;
 	synchProgressState = 'pending';
 	// synchProgressState = 'processing';
 	// synchProgressState = 'completed';
@@ -79,6 +81,8 @@ export class DeviceSyncDmPage implements OnInit {
 		this.callOfflineApi(() => {
 			if (this.progress === 100) {
 				this.synchProgressState = 'completed';
+				this.sharedDataService.offlineMode = true;
+				localStorage.setItem('is_offline_mode', 'true');
 				localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
 				// if (UtilService.randomBoolean()) {
 				// 	this.synchProgressState = 'failed';
@@ -111,24 +115,26 @@ export class DeviceSyncDmPage implements OnInit {
 						this.offlineApiService
 							.getDeviceOfflineFile(res.Result)
 							.then(async (jsonFiles: any) => {
-								jsonFiles.map((jsonFile, isJsonData) => {
-									if (isJsonData) {
-										this.offlineManagerService.insertOfflineData(jsonFile, (progress) => {
-											this.progress = progress;
-											if (this.progress === 100) {
-												callBack && callBack();
-											}
-										});
-									} else {
-										this.filehandlerService.readJsonFile(jsonFile).subscribe((offlineData: any) => {
-											this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+								this.offlineManagerService.emptyAllTables(() => {
+									jsonFiles.map((jsonFile, isJsonData) => {
+										if (isJsonData) {
+											this.offlineManagerService.insertOfflineData(jsonFile, (progress) => {
 												this.progress = progress;
 												if (this.progress === 100) {
 													callBack && callBack();
 												}
 											});
-										});
-									}
+										} else {
+											this.filehandlerService.readJsonFile(Capacitor.convertFileSrc(jsonFile)).subscribe((offlineData: any) => {
+												this.offlineManagerService.insertOfflineData(offlineData, (progress) => {
+													this.progress = progress;
+													if (this.progress === 100) {
+														callBack && callBack();
+													}
+												});
+											});
+										}
+									});
 								});
 							})
 							.catch((error) => {

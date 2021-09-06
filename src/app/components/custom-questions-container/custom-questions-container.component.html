@@ -18,6 +18,7 @@
 				[required]="question.questionIsRequired"
 				[attachments]="question.questionAttachments"
 				[attachmentIcon]="question.questionAttachmentIconPath"
+				[attachmentIconBinaryFile]="question.questionAttachmentIconPath_BinaryFile"
 				[qNo]="(questionElementIds ? questionElementIds.indexOf(UtilService.HtmlElementIdUq(sectionIndex, questionIndex, sectionId, question.questionId)) : questionIndex) + 1"
 			></app-question-list-header>
 

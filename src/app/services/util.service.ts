@@ -198,7 +198,7 @@ export class UtilService {
 	}
 
 	static formattedNumberToNumber(formattedNumber) {
-		return formattedNumber ? Number(formattedNumber.replace(/[^0-9.-]+/g, '')) : 0;
+		return formattedNumber ? Number(String(formattedNumber).replace(/[^0-9.-]+/g, '')) : 0;
 	}
 
 	static FCUniqueName(section, question) {
@@ -280,6 +280,17 @@ export class UtilService {
 			byteArrays.push(byteArray);
 		}
 		return new Blob(byteArrays, { type: contentType });
+	}
+
+	static isOfflineSycronizarionNeeded() {
+		const lastSyncDate = localStorage.getItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME);
+		if (lastSyncDate) {
+			const lastSyncDateObj = moment(lastSyncDate);
+			const todayDateObj = moment();
+			const dayDiff = todayDateObj.diff(lastSyncDateObj, 'days');
+			return dayDiff > StaticDataService.OfflineModeSyncMinDays;
+		}
+		return false;
 	}
 
 	constructor(private loadingController: LoadingController, private file: File, private alertController: AlertController, private validatorService: ValidatorService) {}

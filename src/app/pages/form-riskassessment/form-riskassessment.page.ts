@@ -25,6 +25,7 @@ import { RAtaskTemplateItem } from 'src/app/_models/RAtaskTemplateItem';
 import { TemplateDropdownComponent } from 'src/app/components/template-dropdown/template-dropdown.component';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityItem } from 'src/app/_models/entityItem';
+import { OfflineManagerService } from 'src/app/services/offline-manager.service';
 
 @Component({
 	selector: 'app-form-riskassessment',
@@ -102,7 +103,8 @@ export class FormRiskassessmentPage implements OnInit {
 		public accountService: AccountService,
 		public photoService: PhotoService,
 		public popoverController: PopoverController,
-		public translateService: TranslateService
+		public translateService: TranslateService,
+		public offlineManagerService: OfflineManagerService
 	) {
 		this.user = accountService.userValue;
 
@@ -392,21 +394,30 @@ export class FormRiskassessmentPage implements OnInit {
 	};
 
 	async getCompanyUserList() {
-		this.utilService.presentLoadingWithOptions();
-
-		this.apiService.getCompanyUserList(this.companyId).subscribe(
-			(response: Response) => {
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.users = response.Result;
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceCompanyUsers().then((res: any) => {
+				if (res) {
+					this.users = res;
 				}
-				this.utilService.hideLoading();
-				this.getCompanyUserGroupList();
-			},
-			(error) => {
-				this.utilService.hideLoading();
-				this.getCompanyUserGroupList();
-			}
-		);
+			});
+			this.getCompanyUserGroupList();
+		} else {
+			this.utilService.presentLoadingWithOptions();
+
+			this.apiService.getCompanyUserList(this.companyId).subscribe(
+				(response: Response) => {
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.users = response.Result;
+					}
+					this.utilService.hideLoading();
+					this.getCompanyUserGroupList();
+				},
+				(error) => {
+					this.utilService.hideLoading();
+					this.getCompanyUserGroupList();
+				}
+			);
+		}
 	}
 
 	// async getRiskRatingOptionList() {
@@ -430,93 +441,136 @@ export class FormRiskassessmentPage implements OnInit {
 	// }
 
 	async getRiskAssessmentProbabilityOptions() {
-		if (!this.sharedDataService.probabilityRatings) {
-			this.utilService.presentLoadingWithOptions();
-		}
-		this.apiService.getRiskAssessmentProbabilityOptions().subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					if (response.Result && response.Result.length > 0) {
-						this.sharedDataService.probabilityRatings = response.Result;
-						this.putRiskRatingInVariable();
-					}
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceRiskAssessmentProbabilityOptions().then((res: any) => {
+				if (res) {
+					this.sharedDataService.probabilityRatings = res;
+					this.putRiskRatingInVariable();
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
+			});
+		} else {
+			if (!this.sharedDataService.probabilityRatings) {
+				this.utilService.presentLoadingWithOptions();
 			}
-		);
+			this.apiService.getRiskAssessmentProbabilityOptions().subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						if (response.Result && response.Result.length > 0) {
+							this.sharedDataService.probabilityRatings = response.Result;
+							this.putRiskRatingInVariable();
+						}
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	async getRiskAssessmentSeverityOptions() {
-		if (!this.sharedDataService.severityRatings) {
-			this.utilService.presentLoadingWithOptions();
-		}
-		this.apiService.getRiskAssessmentSeverityOptions().subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					if (response.Result && response.Result.length > 0) {
-						this.sharedDataService.severityRatings = response.Result;
-						this.putRiskRatingInVariable();
-					}
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceRiskAssessmentSeverityOptions().then((res: any) => {
+				if (res) {
+					this.sharedDataService.severityRatings = res;
+					this.putRiskRatingInVariable();
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
+			});
+		} else {
+			if (!this.sharedDataService.severityRatings) {
+				this.utilService.presentLoadingWithOptions();
 			}
-		);
+			this.apiService.getRiskAssessmentSeverityOptions().subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						if (response.Result && response.Result.length > 0) {
+							this.sharedDataService.severityRatings = response.Result;
+							this.putRiskRatingInVariable();
+						}
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	async getRiskItemList() {
-		this.utilService.presentLoadingWithOptions();
-		this.apiService.getRiskItemList(this.companyId).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					if (response.Result && response.Result.length > 0) {
-						this.sharedDataService.raTaskTemplateList = response.Result;
-						this.taskTemplateList = response.Result;
-					}
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceRiskItems().then((res: any) => {
+				if (res) {
+					this.sharedDataService.raTaskTemplateList = res;
+					this.taskTemplateList = res;
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			this.apiService.getRiskItemList(this.companyId).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						if (response.Result && response.Result.length > 0) {
+							this.sharedDataService.raTaskTemplateList = response.Result;
+							this.taskTemplateList = response.Result;
+						}
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	async getHazardItemList(companyRiskItemID) {
-		this.utilService.presentLoadingWithOptions();
-		this.apiService.getHazardItemList(this.companyId, companyRiskItemID).subscribe(
-			(response: Response) => {
-				this.utilService.hideLoading();
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					if (response.Result && response.Result.length > 0) {
-						this.controlMeasureTemplateList = response.Result;
-					}
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceHazardItems(this.companyId, companyRiskItemID).then((res: any) => {
+				if (res) {
+					this.controlMeasureTemplateList = res;
 				}
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			this.apiService.getHazardItemList(this.companyId, companyRiskItemID).subscribe(
+				(response: Response) => {
+					this.utilService.hideLoading();
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						if (response.Result && response.Result.length > 0) {
+							this.controlMeasureTemplateList = response.Result;
+						}
+					}
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	getCompanyUserGroupList() {
-		this.utilService.presentLoadingWithOptions();
-		this.apiService.getCompanyUserGroupList(this.companyId).subscribe(
-			(response: Response) => {
-				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-					this.groups = response.Result;
+		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService.getDeviceCompanyUserGroups().then((res: any) => {
+				if (res) {
+					this.groups = res;
 				}
-				this.utilService.hideLoading();
-			},
-			(error) => {
-				this.utilService.hideLoading();
-			}
-		);
+			});
+		} else {
+			this.utilService.presentLoadingWithOptions();
+			this.apiService.getCompanyUserGroupList(this.companyId).subscribe(
+				(response: Response) => {
+					if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+						this.groups = response.Result;
+					}
+					this.utilService.hideLoading();
+				},
+				(error) => {
+					this.utilService.hideLoading();
+				}
+			);
+		}
 	}
 
 	putRiskRatingInVariable = () => {

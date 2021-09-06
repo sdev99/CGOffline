@@ -13,6 +13,7 @@ import { AttachmentItem } from '../../_models/attachmentItem';
 import { Response } from '../../_models';
 import { FormItem } from '../../_models/formItem';
 import { OfflineManagerService } from 'src/app/services/offline-manager.service';
+import { StaticDataService } from 'src/app/services/static-data.service';
 
 @Component({
 	selector: 'app-form-cover-dm',
@@ -44,6 +45,16 @@ export class FormCoverDmPage implements OnInit {
 	}
 
 	ngOnInit(): void {}
+
+	getAttachmentIcon = (attachment) => {
+		if (this.sharedDataService.offlineMode) {
+			const extension = attachment.documentFileFormat;
+			const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
+			const base64 = 'data:' + mimeType + ';base64,' + attachment.documentIcon_BinaryFile;
+			return base64;
+		}
+		return attachment.documentFileIconURL;
+	};
 
 	openFile(attachmentItem: AttachmentItem) {
 		if (this.sharedDataService.offlineMode) {

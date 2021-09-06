@@ -31,6 +31,10 @@ export class OfflineApiService {
 		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineDetails}/${deviceId}`);
 	}
 
+	deleteDownloadedFileFromServer(fileName) {
+		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineDetails}/${deviceId}`);
+	}
+
 	downloadFile(path: string, headers) {
 		return this.httpClient.get(`${path}`, { headers: headers });
 	}
@@ -68,16 +72,20 @@ export class OfflineApiService {
 						const writeDirectory = this.platform.is('ios') ? this.file.dataDirectory : this.file.dataDirectory;
 						const localFilePath = writeDirectory + fileName;
 
-						this.http
-							.downloadFile(fileUrl, {}, headers, localFilePath)
-							.then(async (response) => {
-								console.log('File Download Completed ', response);
-								onFileDownloaded(localFilePath);
-							})
-							.catch((error) => {
-								debugger;
-								console.log('File Download Error ', error);
-							});
+						if (UtilService.isLocalHost()) {
+							onFileDownloaded(fileUrl);
+						} else {
+							this.http
+								.downloadFile(fileUrl, {}, headers, localFilePath)
+								.then(async (response) => {
+									console.log('File Download Completed ', response);
+									onFileDownloaded(localFilePath);
+								})
+								.catch((error) => {
+									debugger;
+									console.log('File Download Error ', error);
+								});
+						}
 					}
 				});
 			}

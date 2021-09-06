@@ -101,6 +101,7 @@ export class CheckinoutNameDmPage implements OnInit {
 	};
 
 	onContinue() {
+		console.log('SelectedUser ', this.selectedUser);
 		this.sharedDataService.dedicatedModeUserDetail = this.selectedUser;
 		this.navController.navigateForward('checkinout-identityconfirm-dm');
 	}

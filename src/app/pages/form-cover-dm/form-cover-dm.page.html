@@ -32,7 +32,7 @@
 
             <ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)"
                       *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
-                <ion-img slot="start" [src]="attachmentItem.documentFileIconURL"></ion-img>
+                <ion-img slot="start" [src]="getAttachmentIcon(attachmentItem)"></ion-img>
                 <ion-label>{{attachmentItem.documentFileName}}</ion-label>
             </ion-item>
         </div>
