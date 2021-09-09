@@ -31,8 +31,12 @@ export class OfflineApiService {
 		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineDetails}/${deviceId}`);
 	}
 
+	getSynchStatus(deviceId) {
+		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetSynchStatus}/${deviceId}`);
+	}
+
 	deleteDownloadedFileFromServer(fileName) {
-		return this.httpClient.get(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineDetails}/${deviceId}`);
+		return this.httpClient.delete(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.DeviceOfflineFileDelete}?fileName=${fileName}`);
 	}
 
 	downloadFile(path: string, headers) {
@@ -65,6 +69,7 @@ export class OfflineApiService {
 
 				files.map((obj: any) => {
 					const fileName = obj.jsonFileName;
+					const zipFileName = obj.zipFileName;
 
 					// Download JSON file
 					if (fileName) {
@@ -79,6 +84,9 @@ export class OfflineApiService {
 								.downloadFile(fileUrl, {}, headers, localFilePath)
 								.then(async (response) => {
 									console.log('File Download Completed ', response);
+									this.deleteDownloadedFileFromServer(fileName);
+									this.deleteDownloadedFileFromServer(zipFileName);
+
 									onFileDownloaded(localFilePath);
 								})
 								.catch((error) => {
@@ -119,7 +127,6 @@ export class OfflineApiService {
 				}
 
 				const readBlob = (blob) => {
-					debugger;
 					try {
 						var jsZipObj = new JSZip();
 						debugger;
@@ -211,4 +218,14 @@ export class OfflineApiService {
 			}
 		});
 	}
+
+	uploadMultipleFiles = (formData) => {
+		return this.httpClient.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.PostOfflineFormAnswerPhotoOrVideo}`, formData);
+	};
+
+	postOfflineZipFile = (fileObj, fileName) => {
+		const formData = new FormData();
+		formData.append('file', fileObj, fileName);
+		return this.httpClient.post(`${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.PostDeviceOfflineFile}`, formData);
+	};
 }

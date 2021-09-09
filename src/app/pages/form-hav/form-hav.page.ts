@@ -185,11 +185,19 @@ export class FormHavPage implements OnInit {
 		if (this.sharedDataService.dedicatedMode) {
 			userId = this.sharedDataService.dedicatedModeUserDetail?.userId;
 		}
-		this.apiService.getUserTotalHAVExposureForToday(userId).subscribe((response: Response) => {
-			if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-				this.currentExposure = UtilService.formattedNumberToNumber(response.Result);
-			}
-		});
+		if (this.sharedDataService.offlineMode && userId) {
+			this.offlineManagerService.getUserTotalHAVExposureForToday(userId).then((res: any) => {
+				if (res) {
+					this.currentExposure = UtilService.formattedNumberToNumber(res.total_exposure);
+				}
+			});
+		} else {
+			this.apiService.getUserTotalHAVExposureForToday(userId).subscribe((response: Response) => {
+				if (response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
+					this.currentExposure = UtilService.formattedNumberToNumber(response.Result);
+				}
+			});
+		}
 	}
 
 	setupDynamicChoiceListForHavAssessmentTool = (havAssessmentTool, listType, list) => {
@@ -252,22 +260,24 @@ export class FormHavPage implements OnInit {
 			});
 		};
 
-		if (this.sharedDataService.offlineMode) {
-			this.offlineManagerService.getModelList(this.companyId, type).then((res: any) => {
-				onSuccess(res);
-			});
-		} else {
-			this.utilService.presentLoadingWithOptions();
+		if (this.companyId && type) {
+			if (this.sharedDataService.offlineMode) {
+				this.offlineManagerService.getModelList(this.companyId, type).then((res: any) => {
+					onSuccess(res);
+				});
+			} else {
+				this.utilService.presentLoadingWithOptions();
 
-			this.apiService.getModelList(this.companyId, type).subscribe(
-				(response: Response) => {
-					this.utilService.hideLoading();
-					onSuccess(response.Result);
-				},
-				(error) => {
-					this.utilService.hideLoading();
-				}
-			);
+				this.apiService.getModelList(this.companyId, type).subscribe(
+					(response: Response) => {
+						this.utilService.hideLoading();
+						onSuccess(response.Result);
+					},
+					(error) => {
+						this.utilService.hideLoading();
+					}
+				);
+			}
 		}
 	}
 

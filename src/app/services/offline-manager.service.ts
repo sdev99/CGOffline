@@ -40,7 +40,6 @@ import { DeviceFormBuilderDetail } from '../_models/offline/DeviceFormBuilderDet
 import { EntityItem } from '../_models/entityItem';
 import { EnumService } from './enum.service';
 import * as moment from 'moment';
-import { CheckinDetail } from '../_models/checkinDetail';
 
 declare var window: any;
 
@@ -52,9 +51,7 @@ export class OfflineManagerService {
 	readonly db_name: string = 'compliancegenie.db';
 	readonly db_table: string = 'userTable';
 
-	constructor(private platform: Platform, private sqlite: SQLite) {
-		this.dbSetUp();
-	}
+	constructor(private platform: Platform, private sqlite: SQLite, private utilService: UtilService) {}
 
 	public dbSetUp() {
 		if (UtilService.isLocalHost()) {
@@ -206,54 +203,28 @@ export class OfflineManagerService {
 
 	emptyTable = (table, condition = '') => {
 		let query = 'DELETE FROM ' + table + (condition ? ' WHERE ' + condition : '');
-
 		return this.dbQuery(query);
 	};
 
 	emptyAllTables = async (callBack) => {
-		await this.emptyTable('DeviceDetails');
-		await this.emptyTable('DeviceEntities');
-		await this.emptyTable('DeviceUsers');
-		await this.emptyTable('DeviceUserQualifications');
-		await this.emptyTable('DeviceGuestUsers');
-		await this.emptyTable('DeviceAvailableDocuments');
-		await this.emptyTable('DeviceArchivedDocuments');
-		await this.emptyTable('DeviceAvailableForms');
-		await this.emptyTable('DeviceArchivedForms');
-		await this.emptyTable('DeviceAvailableWorkPermits');
-		await this.emptyTable('DeviceLiveWorkPermits');
-		await this.emptyTable('DeviceArchivedWorkPermits');
-		await this.emptyTable('DeviceFormDetails');
-		await this.emptyTable('DeviceFormAttachments');
-		await this.emptyTable('DeviceEvacuations');
-		await this.emptyTable('DeviceUserCheckInQualifications');
-		await this.emptyTable('DeviceLocations');
-		await this.emptyTable('DeviceProjects');
-		await this.emptyTable('DeviceInventoryItems');
-		await this.emptyTable('DeviceUserCheckinDetails');
-		await this.emptyTable('DeviceCheckInInductions');
-		await this.emptyTable('DeviceCheckInInductionItems');
-		await this.emptyTable('DeviceGuestUserCheckinDetails');
-		await this.emptyTable('DeviceCheckInGuestInductions');
-		await this.emptyTable('DeviceCheckInGuestInductionItems');
-		await this.emptyTable('DeviceCompanyUsers');
-		await this.emptyTable('DeviceCompanyUserGroups');
-		await this.emptyTable('DeviceHAVManufacturers');
-		await this.emptyTable('DeviceHAVTypes');
-		await this.emptyTable('DeviceHAVModels');
-		await this.emptyTable('DeviceRiskItems');
-		await this.emptyTable('DeviceHazardItems');
-		await this.emptyTable('DeviceAccidentTypes');
-		await this.emptyTable('DeviceAccidentClassifications');
-		await this.emptyTable('DeviceLocationItems');
-		await this.emptyTable('DeviceRiskAssessmentProbabilityOptions');
-		await this.emptyTable('DeviceRiskAssessmentSeverityOptions');
-		await this.emptyTable('DeviceFormBuilderDetails');
-		await this.emptyTable('FormSubmitData');
-		await this.emptyTable('ImageVideoFiles');
-		await this.emptyTable('SignOffDetails');
-
-		callBack && callBack();
+		let emptiedCount = 0;
+		StaticDataService.offlineTables.map((data) => {
+			if (data.table_name) {
+				this.emptyTable(data.table_name)
+					.then(() => {
+						emptiedCount++;
+						if (emptiedCount === StaticDataService.offlineTables.length) {
+							callBack && callBack();
+						}
+					})
+					.catch(() => {
+						emptiedCount++;
+						if (emptiedCount === StaticDataService.offlineTables.length) {
+							callBack && callBack();
+						}
+					});
+			}
+		});
 	};
 
 	insertOfflineData = async (offlineData: DeviceOfflineDetailViewModels, callBack) => {
@@ -1123,6 +1094,30 @@ export class OfflineManagerService {
 		});
 	}
 
+	getDeviceAvailableWorkPermits(entity: DeviceEntityDetail, folderId = 0) {
+		return new Promise((resolve, reject) => {
+			let condition = this.appendEntityCondition(entity);
+			if (folderId) {
+				condition = '(' + condition + ' OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))' + ' AND  parentFormFolderID = ' + folderId;
+			} else {
+				condition = condition + ' AND  (parentFormFolderID is NULL OR parentFormFolderID = 0)';
+			}
+
+			const query = 'SELECT * FROM DeviceAvailableWorkPermits' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
+
 	getDeviceEvacuations(entity: DeviceEntityDetail) {
 		return new Promise((resolve, reject) => {
 			let condition = this.appendEntityCondition(entity);
@@ -1184,6 +1179,7 @@ export class OfflineManagerService {
 	getDeviceUsers(name) {
 		return new Promise((resolve, reject) => {
 			let condition = '';
+
 			if (name) {
 				condition = condition + "LOWER(firstAndLastName) LIKE LOWER('%" + name + "%') OR LOWER(fullName) LIKE LOWER('%" + name + "%')";
 			}
@@ -1465,16 +1461,19 @@ export class OfflineManagerService {
 			};
 
 			let query;
+			const checkoutDateCondition = '(checkOutDate is NULL OR checkOutDate="" OR checkOutDate="' + StaticDataService.userDefaultDate + '")';
 			if (isGuest) {
-				const condition = ' guestPhone = "' + userIdOrGuestPhone + '" AND checkOutDate is NULL';
+				const condition = ' guestPhone = "' + userIdOrGuestPhone + '" AND ' + checkoutDateCondition;
 				query = 'SELECT * FROM DeviceGuestUserCheckinDetails' + (condition ? ' WHERE ' + condition : '') + ' ORDER BY checkInDate DESC';
 			} else {
-				const condition = ' userId = "' + userIdOrGuestPhone + '" AND checkOutDate is NULL';
+				const condition = ' userId = "' + userIdOrGuestPhone + '" AND ' + checkoutDateCondition;
 				query = 'SELECT * FROM DeviceUserCheckinDetails' + (condition ? ' WHERE ' + condition : '') + ' ORDER BY checkInDate DESC';
 			}
 
+			debugger;
 			this.dbQuery(query, [])
 				.then(async (res: any) => {
+					debugger;
 					const deviceUserCheckinDetails = this.convertToArray(res.rows);
 
 					let isAlreadyCheckinToThisEntity = false;
@@ -1551,6 +1550,7 @@ export class OfflineManagerService {
 					}
 				})
 				.catch((error) => {
+					debugger;
 					reject(error);
 				});
 		});
@@ -1900,17 +1900,44 @@ export class OfflineManagerService {
 		});
 	}
 
+	getUserTotalHAVExposureForToday(userId) {
+		return new Promise((resolve) => {
+			let condition = 'userId = "' + userId + '" AND date="' + moment().format('YYYY-MM-DDT00:00:00.000') + '"';
+			const query = 'SELECT exposure as total_exposure FROM UserHavExposure' + (condition ? ' WHERE ' + condition : '');
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					debugger;
+					if (res.rows?.length > 0) {
+						resolve(this.convertToObject(res.rows));
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					resolve(null);
+				});
+		});
+	}
+
 	/********************************************************************************/
 	/*****************************Insert Data Operations*****************************/
 	/********************************************************************************/
 
+	insertLiveWorkPermit = (data) => {
+		return new Promise((resolve, reject) => {
+			this.insertData('DeviceLiveWorkPermits', data)
+				.then((res: any) => {
+					resolve(res.insertId);
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	};
+
 	insertImageVideoFile = (data) => {
 		return new Promise((resolve, reject) => {
-			const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
-
-			let query = 'INSERT INTO ImageVideoFiles (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
-
-			this.dbQuery(query, dataVals)
+			this.insertData('ImageVideoFiles', data)
 				.then((res: any) => {
 					resolve(res.insertId);
 				})
@@ -1922,11 +1949,7 @@ export class OfflineManagerService {
 
 	insertFormSubmitData = (data) => {
 		return new Promise((resolve, reject) => {
-			const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
-
-			let query = 'INSERT INTO FormSubmitData (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
-
-			this.dbQuery(query, dataVals)
+			this.insertData('FormSubmitData', data)
 				.then((res: any) => {
 					resolve(res.insertId);
 				})
@@ -1936,20 +1959,33 @@ export class OfflineManagerService {
 		});
 	};
 
-	insertSignOffDetail = (data) => {
+	insertHAVExposureForDate = (data) => {
 		return new Promise((resolve, reject) => {
-			const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(data);
-
-			let query = 'INSERT INTO SignOffDetails (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
-
-			this.dbQuery(query, dataVals)
+			const condition = 'userId="' + data.userId + '" AND date="' + moment().format('YYYY-MM-DDT00:00:00.000') + '"';
+			let query = 'SELECT userHavExposureId FROM UserHavExposure WHERE ' + condition;
+			this.dbQuery(query)
 				.then((res: any) => {
-					resolve(res);
+					if (res && res.length > 0) {
+						let query = 'UPDATE UserHavExposure SET exposure=? WHERE ' + condition;
+						this.dbQuery(query, [data.exposure])
+							.then((res: any) => {
+								resolve(res.insertId);
+							})
+							.catch((error) => {
+								reject(error);
+							});
+					} else {
+						this.insertData('UserHavExposure', data);
+					}
 				})
-				.catch((error) => {
-					reject(error);
+				.catch(() => {
+					this.insertData('UserHavExposure', data);
 				});
 		});
+	};
+
+	insertSignOffDetail = (data) => {
+		return this.insertData('SignOffDetails', data);
 	};
 
 	insertCheckinDetails = async (data) => {
@@ -1992,16 +2028,16 @@ export class OfflineManagerService {
 					.then((res: any) => {
 						// Insert user checkin detail to Evacuation List
 						const evacuationData = {
-							firstAndLastName: data.firstAndLastName,
-							firstName: data.firstName,
-							inventoryItemID: data.inventoryItemID,
-							lastName: data.lastName,
-							locationID: data.locationID,
-							projectID: data.projectID,
-							userDetailPhoto: data.userDetailPhoto,
-							userDetailPhoto_BinaryImage: data.userPhotoBinaryFile || null,
-							userPhoto: data.userPhoto,
-							userPhoto_BinaryImage: data.userPhotoBinaryFile || null,
+							firstAndLastName: data.firstAndLastName || '',
+							firstName: data.firstName || '',
+							inventoryItemID: data.inventoryItemID || 0,
+							lastName: data.lastName || '',
+							locationID: data.locationID || 0,
+							projectID: data.projectID || 0,
+							userDetailPhoto: data.userDetailPhoto || '',
+							userDetailPhoto_BinaryImage: data.userPhotoBinaryFile || '',
+							userPhoto: data.userPhoto || '',
+							userPhoto_BinaryImage: data.userPhotoBinaryFile || '',
 						};
 						debugger;
 
@@ -2054,13 +2090,13 @@ export class OfflineManagerService {
 	insertGuestCheckinDetails = (data) => {
 		if (!data.isGuestReturning) {
 			const guestUser = {
-				guestFirsName: data.guestFirsName,
-				guestLastName: data.guestLastName,
-				guestMiddleName: data.guestMiddleName,
-				guestPhone: data.guestPhone,
-				guestPhotoFileName: data.guestPhotoFileName,
-				guestPhotoBinaryFile: data.guestPhotoBinaryFile,
-				isOfflineDone: data.isOfflineDone,
+				guestFirsName: data.guestFirsName || '',
+				guestLastName: data.guestLastName || '',
+				guestMiddleName: data.guestMiddleName || '',
+				guestPhone: data.guestPhone || '',
+				guestPhotoFileName: data.guestPhotoFileName || '',
+				guestPhotoBinaryFile: data.guestPhotoBinaryFile || '',
+				isOfflineDone: data.isOfflineDone || false,
 			};
 			const { dataCols, dataVals, dataValPlaceHolders } = this.convertObjectToColValPlaceholders(guestUser);
 			let query = 'INSERT INTO DeviceGuestUsers (' + dataCols.join(',') + ') select ' + dataValPlaceHolders.join(',') + '';
@@ -2080,15 +2116,15 @@ export class OfflineManagerService {
 					// Insert user checkin detail to Evacuation List
 					const evacuationData = {
 						firstAndLastName: data.guestFirsName + ' ' + (data.guestMiddleName ? data.guestMiddleName + ' ' : '') + data.guestLastName,
-						firstName: data.guestFirsName,
-						inventoryItemID: data.inventoryItemID,
-						lastName: data.guestLastName,
-						locationID: data.locationID,
-						projectID: data.projectID,
-						userDetailPhoto: data.guestPhotoFileName,
-						userDetailPhoto_BinaryImage: data.guestPhotoBinaryFile || null,
-						userPhoto: data.guestPhotoFileName,
-						userPhoto_BinaryImage: data.guestPhotoBinaryFile || null,
+						firstName: data.guestFirsName || '',
+						inventoryItemID: data.inventoryItemID || '',
+						lastName: data.guestLastName || '',
+						locationID: data.locationID || 0,
+						projectID: data.projectID || 0,
+						userDetailPhoto: data.guestPhotoFileName || '',
+						userDetailPhoto_BinaryImage: data.guestPhotoBinaryFile || '',
+						userPhoto: data.guestPhotoFileName || '',
+						userPhoto_BinaryImage: data.guestPhotoBinaryFile || '',
 					};
 
 					let evacCondition = {};
@@ -2187,4 +2223,488 @@ export class OfflineManagerService {
 				});
 		});
 	};
+
+	/********************************************************************************/
+	/*****************************Get Offline Data For Post**************************/
+	/********************************************************************************/
+
+	shouldOnlyUseInOfflineMode = () => {
+		return new Promise((resolve) => {
+			this.getOfflineSignoffDetails().then((res: any) => {
+				if (res && res.length > 0) {
+					resolve(true);
+				} else {
+					this.getOfflineUserCheckinDetails().then((checkinRes: any) => {
+						if (checkinRes && checkinRes.length > 0) {
+							resolve(true);
+						} else {
+							this.getOfflineGuestCheckinDetails().then((guestCheckinRes: any) => {
+								if (guestCheckinRes && guestCheckinRes.length > 0) {
+									resolve(true);
+								} else {
+									resolve(false);
+								}
+							});
+						}
+					});
+				}
+			});
+		});
+	};
+
+	getAllFormSubimitedFiles = () => {
+		return new Promise((resolve) => {
+			const query = 'SELECT * FROM ImageVideoFiles';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	getOfflineSubmittedFormData = (formSubmitDataId) => {
+		return new Promise((resolve) => {
+			const query = 'SELECT * FROM FormSubmitData WHERE formSubmitDataId = ' + formSubmitDataId;
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToObject(res.rows));
+					} else {
+						resolve(null);
+					}
+				})
+				.catch((error) => {
+					resolve(null);
+				});
+		});
+	};
+
+	getOfflineSignoffDetails = () => {
+		return new Promise((resolve) => {
+			const query = 'SELECT * FROM SignOffDetails';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	getOfflineUserCheckinDetails = () => {
+		return new Promise((resolve) => {
+			const query = 'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = "true"';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	getOfflineGuestCheckinDetails = () => {
+		return new Promise((resolve) => {
+			const query = 'SELECT * FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = "true"';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	getOfflineUserCheckoutDetails = () => {
+		return new Promise((resolve) => {
+			const query =
+				'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = "true" AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
+				StaticDataService.userDefaultDate +
+				'")';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	getOfflineGuestCheckoutDetails = () => {
+		return new Promise((resolve) => {
+			const query =
+				'SELECT * FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = "true" AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
+				StaticDataService.userDefaultDate +
+				'")';
+			this.dbQuery(query, [])
+				.then((res: any) => {
+					if (res.rows?.length > 0) {
+						resolve(this.convertToArray(res.rows));
+					} else {
+						resolve([]);
+					}
+				})
+				.catch((error) => {
+					resolve([]);
+				});
+		});
+	};
+
+	replaceImageNameInFormData = (submittedFormData, uploadedFiles) => {
+		if (submittedFormData) {
+			try {
+				submittedFormData.formattedSections?.map((section) => {
+					section.answerData?.map((questionAsnwerObj) => {
+						if (section.isAccidentReportSection) {
+							if (questionAsnwerObj.answerData.accidentAttachmentFileId) {
+								questionAsnwerObj.answerData['accidentAttachmentFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.answerData.accidentAttachmentFileId];
+							}
+							if (questionAsnwerObj.arAnswerData.accidentAttachmentFileId) {
+								questionAsnwerObj.arAnswerData['accidentAttachmentFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.arAnswerData.accidentAttachmentFileId];
+							}
+						} else {
+							if (questionAsnwerObj.answerData.imageVideoFileId) {
+								questionAsnwerObj.answerData['imageVideoFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.answerData.imageVideoFileId];
+							}
+						}
+					});
+				});
+			} catch (error) {}
+
+			try {
+				submittedFormData.accidentReportQuestionAnswers?.map((questionAsnwerObj) => {
+					if (questionAsnwerObj.accidentAttachmentFileId) {
+						questionAsnwerObj['accidentAttachmentFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.accidentAttachmentFileId];
+					}
+				});
+			} catch (error) {}
+
+			try {
+				submittedFormData.questionAnswers?.map((questionAsnwerObj) => {
+					if (questionAsnwerObj.imageVideoFileId) {
+						questionAsnwerObj['imageVideoFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.imageVideoFileId];
+					}
+					if (questionAsnwerObj.accidentAttachmentFileId) {
+						questionAsnwerObj['accidentAttachmentFileName'] = uploadedFiles['imageVideoFileId_' + questionAsnwerObj.accidentAttachmentFileId];
+					}
+				});
+			} catch (error) {}
+		}
+	};
+
+	async prepareJsonFileForPost(deviceId, offlineApiService) {
+		let postJsonFileData = {
+			deviceID: deviceId,
+			personalModeSignOffDetails: [],
+			checkInDetails: [],
+			checkInDetails_Guest: [],
+			checkOutDetails: [],
+			checkOutDetails_Guest: [],
+		};
+		let isDataAvailableForPost = false;
+
+		return new Promise(async (resolve, reject) => {
+			const downloadAllFormOfflineFile = async () => {
+				// getAllFormSubimitedFiles
+				const allFiles: any = await this.getAllFormSubimitedFiles();
+
+				if (allFiles && allFiles.length > 0) {
+					let convertedFileCount = 0;
+					const formData = new FormData();
+					allFiles.forEach((fileData: any) => {
+						this.utilService.dataUriToFile(fileData.binaryFile, fileData.fileName, fileData.mimeType).then((fileObj: any) => {
+							if (fileObj) {
+								formData.append('files', fileObj, fileData.imageVideoFileId + '|' + fileData.fileName);
+							}
+							convertedFileCount++;
+							if (convertedFileCount === allFiles.length) {
+								onAllBinaryToFileCoverted(formData);
+							}
+						});
+					});
+				} else {
+					getSignOffDetails();
+				}
+			};
+
+			// Get all offline files for submitted form and
+			const onAllBinaryToFileCoverted = (formData) => {
+				offlineApiService.uploadMultipleFiles(formData).subscribe((response: any) => {
+					if (response.Result) {
+						const uploadedFiles = response.Result;
+						let uploadedFilesObj = {};
+						if (uploadedFiles) {
+							uploadedFiles.map((uploadedFileData) => {
+								const originalFileName = uploadedFileData.originalFileName;
+								const newFileName = uploadedFileData.newFileName;
+
+								const originalFileNameParts = originalFileName.split('|');
+								if (originalFileNameParts && originalFileNameParts.length > 0) {
+									const imageVideoFileId = originalFileNameParts[0];
+									uploadedFilesObj['imageVideoFileId_' + imageVideoFileId] = newFileName;
+								}
+							});
+						}
+
+						getSignOffDetails(uploadedFilesObj);
+					} else {
+						getSignOffDetails();
+					}
+				});
+			};
+
+			// getSignOffDetails
+			const getSignOffDetails = async (uploadedFiles = {}) => {
+				const signOffDetails: any = await this.getOfflineSignoffDetails();
+
+				let signOffDetailsList = [];
+
+				if (signOffDetails && signOffDetails.length > 0) {
+					const addToSignOffDetailsList = (dataObj) => {
+						const signOffObjectToBePost = {
+							userId: dataObj.userId || '',
+							activityIndividualID: dataObj.activityIndividualID || '',
+							documentVersionID: dataObj.documentVersionID || '',
+							formVersionID: dataObj.formVersionID || 0,
+							locationID: dataObj.locationID || 0,
+							projectID: dataObj.projectID || 0,
+							inventoryItemID: dataObj.inventoryItemID || 0,
+							latitude: dataObj.latitude || '',
+							longitude: dataObj.longitude || '',
+							documentID: dataObj.documentID || 0,
+							userSignaturePhotoFileName: dataObj.userSignaturePhotoFileName || '',
+							userSignaturePhotoBinaryFile: dataObj.userSignaturePhotoBinaryFile || '',
+							digitalInkSignatureFileName: dataObj.digitalInkSignatureFileName || '',
+							digitalInkSignatureBinaryFile: dataObj.digitalInkSignatureBinaryFile || '',
+							formAnswerData: dataObj.submittedFormData || '',
+							signOffDate: dataObj.signOffDate || '',
+						};
+						signOffDetailsList.push(signOffObjectToBePost);
+
+						if (signOffDetailsList.length === signOffDetails.length) {
+							postJsonFileData.personalModeSignOffDetails = signOffDetailsList;
+							isDataAvailableForPost = true;
+							getUserCheckinDetails(uploadedFiles);
+						}
+					};
+
+					signOffDetails.map((dataObj) => {
+						if (dataObj.formSubmitDataId) {
+							this.getOfflineSubmittedFormData(dataObj.formSubmitDataId).then((submittedFormData: any) => {
+								this.replaceImageNameInFormData(submittedFormData, uploadedFiles);
+								dataObj.submittedFormData = submittedFormData;
+								addToSignOffDetailsList(dataObj);
+							});
+						} else {
+							addToSignOffDetailsList(dataObj);
+						}
+					});
+				} else {
+					getUserCheckinDetails(uploadedFiles);
+				}
+			};
+
+			// getUserCheckinDetails
+			const getUserCheckinDetails = async (uploadedFiles) => {
+				const checkinDetails: any = await this.getOfflineUserCheckinDetails();
+
+				if (checkinDetails && checkinDetails.length > 0) {
+					let checkinDetailsList = [];
+
+					const addToCheckinDetailList = (obj) => {
+						checkinDetailsList.push({
+							userId: obj.userId || '',
+							companyID: obj.companyID || 0,
+							userPhotoFileName: obj.userPhotoFileName || '',
+							userPhotoBinaryFile: obj.userPhotoBinaryFile || '',
+							locationID: obj.locationID || 0,
+							projectID: obj.projectID || '',
+							inventoryItemID: obj.inventoryItemID || '',
+							checkInLatitude: obj.checkInLatitude || '',
+							checkInLongitude: obj.checkInLongitude || '',
+							digitalInkSignatureFileName: obj.digitalInkSignatureFileName || '',
+							digitalInkSignatureBinaryFile: obj.digitalInkSignatureBinaryFile || '',
+							userSignaturePhotoFileName: obj.userSignaturePhotoFileName || '',
+							userSignaturePhotoBinaryFile: obj.userSignaturePhotoBinaryFile || '',
+							checkInDate: obj.checkInDate || '',
+							formAnswerData: obj.formAnswerData || '',
+							offlineUserCheckInDetailID: obj.deviceUserCheckinDetailId,
+						});
+						if (checkinDetails.length === checkinDetailsList.length) {
+							postJsonFileData.checkInDetails = checkinDetailsList;
+							isDataAvailableForPost = true;
+							getGuestCheckinDetails(uploadedFiles);
+						}
+					};
+
+					checkinDetails.map((checkinDetailObj) => {
+						if (checkinDetailObj.formSubmitDataId) {
+							this.getOfflineSubmittedFormData(checkinDetailObj.formSubmitDataId).then((submittedFormData: any) => {
+								this.replaceImageNameInFormData(submittedFormData, uploadedFiles);
+								checkinDetailObj.formAnswerData = submittedFormData;
+								addToCheckinDetailList(checkinDetailObj);
+							});
+						} else {
+							addToCheckinDetailList(checkinDetailObj);
+						}
+					});
+				} else {
+					getGuestCheckinDetails(uploadedFiles);
+				}
+			};
+
+			// getGuestCheckinDetails
+			const getGuestCheckinDetails = async (uploadedFiles) => {
+				const checkinDetails: any = await this.getOfflineGuestCheckinDetails();
+
+				if (checkinDetails && checkinDetails.length > 0) {
+					let checkinDetailsList = [];
+
+					const addToCheckinDetailList = (obj) => {
+						checkinDetailsList.push({
+							companyID: obj.companyID || 0,
+							userPhotoFileName: obj.userPhotoFileName || '',
+							userPhotoBinaryFile: obj.userPhotoBinaryFile || '',
+							locationID: obj.locationID || 0,
+							projectID: obj.projectID || 0,
+							inventoryItemID: obj.inventoryItemID || 0,
+							checkInLatitude: obj.checkInLatitude || '',
+							checkInLongitude: obj.checkInLongitude || '',
+							isGuestReturning: obj.isGuestReturning || false,
+							guestPhone: obj.guestPhone || '',
+							guestFirsName: obj.guestFirsName || '',
+							guestMiddleName: obj.guestMiddleName || '',
+							guestLastName: obj.guestLastName || '',
+							guestPhotoFileName: obj.guestPhotoFileName || '',
+							guestPhotoBinaryFile: obj.guestPhotoBinaryFile || '',
+							digitalInkSignatureFileName: obj.digitalInkSignatureFileName || '',
+							digitalInkSignatureBinaryFile: obj.digitalInkSignatureBinaryFile || '',
+							userSignaturePhotoFileName: obj.userSignaturePhotoFileName || '',
+							userSignaturePhotoBinaryFile: obj.userSignaturePhotoBinaryFile || '',
+							checkInDate: obj.checkInDate || '',
+							formAnswerData: obj.formAnswerData || '',
+							offlineUserCheckInDetailID: obj.deviceGuestUserCheckinDetailId,
+						});
+						if (checkinDetails.length === checkinDetailsList.length) {
+							postJsonFileData.checkInDetails_Guest = checkinDetailsList;
+							isDataAvailableForPost = true;
+							getUserCheckoutDetails();
+						}
+					};
+
+					checkinDetails.map((checkinDetailObj) => {
+						if (checkinDetailObj.formSubmitDataId) {
+							this.getOfflineSubmittedFormData(checkinDetailObj.formSubmitDataId).then((submittedFormData: any) => {
+								this.replaceImageNameInFormData(submittedFormData, uploadedFiles);
+								checkinDetailObj.formAnswerData = submittedFormData;
+								addToCheckinDetailList(checkinDetailObj);
+							});
+						} else {
+							addToCheckinDetailList(checkinDetailObj);
+						}
+					});
+				} else {
+					getUserCheckoutDetails();
+				}
+			};
+
+			// getUserCheckinDetails
+			const getUserCheckoutDetails = async () => {
+				const checkoutDetails: any = await this.getOfflineUserCheckoutDetails();
+				debugger;
+				if (checkoutDetails && checkoutDetails.length > 0) {
+					let checkoutDetailsList = [];
+					checkoutDetails.map((obj) => {
+						checkoutDetailsList.push({
+							userCheckInDetailID: obj.userCheckInDetailID || 0,
+							userId: obj.userId || '',
+							companyID: obj.companyID || 0,
+							checkOutLatitude: obj.checkOutLatitude || '',
+							checkOutLongitude: obj.checkOutLongitude || '',
+							checkOutDate: obj.checkOutDate || '',
+							locationID: obj.locationID || 0,
+							projectID: obj.projectID || 0,
+							inventoryItemID: obj.inventoryItemID || 0,
+							offlineUserCheckInDetailID: obj.deviceUserCheckinDetailId,
+						});
+					});
+					postJsonFileData.checkOutDetails = checkoutDetailsList;
+					isDataAvailableForPost = true;
+					getGuestCheckoutDetails();
+				} else {
+					getGuestCheckoutDetails();
+				}
+			};
+
+			// getGuestCheckinDetails
+			const getGuestCheckoutDetails = async () => {
+				const checkoutDetails: any = await this.getOfflineGuestCheckoutDetails();
+				debugger;
+				if (checkoutDetails && checkoutDetails.length > 0) {
+					let checkoutDetailsList = [];
+					checkoutDetails.map((obj) => {
+						checkoutDetailsList.push({
+							userCheckInDetailID: obj.userCheckInDetailID || 0,
+							locationID: obj.locationID || 0,
+							projectID: obj.projectID || 0,
+							inventoryItemID: obj.inventoryItemID || 0,
+							userId: obj.userId || '',
+							companyID: obj.companyID || 0,
+							guestPhone: obj.guestPhone || '',
+							guestFirsName: obj.guestFirsName || '',
+							guestMiddleName: obj.guestMiddleName || '',
+							guestLastName: obj.guestLastName || '',
+							checkOutLatitude: obj.checkOutLatitude || '',
+							checkOutLongitude: obj.checkOutLongitude || '',
+							checkOutDate: obj.checkOutDate || '',
+							offlineUserCheckInDetailID: obj.deviceGuestUserCheckinDetailId,
+						});
+					});
+					postJsonFileData.checkOutDetails_Guest = checkoutDetailsList;
+					isDataAvailableForPost = true;
+					onJsonFileDataInsertionComplete();
+				} else {
+					onJsonFileDataInsertionComplete();
+				}
+			};
+
+			// When all operation done for offline json file post insertion
+			const onJsonFileDataInsertionComplete = () => {
+				if (isDataAvailableForPost) {
+					resolve(postJsonFileData);
+				} else {
+					resolve(null);
+				}
+			};
+
+			downloadAllFormOfflineFile();
+		});
+	}
 }

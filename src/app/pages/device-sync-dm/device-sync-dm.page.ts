@@ -10,6 +10,7 @@ import { Response } from 'src/app/_models';
 import { DeviceOfflineDetailViewModels } from 'src/app/_models/offline/DeviceOfflineDetailViewModels';
 import { FilehandlerService } from 'src/app/services/filehandler.service';
 import { Capacitor } from '@capacitor/core';
+import * as JSZip from 'jszip';
 
 @Component({
 	selector: 'app-device-sync-dm',
@@ -22,6 +23,7 @@ export class DeviceSyncDmPage implements OnInit {
 	// synchProgressState = 'processing';
 	// synchProgressState = 'completed';
 
+	synchronisationErrorMessage;
 	progress = 0;
 
 	constructor(
@@ -75,24 +77,64 @@ export class DeviceSyncDmPage implements OnInit {
 		}
 	}
 
+	isSpaceAvailableInDevice = (fileSize = 0) => {
+		return new Promise((resolve, reject) => {
+			// Insert condition for space check in device
+			resolve(true);
+		});
+	};
+
+	postOfflineDataToServerIfAvailable = () => {
+		return new Promise((resolve, reject) => {
+			this.offlineManagerService.prepareJsonFileForPost(this.sharedDataService.dedicatedModeDeviceDetailData.deviceID, this.offlineApiService).then((postJsonData) => {
+				if (postJsonData) {
+					const fileName = 'OfflinePost';
+					var jsZipObj = new JSZip();
+					debugger;
+					jsZipObj.file(fileName + '.json', JSON.stringify(postJsonData));
+					jsZipObj.generateAsync({ type: 'base64' }).then((base64) => {
+						debugger;
+						this.utilService.dataUriToFile(base64, fileName + '.zip', 'application/zip').then((fileObj) => {
+							this.offlineApiService.postOfflineZipFile(fileObj, fileName + '.zip').subscribe(
+								(res) => {
+									resolve(res);
+								},
+								(error) => {
+									debugger;
+									reject(error);
+								}
+							);
+						});
+					});
+				} else {
+					resolve(null);
+				}
+			});
+		});
+	};
+
 	onSync() {
 		this.progress = 0;
 		this.synchProgressState = 'processing';
-		this.callOfflineApi(() => {
-			if (this.progress === 100) {
-				this.synchProgressState = 'completed';
-				this.sharedDataService.offlineMode = true;
-				localStorage.setItem('is_offline_mode', 'true');
-				localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
-				// if (UtilService.randomBoolean()) {
-				// 	this.synchProgressState = 'failed';
-				// } else {
-				// 	this.synchProgressState = 'networkerror';
-				// }
-			} else {
-				this.progress = this.progress + 5;
-			}
-		});
+
+		this.postOfflineDataToServerIfAvailable()
+			.then((res) => {
+				this.offlineManagerService.emptyAllTables(() => {
+					this.callOfflineApi(() => {
+						if (this.progress === 100) {
+							this.synchProgressState = 'completed';
+							localStorage.setItem(EnumService.LocalStorageKeys.SYNC_DATE_TIME, this.utilService.getCurrentDateTIme());
+						} else {
+							this.progress = this.progress + 5;
+						}
+					});
+				});
+			})
+			.catch((error) => {
+				this.progress = 0;
+				this.synchProgressState = 'failed';
+				this.synchronisationErrorMessage = error.message;
+			});
 	}
 
 	onContinue() {

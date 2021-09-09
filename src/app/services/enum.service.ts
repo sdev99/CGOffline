@@ -178,6 +178,8 @@ export class EnumService {
 		GetDeviceOfflineFile: 'GetDeviceOfflineFile',
 		PostOfflineFormAnswerPhotoOrVideo: 'PostOfflineFormAnswerPhotoOrVideo',
 		DeviceOfflineFileDelete: 'DeviceOfflineFileDelete',
+		GetSynchStatus: 'GetSynchStatus',
+		PostDeviceOfflineFile: 'PostDeviceOfflineFile',
 	};
 
 	static ApiResponseCode = {

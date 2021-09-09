@@ -227,12 +227,18 @@ export class FormWorkpermitPage {
 				});
 			}
 
-			workPermitAnswer = new WorkPermitAnswer({
+			workPermitAnswer = {
+				userWorkPermitID: 0,
 				workPermitId: this.formBuilderDetail.workPermitDetails.workPermitId,
 				scoreAchieved,
 				totalScore: this.formBuilderDetail.workPermitDetails.totalScore,
 				whoDefinesDateType: this.formBuilderDetail?.workPermitDetails?.whoDefinesDateType,
-			});
+				hasExpiresOn: false,
+				expiresOnDate: '',
+				hasExpiresAfter: false,
+				durationValue: 0,
+				durationTypeID: 0,
+			};
 			const isExpireDateUserDefined = this.formBuilderDetail?.workPermitDetails?.whoDefinesDateType === 'UserDefined';
 			if (isExpireDateUserDefined) {
 				if (this.selectedExpireDateType === 'date') {

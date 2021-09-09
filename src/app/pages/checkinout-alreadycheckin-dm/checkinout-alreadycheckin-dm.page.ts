@@ -60,12 +60,12 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 				this.offlineManagerService
 					.insertCheckOutDetails_Guest(
 						{
-							guestPhone: this.sharedDataService.dedicatedModeGuestDetail.guestPhone,
-							guestFirsName: this.sharedDataService.dedicatedModeGuestDetail.guestFirsName,
-							guestMiddleName: this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName,
-							guestLastName: this.sharedDataService.dedicatedModeGuestDetail.guestLastName,
-							checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
-							checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
+							guestPhone: this.sharedDataService.dedicatedModeGuestDetail.guestPhone || '',
+							guestFirsName: this.sharedDataService.dedicatedModeGuestDetail.guestFirsName || '',
+							guestMiddleName: this.sharedDataService.dedicatedModeGuestDetail.guestMiddleName || '',
+							guestLastName: this.sharedDataService.dedicatedModeGuestDetail.guestLastName || '',
+							checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude || '',
+							checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude || '',
 						},
 						{ userCheckInDetailID: this.locationId }
 					)
@@ -155,11 +155,11 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 				this.offlineManagerService
 					.insertCheckOutDetails(
 						{
-							userId: this.sharedDataService.dedicatedModeUserDetail.userId,
-							checkOutDate: utcDateTime,
+							userId: this.sharedDataService.dedicatedModeUserDetail.userId || '',
+							checkOutDate: utcDateTime || '',
 							isOfflineDone: true,
-							checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
-							checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude,
+							checkOutLatitude: this.sharedDataService.myCurrentGeoLocation?.coords?.latitude || '',
+							checkOutLongitude: this.sharedDataService.myCurrentGeoLocation?.coords?.longitude || '',
 						},
 						{ userCheckInDetailID: this.locationId }
 					)

@@ -28,22 +28,7 @@ export class ChooseLocationPage implements OnInit {
 		public offlineManagerService: OfflineManagerService
 	) {
 		this.locations = sharedDataService.dedicatedModeAssignedEntities;
-		this.offlineManagerService
-			.getAssignedEnitities()
-			.then((entities: any) => {
-				if (entities && entities.length > 0) {
-					const list = entities as Array<any>;
-					this.sharedDataService.dedicatedModeAssignedEntities = list;
-					this.locations = this.sharedDataService.dedicatedModeAssignedEntities;
-					localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(list));
-					this.sharedDataService.offlineMode = true;
-				} else {
-					this.sharedDataService.offlineMode = false;
-				}
-			})
-			.catch((error) => {
-				this.sharedDataService.offlineMode = false;
-			});
+		this.offlineManagerService.dbSetUp();
 	}
 
 	ngOnInit() {}
@@ -53,19 +38,20 @@ export class ChooseLocationPage implements OnInit {
 		this.getDeviceEntityDetails();
 	}
 
-	// getLocationItemList = () => {
-	//     if (this.sharedDataService.dedicatedModeDeviceDetailData) {
-	//         this.apiService.getLocationItemList(this.sharedDataService.dedicatedModeDeviceDetailData.companyID).subscribe((res) => {
-	//             if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
-	//                 this.locations = res.Result;
-	//             }
-	//         }, (error) => {
-	//         });
-	//     }
-	// };
-
 	getDeviceEntityDetails = () => {
 		if (this.sharedDataService.offlineMode) {
+			this.offlineManagerService
+				.getAssignedEnitities()
+				.then((entities: any) => {
+					if (entities && entities.length > 0) {
+						const list = entities as Array<any>;
+						this.sharedDataService.dedicatedModeAssignedEntities = list;
+						this.locations = this.sharedDataService.dedicatedModeAssignedEntities;
+						localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(list));
+					}
+				})
+				.catch((error) => {});
+
 			this.offlineManagerService
 				.getDeviceDetail()
 				.then((deviceDetail) => {

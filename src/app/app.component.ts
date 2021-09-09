@@ -286,7 +286,7 @@ export class AppComponent {
 	configureAppForDedicatedMode = async (data: Response = null) => {
 		localStorage.setItem(EnumService.LocalStorageKeys.IS_DEDICATED_MODE, 'true');
 		this.sharedDataService.dedicatedMode = true;
-
+		this.offlineManagerService.dbSetUp();
 		if (data) {
 			localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_DEVICE_DETAIL, JSON.stringify(data.Result?.deviceDetailData));
 			localStorage.setItem(EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES, JSON.stringify(data.Result?.deviceEntityData));

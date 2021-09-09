@@ -1,5 +1,5 @@
 export class WorkPermitAnswer {
-	userWorkPermitID: number;
+	userWorkPermitID?: number;
 	workPermitId: number;
 	scoreAchieved: number;
 	totalScore: number;

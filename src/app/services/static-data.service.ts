@@ -14,6 +14,7 @@ export class StaticDataService {
 	static photoQuality = 85;
 	static photoMaxHeight = 2500;
 	static userDefaultGuid = '00000000-0000-0000-0000-000000000000';
+	static userDefaultDate = '0001-01-01T00:00:00';
 
 	// Test demo - should be remove after development complete
 	static anyScreenTestLocalStoragekey = 'screen_to_test';
@@ -678,6 +679,7 @@ export class StaticDataService {
 				{ name: 'photo', type: 'VARCHAR(32)' },
 				{ name: 'timeDifference', type: 'VARCHAR(32)' },
 				{ name: 'todayDate', type: 'VARCHAR(32)' },
+				{ name: 'isOfflineDone', type: 'BOOLEAN' },
 			],
 		},
 		{
@@ -1285,7 +1287,7 @@ export class StaticDataService {
 			table_name: 'FormSubmitData',
 			columns: [
 				{
-					name: 'FormSubmitDataId',
+					name: 'formSubmitDataId',
 					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
 				},
 				{ name: 'formId', type: 'INTEGER' },
@@ -1306,6 +1308,18 @@ export class StaticDataService {
 			],
 		},
 		{
+			table_name: 'UserHavExposure',
+			columns: [
+				{
+					name: 'userHavExposureId',
+					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+				},
+				{ name: 'userId', type: 'VARCHAR(32)' },
+				{ name: 'exposure', type: 'VARCHAR(32)' },
+				{ name: 'date', type: 'VARCHAR(32)' },
+			],
+		},
+		{
 			table_name: 'ImageVideoFiles',
 			columns: [
 				{
@@ -1322,7 +1336,7 @@ export class StaticDataService {
 			table_name: 'SignOffDetails',
 			columns: [
 				{
-					name: 'SignOffDetailId',
+					name: 'signOffDetailId',
 					type: 'INTEGER PRIMARY KEY AUTOINCREMENT',
 				},
 				{ name: 'userId', type: 'INTEGER' },

@@ -47,7 +47,7 @@
 			<ion-icon class="error-icon" src="./assets/icon/ErrorCheck.svg"></ion-icon>
 
 			<ion-label class="error-title failed">Synchronisation Error</ion-label>
-			<ion-label class="text-2"> An unknown error has occured. You may try again or contact administrator for solution. </ion-label>
+			<ion-label class="text-2"> {{synchronisationErrorMessage || "An unknown error has occured. You may try again or contact administrator for solution."}} </ion-label>
 			<ion-button class="action-btn" (click)="onClose()"> Quit </ion-button>
 		</ng-container>
 	</div>
