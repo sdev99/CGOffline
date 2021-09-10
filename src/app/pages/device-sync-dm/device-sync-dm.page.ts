@@ -120,6 +120,7 @@ export class DeviceSyncDmPage implements OnInit {
 		this.postOfflineDataToServerIfAvailable()
 			.then((res) => {
 				this.offlineManagerService.emptyAllTables(() => {
+					this.progress = 5;
 					this.callOfflineApi(() => {
 						if (this.progress === 100) {
 							this.synchProgressState = 'completed';
@@ -151,9 +152,13 @@ export class DeviceSyncDmPage implements OnInit {
 
 		this.offlineApiService.getDeviceOfflineDetails(this.sharedDataService.deviceUID).subscribe(
 			async (res: Response) => {
-				this.progress = 5;
+				this.progress = 10;
 				if (res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful) {
 					if (res.Result) {
+						const offlineFileDetails = res.Result;
+						const zipFileSizeBytes = offlineFileDetails.zipFileSize;
+						const jsonFileSizeBytes = offlineFileDetails.jsonFileSize;
+
 						this.offlineApiService
 							.getDeviceOfflineFile(res.Result)
 							.then(async (jsonFiles: any) => {

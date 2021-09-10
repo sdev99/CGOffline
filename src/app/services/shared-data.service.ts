@@ -737,7 +737,7 @@ export class SharedDataService {
 				guestFirsName: dedicatedModeGuestDetail.guestFirsName,
 				guestMiddleName: dedicatedModeGuestDetail.guestMiddleName,
 				guestLastName: dedicatedModeGuestDetail.guestLastName,
-				guestPhotoBinaryFile: dedicatedModeGuestDetail.guestPhoto_BinaryImage || dedicatedModeGuestDetail.guestPhotoFileName,
+				guestPhotoBinaryFile: UtilService.FixBase64String(dedicatedModeGuestDetail.guestPhoto_BinaryImage || dedicatedModeGuestDetail.guestPhotoFileName),
 				guestPhoto: dedicatedModeGuestDetail.guestPhoto,
 				companyID: dedicatedModeDeviceDetailData.companyID,
 			} as unknown as CheckInPostData;
@@ -1803,7 +1803,7 @@ export class SharedDataService {
 				companyID: this.checkInPostData.companyID || '',
 				currentUTCDate: utcDateTime || '',
 				digitalInkSignatureFileName: this.checkInPostData.digitalInkSignatureFileName || '',
-				digitalInkSignatureBinaryFile: this.checkInPostData.digitalInkSignatureBinaryFile || '',
+				digitalInkSignatureBinaryFile: UtilService.FixBase64String(this.checkInPostData.digitalInkSignatureBinaryFile || ''),
 				entityName: this.dedicatedModeLocationUse.projectName || this.dedicatedModeLocationUse.locationName || this.dedicatedModeLocationUse.itemName || '',
 				firstAndLastName: dedicatedModeUserDetail?.firstName + ' ' + (dedicatedModeUserDetail?.middleName ? dedicatedModeUserDetail?.middleName + ' ' : '') + dedicatedModeUserDetail?.lastName,
 				firstName: dedicatedModeUserDetail?.firstName || '',
@@ -1816,13 +1816,15 @@ export class SharedDataService {
 				userDetailPhoto: dedicatedModeUserDetail.userPhoto || '',
 				userId: this.checkInPostData.userId || '',
 				userPhotoFileName: this.checkInPostData.userPhotoFileName || '',
-				userPhotoBinaryFile: this.checkInPostData.userPhotoBinaryFile || dedicatedModeUserDetail.photo_BinaryImage || dedicatedModeUserDetail.userPhoto_BinaryImage || '',
+				userPhotoBinaryFile: UtilService.FixBase64String(
+					this.checkInPostData.userPhotoBinaryFile || dedicatedModeUserDetail.photo_BinaryImage || dedicatedModeUserDetail.userPhoto_BinaryImage || ''
+				),
 				locationAutoCheckOutHour: entityData.autoCheckOutHour || '',
 				locationAutoCheckOutTime: entityData.autoCheckOutTime || '',
 				userAutoCheckOutTime: dedicatedModeUserDetail?.userAutoCheckOutTime || '',
 				formSubmitDataId: this.checkInPostData?.formSubmitDataId || '',
 			};
-			debugger;
+
 			this.offlineManagerService
 				.insertCheckinDetails(checkinData)
 				.then((res) => {
@@ -1887,14 +1889,16 @@ export class SharedDataService {
 				companyID: this.checkInPostData.companyID || '',
 				currentUTCDate: utcDateTime || '',
 				digitalInkSignatureFileName: this.checkInPostData.digitalInkSignatureFileName || '',
-				digitalInkSignatureBinaryFile: this.checkInPostData.digitalInkSignatureBinaryFile || '',
+				digitalInkSignatureBinaryFile: UtilService.FixBase64String(this.checkInPostData.digitalInkSignatureBinaryFile || ''),
 				entityName: this.dedicatedModeLocationUse.projectName || this.dedicatedModeLocationUse.locationName || this.dedicatedModeLocationUse.itemName || '',
 				guestPhone: this.checkInPostData.guestPhone.toString() || '',
 				guestFirsName: this.checkInPostData.guestFirsName || '',
 				guestLastName: this.checkInPostData.guestLastName || '',
 				guestMiddleName: this.checkInPostData.guestMiddleName || '',
 				guestPhotoFileName: this.checkInPostData.guestPhotoFileName || '',
-				guestPhotoBinaryFile: this.checkInPostData.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhoto_BinaryImage || '',
+				guestPhotoBinaryFile: UtilService.FixBase64String(
+					this.checkInPostData.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhotoBinaryFile || this.dedicatedModeGuestDetail.guestPhoto_BinaryImage || ''
+				),
 				isOfflineDone: true,
 				isGuestReturning: this.checkInPostData.isGuestReturning || false,
 				isSimultaneousCheckIn: entityData.isSimultaneousCheckIn || false,
@@ -2047,20 +2051,26 @@ export class SharedDataService {
 					if (this.workPermitAnswer.scoreAchieved >= this.workPermitAnswer.totalScore) {
 						if (this.dedicatedMode && this.offlineMode) {
 							const dateTimeNow = moment().format('YYYY-MM-DDTHH:mm:00.000');
-
-							// it is pending_to_fix
-							const formattedIssuedDate = moment().format('YYYY-MM-DDTHH:mm:00.000');
-							const formattedExpiryDate = moment().add(10, 'days').format('YYYY-MM-DDTHH:mm:00.000');
+							const hasExpiresOn = this.workPermitAnswer.hasExpiresOn;
+							const hasExpiresAfter = this.workPermitAnswer.hasExpiresAfter;
+							let expiryDate = moment().add(60, 'days');
+							if (hasExpiresAfter) {
+								const durations = ['days', 'weeks', 'months', 'years'];
+								const unit: any = durations[this.workPermitAnswer.durationTypeID - 1];
+								expiryDate = moment().add(this.workPermitAnswer.durationValue, unit);
+							} else if (hasExpiresOn) {
+								expiryDate = moment(this.workPermitAnswer.expiresOnDate);
+							}
 
 							const permitData = {
 								locationID: this.dedicatedModeLocationUse.locationID,
 								projectID: this.dedicatedModeLocationUse.projectID,
 								inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-								expiryDate: this.workPermitAnswer.hasExpiresAfter,
+								expiryDate: expiryDate.format('YYYY-MM-DDTHH:mm:00.000'),
 								firstName: this.dedicatedModeUserDetail.firstName,
 								formTitle: this.formBuilderDetails.title,
-								formattedExpiryDate: formattedExpiryDate,
-								formattedIssuedDate: formattedIssuedDate,
+								formattedExpiryDate: '',
+								formattedIssuedDate: '',
 								issuedDate: dateTimeNow,
 								lastName: this.dedicatedModeUserDetail.lastName,
 								middleName: this.dedicatedModeUserDetail.middleName,
@@ -2192,28 +2202,10 @@ export class SharedDataService {
 				inventoryItemID: this.signOffDetailsPostData.inventoryItemID || 0,
 				signOffDate: this.signOffDetailsPostData.signOffDate || '',
 				digitalInkSignatureFileName: this.signOffDetailsPostData.digitalInkSignatureFileName || '',
-				digitalInkSignatureBinaryFile: this.signOffDetailsPostData.digitalInkSignatureBinaryFile || '',
+				digitalInkSignatureBinaryFile: UtilService.FixBase64String(this.signOffDetailsPostData.digitalInkSignatureBinaryFile) || '',
 				userSignaturePhotoFileName: this.signOffDetailsPostData.userSignaturePhotoFileName || '',
-				userSignaturePhotoBinaryFile: this.signOffDetailsPostData.userSignaturePhotoBinaryFile || '',
+				userSignaturePhotoBinaryFile: UtilService.FixBase64String(this.signOffDetailsPostData.userSignaturePhotoBinaryFile) || '',
 				formSubmitDataId: this.signOffDetailsPostData.formSubmitDataId || '',
-			};
-
-			const permitData = {
-				locationID: this.dedicatedModeLocationUse.locationID,
-				projectID: this.dedicatedModeLocationUse.projectID,
-				inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-				expiryDate: '',
-				firstName: '',
-				formTitle: this.formBuilderDetails.title,
-				formattedExpiryDate: '',
-				formattedIssuedDate: '',
-				issuedDate: utcDateTime,
-				lastName: '',
-				middleName: '',
-				photo: '',
-				timeDifference: '',
-				todayDate: '',
-				isOfflineDone: '',
 			};
 
 			this.offlineManagerService.insertSignOffDetail(signOffData).then((res) => {

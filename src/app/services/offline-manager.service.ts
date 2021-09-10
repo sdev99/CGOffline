@@ -1058,13 +1058,27 @@ export class OfflineManagerService {
 
 	getDeviceLiveWorkPermits(entity: DeviceEntityDetail) {
 		return new Promise((resolve, reject) => {
-			let condition = this.appendEntityCondition(entity);
+			let condition = this.appendEntityCondition(entity) + ' AND expiryDate >= datetime("now")';
 
 			const query = 'SELECT * FROM DeviceLiveWorkPermits' + (condition ? ' WHERE ' + condition : '');
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
-						resolve(this.convertToArray(res.rows));
+						const list = this.convertToArray(res.rows);
+						list.map((item: any) => {
+							const issuedDateObj = moment(item.issuedDate);
+							const expiryDateObj = moment(item.expiryDate);
+							const currentDate = moment();
+
+							const formattedIssuedDate = issuedDateObj.from(currentDate);
+							const formattedExpiryDate = expiryDateObj.from(currentDate, true) + ' (' + moment(expiryDateObj).format('DD MMM YYYY HH:mm') + ')';
+
+							item.formattedIssuedDate = formattedIssuedDate;
+							item.formattedExpiryDate = formattedExpiryDate;
+							item.todayDate = currentDate.format('YYYY-MM-DDTHH:mm:00.000');
+						});
+
+						resolve(list);
 					} else {
 						resolve([]);
 					}
@@ -1470,10 +1484,8 @@ export class OfflineManagerService {
 				query = 'SELECT * FROM DeviceUserCheckinDetails' + (condition ? ' WHERE ' + condition : '') + ' ORDER BY checkInDate DESC';
 			}
 
-			debugger;
 			this.dbQuery(query, [])
 				.then(async (res: any) => {
-					debugger;
 					const deviceUserCheckinDetails = this.convertToArray(res.rows);
 
 					let isAlreadyCheckinToThisEntity = false;
@@ -1965,11 +1977,11 @@ export class OfflineManagerService {
 			let query = 'SELECT userHavExposureId FROM UserHavExposure WHERE ' + condition;
 			this.dbQuery(query)
 				.then((res: any) => {
-					if (res && res.length > 0) {
+					if (res && res.rows?.length > 0) {
 						let query = 'UPDATE UserHavExposure SET exposure=? WHERE ' + condition;
 						this.dbQuery(query, [data.exposure])
-							.then((res: any) => {
-								resolve(res.insertId);
+							.then((updateRes: any) => {
+								resolve(updateRes);
 							})
 							.catch((error) => {
 								reject(error);
@@ -2229,26 +2241,40 @@ export class OfflineManagerService {
 	/********************************************************************************/
 
 	shouldOnlyUseInOfflineMode = () => {
+		const signOffQuery = 'SELECT COUNT(signOffDetailId) as total_result FROM SignOffDetails';
+		const checkinQuery = 'SELECT COUNT(deviceUserCheckinDetailId)  as total_result FROM DeviceUserCheckinDetails WHERE isOfflineDone = true OR isOfflineDone = "true"';
+		const guestCheckinQuery = 'SELECT COUNT(deviceGuestUserCheckinDetailId)  as total_result FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = true OR isOfflineDone = "true"';
+
 		return new Promise((resolve) => {
-			this.getOfflineSignoffDetails().then((res: any) => {
-				if (res && res.length > 0) {
-					resolve(true);
-				} else {
-					this.getOfflineUserCheckinDetails().then((checkinRes: any) => {
-						if (checkinRes && checkinRes.length > 0) {
-							resolve(true);
-						} else {
-							this.getOfflineGuestCheckinDetails().then((guestCheckinRes: any) => {
-								if (guestCheckinRes && guestCheckinRes.length > 0) {
+			this.dbQuery(signOffQuery)
+				.then((res: any) => {
+					const signOffRes = this.convertToObject(res.rows);
+					if (signOffRes && signOffRes.total_result > 0) {
+						resolve(true);
+					} else {
+						this.dbQuery(checkinQuery)
+							.then((res1: any) => {
+								const checkinRes = this.convertToObject(res.rows);
+								if (checkinRes && checkinRes.total_result > 0) {
 									resolve(true);
-								} else {
-									resolve(false);
 								}
-							});
-						}
-					});
-				}
-			});
+								this.dbQuery(guestCheckinQuery)
+									.then((res: any) => {
+										const guestCheckinRes = this.convertToObject(res.rows);
+										if (guestCheckinRes && guestCheckinRes.total_result > 0) {
+											resolve(true);
+										} else {
+											resolve(false);
+										}
+									})
+									.catch((error) => {});
+							})
+							.catch((error) => {});
+					}
+				})
+				.catch((error) => {
+					debugger;
+				});
 		});
 	};
 
@@ -2305,7 +2331,7 @@ export class OfflineManagerService {
 
 	getOfflineUserCheckinDetails = () => {
 		return new Promise((resolve) => {
-			const query = 'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = "true"';
+			const query = 'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = true OR isOfflineDone = "true"';
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
@@ -2322,7 +2348,7 @@ export class OfflineManagerService {
 
 	getOfflineGuestCheckinDetails = () => {
 		return new Promise((resolve) => {
-			const query = 'SELECT * FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = "true"';
+			const query = 'SELECT * FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = true OR isOfflineDone = "true"';
 			this.dbQuery(query, [])
 				.then((res: any) => {
 					if (res.rows?.length > 0) {
@@ -2340,7 +2366,7 @@ export class OfflineManagerService {
 	getOfflineUserCheckoutDetails = () => {
 		return new Promise((resolve) => {
 			const query =
-				'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = "true" AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
+				'SELECT * FROM DeviceUserCheckinDetails WHERE (isOfflineDone = true OR isOfflineDone = "true")  AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
 				StaticDataService.userDefaultDate +
 				'")';
 			this.dbQuery(query, [])
@@ -2360,7 +2386,7 @@ export class OfflineManagerService {
 	getOfflineGuestCheckoutDetails = () => {
 		return new Promise((resolve) => {
 			const query =
-				'SELECT * FROM DeviceGuestUserCheckinDetails WHERE isOfflineDone = "true" AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
+				'SELECT * FROM DeviceGuestUserCheckinDetails WHERE (isOfflineDone = true OR isOfflineDone = "true") AND (checkOutDate IS NOT NULL AND checkOutDate != "" AND checkOutDate != "' +
 				StaticDataService.userDefaultDate +
 				'")';
 			this.dbQuery(query, [])
@@ -2483,6 +2509,7 @@ export class OfflineManagerService {
 			// getSignOffDetails
 			const getSignOffDetails = async (uploadedFiles = {}) => {
 				const signOffDetails: any = await this.getOfflineSignoffDetails();
+				debugger;
 
 				let signOffDetailsList = [];
 
@@ -2534,6 +2561,7 @@ export class OfflineManagerService {
 			// getUserCheckinDetails
 			const getUserCheckinDetails = async (uploadedFiles) => {
 				const checkinDetails: any = await this.getOfflineUserCheckinDetails();
+				debugger;
 
 				if (checkinDetails && checkinDetails.length > 0) {
 					let checkinDetailsList = [];
@@ -2583,6 +2611,7 @@ export class OfflineManagerService {
 			// getGuestCheckinDetails
 			const getGuestCheckinDetails = async (uploadedFiles) => {
 				const checkinDetails: any = await this.getOfflineGuestCheckinDetails();
+				debugger;
 
 				if (checkinDetails && checkinDetails.length > 0) {
 					let checkinDetailsList = [];

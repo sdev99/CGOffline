@@ -79,6 +79,10 @@ export class UtilService {
 		return color;
 	}
 
+	static FixBase64String(base64String) {
+		return base64String.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+	}
+
 	static InductionContentTypeScreenIdentify(contentType, isDedicatedMode = false) {
 		let routeName = '';
 		switch (contentType) {

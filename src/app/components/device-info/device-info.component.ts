@@ -19,10 +19,11 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 	UtilService = UtilService;
 
 	constructor(private menu: MenuController, public navController: NavController, public sharedDataService: SharedDataService, public offlineManagerService: OfflineManagerService) {
-		this.checkForNetwork();
+		this.offlineManagerService.dbSetUp();
 	}
 
 	ngOnInit() {
+		this.checkForNetwork();
 		Network.addListener('networkStatusChange', (status) => {
 			console.log('Network status changed', status);
 			this.checkForNetwork();
@@ -36,7 +37,7 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 	checkForNetwork = async () => {
 		const ntstatus = await Network.getStatus();
 		this.isOnline = ntstatus.connected;
-	
+
 		this.offlineManagerService.shouldOnlyUseInOfflineMode().then((res) => {
 			if (res) {
 				this.sharedDataService.offlineMode = true;
