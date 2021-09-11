@@ -73,7 +73,7 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 				if (error) {
 					if (error.StatusCode === EnumService.ApiResponseCode.InvalidToken) {
 						return from(this.accountService.getToken()).pipe(
-							mergeMap((res) => {
+							mergeMap((res: any) => {
 								request = request.clone({
 									setHeaders: {
 										accessID,

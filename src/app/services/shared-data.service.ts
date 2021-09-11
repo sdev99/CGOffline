@@ -902,7 +902,7 @@ export class SharedDataService {
 										}
 
 										if (hazard.isMembersOfTheWorkForce) {
-											if (!hazard.isMembersOfTheWorkForceUserIDs && !hazard.PAGESPECIFIC_TEXT.SIGN_OFF.length) {
+											if (!hazard.isMembersOfTheWorkForceUserIDs && !hazard.isMembersOfTheWorkForceUserGroupIDs) {
 												isValid = false;
 											}
 											if (hazard.hasPersonnelExposedNotification) {
