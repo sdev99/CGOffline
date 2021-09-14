@@ -266,6 +266,10 @@ const routes: Routes = [
 		path: 'folder-content-list',
 		loadChildren: () => import('./pages/folder-content-list/folder-content-list.module').then((m) => m.FolderContentListPageModule),
 	},
+  {
+    path: 'device-offline',
+    loadChildren: () => import('./modals/device-offline/device-offline.module').then( m => m.DeviceOfflinePageModule)
+  },
 ];
 
 const webAppRoutes: Routes = [

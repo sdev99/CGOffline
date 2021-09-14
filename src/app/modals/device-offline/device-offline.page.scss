@@ -1,0 +1,67 @@
+ion-content {
+  .content {
+    display: flex;
+    min-height: 100%;
+    width: 40%;
+    min-width: 320px;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .device-is-offline {
+      width: 100%;
+      ion-icon {
+      }
+      ion-label {
+      }
+    }
+
+    .offline-desc {
+      width: 100%;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 17px;
+      line-height: 22px;
+      text-align: center;
+      color: #171538;
+    }
+
+    .last-sync-date-time {
+      width: 100%;
+      text-align: center;
+      span {
+        &.heading {
+        }
+      }
+    }
+
+    .action-btn {
+    }
+
+    .attention-message {
+      width: 100%;
+      text-align: center;
+      .title {
+        font-weight: bold;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-size: 17px;
+        line-height: 22px;
+        text-align: center;
+        color: #171538;
+      }
+
+      .description {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 17px;
+        line-height: 22px;
+        text-align: center;
+        color: #171538;
+      }
+    }
+  }
+}

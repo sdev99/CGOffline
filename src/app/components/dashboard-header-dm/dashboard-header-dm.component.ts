@@ -7,6 +7,7 @@ import { HomeExitDmPage } from "../../modals/home-exit-dm/home-exit-dm.page";
 import { AccountService } from "../../services/account.service";
 import { UtilService } from "src/app/services/util.service";
 import { Network } from "@capacitor/core";
+import { OfflineManagerService } from "src/app/services/offline-manager.service";
 
 @Component({
   selector: "app-dashboard-header-dm",
@@ -25,9 +26,16 @@ export class DashboardHeaderDmComponent implements OnInit {
     private menu: MenuController,
     public sharedDataService: SharedDataService,
     public accountService: AccountService,
+    public offlineManagerService: OfflineManagerService,
     public observablesService: ObservablesService
   ) {
-    this.isSycronizationNeeded = UtilService.isOfflineSycronizarionNeeded();
+    this.checkForSyncNeeded();
+
+    this.observablesService
+      .getObservable(EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED)
+      .subscribe((status: boolean) => {
+        this.checkForSyncNeeded();
+      });
   }
 
   ngOnInit() {
@@ -36,6 +44,14 @@ export class DashboardHeaderDmComponent implements OnInit {
       this.checkForNetwork();
     });
   }
+
+  checkForSyncNeeded = () => {
+    this.offlineManagerService
+      .shouldOnlyUseInOfflineMode()
+      .then((status: boolean) => {
+        this.isSycronizationNeeded = status;
+      });
+  };
 
   ngOnDestroy(): void {
     Network.removeAllListeners();
