@@ -50,11 +50,9 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 
     this.offlineManagerService.shouldOnlyUseInOfflineMode().then((res) => {
       if (res) {
-        this.sharedDataService.offlineMode = true;
         this.isSycronizationNeeded = true;
       } else {
         this.isSycronizationNeeded = false;
-        this.sharedDataService.offlineMode = !this.isOnline;
       }
     });
   };

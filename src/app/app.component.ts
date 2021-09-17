@@ -23,7 +23,7 @@ import { StaticDataService } from "./services/static-data.service";
 import { OfflineManagerService } from "./services/offline-manager.service";
 import { DeviceOfflinePage } from "./modals/device-offline/device-offline.page";
 
-const { Geolocation, Permissions, App, SplashScreen } = Plugins;
+const { Geolocation, Permissions, App, SplashScreen, Network } = Plugins;
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -35,6 +35,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent {
+  deviceOfflineModal = null;
+
   constructor(
     private platform: Platform,
     private ngZone: NgZone,
@@ -58,21 +60,16 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(async () => {
-      //Test UI
-      if (UtilService.isLocalHost()) {
-        setTimeout(async () => {
-          const modal = await this.modalController.create({
-            component: DeviceOfflinePage,
-          });
-          await modal.present();
-        }, 3000);
-      }
       this.statusBar.styleDefault();
       this.sharedDataService.apiServiceRerence = this.apiService;
       this.sharedDataService.accountServiceRef = this.accountService;
 
       this.sharedDataService.offlineMode =
-        localStorage.getItem("is_offline_mode") === "true" ? true : false;
+        localStorage.getItem(
+          EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE
+        ) === "true"
+          ? true
+          : false;
 
       const appLang = localStorage.getItem(
         EnumService.LocalStorageKeys.APP_LANGUAGE
@@ -315,11 +312,45 @@ export class AppComponent {
       );
   };
 
+  checkForNetwork = async () => {
+    const ntstatus = await Network.getStatus();
+    const isOnline = ntstatus.connected;
+
+    const isOfflineModeEnable = localStorage.getItem(
+      EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE
+    );
+    if (isOfflineModeEnable === "true") {
+      this.sharedDataService.offlineMode = true;
+    } else {
+      if (!this.deviceOfflineModal) {
+        this.deviceOfflineModal = await this.modalController.create({
+          component: DeviceOfflinePage,
+          cssClass: "offline-device-modal",
+          animated: false,
+        });
+      }
+
+      if (isOnline) {
+        await this.deviceOfflineModal.dismiss();
+      } else {
+        await this.deviceOfflineModal.present();
+      }
+    }
+  };
+
   configureAppForDedicatedMode = async (data: Response = null) => {
     localStorage.setItem(
       EnumService.LocalStorageKeys.IS_DEDICATED_MODE,
       "true"
     );
+
+    this.checkForNetwork();
+
+    Network.addListener("networkStatusChange", (status) => {
+      console.log("Network status changed", status);
+      this.checkForNetwork();
+    });
+
     this.sharedDataService.dedicatedMode = true;
     this.offlineManagerService.dbSetUp();
     if (data) {

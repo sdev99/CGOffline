@@ -2282,7 +2282,7 @@ export class SharedDataService {
         firstName: dedicatedModeUserDetail?.firstName || "",
         lastName: dedicatedModeUserDetail?.lastName || "",
         isOfflineDone: true,
-        isSimultaneousCheckIn: entityData.isSimultaneousCheckIn || true,
+        isSimultaneousCheckIn: entityData.isSimultaneousCheckIn || false,
         inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID || 0,
         projectID: this.dedicatedModeLocationUse.projectID || 0,
         locationID: this.dedicatedModeLocationUse.locationID || 0,

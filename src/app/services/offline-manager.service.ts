@@ -1733,10 +1733,13 @@ export class OfflineManagerService {
           (condition ? " WHERE " + condition : "") +
           " ORDER BY checkInDate DESC";
       }
+      debugger;
 
       this.dbQuery(query, [])
         .then(async (res: any) => {
           const deviceUserCheckinDetails = this.convertToArray(res.rows);
+
+          debugger;
 
           let isAlreadyCheckinToThisEntity = false;
           let isSimultaneousCheckInAllowed = true;

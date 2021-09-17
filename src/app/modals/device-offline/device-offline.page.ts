@@ -1,10 +1,15 @@
 import { Component, OnInit } from "@angular/core";
-import { AlertController, NavController } from "@ionic/angular";
+import {
+  AlertController,
+  ModalController,
+  NavController,
+} from "@ionic/angular";
 import { UtilService } from "../../services/util.service";
 import { ActivatedRoute } from "@angular/router";
 import { OfflineApiService } from "src/app/services/offline-api.service";
 import { SharedDataService } from "src/app/services/shared-data.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { EnumService } from "src/app/services/enum.service";
 
 @Component({
   selector: "app-device-offline",
@@ -13,10 +18,12 @@ import { OfflineManagerService } from "src/app/services/offline-manager.service"
 })
 export class DeviceOfflinePage implements OnInit {
   UtilService = UtilService;
-  isDeviceHaveOfflineData = true;
+  isDeviceHaveOfflineData = false;
+  lastSyncDate;
 
   constructor(
     public navController: NavController,
+    public modalController: ModalController,
     public alertController: AlertController,
     public activatedRoute: ActivatedRoute,
     public utilService: UtilService,
@@ -25,9 +32,30 @@ export class DeviceOfflinePage implements OnInit {
     public sharedDataService: SharedDataService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const syncDate = localStorage.getItem(
+      EnumService.LocalStorageKeys.SYNC_DATE_TIME
+    );
+    this.lastSyncDate = syncDate;
+    if (this.lastSyncDate) {
+      this.isDeviceHaveOfflineData = true;
+    } else {
+      this.isDeviceHaveOfflineData = false;
+    }
+  }
 
-  loadDataset() {}
+  loadDataset() {
+    this.sharedDataService.offlineMode = true;
+    localStorage.setItem(
+      EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE,
+      "true"
+    );
+    this.modalController.dismiss();
+  }
 
-  exitApp() {}
+  closeApp() {
+    try {
+      navigator["app"].exitApp();
+    } catch (error) {}
+  }
 }

@@ -157,6 +157,9 @@ export class DeviceSyncDmPage implements OnInit {
                 EnumService.LocalStorageKeys.SYNC_DATE_TIME,
                 this.utilService.getCurrentDateTIme()
               );
+              localStorage.removeItem(
+                EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE
+              );
             } else {
               this.progress = this.progress + 5;
             }
