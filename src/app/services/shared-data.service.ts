@@ -708,8 +708,9 @@ export class SharedDataService {
                 this.checkInDetail = response.Result as CheckinDetail;
                 this.checkInPostData = {
                   userId,
-                  checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-                  checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+                  checkInLatitude: this.myCurrentGeoLocation?.coords?.latitude,
+                  checkInLongitude:
+                    this.myCurrentGeoLocation?.coords?.longitude,
                   isGuestReturning: false,
                   projectID: this.checkInDetail.checkInEntityDetail.projectID,
                   inventoryItemID:
@@ -855,8 +856,8 @@ export class SharedDataService {
           this.checkInPostData = {
             userId,
             userPhoto,
-            checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-            checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+            checkInLatitude: this.myCurrentGeoLocation?.coords?.latitude,
+            checkInLongitude: this.myCurrentGeoLocation?.coords?.longitude,
             isGuestReturning: false,
             projectID: this.dedicatedModeLocationUse.projectID,
             inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
@@ -917,9 +918,10 @@ export class SharedDataService {
 
     const onSuccess = (data) => {
       this.checkInDetail = data;
+      debugger;
       this.checkInPostData = {
-        checkInLatitude: this.myCurrentGeoLocation?.coords.latitude,
-        checkInLongitude: this.myCurrentGeoLocation?.coords.longitude,
+        checkInLatitude: this.myCurrentGeoLocation?.coords?.latitude,
+        checkInLongitude: this.myCurrentGeoLocation?.coords?.longitude,
         isGuestReturning,
         projectID: dedicatedModeLocationUse.projectID,
         inventoryItemID: dedicatedModeLocationUse.inventoryItemID,
@@ -2305,6 +2307,47 @@ export class SharedDataService {
       this.offlineManagerService
         .insertCheckinDetails(checkinData)
         .then((res) => {
+          // insert form signoff detail to form archive list
+          if (this.checkInPostData?.formSubmitDataId) {
+            const formBuilderDetails: any = this.formBuilderDetails;
+
+            const signedByName =
+              (this.dedicatedModeUserDetail.firstName || "") +
+              " " +
+              (this.dedicatedModeUserDetail.middleName
+                ? this.dedicatedModeUserDetail.middleName + " "
+                : "") +
+              (this.dedicatedModeUserDetail.lastName || "");
+
+            const inductionTitle =
+              "Induction Sign-Off at " +
+              (this.dedicatedModeLocationUse.itemName ||
+                this.dedicatedModeLocationUse.projectName ||
+                this.dedicatedModeLocationUse.locationName) +
+              " by " +
+              signedByName;
+
+            const createdDateStr = moment().format(
+              StaticDataService.dateTimeFormatForDb
+            );
+
+            const archiveFormData = {
+              createdDate: createdDateStr,
+              documentID: formBuilderDetails.formId,
+              documentTitle: inductionTitle,
+              formattedCreatedDate: "",
+              timeDifference: "",
+              todayDate: "",
+              signedByName: signedByName,
+              document_BinaryFile: "",
+              inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
+              locationID: this.dedicatedModeLocationUse?.locationID,
+              projectID: this.dedicatedModeLocationUse?.projectID,
+            };
+            this.offlineManagerService
+              .insertDeviceArchivedForms(archiveFormData)
+              .then((res) => {});
+          }
           this.observablesService.publishSomeData(
             EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
             true
@@ -2830,7 +2873,76 @@ export class SharedDataService {
             EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
             true
           );
-          onSuccessCallBack(true);
+
+          //Add sign off form/document in archive list
+
+          const createdDateStr = moment().format(
+            StaticDataService.dateTimeFormatForDb
+          );
+          const signedByName =
+            (this.dedicatedModeUserDetail.firstName || "") +
+            " " +
+            (this.dedicatedModeUserDetail.middleName
+              ? this.dedicatedModeUserDetail.middleName + " "
+              : "") +
+            (this.dedicatedModeUserDetail.lastName || "");
+
+          if (this.signOffDetailsPostData.documentID) {
+            const documentDetail: any = this.signOffDocumentDetail;
+
+            const documentTitle =
+              "Document Sign-Off for " +
+              documentDetail?.documentTitle +
+              " by " +
+              signedByName;
+
+            const archiveDocumentData = {
+              documentID: this.signOffDetailsPostData.documentID,
+              documentTitle: documentTitle,
+              documentFileName: "",
+              createdDate: createdDateStr,
+              formattedCreatedDate: "",
+              timeDifference: "",
+              todayDate: "",
+              signedByName: signedByName,
+              document_BinaryFile: "",
+              inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
+              locationID: this.dedicatedModeLocationUse?.locationID,
+              projectID: this.dedicatedModeLocationUse?.projectID,
+            };
+            this.offlineManagerService
+              .insertDeviceArchivedDocuments(archiveDocumentData)
+              .then((res) => {
+                onSuccessCallBack(true);
+              });
+          } else if (this.signOffDetailsPostData.formVersionID) {
+            const formBuilderDetails: any = this.formBuilderDetails;
+
+            const formTitle =
+              "Form Sign-Off for " +
+              formBuilderDetails.title +
+              " by " +
+              signedByName;
+
+            const archiveFormData = {
+              createdDate: createdDateStr,
+              documentID: formBuilderDetails.formId,
+              documentTitle: formTitle,
+              formattedCreatedDate: "",
+              timeDifference: "",
+              todayDate: "",
+              signedByName: signedByName,
+              document_BinaryFile: "",
+              inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
+              locationID: this.dedicatedModeLocationUse?.locationID,
+              projectID: this.dedicatedModeLocationUse?.projectID,
+            };
+            this.offlineManagerService
+              .insertDeviceArchivedForms(archiveFormData)
+              .then((res) => {
+                onSuccessCallBack(true);
+              });
+          }
         });
     } else {
       this.utilService.presentLoadingWithOptions();

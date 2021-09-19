@@ -914,6 +914,31 @@ export class OfflineManagerService {
       console.log("DeviceHazardItems Inserted");
     }
 
+    // deviceAnswerChoiceQrCodeEntityDataList
+    const deviceAnswerChoiceQrCodeEntityDataList =
+      offlineData.deviceAnswerChoiceQrCodeEntityDataList;
+    if (deviceAnswerChoiceQrCodeEntityDataList) {
+      for (
+        let index = 0;
+        index < deviceAnswerChoiceQrCodeEntityDataList.length;
+        index++
+      ) {
+        const value = deviceAnswerChoiceQrCodeEntityDataList[index];
+        const condition: any = {
+          entityID: value.entityID,
+          entityType: value.entityType,
+          qrCode: value.qrCode,
+        };
+        await this.insertData(
+          "DeviceAnswerChoiceQrCodeEntities",
+          value,
+          condition
+        );
+      }
+      callBack && callBack(100);
+      console.log("DeviceAnswerChoiceQrCodeEntities Inserted");
+    }
+
     // deviceLocationItemList
     const deviceLocationItemList = offlineData.deviceLocationItemList;
     if (deviceLocationItemList) {
@@ -987,6 +1012,26 @@ export class OfflineManagerService {
       }
       callBack && callBack(100);
       console.log("DeviceRiskAssessmentProbabilityOptions Inserted");
+    }
+
+    // deviceUserTotalHAVExposureList
+    const deviceUserTotalHAVExposureList =
+      offlineData.deviceUserTotalHAVExposureList;
+    if (deviceUserTotalHAVExposureList) {
+      for (
+        let index = 0;
+        index < deviceUserTotalHAVExposureList.length;
+        index++
+      ) {
+        const value: any = deviceUserTotalHAVExposureList[index];
+        const condition: any = {
+          userID: value.userID,
+          modifiedDate: value.modifiedDate,
+        };
+        await this.insertData("DeviceUserTotalHAVExposures", value, condition);
+      }
+      callBack && callBack(100);
+      console.log("DeviceUserTotalHAVExposures Inserted");
     }
 
     // deviceRiskAssessmentSeverityOptions
@@ -1146,11 +1191,23 @@ export class OfflineManagerService {
 
       const query =
         "SELECT * FROM DeviceArchivedDocuments" +
-        (condition ? " WHERE " + condition : "");
+        (condition ? " WHERE " + condition : "") +
+        " ORDER BY createdDate DESC";
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {
-            resolve(this.convertToArray(res.rows));
+            const list = this.convertToArray(res.rows);
+            list.map((item: any) => {
+              const createdDate = moment(item.createdDate);
+              const currentDate = moment();
+
+              const formattedCreatedDate = createdDate.from(currentDate);
+
+              item.formattedCreatedDate = formattedCreatedDate;
+              item.todayDate = currentDate.format("YYYY-MM-DDTHH:mm:00.000");
+            });
+
+            resolve(list);
           } else {
             resolve([]);
           }
@@ -1200,11 +1257,25 @@ export class OfflineManagerService {
 
       const query =
         "SELECT * FROM DeviceArchivedForms" +
-        (condition ? " WHERE " + condition : "");
+        (condition ? " WHERE " + condition : "") +
+        " ORDER BY createdDate DESC";
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {
-            resolve(this.convertToArray(res.rows));
+            const list = this.convertToArray(res.rows);
+            list.map((item: any) => {
+              const createdDate = moment(item.createdDate);
+              const currentDate = moment();
+
+              const formattedCreatedDate = createdDate.from(currentDate);
+
+              item.formattedCreatedDate = formattedCreatedDate;
+              item.todayDate = currentDate.format(
+                StaticDataService.dateTimeFormatForDb
+              );
+            });
+
+            resolve(list);
           } else {
             resolve([]);
           }
@@ -1528,7 +1599,7 @@ export class OfflineManagerService {
     });
   }
 
-  getAnswerChoiceEntityByQRCode(qrCode, companyID) {
+  getAnswerChoiceEntityByQRCode(qrCode) {
     return new Promise(async (resolve, reject) => {
       let condition = "";
       if (qrCode) {
@@ -1536,65 +1607,14 @@ export class OfflineManagerService {
       }
       // Get DeviceInventoryItems
       let query =
-        "SELECT * FROM DeviceInventoryItems" +
+        "SELECT * FROM DeviceAnswerChoiceQrCodeEntities" +
         (condition ? " WHERE " + condition : "");
       const inventryItemsRes: any = await this.dbQuery(query, []);
       if (inventryItemsRes && inventryItemsRes.rows?.length > 0) {
         const inventoryItem = this.convertToObject(inventryItemsRes.rows);
-        const entityItem = new EntityItem();
-        entityItem.entityID = inventoryItem.inventoryItemID;
-        entityItem.entityName = inventoryItem.itemName;
-        entityItem.entityType = EnumService.SelectedQRCodeType.InventoryItem;
-        entityItem.havManufacturerID = inventoryItem.havManufacturerID;
-        entityItem.havModelID = inventoryItem.havModelID;
-        entityItem.havTypeID = inventoryItem.havTypeID;
-        entityItem.isHAVSData = inventoryItem.isHAVSData;
-        resolve(entityItem);
+        resolve(inventoryItem);
       } else {
-        // Get DeviceProjects
-        query =
-          "SELECT * FROM DeviceProjects" +
-          (condition ? " WHERE " + condition : "");
-        const deviceProjectsRes: any = await this.dbQuery(query, []);
-        if (deviceProjectsRes && deviceProjectsRes.rows?.length > 0) {
-          const projectItem = this.convertToObject(deviceProjectsRes.rows);
-          const entityItem = new EntityItem();
-          entityItem.entityID = projectItem.projectID;
-          entityItem.entityName = projectItem.projectName;
-          entityItem.entityType = EnumService.SelectedQRCodeType.Project;
-          resolve(entityItem);
-        } else {
-          // Get DeviceLocations
-          query =
-            "SELECT * FROM DeviceLocations" +
-            (condition ? " WHERE " + condition : "");
-          const deviceLocationsRes: any = await this.dbQuery(query, []);
-          if (deviceLocationsRes && deviceLocationsRes.rows?.length > 0) {
-            const locationItem = this.convertToObject(deviceLocationsRes.rows);
-            const entityItem = new EntityItem();
-            entityItem.entityID = locationItem.locationID;
-            entityItem.entityName = locationItem.locationName;
-            entityItem.entityType = EnumService.SelectedQRCodeType.Location;
-            resolve(entityItem);
-          } else {
-            // Get DeviceUsers
-            query =
-              "SELECT * FROM DeviceUsers" +
-              (condition ? " WHERE " + condition : "");
-            const deviceUserRes: any = await this.dbQuery(query, []);
-            if (deviceUserRes && deviceUserRes.rows?.length > 0) {
-              const userItem = this.convertToObject(deviceUserRes.rows);
-              const entityItem = new EntityItem();
-              entityItem.entityID = userItem.userId;
-              entityItem.entityName =
-                userItem.firstName + " " + userItem.lastName;
-              entityItem.entityType = EnumService.SelectedQRCodeType.User;
-              resolve(entityItem);
-            } else {
-              resolve(null);
-            }
-          }
-        }
+        resolve(null);
       }
     });
   }
@@ -1733,8 +1753,8 @@ export class OfflineManagerService {
           (condition ? " WHERE " + condition : "") +
           " ORDER BY checkInDate DESC";
       }
-      debugger;
 
+      debugger;
       this.dbQuery(query, [])
         .then(async (res: any) => {
           const deviceUserCheckinDetails = this.convertToArray(res.rows);
@@ -2104,6 +2124,7 @@ export class OfflineManagerService {
         });
     });
   }
+
   getDeviceLocationItemList() {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM DeviceLocationItems";
@@ -2307,6 +2328,89 @@ export class OfflineManagerService {
         .catch((error) => {
           reject({ message: "Error in saving the form" });
         });
+    });
+  };
+
+  insertDeviceArchivedDocuments = (data) => {
+    return new Promise((resolve, reject) => {
+      const entity:any = {
+        inventoryItemID: data.inventoryItemID,
+        locationID: data.locationID,
+        projectID: data.projectID,
+      };
+      let condition = this.appendEntityCondition(entity);
+      condition = condition+  " AND documentTitle LIKE '%"+data.documentTitle+"%'";
+      const query =
+        "SELECT COUNT(*) as total_count FROM DeviceArchivedDocuments" +
+        (condition ? " WHERE " + condition : "") +
+        " ORDER BY createdDate DESC";
+      this.dbQuery(query, []).then((res: any) => {
+        debugger;
+        if (res.rows?.length > 0) {
+          const obj = this.convertToObject(res.rows);
+          if(obj.total_count > 0) {
+            data.documentTitle = data.documentTitle+" "+obj.total_count;
+          }
+        }
+        this.insertData("DeviceArchivedDocuments", data)
+        .then((res: any) => {
+          resolve(res.insertId);
+        })
+        .catch((error) => {
+          reject({ message: "Error in saving the form" });
+        });
+      }).catch(()=>{
+        this.insertData("DeviceArchivedDocuments", data)
+        .then((res: any) => {
+          resolve(res.insertId);
+        })
+        .catch((error) => {
+          reject({ message: "Error in saving the form" });
+        });
+      });
+
+    
+    });
+  };
+
+  insertDeviceArchivedForms = (data) => {
+    return new Promise((resolve, reject) => {
+      const entity:any = {
+        inventoryItemID: data.inventoryItemID,
+        locationID: data.locationID,
+        projectID: data.projectID,
+      };
+      let condition = this.appendEntityCondition(entity);
+      condition = condition+  " AND documentTitle LIKE '%"+data.documentTitle+"%'";
+      const query =
+        "SELECT COUNT(*) as total_count FROM DeviceArchivedForms" +
+        (condition ? " WHERE " + condition : "") +
+        " ORDER BY createdDate DESC";
+      this.dbQuery(query, []).then((res: any) => {
+        debugger;
+        if (res.rows?.length > 0) {
+          const obj = this.convertToObject(res.rows);
+          if(obj.total_count > 0) {
+            data.documentTitle = data.documentTitle+" "+obj.total_count;
+          }
+        }
+        this.insertData("DeviceArchivedForms", data)
+        .then((res: any) => {
+          resolve(res.insertId);
+        })
+        .catch((error) => {
+          reject({ message: "Error in saving the form" });
+        });
+      }).catch(()=>{
+        this.insertData("DeviceArchivedForms", data)
+        .then((res: any) => {
+          resolve(res.insertId);
+        })
+        .catch((error) => {
+          reject({ message: "Error in saving the form" });
+        });
+      });
+    
     });
   };
 
