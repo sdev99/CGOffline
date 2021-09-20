@@ -2333,84 +2333,87 @@ export class OfflineManagerService {
 
   insertDeviceArchivedDocuments = (data) => {
     return new Promise((resolve, reject) => {
-      const entity:any = {
+      const entity: any = {
         inventoryItemID: data.inventoryItemID,
         locationID: data.locationID,
         projectID: data.projectID,
       };
       let condition = this.appendEntityCondition(entity);
-      condition = condition+  " AND documentTitle LIKE '%"+data.documentTitle+"%'";
+      condition =
+        condition + " AND documentTitle LIKE '%" + data.documentTitle + "%'";
       const query =
         "SELECT COUNT(*) as total_count FROM DeviceArchivedDocuments" +
         (condition ? " WHERE " + condition : "") +
         " ORDER BY createdDate DESC";
-      this.dbQuery(query, []).then((res: any) => {
-        debugger;
-        if (res.rows?.length > 0) {
-          const obj = this.convertToObject(res.rows);
-          if(obj.total_count > 0) {
-            data.documentTitle = data.documentTitle+" "+obj.total_count;
+      this.dbQuery(query, [])
+        .then((res: any) => {
+          debugger;
+          if (res.rows?.length > 0) {
+            const obj = this.convertToObject(res.rows);
+            if (obj.total_count > 0) {
+              data.documentTitle = data.documentTitle + " " + obj.total_count;
+            }
           }
-        }
-        this.insertData("DeviceArchivedDocuments", data)
-        .then((res: any) => {
-          resolve(res.insertId);
+          this.insertData("DeviceArchivedDocuments", data)
+            .then((res: any) => {
+              resolve(res.insertId);
+            })
+            .catch((error) => {
+              reject({ message: "Error in saving the form" });
+            });
         })
-        .catch((error) => {
-          reject({ message: "Error in saving the form" });
+        .catch(() => {
+          this.insertData("DeviceArchivedDocuments", data)
+            .then((res: any) => {
+              resolve(res.insertId);
+            })
+            .catch((error) => {
+              reject({ message: "Error in saving the form" });
+            });
         });
-      }).catch(()=>{
-        this.insertData("DeviceArchivedDocuments", data)
-        .then((res: any) => {
-          resolve(res.insertId);
-        })
-        .catch((error) => {
-          reject({ message: "Error in saving the form" });
-        });
-      });
-
-    
     });
   };
 
   insertDeviceArchivedForms = (data) => {
     return new Promise((resolve, reject) => {
-      const entity:any = {
+      const entity: any = {
         inventoryItemID: data.inventoryItemID,
         locationID: data.locationID,
         projectID: data.projectID,
       };
       let condition = this.appendEntityCondition(entity);
-      condition = condition+  " AND documentTitle LIKE '%"+data.documentTitle+"%'";
+      condition =
+        condition + " AND documentTitle LIKE '%" + data.documentTitle + "%'";
       const query =
         "SELECT COUNT(*) as total_count FROM DeviceArchivedForms" +
         (condition ? " WHERE " + condition : "") +
         " ORDER BY createdDate DESC";
-      this.dbQuery(query, []).then((res: any) => {
-        debugger;
-        if (res.rows?.length > 0) {
-          const obj = this.convertToObject(res.rows);
-          if(obj.total_count > 0) {
-            data.documentTitle = data.documentTitle+" "+obj.total_count;
+      this.dbQuery(query, [])
+        .then((res: any) => {
+          debugger;
+          if (res.rows?.length > 0) {
+            const obj = this.convertToObject(res.rows);
+            if (obj.total_count > 0) {
+              data.documentTitle = data.documentTitle + " " + obj.total_count;
+            }
           }
-        }
-        this.insertData("DeviceArchivedForms", data)
-        .then((res: any) => {
-          resolve(res.insertId);
+          this.insertData("DeviceArchivedForms", data)
+            .then((res: any) => {
+              resolve(res.insertId);
+            })
+            .catch((error) => {
+              reject({ message: "Error in saving the form" });
+            });
         })
-        .catch((error) => {
-          reject({ message: "Error in saving the form" });
+        .catch(() => {
+          this.insertData("DeviceArchivedForms", data)
+            .then((res: any) => {
+              resolve(res.insertId);
+            })
+            .catch((error) => {
+              reject({ message: "Error in saving the form" });
+            });
         });
-      }).catch(()=>{
-        this.insertData("DeviceArchivedForms", data)
-        .then((res: any) => {
-          resolve(res.insertId);
-        })
-        .catch((error) => {
-          reject({ message: "Error in saving the form" });
-        });
-      });
-    
     });
   };
 
@@ -2846,7 +2849,7 @@ export class OfflineManagerService {
   getOfflineUserCheckinDetails = () => {
     return new Promise((resolve) => {
       const query =
-        'SELECT * FROM DeviceUserCheckinDetails WHERE isOfflineDone = true OR isOfflineDone = "true"';
+        'SELECT * FROM DeviceUserCheckinDetails WHERE (userCheckInDetailID is NULL OR userCheckInDetailID="") AND (isOfflineDone = true OR isOfflineDone = "true")';
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {

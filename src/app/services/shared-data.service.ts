@@ -52,6 +52,8 @@ import { EntityItem } from "../_models/entityItem";
 import { AccountService } from "./account.service";
 import { OfflineManagerService } from "./offline-manager.service";
 import { DeviceUserDetail } from "../_models/offline/DeviceUserDetail";
+import { File } from "@ionic-native/file/ngx";
+import { Base64 } from "@ionic-native/base64/ngx";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -173,6 +175,8 @@ export class SharedDataService {
     private observablesService: ObservablesService,
     private offlineManagerService: OfflineManagerService,
     public utilService: UtilService,
+    public file: File,
+    private base64: Base64,
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {
     // Set dynamic api url for WebApp based on domain
@@ -1286,32 +1290,65 @@ export class SharedDataService {
                         ];
                     }
                     if (this.offlineMode) {
-                      this.offlineManagerService
-                        .insertImageVideoFile({
-                          fileName: fileName || "",
-                          mimeType: mimeType || "",
-                          isVideo: isVideo || false,
-                          binaryFile: control.value || "",
-                        })
-                        .then((res) => {
-                          attachemtUploaded[question.questionId] = res;
-                          attachmentUploadedCount++;
-                          if (attachmentCount === attachmentUploadedCount) {
-                            loading = false;
-                            this.utilService.hideLoading();
-                            this.submitFormAnswers(
-                              apiService,
-                              formGroup,
-                              formBuilderDetail,
-                              personalModeLoggedUser,
-                              callBack,
-                              havAnswerDetail,
-                              workPermitAnswer,
-                              attachemtUploaded
+                      const attachmentProcessDone = () => {
+                        attachmentUploadedCount++;
+                        if (attachmentCount === attachmentUploadedCount) {
+                          loading = false;
+                          this.utilService.hideLoading();
+                          this.submitFormAnswers(
+                            apiService,
+                            formGroup,
+                            formBuilderDetail,
+                            personalModeLoggedUser,
+                            callBack,
+                            havAnswerDetail,
+                            workPermitAnswer,
+                            attachemtUploaded
+                          );
+                        }
+                      };
+
+                      const insertImageVideoFileToDb = (binaryFile) => {
+                        this.offlineManagerService
+                          .insertImageVideoFile({
+                            fileName: fileName || "",
+                            mimeType: mimeType || "",
+                            isVideo: isVideo || false,
+                            binaryFile: binaryFile || "",
+                          })
+                          .then((res) => {
+                            attachemtUploaded[question.questionId] = res;
+                            attachmentProcessDone();
+                          })
+                          .catch((error) => {});
+                      };
+
+                      if (isVideo) {
+                        debugger;
+                        this.file
+                          .resolveLocalFilesystemUrl(control.value)
+                          .then((res) => {
+                            debugger;
+
+                            this.base64.encodeFile(res.nativeURL).then(
+                              (base64File: string) => {
+                                console.log(base64File);
+                                insertImageVideoFileToDb(
+                                  UtilService.FixBase64String(base64File)
+                                );
+                              },
+                              (err) => {
+                                attachmentProcessDone();
+                                console.log(err);
+                              }
                             );
-                          }
-                        })
-                        .catch((error) => {});
+                          })
+                          .catch((error) => {
+                            attachmentProcessDone();
+                          });
+                      } else {
+                        insertImageVideoFileToDb(control.value);
+                      }
                     } else {
                       this.utilService
                         .dataUriToFile(control.value, fileName, mimeType)
