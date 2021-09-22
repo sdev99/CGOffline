@@ -281,28 +281,30 @@ export class FormAccidentReportPage {
             const questionDisplayOrder = questionIndex + 1;
             if (questionDisplayOrder === listType) {
               this.ngZone.run(() => {
-                if (
-                  questionDisplayOrder ===
-                  EnumService.AccidentFormFieldOrder.Type
-                ) {
-                  question.answerChoiceAttributes = this.types;
-                  question.listValueKey = "accidentTypeId";
-                  question.listLabelKey = "accidentTypeTitle";
-                } else if (
-                  questionDisplayOrder ===
-                  EnumService.AccidentFormFieldOrder.Classification
-                ) {
-                  question.answerChoiceAttributes = this.classifications;
-                  question.listValueKey = "accidentClassificationId";
-                  question.listLabelKey = "accidentClassificationTitle";
-                } else if (
-                  questionDisplayOrder ===
-                  EnumService.AccidentFormFieldOrder.AccidentLocation
-                ) {
-                  question.answerChoiceAttributes = this.locations;
-                  question.listValueKey = "locationName";
-                  question.listLabelKey = "locationID";
-                }
+                setTimeout(() => {
+                  if (
+                    questionDisplayOrder ===
+                    EnumService.AccidentFormFieldOrder.Type
+                  ) {
+                    question.answerChoiceAttributes = this.types;
+                    question.listValueKey = "accidentTypeId";
+                    question.listLabelKey = "accidentTypeTitle";
+                  } else if (
+                    questionDisplayOrder ===
+                    EnumService.AccidentFormFieldOrder.Classification
+                  ) {
+                    question.answerChoiceAttributes = this.classifications;
+                    question.listValueKey = "accidentClassificationId";
+                    question.listLabelKey = "accidentClassificationTitle";
+                  } else if (
+                    questionDisplayOrder ===
+                    EnumService.AccidentFormFieldOrder.AccidentLocation
+                  ) {
+                    question.answerChoiceAttributes = this.locations;
+                    question.listValueKey = "locationName";
+                    question.listLabelKey = "locationID";
+                  }
+                }, 0);
               });
             }
           });
@@ -324,32 +326,34 @@ export class FormAccidentReportPage {
 
         const entityItem = result as EntityItem;
         this.ngZone.run(() => {
-          let locationId = "";
-          switch (entityItem.entityType) {
-            case EnumService.SelectedQRCodeType.Location:
-              locationId = "L|";
-              break;
-            case EnumService.SelectedQRCodeType.Project:
-              locationId = "P|";
-              break;
-            case EnumService.SelectedQRCodeType.InventoryItem:
-              locationId = "I|";
-              break;
-            case EnumService.SelectedQRCodeType.Document:
-              locationId = "D|";
-              break;
-            case EnumService.SelectedQRCodeType.Form:
-              locationId = "F|";
-              break;
-            case EnumService.SelectedQRCodeType.User:
-              locationId = "U|";
-              break;
-            default:
-              break;
-          }
-          this.formGroup.controls[formControlName].setValue(
-            locationId + "" + entityItem.entityID
-          );
+          setTimeout(() => {
+            let locationId = "";
+            switch (entityItem.entityType) {
+              case EnumService.SelectedQRCodeType.Location:
+                locationId = "L|";
+                break;
+              case EnumService.SelectedQRCodeType.Project:
+                locationId = "P|";
+                break;
+              case EnumService.SelectedQRCodeType.InventoryItem:
+                locationId = "I|";
+                break;
+              case EnumService.SelectedQRCodeType.Document:
+                locationId = "D|";
+                break;
+              case EnumService.SelectedQRCodeType.Form:
+                locationId = "F|";
+                break;
+              case EnumService.SelectedQRCodeType.User:
+                locationId = "U|";
+                break;
+              default:
+                break;
+            }
+            this.formGroup.controls[formControlName].setValue(
+              locationId + "" + entityItem.entityID
+            );
+          }, 0);
         });
 
         this.observablesService.removeObservable(fromFormCallbackKey);
@@ -383,17 +387,19 @@ export class FormAccidentReportPage {
         .onChange()
         .subscribe(() => {
           this.ngZone.run(() => {
-            if (this.screenOrientation.type.includes("portrait")) {
-              this.isShowOritationPortrait = false;
-              if (!UtilService.isLocalHost()) {
-                this.screenOrientation.lock(
-                  this.screenOrientation.ORIENTATIONS.PORTRAIT
-                );
+            setTimeout(() => {
+              if (this.screenOrientation.type.includes("portrait")) {
+                this.isShowOritationPortrait = false;
+                if (!UtilService.isLocalHost()) {
+                  this.screenOrientation.lock(
+                    this.screenOrientation.ORIENTATIONS.PORTRAIT
+                  );
+                }
               }
-            }
-            if (this.screenOrientation.type.includes("landscape")) {
-              this.isShowOritationPortrait = true;
-            }
+              if (this.screenOrientation.type.includes("landscape")) {
+                this.isShowOritationPortrait = true;
+              }
+            }, 0);
           });
         });
     }

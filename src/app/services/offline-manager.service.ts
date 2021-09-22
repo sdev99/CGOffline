@@ -2574,6 +2574,7 @@ export class OfflineManagerService {
         guestPhotoBinaryFile: data.guestPhotoBinaryFile || "",
         isOfflineDone: data.isOfflineDone || false,
       };
+
       const { dataCols, dataVals, dataValPlaceHolders } =
         this.convertObjectToColValPlaceholders(guestUser);
       let query =
@@ -2768,19 +2769,20 @@ export class OfflineManagerService {
                 const checkinRes = this.convertToObject(res1.rows);
                 if (checkinRes && checkinRes.total_result > 0) {
                   resolve(true);
-                }
-                this.dbQuery(guestCheckinQuery)
-                  .then((res2: any) => {
-                    const guestCheckinRes = this.convertToObject(res2.rows);
-                    if (guestCheckinRes && guestCheckinRes.total_result > 0) {
-                      resolve(true);
-                    } else {
+                } else {
+                  this.dbQuery(guestCheckinQuery)
+                    .then((res2: any) => {
+                      const guestCheckinRes = this.convertToObject(res2.rows);
+                      if (guestCheckinRes && guestCheckinRes.total_result > 0) {
+                        resolve(true);
+                      } else {
+                        resolve(false);
+                      }
+                    })
+                    .catch((error) => {
                       resolve(false);
-                    }
-                  })
-                  .catch((error) => {
-                    resolve(false);
-                  });
+                    });
+                }
               })
               .catch((error) => {
                 resolve(false);

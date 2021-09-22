@@ -182,24 +182,26 @@ export class FormHavPage implements OnInit {
 
   setupHavData = (havAssessmentTool, entityItem) => {
     this.ngZone.run(() => {
-      havAssessmentTool.questions.map((questionItem) => {
-        if (
-          questionItem.questionDisplayOrder ===
-          EnumService.HavFormFieldOrder.Manufacturer
-        ) {
-          questionItem.value = entityItem.havManufacturerID;
-        } else if (
-          questionItem.questionDisplayOrder ===
-          EnumService.HavFormFieldOrder.Type
-        ) {
-          questionItem.value = entityItem.havTypeID;
-        } else if (
-          questionItem.questionDisplayOrder ===
-          EnumService.HavFormFieldOrder.Model
-        ) {
-          questionItem.value = entityItem.havModelID;
-        }
-      });
+      setTimeout(() => {
+        havAssessmentTool.questions.map((questionItem) => {
+          if (
+            questionItem.questionDisplayOrder ===
+            EnumService.HavFormFieldOrder.Manufacturer
+          ) {
+            questionItem.value = entityItem.havManufacturerID;
+          } else if (
+            questionItem.questionDisplayOrder ===
+            EnumService.HavFormFieldOrder.Type
+          ) {
+            questionItem.value = entityItem.havTypeID;
+          } else if (
+            questionItem.questionDisplayOrder ===
+            EnumService.HavFormFieldOrder.Model
+          ) {
+            questionItem.value = entityItem.havModelID;
+          }
+        });
+      }, 0);
     });
   };
 
@@ -273,19 +275,21 @@ export class FormHavPage implements OnInit {
 
     const onSuccess = (toolTypes: any) => {
       this.ngZone.run(() => {
-        this.setupDynamicChoiceListForHavAssessmentTool(
-          havAssessmentTool,
-          EnumService.HavFormFieldOrder.Type,
-          toolTypes
-        );
-        this.setupDynamicChoiceListForHavAssessmentTool(
-          havAssessmentTool,
-          EnumService.HavFormFieldOrder.Model,
-          []
-        );
         setTimeout(() => {
-          callBack && callBack();
-        }, 100);
+          this.setupDynamicChoiceListForHavAssessmentTool(
+            havAssessmentTool,
+            EnumService.HavFormFieldOrder.Type,
+            toolTypes
+          );
+          this.setupDynamicChoiceListForHavAssessmentTool(
+            havAssessmentTool,
+            EnumService.HavFormFieldOrder.Model,
+            []
+          );
+          setTimeout(() => {
+            callBack && callBack();
+          }, 100);
+        }, 0);
       });
     };
 
@@ -319,14 +323,16 @@ export class FormHavPage implements OnInit {
     );
     const onSuccess = (toolModels: any) => {
       this.ngZone.run(() => {
-        this.setupDynamicChoiceListForHavAssessmentTool(
-          havAssessmentTool,
-          EnumService.HavFormFieldOrder.Model,
-          toolModels
-        );
         setTimeout(() => {
-          callBack && callBack();
-        }, 100);
+          this.setupDynamicChoiceListForHavAssessmentTool(
+            havAssessmentTool,
+            EnumService.HavFormFieldOrder.Model,
+            toolModels
+          );
+          setTimeout(() => {
+            callBack && callBack();
+          }, 100);
+        }, 0);
       });
     };
 
@@ -381,17 +387,19 @@ export class FormHavPage implements OnInit {
         .onChange()
         .subscribe(() => {
           this.ngZone.run(() => {
-            if (this.screenOrientation.type.includes("portrait")) {
-              if (!UtilService.isLocalHost()) {
-                this.screenOrientation.lock(
-                  this.screenOrientation.ORIENTATIONS.PORTRAIT
-                );
+            setTimeout(() => {
+              if (this.screenOrientation.type.includes("portrait")) {
+                if (!UtilService.isLocalHost()) {
+                  this.screenOrientation.lock(
+                    this.screenOrientation.ORIENTATIONS.PORTRAIT
+                  );
+                }
+                this.isShowOritationPortrait = false;
               }
-              this.isShowOritationPortrait = false;
-            }
-            if (this.screenOrientation.type.includes("landscape")) {
-              this.isShowOritationPortrait = true;
-            }
+              if (this.screenOrientation.type.includes("landscape")) {
+                this.isShowOritationPortrait = true;
+              }
+            }, 0);
           });
         });
     }
