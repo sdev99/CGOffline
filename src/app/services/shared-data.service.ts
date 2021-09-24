@@ -54,6 +54,7 @@ import { OfflineManagerService } from "./offline-manager.service";
 import { DeviceUserDetail } from "../_models/offline/DeviceUserDetail";
 import { File } from "@ionic-native/file/ngx";
 import { Base64 } from "@ionic-native/base64/ngx";
+import { InductionItem } from "../_models/inductionItem";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -1324,28 +1325,20 @@ export class SharedDataService {
                       };
 
                       if (isVideo) {
+                        let path = control.value;
                         debugger;
-                        this.file
-                          .resolveLocalFilesystemUrl(control.value)
-                          .then((res) => {
-                            debugger;
 
-                            this.base64.encodeFile(res.nativeURL).then(
-                              (base64File: string) => {
-                                console.log(base64File);
-                                insertImageVideoFileToDb(
-                                  UtilService.FixBase64String(base64File)
-                                );
-                              },
-                              (err) => {
-                                attachmentProcessDone();
-                                console.log(err);
-                              }
+                        this.base64.encodeFile(path).then(
+                          (base64File: string) => {
+                            insertImageVideoFileToDb(
+                              base64File.split(",").pop()
                             );
-                          })
-                          .catch((error) => {
+                          },
+                          (err) => {
                             attachmentProcessDone();
-                          });
+                            console.log(err);
+                          }
+                        );
                       } else {
                         insertImageVideoFileToDb(control.value);
                       }
@@ -2344,52 +2337,13 @@ export class SharedDataService {
       this.offlineManagerService
         .insertCheckinDetails(checkinData)
         .then((res) => {
-          // insert form signoff detail to form archive list
-          if (this.checkInPostData?.formSubmitDataId) {
-            const formBuilderDetails: any = this.formBuilderDetails;
-
-            const signedByName =
-              (this.dedicatedModeUserDetail.firstName || "") +
-              " " +
-              (this.dedicatedModeUserDetail.middleName
-                ? this.dedicatedModeUserDetail.middleName + " "
-                : "") +
-              (this.dedicatedModeUserDetail.lastName || "");
-
-            const inductionTitle =
-              "Induction Sign-Off at " +
-              (this.dedicatedModeLocationUse.itemName ||
-                this.dedicatedModeLocationUse.projectName ||
-                this.dedicatedModeLocationUse.locationName) +
-              " by " +
-              signedByName;
-
-            const createdDateStr = moment().format(
-              StaticDataService.dateTimeFormatForDb
+          this.insertInductionItemsArchiveRecords(() => {
+            this.observablesService.publishSomeData(
+              EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
+              true
             );
-
-            const archiveFormData = {
-              createdDate: createdDateStr,
-              documentID: formBuilderDetails.formId,
-              documentTitle: inductionTitle,
-              formattedCreatedDate: "",
-              timeDifference: "",
-              todayDate: "",
-              signedByName: signedByName,
-              document_BinaryFile: "",
-              inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
-              locationID: this.dedicatedModeLocationUse?.locationID,
-              projectID: this.dedicatedModeLocationUse?.projectID,
-            };
-            this.offlineManagerService
-              .insertDeviceArchivedForms(archiveFormData)
-              .then((res) => {});
-          }
-          this.observablesService.publishSomeData(
-            EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
-            true
-          );
-          onSuccess(checkinData);
+            onSuccess(checkinData);
+          });
         })
         .catch((error) => {
           this.processCheckInError(error, nextScreen);
@@ -2416,6 +2370,106 @@ export class SharedDataService {
       );
     }
   };
+
+  private insertInductionItemsArchiveRecords(callBack) {
+    // insert form signoff detail to form archive list
+
+    const checkInInductionItems = this.checkInDetail?.checkInInductionItems;
+    let insertCount = 0;
+    const onRecordInserted = () => {
+      if (checkInInductionItems.length === ++insertCount) {
+        callBack();
+      }
+    };
+
+    if (checkInInductionItems && checkInInductionItems.length > 0) {
+      checkInInductionItems.forEach((item: InductionItem) => {
+        let titlePrepend: string = "";
+        switch (item.contentType) {
+          case EnumService.InductionContentTypes.VISITOR_AGREEMENT:
+            titlePrepend = "Visitor Agreement Sign-Off at";
+            break;
+
+          case EnumService.InductionContentTypes.RICH_TEXT:
+          case EnumService.InductionContentTypes.VIDEO_FILE:
+          case EnumService.InductionContentTypes.IMAGE_FILE:
+          case EnumService.InductionContentTypes.FORM:
+            titlePrepend = "Induction Sign-Off at";
+
+            break;
+
+          default:
+            break;
+        }
+
+        let signedByName = "";
+        if (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
+          signedByName =
+            (this.dedicatedModeGuestDetail.guestFirsName || "") +
+            " " +
+            (this.dedicatedModeGuestDetail.guestMiddleName
+              ? this.dedicatedModeGuestDetail.guestMiddleName + " "
+              : "") +
+            (this.dedicatedModeGuestDetail.guestLastName || "");
+        } else {
+          signedByName =
+            (this.dedicatedModeUserDetail.firstName || "") +
+            " " +
+            (this.dedicatedModeUserDetail.middleName
+              ? this.dedicatedModeUserDetail.middleName + " "
+              : "") +
+            (this.dedicatedModeUserDetail.lastName || "");
+        }
+
+        const inductionTitle =
+          titlePrepend +
+          " " +
+          (this.dedicatedModeLocationUse.itemName ||
+            this.dedicatedModeLocationUse.projectName ||
+            this.dedicatedModeLocationUse.locationName) +
+          " by " +
+          signedByName;
+        const createdDateStr = moment().format(
+          StaticDataService.dateTimeFormatForDb
+        );
+
+        const archiveData = {
+          documentID: item.checkInInductionItemID,
+          documentTitle: inductionTitle,
+          documentFileName: "",
+          createdDate: createdDateStr,
+          formattedCreatedDate: "",
+          timeDifference: "",
+          todayDate: "",
+          signedByName: signedByName,
+          document_BinaryFile: "",
+          inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
+          locationID: this.dedicatedModeLocationUse?.locationID,
+          projectID: this.dedicatedModeLocationUse?.projectID,
+        };
+
+        if (item.contentType === EnumService.InductionContentTypes.FORM) {
+          this.offlineManagerService
+            .insertDeviceArchivedForms(archiveData)
+            .then((res) => {
+              onRecordInserted();
+            })
+            .catch(() => {
+              onRecordInserted();
+            });
+        } else {
+          this.offlineManagerService
+            .insertDeviceArchivedDocuments(archiveData)
+            .then((res) => {
+              onRecordInserted();
+            })
+            .catch(() => {
+              onRecordInserted();
+            });
+        }
+      });
+    }
+  }
 
   submitInductionCheckInDataGuest = async (apiService: ApiService) => {
     const nextScreen = this.dedicatedMode ? "/dashboard-dm" : "/tabs/dashboard";
