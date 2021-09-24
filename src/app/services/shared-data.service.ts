@@ -2429,9 +2429,7 @@ export class SharedDataService {
             this.dedicatedModeLocationUse.locationName) +
           " by " +
           signedByName;
-        const createdDateStr = moment().format(
-          StaticDataService.dateTimeFormatForDb
-        );
+        const createdDateStr = moment().toISOString(true);
 
         const archiveData = {
           documentID: item.checkInInductionItemID,
@@ -2967,9 +2965,7 @@ export class SharedDataService {
 
           //Add sign off form/document in archive list
 
-          const createdDateStr = moment().format(
-            StaticDataService.dateTimeFormatForDb
-          );
+          const createdDateStr = moment().toISOString(true);
           const signedByName =
             (this.dedicatedModeUserDetail.firstName || "") +
             " " +

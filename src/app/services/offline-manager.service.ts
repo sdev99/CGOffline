@@ -271,7 +271,7 @@ export class OfflineManagerService {
       };
       await this.insertData("DeviceDetails", deviceDetailData, condition);
 
-      callBack && callBack(3);
+      callBack && callBack();
       console.log("DeviceDetails Inserted");
     }
 
@@ -286,7 +286,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceEntities", value, condition);
       }
-      callBack && callBack(6);
+      callBack && callBack();
       console.log("DeviceEntities Inserted");
     }
 
@@ -301,12 +301,13 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceUsers", value, condition);
       }
-      callBack && callBack(9);
+      callBack && callBack();
       console.log("DeviceUsers Inserted");
     }
 
     // deviceUserQualificationList
     const deviceUserQualificationList = offlineData.deviceUserQualificationList;
+    debugger;
     if (deviceUserQualificationList) {
       for (let index = 0; index < deviceUserQualificationList.length; index++) {
         const value: DeviceUserQualificationDetail =
@@ -317,7 +318,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceUserQualifications", value, condition);
       }
-      callBack && callBack(12);
+      callBack && callBack();
       console.log("DeviceUserQualifications Inserted");
     }
 
@@ -329,7 +330,7 @@ export class OfflineManagerService {
         const condition: any = { guestPhone: value.guestPhone };
         await this.insertData("DeviceGuestUsers", value, condition);
       }
-      callBack && callBack(15);
+      callBack && callBack();
       console.log("DeviceGuestUsers Inserted");
     }
 
@@ -357,7 +358,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceAvailableDocuments", value, condition);
       }
-      callBack && callBack(18);
+      callBack && callBack();
       console.log("DeviceAvailableDocuments Inserted");
     }
 
@@ -379,7 +380,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceArchivedDocuments", value, condition);
       }
-      callBack && callBack(21);
+      callBack && callBack();
       console.log("DeviceArchivedDocuments Inserted");
     }
 
@@ -405,7 +406,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceAvailableForms", value, condition);
       }
-      callBack && callBack(24);
+      callBack && callBack();
       console.log("DeviceAvailableForms Inserted");
     }
 
@@ -426,7 +427,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceArchivedForms", value, condition);
       }
-      callBack && callBack(27);
+      callBack && callBack();
       console.log("DeviceArchivedForms Inserted");
     }
 
@@ -455,7 +456,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceAvailableWorkPermits", value, condition);
       }
-      callBack && callBack(30);
+      callBack && callBack();
       console.log("DeviceAvailableWorkPermits Inserted");
     }
 
@@ -477,7 +478,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceLiveWorkPermits", value, condition);
       }
-      callBack && callBack(33);
+      callBack && callBack();
       console.log("DeviceLiveWorkPermits Inserted");
     }
 
@@ -504,7 +505,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceArchivedWorkPermits", value, condition);
       }
-      callBack && callBack(36);
+      callBack && callBack();
       console.log("DeviceArchivedWorkPermits Inserted");
     }
 
@@ -528,7 +529,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceFormDetails", value, condition);
       }
-      callBack && callBack(39);
+      callBack && callBack();
       console.log("DeviceFormDetails Inserted");
     }
 
@@ -546,7 +547,7 @@ export class OfflineManagerService {
 
         await this.insertData("DeviceFormAttachments", value, condition);
       }
-      callBack && callBack(42);
+      callBack && callBack();
       console.log("DeviceFormAttachments Inserted");
     }
 
@@ -568,7 +569,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceEvacuations", value, condition);
       }
-      callBack && callBack(45);
+      callBack && callBack();
       console.log("DeviceEvacuations Inserted");
     }
 
@@ -600,7 +601,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(48);
+      callBack && callBack();
       console.log("DeviceUserCheckInQualifications Inserted");
     }
 
@@ -615,7 +616,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceLocations", value, condition);
       }
-      callBack && callBack(51);
+      callBack && callBack();
       console.log("DeviceLocations Inserted");
     }
 
@@ -630,7 +631,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceProjects", value, condition);
       }
-      callBack && callBack(54);
+      callBack && callBack();
       console.log("DeviceProjects Inserted");
     }
 
@@ -645,7 +646,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceInventoryItems", value, condition);
       }
-      callBack && callBack(57);
+      callBack && callBack();
       console.log("DeviceInventoryItems Inserted");
     }
 
@@ -668,7 +669,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceUserCheckinDetails", value, condition);
       }
-      callBack && callBack(60);
+      callBack && callBack();
       console.log("DeviceUserCheckinDetails Inserted");
     }
 
@@ -690,7 +691,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceCheckInInductions", value, condition);
       }
-      callBack && callBack(63);
+      callBack && callBack();
       console.log("DeviceCheckInInductions Inserted");
     }
 
@@ -713,7 +714,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceCheckInInductionItems", value, condition);
       }
-      callBack && callBack(66);
+      callBack && callBack();
       console.log("DeviceCheckInInductionItems Inserted");
     }
 
@@ -745,7 +746,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(69);
+      callBack && callBack();
       console.log("DeviceGuestUserCheckinDetails Inserted");
     }
 
@@ -772,7 +773,7 @@ export class OfflineManagerService {
         }
         await this.insertData("DeviceCheckInGuestInductions", value, condition);
       }
-      callBack && callBack(72);
+      callBack && callBack();
       console.log("DeviceCheckInGuestInductions Inserted");
     }
 
@@ -801,7 +802,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(75);
+      callBack && callBack();
       console.log("DeviceCheckInGuestInductionItems Inserted");
     }
 
@@ -815,7 +816,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceCompanyUsers", value, condition);
       }
-      callBack && callBack(78);
+      callBack && callBack();
       console.log("DeviceCompanyUsers Inserted");
     }
 
@@ -830,7 +831,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceCompanyUserGroups", value, condition);
       }
-      callBack && callBack(81);
+      callBack && callBack();
       console.log("DeviceCompanyUserGroups Inserted");
     }
 
@@ -846,7 +847,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceHAVManufacturers", value, condition);
       }
-      callBack && callBack(84);
+      callBack && callBack();
       console.log("DeviceHAVManufacturers Inserted");
     }
 
@@ -862,7 +863,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceHAVTypes", value, condition);
       }
-      callBack && callBack(87);
+      callBack && callBack();
       console.log("DeviceHAVTypes Inserted");
     }
 
@@ -879,7 +880,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceHAVModels", value, condition);
       }
-      callBack && callBack(90);
+      callBack && callBack();
       console.log("DeviceHAVModels Inserted");
     }
 
@@ -894,7 +895,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceRiskItems", value, condition);
       }
-      callBack && callBack(93);
+      callBack && callBack();
       console.log("DeviceRiskItems Inserted");
     }
 
@@ -910,7 +911,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceHazardItems", value, condition);
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceHazardItems Inserted");
     }
 
@@ -935,7 +936,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceAnswerChoiceQrCodeEntities Inserted");
     }
 
@@ -949,7 +950,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceLocationItems", value, condition);
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceLocationItems Inserted");
     }
 
@@ -963,7 +964,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceAccidentTypes", value, condition);
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceAccidentTypes Inserted");
     }
 
@@ -986,7 +987,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceAccidentClassifications Inserted");
     }
 
@@ -1010,7 +1011,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceRiskAssessmentProbabilityOptions Inserted");
     }
 
@@ -1030,7 +1031,7 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceUserTotalHAVExposures", value, condition);
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceUserTotalHAVExposures Inserted");
     }
 
@@ -1053,7 +1054,7 @@ export class OfflineManagerService {
           condition
         );
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("DeviceRiskAssessmentSeverityOptions Inserted");
     }
 
@@ -1075,9 +1076,11 @@ export class OfflineManagerService {
         };
         await this.insertData("DeviceFormBuilderDetails", value, condition);
       }
-      callBack && callBack(100);
+      callBack && callBack();
       console.log("deviceFormBuilderDetailsList Inserted");
     }
+
+    callBack && callBack(true);
   };
 
   appendEntityCondition = (entity: DeviceEntityDetail) => {
@@ -2462,6 +2465,7 @@ export class OfflineManagerService {
       const userQualifications: any = await this.getDeviceUserQualifications(
         data.userId
       );
+      debugger;
       if (userQualifications && userQualifications.length > 0) {
         let matchedQualificationCount = 0;
         checkinQualifications.map((checkinQualObj) => {

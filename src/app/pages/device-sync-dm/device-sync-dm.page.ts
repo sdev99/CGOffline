@@ -15,6 +15,8 @@ import { DeviceOfflineDetailViewModels } from "src/app/_models/offline/DeviceOff
 import { FilehandlerService } from "src/app/services/filehandler.service";
 import { Capacitor, Network } from "@capacitor/core";
 import * as JSZip from "jszip";
+import * as moment from "moment";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-device-sync-dm",
@@ -39,6 +41,7 @@ export class DeviceSyncDmPage implements OnInit {
     public offlineApiService: OfflineApiService,
     public offlineManagerService: OfflineManagerService,
     public sharedDataService: SharedDataService,
+    public observablesService: ObservablesService,
     public filehandlerService: FilehandlerService
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
@@ -142,6 +145,19 @@ export class DeviceSyncDmPage implements OnInit {
     });
   };
 
+  onSyncCompleted = () => {
+    this.synchProgressState = "completed";
+    localStorage.setItem(
+      EnumService.LocalStorageKeys.SYNC_DATE_TIME,
+      moment().toISOString(true)
+    );
+    localStorage.removeItem(EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE);
+    this.observablesService.publishSomeData(
+      EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
+      true
+    );
+  };
+
   onSync() {
     this.progress = 0;
     this.synchProgressState = "processing";
@@ -149,20 +165,10 @@ export class DeviceSyncDmPage implements OnInit {
     this.postOfflineDataToServerIfAvailable()
       .then((res) => {
         this.offlineManagerService.emptyAllTables(() => {
-          this.progress = 5;
+          this.updateProgressBy(5);
+
           this.callOfflineApi(() => {
-            if (this.progress === 100) {
-              this.synchProgressState = "completed";
-              localStorage.setItem(
-                EnumService.LocalStorageKeys.SYNC_DATE_TIME,
-                this.utilService.getCurrentDateTIme()
-              );
-              localStorage.removeItem(
-                EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE
-              );
-            } else {
-              this.progress = this.progress + 5;
-            }
+            this.onSyncCompleted();
           });
         });
       })
@@ -177,6 +183,13 @@ export class DeviceSyncDmPage implements OnInit {
     this.navController.back();
   }
 
+  updateProgressBy = (increaseBy: number = 0) => {
+    this.progress += increaseBy;
+    if (this.progress > 100) {
+      this.progress = 100;
+    }
+  };
+
   callOfflineApi = (callBack) => {
     // Need to check device storage
     // Need to check internet
@@ -189,7 +202,7 @@ export class DeviceSyncDmPage implements OnInit {
       .getDeviceOfflineDetails(this.sharedDataService.deviceUID)
       .subscribe(
         async (res: Response) => {
-          this.progress = 10;
+          this.updateProgressBy(5);
           if (
             res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
           ) {
@@ -214,9 +227,9 @@ export class DeviceSyncDmPage implements OnInit {
                             if (isJsonData) {
                               this.offlineManagerService.insertOfflineData(
                                 jsonFile,
-                                (progress) => {
-                                  this.progress = progress;
-                                  if (this.progress === 100) {
+                                (insertionDone) => {
+                                  this.updateProgressBy(2);
+                                  if (insertionDone) {
                                     callBack && callBack();
                                   }
                                 }
@@ -229,9 +242,9 @@ export class DeviceSyncDmPage implements OnInit {
                                 .subscribe((offlineData: any) => {
                                   this.offlineManagerService.insertOfflineData(
                                     offlineData,
-                                    (progress) => {
-                                      this.progress = progress;
-                                      if (this.progress === 100) {
+                                    (insertionDone) => {
+                                      this.updateProgressBy(2);
+                                      if (insertionDone) {
                                         callBack && callBack();
                                       }
                                     }

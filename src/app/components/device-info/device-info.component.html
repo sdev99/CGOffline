@@ -45,7 +45,7 @@
 
         <ion-item>
           <ion-label slot="start">Last Sync</ion-label>
-          <ion-note color="medium" slot="end" *ngIf="lastSyncTime()">{{
+          <ion-note color="medium" *ngIf="lastSyncTime()">{{
             lastSyncTime() | date: "dd MMM yyyy HH:mm"
           }}</ion-note>
           <ion-note color="medium" slot="end" *ngIf="!lastSyncTime()"

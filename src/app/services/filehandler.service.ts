@@ -74,6 +74,19 @@ export class FilehandlerService {
     });
   }
 
+  showErrorAlert = (error, defaultErrorMessage = "") => {
+    let errorMessage = "";
+    if (typeof error === "string") {
+      errorMessage = error;
+    } else if (typeof error === "object") {
+      errorMessage =
+        Object.keys(error).length > 0 ? error.message : JSON.stringify(error);
+    } else {
+      errorMessage = defaultErrorMessage;
+    }
+    this.utilService.showAlert(errorMessage, "Alert !");
+  };
+
   async openFile(fileUrl = "", openInDefaultApp = false) {
     this.utilService.presentLoadingWithOptions("File downloading...");
 
@@ -100,12 +113,13 @@ export class FilehandlerService {
     const extension = fileName.split(".").pop();
 
     const onError = (error) => {
-      console.log("Error opening file", error);
-      this.utilService.showAlert(
-        error?.message || error || "File cannot open",
-        "Alert !"
-      );
+      this.showErrorAlert(error, "File cannot open");
     };
+
+    if (!url) {
+      onError("File not found.");
+      return;
+    }
 
     const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
     if (extension.toLowerCase() === "pdf" || openInDefaultApp) {

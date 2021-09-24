@@ -445,7 +445,7 @@ export class FormRiskassessmentPage implements OnInit {
       });
   }
 
-  scanUserQrCode = (event, hazard, valueKey) => {
+  scanUserQrCode = (event, hazard, valueKey, listType) => {
     event.stopPropagation();
     this.sharedDataService.isOpenSubScreen = true;
 
@@ -461,12 +461,8 @@ export class FormRiskassessmentPage implements OnInit {
         const entityItem = result as EntityItem;
         this.ngZone.run(() => {
           setTimeout(() => {
-            hazard[valueKey] = entityItem.entityID;
-            this.addUserOrGroup(
-              hazard,
-              "isMembersOfTheWorkForceUserIDs",
-              "memberOfTheWorkForceSelectedUser"
-            );
+            hazard[valueKey] = entityItem.entityID?.toLowerCase();
+            this.addUserOrGroup(hazard, listType, valueKey);
           }, 0);
         });
 
@@ -949,6 +945,7 @@ export class FormRiskassessmentPage implements OnInit {
     } else {
       list = [];
     }
+
     if (
       list.indexOf(hazard[selectedIdKey]) === -1 &&
       list.indexOf(parseInt(hazard[selectedIdKey])) === -1
