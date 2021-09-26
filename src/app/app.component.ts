@@ -35,7 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent {
-  deviceOfflineModal = null;
+  deviceOfflineModal: HTMLIonModalElement = null;
 
   constructor(
     private platform: Platform,
@@ -329,6 +329,9 @@ export class AppComponent {
           animated: false,
         });
       }
+      this.deviceOfflineModal?.onDidDismiss()?.then(() => {
+        this.deviceOfflineModal = null;
+      });
 
       if (isOnline) {
         await this.deviceOfflineModal.dismiss();
@@ -343,6 +346,9 @@ export class AppComponent {
       EnumService.LocalStorageKeys.IS_DEDICATED_MODE,
       "true"
     );
+
+    // Check  previous sync data progress and clear if not finished
+    this.offlineManagerService.checkPreviousSyncDataProgress();
 
     this.checkForNetwork();
 

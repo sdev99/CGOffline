@@ -12,6 +12,7 @@ import { SignOffFormDetail } from "../../_models/signOffFormDetail";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicRouteService } from "src/app/services/dynamic-route.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-forms-dm",
@@ -33,7 +34,9 @@ export class FormsDmPage implements OnInit {
   isLoadingForms = false;
 
   itemDetail: FormItem;
-  pageTitle = "";
+  pageTitle: string = "";
+
+  offlineMode: boolean = false;
 
   constructor(
     private dynamicRouteService: DynamicRouteService,
@@ -43,6 +46,8 @@ export class FormsDmPage implements OnInit {
     public sharedDataService: SharedDataService,
     public apiService: ApiService,
     public activatedRoute: ActivatedRoute,
+    public observablesService: ObservablesService,
+
     public offlineManagerService: OfflineManagerService
   ) {
     this.activatedRoute.queryParams.subscribe((res) => {
@@ -53,6 +58,21 @@ export class FormsDmPage implements OnInit {
         }
       }
     });
+
+    this.offlineMode = sharedDataService.offlineMode;
+
+    this.observablesService
+      .getObservable(EnumService.ObserverKeys.OFFLINE_MODE_CHANGE)
+      .subscribe((res) => {
+        if (this.offlineMode !== sharedDataService.offlineMode) {
+          this.availableForms = null;
+          this.archivedForms = null;
+        }
+
+        this.getDedicatedModeAvailableForms();
+        this.getDedicatedModeArchiveForms();
+        this.offlineMode = sharedDataService.offlineMode;
+      });
   }
 
   ngOnInit() {}

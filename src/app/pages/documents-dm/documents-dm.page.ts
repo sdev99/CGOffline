@@ -11,6 +11,7 @@ import { ArchivedDocumentDetail } from "../../_models/archivedDocumentDetail";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicRouteService } from "src/app/services/dynamic-route.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-documents-dm",
@@ -34,12 +35,15 @@ export class DocumentsDmPage implements OnInit {
   itemDetail: DocumentDetail;
   pageTitle = "";
 
+  offlineMode: boolean = false;
+
   constructor(
     private dynamicRouteService: DynamicRouteService,
     private navCtrl: NavController,
     private filehandlerService: FilehandlerService,
     public utilService: UtilService,
     public sharedDataService: SharedDataService,
+    public observablesService: ObservablesService,
     public offlineManagerService: OfflineManagerService,
     public apiService: ApiService,
     public activatedRoute: ActivatedRoute
@@ -52,6 +56,21 @@ export class DocumentsDmPage implements OnInit {
         }
       }
     });
+
+    this.offlineMode = sharedDataService.offlineMode;
+
+    this.observablesService
+      .getObservable(EnumService.ObserverKeys.OFFLINE_MODE_CHANGE)
+      .subscribe((res) => {
+        if (this.offlineMode !== sharedDataService.offlineMode) {
+          this.availableDocuments = null;
+          this.archivedDocuments = null;
+        }
+
+        this.getDedicatedModeAvailableDocuments();
+        this.getDedicatedModeArchiveDocuments();
+        this.offlineMode = sharedDataService.offlineMode;
+      });
   }
 
   ngOnInit() {}

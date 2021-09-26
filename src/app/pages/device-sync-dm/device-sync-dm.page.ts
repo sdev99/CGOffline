@@ -1,9 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  AlertController,
-  ModalController,
-  NavController,
-} from "@ionic/angular";
+import { AlertController, NavController } from "@ionic/angular";
 import { UtilService } from "../../services/util.service";
 import { ActivatedRoute } from "@angular/router";
 import { EnumService } from "../../services/enum.service";
@@ -11,9 +7,8 @@ import { OfflineApiService } from "src/app/services/offline-api.service";
 import { SharedDataService } from "src/app/services/shared-data.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import { Response } from "src/app/_models";
-import { DeviceOfflineDetailViewModels } from "src/app/_models/offline/DeviceOfflineDetailViewModels";
 import { FilehandlerService } from "src/app/services/filehandler.service";
-import { Capacitor, Network } from "@capacitor/core";
+import { Capacitor, Network, PluginListenerHandle } from "@capacitor/core";
 import * as JSZip from "jszip";
 import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
@@ -24,10 +19,10 @@ import { ObservablesService } from "src/app/services/observables.service";
   styleUrls: ["./device-sync-dm.page.scss"],
 })
 export class DeviceSyncDmPage implements OnInit {
+  networkChangeListner: PluginListenerHandle;
+
   UtilService = UtilService;
-  synchProgressState = "pending";
-  // synchProgressState = 'processing';
-  // synchProgressState = 'completed';
+  synchProgressState: string = "pending"; // EnumService.SyncProcessState
 
   synchronisationErrorMessage;
   progress = 0;
@@ -53,13 +48,18 @@ export class DeviceSyncDmPage implements OnInit {
 
   ngOnInit() {
     this.checkForNetwork();
-    Network.addListener("networkStatusChange", (status) => {
-      this.checkForNetwork();
-    });
+    this.networkChangeListner = Network.addListener(
+      "networkStatusChange",
+      (status) => {
+        this.checkForNetwork();
+      }
+    );
   }
 
   ngOnDestroy(): void {
-    Network.removeAllListeners();
+    if (this.networkChangeListner) {
+      this.networkChangeListner.remove();
+    }
   }
 
   checkForNetwork = async () => {
@@ -108,6 +108,10 @@ export class DeviceSyncDmPage implements OnInit {
   };
 
   postOfflineDataToServerIfAvailable = () => {
+    this.updateSyncState(
+      EnumService.SyncProcessState.OFFLINE_DATA_PREPARE_START
+    );
+
     return new Promise((resolve, reject) => {
       this.offlineManagerService
         .prepareJsonFileForPost(
@@ -116,28 +120,44 @@ export class DeviceSyncDmPage implements OnInit {
         )
         .then((postJsonData) => {
           if (postJsonData) {
+            this.updateSyncState(
+              EnumService.SyncProcessState.OFFLINE_DATA_UPLOAD_START
+            );
+
             const fileName = "OfflinePost";
             var jsZipObj = new JSZip();
             debugger;
             jsZipObj.file(fileName + ".json", JSON.stringify(postJsonData));
-            jsZipObj.generateAsync({ type: "base64" }).then((base64) => {
-              debugger;
-              this.utilService
-                .dataUriToFile(base64, fileName + ".zip", "application/zip")
-                .then((fileObj) => {
-                  this.offlineApiService
-                    .postOfflineZipFile(fileObj, fileName + ".zip")
-                    .subscribe(
-                      (res) => {
-                        resolve(res);
-                      },
-                      (error) => {
-                        debugger;
-                        reject(error);
-                      }
-                    );
-                });
-            });
+
+            // Convert json file to zip base64
+            jsZipObj
+              .generateAsync({ type: "base64" })
+              .then((base64) => {
+                debugger;
+                // Convert zip base64 to fileobj
+                this.utilService
+                  .dataUriToFile(base64, fileName + ".zip", "application/zip")
+                  .then((fileObj) => {
+                    // Post zip file to server
+                    this.offlineApiService
+                      .postOfflineZipFile(fileObj, fileName + ".zip")
+                      .subscribe(
+                        (res) => {
+                          resolve(res);
+                        },
+                        (error) => {
+                          debugger;
+                          reject(error);
+                        }
+                      );
+                  })
+                  .catch((error) => {
+                    reject(error);
+                  });
+              })
+              .catch((error) => {
+                reject(error);
+              });
           } else {
             resolve(null);
           }
@@ -151,19 +171,52 @@ export class DeviceSyncDmPage implements OnInit {
       EnumService.LocalStorageKeys.SYNC_DATE_TIME,
       moment().toISOString(true)
     );
+    this.updateSyncState(EnumService.SyncProcessState.COMPLETED);
+
     localStorage.removeItem(EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE);
     this.observablesService.publishSomeData(
       EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
       true
     );
+
+    //remove offline data json/zip files
+    const offlineDataFiles = localStorage.getItem(
+      EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+    );
+    if (offlineDataFiles) {
+      try {
+        const files = JSON.parse(offlineDataFiles);
+        files.forEach((fileUrl) => {
+          this.filehandlerService.removeFile(fileUrl);
+        });
+        localStorage.removeItem(
+          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+        );
+      } catch (error) {}
+    }
+
+    // if it is already offline mode then publish event to update UI on other pages that are subscribed for changes
+    if (this.sharedDataService.offlineMode) {
+      this.sharedDataService.offlineMode = false;
+      this.observablesService.publishSomeData(
+        EnumService.ObserverKeys.OFFLINE_MODE_CHANGE,
+        false
+      );
+    }
   };
 
   onSync() {
     this.progress = 0;
     this.synchProgressState = "processing";
 
+    this.updateSyncState(EnumService.SyncProcessState.STARTED);
+
     this.postOfflineDataToServerIfAvailable()
       .then((res) => {
+        this.updateSyncState(
+          EnumService.SyncProcessState.OFFLINE_DATA_DOWNLOAD_START
+        );
+
         this.offlineManagerService.emptyAllTables(() => {
           this.updateProgressBy(5);
 
@@ -175,6 +228,10 @@ export class DeviceSyncDmPage implements OnInit {
       .catch((error) => {
         this.progress = 0;
         this.synchProgressState = "failed";
+        localStorage.setItem(
+          EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+          "failed"
+        );
         this.synchronisationErrorMessage = error.message;
       });
   }
@@ -188,6 +245,13 @@ export class DeviceSyncDmPage implements OnInit {
     if (this.progress > 100) {
       this.progress = 100;
     }
+  };
+
+  updateSyncState = (state: string) => {
+    localStorage.setItem(
+      EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+      state
+    );
   };
 
   callOfflineApi = (callBack) => {
@@ -222,8 +286,14 @@ export class DeviceSyncDmPage implements OnInit {
                     this.offlineApiService
                       .getDeviceOfflineFile(files)
                       .then(async (jsonFiles: any) => {
+                        localStorage.setItem(
+                          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
+                          JSON.stringify(jsonFiles)
+                        );
+
+                        let isJsonData = false;
                         this.offlineManagerService.emptyAllTables(() => {
-                          jsonFiles.map((jsonFile, isJsonData) => {
+                          jsonFiles.map((jsonFile) => {
                             if (isJsonData) {
                               this.offlineManagerService.insertOfflineData(
                                 jsonFile,
@@ -240,6 +310,11 @@ export class DeviceSyncDmPage implements OnInit {
                                   Capacitor.convertFileSrc(jsonFile)
                                 )
                                 .subscribe((offlineData: any) => {
+                                  this.updateSyncState(
+                                    EnumService.SyncProcessState
+                                      .OFFLINE_DATA_INSERT_START
+                                  );
+
                                   this.offlineManagerService.insertOfflineData(
                                     offlineData,
                                     (insertionDone) => {
@@ -256,11 +331,25 @@ export class DeviceSyncDmPage implements OnInit {
                       })
                       .catch((error) => {
                         this.synchProgressState = "failed";
+                        localStorage.setItem(
+                          EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+                          "failed"
+                        );
+                        this.updateSyncState(
+                          EnumService.SyncProcessState.FAILED
+                        );
+
                         this.synchronisationErrorMessage =
                           error?.message || "File download error";
                       });
                   } else {
                     this.synchProgressState = "failed";
+                    localStorage.setItem(
+                      EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+                      "failed"
+                    );
+                    this.updateSyncState(EnumService.SyncProcessState.FAILED);
+
                     this.synchronisationErrorMessage =
                       "No enough space available in your device";
                   }

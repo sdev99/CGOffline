@@ -61,7 +61,13 @@ export class OfflineApiService {
       };
 
       const onFileDownloadError = (error) => {
-        reject(error?.message);
+        if (typeof error === "object" && error?.message) {
+          reject(error?.message);
+        } else if (typeof error === "string") {
+          reject(error);
+        } else {
+          reject("File download error");
+        }
       };
 
       const accessID = this.sharedDataService.deviceUID;
@@ -80,9 +86,7 @@ export class OfflineApiService {
         // Download JSON file
         if (fileName) {
           let fileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
-          const writeDirectory = this.platform.is("ios")
-            ? this.file.dataDirectory
-            : this.file.dataDirectory;
+          const writeDirectory = this.file.dataDirectory;
           const localFilePath = writeDirectory + fileName;
 
           if (UtilService.isLocalHost()) {

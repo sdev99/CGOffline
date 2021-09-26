@@ -1,72 +1,139 @@
 <ion-header mode="ios" *ngIf="signOffFormDetail">
-	<app-modal-header [modalTitle]="'PAGESPECIFIC_TEXT.FORM_LIST.FORM_DETAILS' | translate" (closeModal)="onClose()"></app-modal-header>
+  <app-modal-header
+    [modalTitle]="'PAGESPECIFIC_TEXT.FORM_LIST.FORM_DETAILS' | translate"
+    (closeModal)="onClose()"
+  ></app-modal-header>
 
-	<ion-item lines="none">
-		<ion-label>
-			<h6>{{signOffFormDetail?.formData?.formTitle}}</h6>
+  <ion-item lines="none">
+    <ion-label>
+      <h6>{{signOffFormDetail?.formData?.formTitle}}</h6>
 
-			<div class="form-text-row">
-				<div class="title">{{'PAGESPECIFIC_TEXT.FORM_LIST.ENTITY' | translate}}</div>
-				<div class="value" *ngFor="let entity of signOffFormDetail?.entityList">{{entity.locationName}}</div>
-			</div>
+      <div class="form-text-row">
+        <div class="title">
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.ENTITY' | translate}}
+        </div>
+        <div class="value" *ngFor="let entity of signOffFormDetail?.entityList">
+          {{entity.locationName}}
+        </div>
+      </div>
 
-			<div class="form-text-row">
-				<div class="title">{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPE' | translate}}</div>
-				<div class="value" *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.CUSTOM">{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.CUSTOM' | translate}}</div>
-				<div class="value" *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.RISK_ASSESSMENT">
-					{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.RISK_ASSESSMENT' | translate}}
-				</div>
-				<div class="value" *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.WORK_PERMIT">{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.WORK_PERMIT' | translate}}</div>
-				<div class="value" *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.HAV">{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.HAV' | translate}}</div>
-				<div class="value" *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.ACCIDENT_REPORT">
-					{{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.ACCIDENT_REPORT' | translate}}
-				</div>
-			</div>
+      <div class="form-text-row">
+        <div class="title">
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPE' | translate}}
+        </div>
+        <div
+          class="value"
+          *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.CUSTOM"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.CUSTOM' | translate}}
+        </div>
+        <div
+          class="value"
+          *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.RISK_ASSESSMENT"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.RISK_ASSESSMENT' |
+          translate}}
+        </div>
+        <div
+          class="value"
+          *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.WORK_PERMIT"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.WORK_PERMIT' | translate}}
+        </div>
+        <div
+          class="value"
+          *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.HAV"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.HAV' | translate}}
+        </div>
+        <div
+          class="value"
+          *ngIf="signOffFormDetail?.formData?.formType === EnumService.FormTypes.ACCIDENT_REPORT"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.FORM_TYPES.ACCIDENT_REPORT' |
+          translate}}
+        </div>
+      </div>
 
-			<div class="rejected-view" *ngIf="signOffFormDetail?.formData.isRejected">
-				<div class="detail">
-					<ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
-					<ion-label class="rejected">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNATURE_REJECTED' | translate}}</ion-label>
-				</div>
+      <div class="rejected-view" *ngIf="signOffFormDetail?.formData.isRejected">
+        <div class="detail">
+          <ion-icon slot="start" src="./assets/icon/rejected.svg"></ion-icon>
+          <ion-label class="rejected"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNATURE_REJECTED' |
+            translate}}</ion-label
+          >
+        </div>
 
-				<p class="time" *ngIf="signOffFormDetail?.formData.formattedRejectedDate;">
-					{{'PAGESPECIFIC_TEXT.FORM_LIST.BY' | translate}}&nbsp;{{signOffFormDetail?.formData?.rejectedBy}}&nbsp;{{'PAGESPECIFIC_TEXT.FORM_LIST.ON' |
-					translate}}&nbsp;{{signOffFormDetail?.formData.formattedRejectedDate}}
-				</p>
+        <p
+          class="time"
+          *ngIf="signOffFormDetail?.formData.formattedRejectedDate;"
+        >
+          {{'PAGESPECIFIC_TEXT.FORM_LIST.BY' |
+          translate}}&nbsp;{{signOffFormDetail?.formData?.rejectedBy}}&nbsp;{{'PAGESPECIFIC_TEXT.FORM_LIST.ON'
+          |
+          translate}}&nbsp;{{signOffFormDetail?.formData.formattedRejectedDate}}
+        </p>
 
-				<div class="reject-reason">
-					<h3>{{'PAGESPECIFIC_TEXT.FORM_LIST.REJECTION_REASON' | translate}}</h3>
-					<p>{{signOffFormDetail?.formData.rejectedReason}}</p>
-				</div>
-			</div>
-		</ion-label>
-	</ion-item>
+        <div class="reject-reason">
+          <h3>
+            {{'PAGESPECIFIC_TEXT.FORM_LIST.REJECTION_REASON' | translate}}
+          </h3>
+          <p>{{signOffFormDetail?.formData.rejectedReason}}</p>
+        </div>
+      </div>
+    </ion-label>
+  </ion-item>
 </ion-header>
 
 <ion-content class="ion-padding-horizontal" fullscreen="true">
-	<div class="content-container" *ngIf="signOffFormDetail">
-		<ion-item lines="full" class="title-item" *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions">
-			<ion-label class="ion-text-wrap">
-				<p *ngIf="signOffFormDetail?.formData?.formattedDescription" [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"></p>
+  <div class="content-container" *ngIf="signOffFormDetail">
+    <ion-item
+      lines="full"
+      class="title-item"
+      *ngIf="signOffFormDetail?.formData?.formattedDescription || signOffFormDetail?.formData?.formattedInstructions"
+    >
+      <ion-label class="ion-text-wrap">
+        <p
+          *ngIf="signOffFormDetail?.formData?.formattedDescription"
+          [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"
+        ></p>
 
-				<ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
-					<h6>{{'PAGESPECIFIC_TEXT.FORM_LIST.EXPLANATION' | translate}}</h6>
-					<p [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"></p>
-				</ng-container>
-			</ion-label>
-		</ion-item>
+        <ng-container
+          *ngIf="signOffFormDetail?.formData?.formattedInstructions"
+        >
+          <h6>{{'PAGESPECIFIC_TEXT.FORM_LIST.EXPLANATION' | translate}}</h6>
+          <p
+            [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"
+          ></p>
+        </ng-container>
+      </ion-label>
+    </ion-item>
 
-		<div class="ion-margin-top" *ngIf="signOffFormDetail && signOffFormDetail.formAttachments">
-			<ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)" *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
-				<ion-img slot="start" [src]="attachmentItem.documentFileIconURL"></ion-img>
-				<ion-label>{{attachmentItem.documentFileName}}</ion-label>
-			</ion-item>
-		</div>
+    <div
+      class="ion-margin-top"
+      *ngIf="signOffFormDetail && signOffFormDetail.formAttachments"
+    >
+      <ion-item
+        lines="none"
+        class="form-item"
+        (click)="openFile(attachmentItem)"
+        *ngFor="let attachmentItem of signOffFormDetail.formAttachments"
+      >
+        <ion-img
+          slot="start"
+          [src]="getAttachmentIcon(attachmentItem)"
+        ></ion-img>
+        <ion-label>{{attachmentItem.documentFileName}}</ion-label>
+      </ion-item>
+    </div>
 
-		<div class="fill-vertical-space"></div>
+    <div class="fill-vertical-space"></div>
 
-		<ion-footer mode="ios">
-			<ion-button expand="full" class="action-btn" (click)="onContinue()">{{'PAGESPECIFIC_TEXT.FORM_LIST.LAUNCH_THE_FORM' | translate}}</ion-button>
-		</ion-footer>
-	</div>
+    <ion-footer mode="ios">
+      <ion-button expand="full" class="action-btn" (click)="onContinue()"
+        >{{'PAGESPECIFIC_TEXT.FORM_LIST.LAUNCH_THE_FORM' |
+        translate}}</ion-button
+      >
+    </ion-footer>
+  </div>
 </ion-content>

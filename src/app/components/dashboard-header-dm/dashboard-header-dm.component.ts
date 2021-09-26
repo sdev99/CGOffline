@@ -6,7 +6,7 @@ import { EnumService } from "../../services/enum.service";
 import { HomeExitDmPage } from "../../modals/home-exit-dm/home-exit-dm.page";
 import { AccountService } from "../../services/account.service";
 import { UtilService } from "src/app/services/util.service";
-import { Network } from "@capacitor/core";
+import { Network, PluginListenerHandle } from "@capacitor/core";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 
 @Component({
@@ -16,6 +16,7 @@ import { OfflineManagerService } from "src/app/services/offline-manager.service"
 })
 export class DashboardHeaderDmComponent implements OnInit {
   @Input() title = "";
+  networkChangeListner: PluginListenerHandle;
 
   isSycronizationNeeded = false;
   isSyncButtonDisabled = false;
@@ -40,9 +41,12 @@ export class DashboardHeaderDmComponent implements OnInit {
 
   ngOnInit() {
     this.checkForNetwork();
-    Network.addListener("networkStatusChange", (status) => {
-      this.checkForNetwork();
-    });
+    this.networkChangeListner = Network.addListener(
+      "networkStatusChange",
+      (status) => {
+        this.checkForNetwork();
+      }
+    );
   }
 
   checkForSyncNeeded = () => {
@@ -54,7 +58,9 @@ export class DashboardHeaderDmComponent implements OnInit {
   };
 
   ngOnDestroy(): void {
-    Network.removeAllListeners();
+    if (this.networkChangeListner) {
+      this.networkChangeListner.remove();
+    }
   }
 
   checkForNetwork = async () => {

@@ -362,6 +362,35 @@ export class UtilService {
     private validatorService: ValidatorService
   ) {}
 
+  urlToBase64(url, filename, mimeType) {
+    return new Promise(async (resolve, reject) => {
+      let dirpath = url.substr(0, url.lastIndexOf("/") + 1);
+      dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+      debugger;
+      try {
+        const dirUrl = await this.file.resolveDirectoryUrl(dirpath);
+        const retrievedFile = await this.file.getFile(dirUrl, filename, {});
+
+        retrievedFile.file((data) => {
+          // if (data.size > MAX_FILE_SIZE) return this.presentAlert("Error", "You cannot upload more than 5mb.");
+          // if (data.type !== ALLOWED_MIME_TYPE) return this.presentAlert("Error", "Incorrect file type.");
+          const reader = new FileReader();
+          reader.readAsDataURL(data);
+          reader.onload = function () {
+            console.log(reader.result);
+            resolve(reader.result);
+          };
+          reader.onerror = function (error) {
+            console.log("Error: ", error);
+            reject(error);
+          };
+        });
+      } catch {
+        reject();
+      }
+    });
+  }
+
   dataUriToFile(url, filename, mimeType) {
     return new Promise(async (resolve, reject) => {
       if (

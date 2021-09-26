@@ -77,6 +77,17 @@ export class EnumService {
     ACTIVITY_COMPLETED: "ACTIVITY_COMPLETED",
     QRCODE_SCANNED_RESULT: "QRCODE_SCANNED_RESULT",
     OFFLINE_DATA_SYNC_NEEDED: "OFFLINE_DATA_SYNC_NEEDED",
+    OFFLINE_MODE_CHANGE: "OFFLINE_MODE_CHANGE",
+  };
+
+  static SyncProcessState = {
+    STARTED: "started",
+    OFFLINE_DATA_PREPARE_START: "offline_data_prepare_start",
+    OFFLINE_DATA_UPLOAD_START: "offline_data_upload_start",
+    OFFLINE_DATA_DOWNLOAD_START: "offline_data_download_start",
+    OFFLINE_DATA_INSERT_START: "offline_data_insert_start",
+    COMPLETED: "completed",
+    FAILED: "failed",
   };
 
   static LocalStorageKeys = {
@@ -97,6 +108,8 @@ export class EnumService {
     APP_LANGUAGE: "app_language",
     TIMEZONE_LIST: "timezone_list",
     OFFLINE_MODE_ENABLE: "offline_mode_enable",
+    OFFLINEMODE_SYNC_STATE: "offline_mode_sync_state",
+    OFFLINE_DATA_FILES: "OFFLINE_DATA_FILES",
   };
 
   static ApiMethods = {

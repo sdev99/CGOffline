@@ -66,8 +66,23 @@ export class FilehandlerService {
     } catch (error) {}
   }
 
+  removeFile(fileUrl: string) {
+    try {
+      const fileName = fileUrl.split("\\").pop().split("/").pop();
+      const directory = fileUrl.replace(fileName, "");
+
+      this.file.removeFile(directory, fileName).then((res) => {
+        console.log("File remove successfully");
+      });
+    } catch (error) {}
+  }
+
   saveAndOpenFile(base64File: string, fileName: string) {
+    this.utilService.presentLoadingWithOptions("Loading...");
+
     this.saveBinaryFileOnDevice(base64File, fileName, (url) => {
+      this.utilService.hideLoading();
+
       if (url) {
         this.openDownloadedFile(url, fileName);
       }
@@ -75,14 +90,15 @@ export class FilehandlerService {
   }
 
   showErrorAlert = (error, defaultErrorMessage = "") => {
-    let errorMessage = "";
+    let errorMessage = defaultErrorMessage;
     if (typeof error === "string") {
       errorMessage = error;
-    } else if (typeof error === "object") {
-      errorMessage =
-        Object.keys(error).length > 0 ? error.message : JSON.stringify(error);
-    } else {
-      errorMessage = defaultErrorMessage;
+    } else if (typeof error === "object" && (error.message || error.error)) {
+      if (error.error) {
+        errorMessage = error.error;
+      } else {
+        errorMessage = error.message;
+      }
     }
     this.utilService.showAlert(errorMessage, "Alert !");
   };
@@ -101,10 +117,7 @@ export class FilehandlerService {
       })
       .catch((error) => {
         this.utilService.hideLoading();
-        this.utilService.showAlert(
-          error?.message || error || "File cannot open",
-          "Alert !"
-        );
+        this.showErrorAlert(error, "File download error");
         console.log("Error download file", error);
       });
   }

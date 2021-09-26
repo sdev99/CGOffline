@@ -40,6 +40,7 @@ import { DeviceFormBuilderDetail } from "../_models/offline/DeviceFormBuilderDet
 import { EntityItem } from "../_models/entityItem";
 import { EnumService } from "./enum.service";
 import * as moment from "moment";
+import { FilehandlerService } from "./filehandler.service";
 
 declare var window: any;
 
@@ -54,7 +55,8 @@ export class OfflineManagerService {
   constructor(
     private platform: Platform,
     private sqlite: SQLite,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private filehandlerService: FilehandlerService
   ) {}
 
   public dbSetUp() {
@@ -185,6 +187,38 @@ export class OfflineManagerService {
     return condition;
   }
 
+  checkPreviousSyncDataProgress = () => {
+    const syncState = localStorage.getItem(
+      EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE
+    );
+    if (syncState) {
+      switch (syncState) {
+        case EnumService.SyncProcessState.OFFLINE_DATA_INSERT_START:
+          this.emptyAllTables(() => {
+            // Remove offline data json/zip files
+            const offlineDataFiles = localStorage.getItem(
+              EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+            );
+            if (offlineDataFiles) {
+              try {
+                const files = JSON.parse(offlineDataFiles);
+                files.forEach((fileUrl) => {
+                  this.filehandlerService.removeFile(fileUrl);
+                });
+                localStorage.removeItem(
+                  EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+                );
+              } catch (error) {}
+            }
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
+  };
+
   /**
    *
    * @param table DB table name
@@ -307,7 +341,6 @@ export class OfflineManagerService {
 
     // deviceUserQualificationList
     const deviceUserQualificationList = offlineData.deviceUserQualificationList;
-    debugger;
     if (deviceUserQualificationList) {
       for (let index = 0; index < deviceUserQualificationList.length; index++) {
         const value: DeviceUserQualificationDetail =
@@ -1757,12 +1790,9 @@ export class OfflineManagerService {
           " ORDER BY checkInDate DESC";
       }
 
-      debugger;
       this.dbQuery(query, [])
         .then(async (res: any) => {
           const deviceUserCheckinDetails = this.convertToArray(res.rows);
-
-          debugger;
 
           let isAlreadyCheckinToThisEntity = false;
           let isSimultaneousCheckInAllowed = true;
@@ -2206,7 +2236,13 @@ export class OfflineManagerService {
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {
-            resolve(this.convertToObject(res.rows));
+            const formDetail = this.convertToObject(res.rows);
+            this.getDeviceFormAttachments(formId).then((attachments) => {
+              if (attachments) {
+                formDetail.formAttachments = attachments;
+              }
+              resolve(formDetail);
+            });
           } else {
             resolve(null);
           }
@@ -2227,10 +2263,14 @@ export class OfflineManagerService {
         .then((res: any) => {
           if (res.rows?.length > 0) {
             const formData = this.convertToObject(res.rows);
-            resolve({
-              formData,
-              formAttachments: formData.formAttachments,
-              entityList: null,
+            this.getDeviceFormAttachments(formId).then((attachments) => {
+              resolve({
+                formData,
+                formAttachments: attachments
+                  ? attachments
+                  : formData.formAttachments,
+                entityList: null,
+              });
             });
           } else {
             resolve(null);
@@ -2238,6 +2278,27 @@ export class OfflineManagerService {
         })
         .catch((error) => {
           reject(error);
+        });
+    });
+  }
+
+  getDeviceFormAttachments(formId) {
+    return new Promise((resolve, reject) => {
+      let condition = "formID = " + formId;
+
+      const query =
+        "SELECT * FROM DeviceFormAttachments" + " WHERE " + condition;
+
+      this.dbQuery(query, [])
+        .then((res: any) => {
+          if (res.rows?.length > 0) {
+            resolve(this.convertToArray(res.rows));
+          } else {
+            resolve(null);
+          }
+        })
+        .catch((error) => {
+          resolve(null);
         });
     });
   }
@@ -2465,7 +2526,6 @@ export class OfflineManagerService {
       const userQualifications: any = await this.getDeviceUserQualifications(
         data.userId
       );
-      debugger;
       if (userQualifications && userQualifications.length > 0) {
         let matchedQualificationCount = 0;
         checkinQualifications.map((checkinQualObj) => {
@@ -2473,11 +2533,18 @@ export class OfflineManagerService {
             if (
               checkinQualObj.qualificationID === userQualObj.qualificationID
             ) {
-              const expireDate = moment(userQualObj.expireDate);
-              const todayDate = moment();
+              if (
+                userQualObj.expireDate &&
+                userQualObj.expireDate !== StaticDataService.userDefaultDate
+              ) {
+                const expireDate = moment(userQualObj.expireDate);
+                const todayDate = moment();
 
-              const validTilDays = expireDate.diff(todayDate, "days");
-              if (validTilDays > 0) {
+                const validTilDays = expireDate.diff(todayDate, "days");
+                if (validTilDays > 0) {
+                  matchedQualificationCount++;
+                }
+              } else {
                 matchedQualificationCount++;
               }
               return true;
@@ -2519,7 +2586,6 @@ export class OfflineManagerService {
               userPhoto: data.userPhoto || "",
               userPhoto_BinaryImage: data.userPhotoBinaryFile || "",
             };
-            debugger;
 
             let evacCondition = {};
             if (data.inventoryItemID) {
@@ -2799,7 +2865,7 @@ export class OfflineManagerService {
     });
   };
 
-  getAllFormSubimitedFiles = () => {
+  getAllFormSubmittedFiles = () => {
     return new Promise((resolve) => {
       const query = "SELECT * FROM ImageVideoFiles";
       this.dbQuery(query, [])
@@ -3007,8 +3073,8 @@ export class OfflineManagerService {
 
     return new Promise(async (resolve, reject) => {
       const downloadAllFormOfflineFile = async () => {
-        // getAllFormSubimitedFiles
-        const allFiles: any = await this.getAllFormSubimitedFiles();
+        // getAllFormSubmittedFiles
+        const allFiles: any = await this.getAllFormSubmittedFiles();
 
         if (allFiles && allFiles.length > 0) {
           let convertedFileCount = 0;

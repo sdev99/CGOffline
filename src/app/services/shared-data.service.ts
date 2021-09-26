@@ -170,7 +170,7 @@ export class SharedDataService {
   companyLangaugeTranslations = {};
 
   constructor(
-    platform: Platform,
+    public platform: Platform,
     private fileTransfer: FileTransfer,
     private navCtrl: NavController,
     private observablesService: ObservablesService,
@@ -1326,19 +1326,33 @@ export class SharedDataService {
 
                       if (isVideo) {
                         let path = control.value;
-                        debugger;
 
-                        this.base64.encodeFile(path).then(
-                          (base64File: string) => {
-                            insertImageVideoFileToDb(
-                              base64File.split(",").pop()
-                            );
-                          },
-                          (err) => {
-                            attachmentProcessDone();
-                            console.log(err);
-                          }
-                        );
+                        if (this.platform.is("ios")) {
+                          this.utilService
+                            .urlToBase64(path, fileName, mimeType)
+                            .then((base64Str: any) => {
+                              debugger;
+                              insertImageVideoFileToDb(
+                                base64Str.split(",").pop()
+                              );
+                            })
+                            .catch((err) => {
+                              attachmentProcessDone();
+                              console.log(err);
+                            });
+                        } else {
+                          this.base64.encodeFile(path).then(
+                            (base64File: string) => {
+                              insertImageVideoFileToDb(
+                                base64File.split(",").pop()
+                              );
+                            },
+                            (err) => {
+                              attachmentProcessDone();
+                              console.log(err);
+                            }
+                          );
+                        }
                       } else {
                         insertImageVideoFileToDb(control.value);
                       }

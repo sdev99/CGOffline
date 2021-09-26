@@ -10,6 +10,7 @@ import { OfflineApiService } from "src/app/services/offline-api.service";
 import { SharedDataService } from "src/app/services/shared-data.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import { EnumService } from "src/app/services/enum.service";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-device-offline",
@@ -29,10 +30,12 @@ export class DeviceOfflinePage implements OnInit {
     public utilService: UtilService,
     public offlineApiService: OfflineApiService,
     public offlineManagerService: OfflineManagerService,
+    public observablesService: ObservablesService,
     public sharedDataService: SharedDataService
   ) {}
 
   ngOnInit() {
+    console.log("Modal Test");
     const syncDate = localStorage.getItem(
       EnumService.LocalStorageKeys.SYNC_DATE_TIME
     );
@@ -50,7 +53,13 @@ export class DeviceOfflinePage implements OnInit {
       EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE,
       "true"
     );
+    this.observablesService.publishSomeData(
+      EnumService.ObserverKeys.OFFLINE_MODE_CHANGE,
+      true
+    );
     this.modalController.dismiss();
+
+    this.navController.navigateRoot("dashboard-dm", { replaceUrl: true });
   }
 
   closeApp() {
