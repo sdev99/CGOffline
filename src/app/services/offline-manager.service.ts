@@ -194,6 +194,7 @@ export class OfflineManagerService {
     if (syncState) {
       switch (syncState) {
         case EnumService.SyncProcessState.OFFLINE_DATA_INSERT_START:
+        case EnumService.SyncProcessState.OFFLINE_DATA_DOWNLOAD_START:
           this.emptyAllTables(() => {
             // Remove offline data json/zip files
             const offlineDataFiles = localStorage.getItem(

@@ -1,38 +1,41 @@
 <ion-header>
-    <app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
+  <app-dashboard-header-dm
+    [title]="sharedDataService.getCurrentCheckedInEntityName()"
+  ></app-dashboard-header-dm>
 </ion-header>
 
-<ion-content mode="md" >
-    <div class="content">
-       <div class="dashboard-btns-container">
-           <app-dashboard-button
-                   img="./assets/icon/checkinout-active.png"
-                   title="Check In/Out"
-                   (click)="checkInOutClick()"></app-dashboard-button>
+<ion-content mode="md">
+  <div class="content">
+    <div class="dashboard-btns-container">
+      <app-dashboard-button
+        img="./assets/icon/checkinout-active.png"
+        title="Check In/Out"
+        (click)="checkInOutClick()"
+      ></app-dashboard-button>
 
-           <app-dashboard-button
-                   img="./assets/icon/document-active.png"
-                   title="Documents"
-                   (click)="documentsClick()"></app-dashboard-button>
+      <app-dashboard-button
+        img="./assets/icon/document-active.png"
+        title="Documents"
+        (click)="documentsClick()"
+      ></app-dashboard-button>
 
-           <app-dashboard-button
-                   img="./assets/icon/form-active.png"
-                   title="Forms"
-                   (click)="formsClick()"></app-dashboard-button>
+      <app-dashboard-button
+        img="./assets/icon/form-active.png"
+        title="Forms"
+        (click)="formsClick()"
+      ></app-dashboard-button>
 
-           <app-dashboard-button
-                   img="./assets/icon/permit-active.png"
-                   title="Permits"
-                   (click)="permitsClick()"></app-dashboard-button>
+      <app-dashboard-button
+        img="./assets/icon/permit-active.png"
+        title="Permits"
+        (click)="permitsClick()"
+      ></app-dashboard-button>
 
-           <app-dashboard-button
-                   img="./assets/icon/evacuation-active.png"
-                   title="Evacuation"
-                   (click)="evacuationClick()"></app-dashboard-button>
-       </div>
+      <app-dashboard-button
+        img="./assets/icon/evacuation-active.png"
+        title="Evacuation"
+        (click)="evacuationClick()"
+      ></app-dashboard-button>
     </div>
+  </div>
 </ion-content>
-
-
-
-
