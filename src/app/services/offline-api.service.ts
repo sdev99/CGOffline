@@ -133,7 +133,7 @@ export class OfflineApiService {
       if (isDemoFile) {
         this.filehandlerService
           .readJsonFile("./assets/202108101317573870376.json")
-          .subscribe((response) => {
+          .then((response) => {
             resolve(response);
           });
       } else {

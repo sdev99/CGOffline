@@ -7,6 +7,7 @@ import { StaticDataService } from "./static-data.service";
 import { Platform } from "@ionic/angular";
 import { HttpClient } from "@angular/common/http";
 import { Capacitor } from "@capacitor/core";
+import { EnumService } from "./enum.service";
 
 @Injectable({
   providedIn: "root",
@@ -21,7 +22,23 @@ export class FilehandlerService {
     private http: HTTP
   ) {}
 
-  readJsonFile(filePath) {
+  readJsonFile(filePath, accessID = "") {
+    const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
+
+    // Authentication by setting header with token value
+    let headers: any = {};
+    if (accessID && token) {
+      headers = {
+        accessID,
+        token,
+        Accept: "application/json",
+      };
+    }
+
+    return fetch(filePath, { headers: headers }).then((res) => res.json());
+  }
+
+  readJsonFileOld(filePath) {
     return this.httpClient.get(filePath, {});
   }
 

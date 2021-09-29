@@ -307,9 +307,10 @@ export class DeviceSyncDmPage implements OnInit {
                             } else {
                               this.filehandlerService
                                 .readJsonFile(
-                                  Capacitor.convertFileSrc(jsonFile)
+                                  Capacitor.convertFileSrc(jsonFile),
+                                  this.sharedDataService.deviceUID
                                 )
-                                .subscribe((offlineData: any) => {
+                                .then((offlineData: any) => {
                                   this.updateSyncState(
                                     EnumService.SyncProcessState
                                       .OFFLINE_DATA_INSERT_START
@@ -324,6 +325,20 @@ export class DeviceSyncDmPage implements OnInit {
                                       }
                                     }
                                   );
+                                })
+                                .catch((error) => {
+                                  this.synchProgressState = "failed";
+                                  localStorage.setItem(
+                                    EnumService.LocalStorageKeys
+                                      .OFFLINEMODE_SYNC_STATE,
+                                    "failed"
+                                  );
+                                  this.updateSyncState(
+                                    EnumService.SyncProcessState.FAILED
+                                  );
+
+                                  this.synchronisationErrorMessage =
+                                    error?.message || "File Read error";
                                 });
                             }
                           });
