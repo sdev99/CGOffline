@@ -9,9 +9,10 @@ import { UtilService } from "./util.service";
 
 import * as JSZip from "jszip";
 import { FilehandlerService } from "./filehandler.service";
-import { DeviceOfflineDetailViewModels } from "../_models/offline/DeviceOfflineDetailViewModels";
+import { Zip } from "@ionic-native/zip/ngx";
 import { Platform } from "@ionic/angular";
 import { FileTransfer } from "@ionic-native/file-transfer/ngx";
+import { of } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -21,6 +22,7 @@ export class OfflineApiService {
     private httpClient: HttpClient,
     private platform: Platform,
     private http: HTTP,
+    private zip: Zip,
     private file: File,
     private fileTransfer: FileTransfer,
     public sharedDataService: SharedDataService,
@@ -49,18 +51,13 @@ export class OfflineApiService {
     return this.httpClient.get(`${path}`, { headers: headers });
   }
 
-  getDeviceOfflineFile(files) {
+  getDeviceOfflineFile(files, progressCallBack = null) {
     return new Promise((resolve, reject) => {
-      const downloadedJsonFiles = [];
-
-      const onFileDownloaded = (jsonObject) => {
-        downloadedJsonFiles.push(jsonObject);
-        if (downloadedJsonFiles.length === files.length) {
-          resolve(downloadedJsonFiles);
-        }
-      };
+      const unZippedFiles = [];
 
       const onFileDownloadError = (error) => {
+        console.log("File Download Error ", error);
+
         if (typeof error === "object" && error?.message) {
           reject(error?.message);
         } else if (typeof error === "string") {
@@ -79,23 +76,87 @@ export class OfflineApiService {
         headers = { accessID, token };
       }
 
-      files.map((obj: any) => {
-        const fileName = obj.jsonFileName;
-        const zipFileName = obj.zipFileName;
+      const unZipFile = (localFilePath, fileIndex) => {
+        this.zip
+          .unzip(
+            localFilePath,
+            this.sharedDataService.saveZipFileLocation(),
+            (progress) => {
+              if (progress.total > 0) {
+                const percent = Math.round(
+                  (progress.loaded / progress.total) * 100
+                );
 
-        // Download JSON file
-        if (fileName) {
-          let fileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
-          const writeDirectory = this.file.dataDirectory;
-          const localFilePath = writeDirectory + fileName;
+                const totalFiles = files.length * 2;
+                const eachFilePercent = 100 / totalFiles;
 
-          if (UtilService.isLocalHost()) {
-            onFileDownloaded(fileUrl);
-          } else {
-            this.http
-              .downloadFile(fileUrl, {}, headers, localFilePath)
-              .then(async (response) => {
+                const finalPercent =
+                  eachFilePercent * (fileIndex * 2 + 1) + percent / totalFiles;
+
+                if (finalPercent > 0) {
+                  progressCallBack && progressCallBack(finalPercent, "unzip");
+                }
+
+                console.log("Unzipping, " + finalPercent + "%");
+              }
+            }
+          )
+          .then((result) => {
+            // UnZipping completed
+            if (result === 0) {
+              // For json file only
+              unZippedFiles.push(localFilePath.replace(".zip", ".json"));
+              // Delete zip file
+              this.filehandlerService
+                .removeFile(localFilePath)
+                .then(() => {
+                  //Download Next zip file
+                  if (++fileIndex < files.length) {
+                    downloadFileFromServer(fileIndex);
+                  } else {
+                    // All files downloaded complete
+                    resolve(unZippedFiles);
+                  }
+                })
+                .catch((error) => {
+                  reject(
+                    new Error(
+                      "Unable to remove downloaded zip file:: " + error.message
+                    )
+                  );
+                });
+            }
+            // UnZipping Failed
+            if (result === -1) {
+              console.log("UnZipping FAILED");
+              reject(new Error("Unable to unzip file " + fileIndex));
+            }
+          });
+      };
+
+      const downloadFileFromServer = (fileIndex) => {
+        if (fileIndex < files.length) {
+          const fileDetail = files[fileIndex];
+          const jsonFileName = fileDetail.jsonFileName;
+          const zipFileName = fileDetail.zipFileName;
+
+          const fileName = UtilService.isLocalHost()
+            ? jsonFileName
+            : zipFileName;
+
+          if (fileName) {
+            let serverFileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
+
+            const deviceFilePath =
+              this.sharedDataService.saveZipFileLocation() + fileName;
+
+            if (UtilService.isLocalHost()) {
+              resolve([serverFileUrl]);
+            } else {
+              const onFileDownloadCompleted = (response) => {
                 console.log("File Download Completed ", response);
+
+                // Remove files from server
                 this.deleteDownloadedFileFromServer(fileName).subscribe(
                   (res) => {}
                 );
@@ -103,16 +164,82 @@ export class OfflineApiService {
                   (res) => {}
                 );
 
-                onFileDownloaded(localFilePath);
-              })
-              .catch((error) => {
-                console.log("File Download Error ", error);
-                debugger;
-                onFileDownloadError(error);
-              });
+                unZipFile(deviceFilePath, fileIndex);
+              };
+
+              const calculateProgress = (progress) => {
+                if (progress.total > 0) {
+                  const percent = Math.round(
+                    (progress.loaded / progress.total) * 100
+                  );
+
+                  const totalFiles = files.length * 2;
+                  const eachFilePercent = 100 / totalFiles;
+
+                  const finalPercent =
+                    eachFilePercent * fileIndex * 2 + percent / totalFiles;
+                  if (finalPercent > 0) {
+                    progressCallBack && progressCallBack(finalPercent);
+                  }
+                  console.log("Downloading  " + finalPercent + "%");
+                }
+              };
+
+              if (this.platform.is("android")) {
+                // Loading with timer becuase this.http.downloadFile doest
+                let totalLoad = 100;
+                let loaded = 1;
+                const intervalRef = setInterval(() => {
+                  loaded++;
+                  if (loaded >= 100) {
+                    clearInterval(intervalRef);
+                    loaded = 100;
+                  }
+                  calculateProgress({ total: totalLoad, loaded });
+                }, 1000);
+
+                this.http
+                  .downloadFile(serverFileUrl, {}, headers, deviceFilePath)
+                  .then(async (response) => {
+                    calculateProgress({ total: totalLoad, loaded: 100 });
+                    clearInterval(intervalRef);
+
+                    onFileDownloadCompleted(response);
+                  })
+                  .catch((error) => {
+                    calculateProgress({ total: totalLoad, loaded: 100 });
+                    clearInterval(intervalRef);
+                    onFileDownloadError(error);
+                  });
+              } else {
+                const fileTransfer = this.fileTransfer.create();
+                fileTransfer
+                  .download(serverFileUrl, deviceFilePath, false, {
+                    headers: headers,
+                  })
+                  .then((response) => {
+                    onFileDownloadCompleted(response);
+                  })
+                  .catch((error) => {
+                    onFileDownloadError(error);
+                  });
+
+                fileTransfer.onProgress((progress) => {
+                  calculateProgress(progress);
+                });
+              }
+            }
+          } else {
+            onFileDownloadError(new Error("File not found on server"));
           }
         }
-      });
+      };
+
+      if (files && files.length > 0) {
+        downloadFileFromServer(0);
+      } else {
+        onFileDownloadError(new Error("No files for download"));
+      }
     });
   }
 

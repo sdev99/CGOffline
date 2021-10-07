@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit } from "@angular/core";
 import { AlertController, NavController } from "@ionic/angular";
 import { UtilService } from "../../services/util.service";
 import { ActivatedRoute } from "@angular/router";
@@ -37,7 +37,8 @@ export class DeviceSyncDmPage implements OnInit {
     public offlineManagerService: OfflineManagerService,
     public sharedDataService: SharedDataService,
     public observablesService: ObservablesService,
-    public filehandlerService: FilehandlerService
+    public filehandlerService: FilehandlerService,
+    public ngZone: NgZone
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
       if (data && data.startSync) {
@@ -186,12 +187,12 @@ export class DeviceSyncDmPage implements OnInit {
     if (offlineDataFiles) {
       try {
         const files = JSON.parse(offlineDataFiles);
-        files.forEach((fileUrl) => {
-          this.filehandlerService.removeFile(fileUrl);
-        });
-        localStorage.removeItem(
-          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
-        );
+        // files.forEach((fileUrl) => {
+        //   this.filehandlerService.removeFile(fileUrl);
+        // });
+        // localStorage.removeItem(
+        //   EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+        // );
       } catch (error) {}
     }
 
@@ -213,13 +214,12 @@ export class DeviceSyncDmPage implements OnInit {
 
     this.postOfflineDataToServerIfAvailable()
       .then((res) => {
+        this.updateProgress(100, 0);
+
         this.updateSyncState(
           EnumService.SyncProcessState.OFFLINE_DATA_DOWNLOAD_START
         );
-
         this.offlineManagerService.emptyAllTables(() => {
-          this.updateProgressBy(5);
-
           this.callOfflineApi(() => {
             this.onSyncCompleted();
           });
@@ -240,11 +240,16 @@ export class DeviceSyncDmPage implements OnInit {
     this.navController.back();
   }
 
-  updateProgressBy = (increaseBy: number = 0) => {
-    this.progress += increaseBy;
-    if (this.progress > 100) {
-      this.progress = 100;
+  updateProgress = (progress: number = 0, currentSyncStep: number = 0) => {
+    let totalSyncStep = 4;
+    let finalProgress = (100 / totalSyncStep) * currentSyncStep + progress / 4;
+    if (finalProgress > 100) {
+      finalProgress = 100;
     }
+
+    this.ngZone.run(() => {
+      this.progress = finalProgress;
+    });
   };
 
   updateSyncState = (state: string) => {
@@ -266,7 +271,8 @@ export class DeviceSyncDmPage implements OnInit {
       .getDeviceOfflineDetails(this.sharedDataService.deviceUID)
       .subscribe(
         async (res: Response) => {
-          this.updateProgressBy(5);
+          this.updateProgress(100, 1);
+
           if (
             res.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
           ) {
@@ -284,63 +290,57 @@ export class DeviceSyncDmPage implements OnInit {
                 (isAvailable) => {
                   if (isAvailable) {
                     this.offlineApiService
-                      .getDeviceOfflineFile(files)
+                      .getDeviceOfflineFile(files, (zipProgress) => {
+                        this.updateProgress(zipProgress, 2);
+                      })
                       .then(async (jsonFiles: any) => {
                         localStorage.setItem(
                           EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
                           JSON.stringify(jsonFiles)
                         );
 
-                        let isJsonData = false;
+                        // Empty all sqlite tables data
                         this.offlineManagerService.emptyAllTables(() => {
                           jsonFiles.map((jsonFile) => {
-                            if (isJsonData) {
-                              this.offlineManagerService.insertOfflineData(
-                                jsonFile,
-                                (insertionDone) => {
-                                  this.updateProgressBy(2);
-                                  if (insertionDone) {
-                                    callBack && callBack();
-                                  }
-                                }
-                              );
-                            } else {
-                              this.filehandlerService
-                                .readJsonFile(
-                                  Capacitor.convertFileSrc(jsonFile),
-                                  this.sharedDataService.deviceUID
-                                )
-                                .then((offlineData: any) => {
-                                  this.updateSyncState(
-                                    EnumService.SyncProcessState
-                                      .OFFLINE_DATA_INSERT_START
-                                  );
+                            this.filehandlerService
+                              .readJsonFile(
+                                Capacitor.convertFileSrc(jsonFile),
+                                this.sharedDataService.deviceUID
+                              )
+                              .then((offlineData: any) => {
+                                this.updateSyncState(
+                                  EnumService.SyncProcessState
+                                    .OFFLINE_DATA_INSERT_START
+                                );
 
-                                  this.offlineManagerService.insertOfflineData(
-                                    offlineData,
-                                    (insertionDone) => {
-                                      this.updateProgressBy(2);
-                                      if (insertionDone) {
-                                        callBack && callBack();
-                                      }
+                                let progressCount = 0;
+
+                                this.offlineManagerService.insertOfflineData(
+                                  offlineData,
+                                  (insertionDone) => {
+                                    progressCount += 2;
+
+                                    this.updateProgress(progressCount, 3);
+                                    if (insertionDone) {
+                                      callBack && callBack();
                                     }
-                                  );
-                                })
-                                .catch((error) => {
-                                  this.synchProgressState = "failed";
-                                  localStorage.setItem(
-                                    EnumService.LocalStorageKeys
-                                      .OFFLINEMODE_SYNC_STATE,
-                                    "failed"
-                                  );
-                                  this.updateSyncState(
-                                    EnumService.SyncProcessState.FAILED
-                                  );
+                                  }
+                                );
+                              })
+                              .catch((error) => {
+                                this.synchProgressState = "failed";
+                                localStorage.setItem(
+                                  EnumService.LocalStorageKeys
+                                    .OFFLINEMODE_SYNC_STATE,
+                                  "failed"
+                                );
+                                this.updateSyncState(
+                                  EnumService.SyncProcessState.FAILED
+                                );
 
-                                  this.synchronisationErrorMessage =
-                                    error?.message || "File Read error";
-                                });
-                            }
+                                this.synchronisationErrorMessage =
+                                  error?.message || "File Read error";
+                              });
                           });
                         });
                       })

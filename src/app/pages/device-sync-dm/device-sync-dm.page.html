@@ -29,7 +29,7 @@
       <ion-label class="progress-title">in Progress</ion-label>
       <div class="progress-bar-view">
         <ion-progress-bar [value]="progress/100"></ion-progress-bar>
-        <ion-note>{{progress}} %</ion-note>
+        <ion-note>{{progress | number:'1.0-0'}} %</ion-note>
       </div>
 
       <ion-chip class="alert-msg">

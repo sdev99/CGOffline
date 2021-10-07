@@ -22,7 +22,7 @@ export class FilehandlerService {
     private http: HTTP
   ) {}
 
-  readJsonFile(filePath, accessID = "") {
+  readJsonFileDisable(filePath, accessID = "") {
     const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
 
     // Authentication by setting header with token value
@@ -38,8 +38,10 @@ export class FilehandlerService {
     return fetch(filePath, { headers: headers }).then((res) => res.json());
   }
 
-  readJsonFileOld(filePath) {
-    return this.httpClient.get(filePath, {});
+  readJsonFile(filePath, accessID = "") {
+    return new Promise((resolve) => {
+      resolve({});
+    });
   }
 
   saveBinaryFileOnDevice(base64File: string, fileName: string, callBack) {
@@ -84,14 +86,25 @@ export class FilehandlerService {
   }
 
   removeFile(fileUrl: string) {
-    try {
-      const fileName = fileUrl.split("\\").pop().split("/").pop();
-      const directory = fileUrl.replace(fileName, "");
+    return new Promise((resolve, reject) => {
+      try {
+        const fileName = fileUrl.split("\\").pop().split("/").pop();
+        const directory = fileUrl.replace(fileName, "");
 
-      this.file.removeFile(directory, fileName).then((res) => {
-        console.log("File remove successfully");
-      });
-    } catch (error) {}
+        this.file
+          .removeFile(directory, fileName)
+          .then((res) => {
+            console.log("File removed successfully");
+            resolve(res);
+          })
+          .catch((error) => {
+            console.log("File removed error" + JSON.stringify(error));
+            reject(error);
+          });
+      } catch (error) {
+        console.log("File removed error" + JSON.stringify(error));
+      }
+    });
   }
 
   saveAndOpenFile(base64File: string, fileName: string) {

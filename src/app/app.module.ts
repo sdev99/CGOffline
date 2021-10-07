@@ -21,6 +21,8 @@ import { CommonModule } from "@angular/common";
 import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
 import { DirectivesModule } from "./directives/directives.module";
 import { HTTP } from "@ionic-native/http/ngx";
+import { Zip } from "@ionic-native/zip/ngx";
+
 import {
   HTTP_INTERCEPTORS,
   HttpClient,
@@ -74,6 +76,7 @@ import { Device } from "@ionic-native/device/ngx";
     Base64,
     File,
     Device,
+    Zip,
     FileTransfer,
     UniqueDeviceID,
     CameraPreview,

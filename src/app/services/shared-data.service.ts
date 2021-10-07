@@ -266,6 +266,10 @@ export class SharedDataService {
     }
   }
 
+  saveZipFileLocation = () => {
+    return this.file.dataDirectory;
+  };
+
   setAnnotationImage(image) {
     this.annotationImage = image;
   }
