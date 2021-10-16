@@ -10,6 +10,7 @@ import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { FilehandlerService } from "../../services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-checkin-induction-image-file",
@@ -47,19 +48,15 @@ export class CheckinInductionImageFilePage implements OnInit {
             inductionContentItemIndex
           ];
         if (this.sharedDataService.offlineMode) {
-          if (this.inductionItem.document_BinaryFile) {
+          if (this.inductionItem.documentFileName) {
             this.ngZone.run(() => {
               setTimeout(() => {
-                const extension = this.inductionItem.documentFileName
-                  .split(".")
-                  ?.pop()
-                  ?.toLowerCase();
-                const mimeType = StaticDataService.fileMimeTypes[extension];
-                this.imageUrl =
-                  "data:" +
-                  mimeType +
-                  ";base64," +
-                  this.inductionItem.document_BinaryFile;
+                this.imageUrl = Capacitor.convertFileSrc(
+                  this.utilService.getOfflineFileUrl(
+                    this.inductionItem.documentFileName,
+                    "document"
+                  )
+                );
               }, 0);
             });
           }

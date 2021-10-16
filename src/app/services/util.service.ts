@@ -3,6 +3,7 @@ import {
   AlertController,
   LoadingController,
   NavController,
+  Platform,
 } from "@ionic/angular";
 import { EnumService } from "./enum.service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
@@ -358,9 +359,41 @@ export class UtilService {
   constructor(
     private loadingController: LoadingController,
     private file: File,
+    private platform: Platform,
     private alertController: AlertController,
     private validatorService: ValidatorService
   ) {}
+
+  getOfflineFileUrl(fileName, type) {
+    const deviceDirectory = this.file.dataDirectory;
+    let localFilePath =
+      deviceDirectory +
+      "" +
+      localStorage.getItem(
+        EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
+      );
+
+    const slash = this.platform.is("ios") ? "/" : "%5C";
+    switch (type) {
+      case "icon":
+        localFilePath += slash + "images" + slash + fileName;
+        break;
+      case "user":
+        localFilePath += slash + "user" + slash + fileName;
+        break;
+      case "document":
+        localFilePath += slash + "document" + slash + fileName;
+        return localFilePath;
+      case "signoff":
+      case "checkin":
+        localFilePath += slash + "user_checkin_signoff" + slash + fileName;
+        break;
+      default:
+        break;
+    }
+    return Capacitor.convertFileSrc(localFilePath);
+    // return localFilePath;
+  }
 
   urlToBase64(url, filename, mimeType) {
     return new Promise(async (resolve, reject) => {

@@ -22,10 +22,10 @@ export class FilehandlerService {
     private http: HTTP
   ) {}
 
-  readJsonFileDisable(filePath, accessID = "") {
+  readJsonFile(filePath, accessID = "") {
     const token = localStorage.getItem(EnumService.LocalStorageKeys.API_TOKEN);
 
-    // Authentication by setting header with token value
+    // Authenticaotion by setting header with token value
     let headers: any = {};
     if (accessID && token) {
       headers = {
@@ -38,38 +38,66 @@ export class FilehandlerService {
     return fetch(filePath, { headers: headers }).then((res) => res.json());
   }
 
-  readJsonFile(filePath, accessID = "") {
-    return new Promise((resolve) => {
-      resolve({});
-    });
-  }
+  // saveBinaryFileOnDevice(base64File: string, fileName: string, callBack) {
+  //   const extension = fileName.split(".").pop();
+  //   const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
 
-  saveBinaryFileOnDevice(base64File: string, fileName: string, callBack) {
+  //   const writeDirectory = this.platform.is("ios")
+  //     ? this.file.dataDirectory
+  //     : this.file.externalDataDirectory;
+  //   try {
+  //     this.file
+  //       .writeFile(
+  //         writeDirectory,
+  //         fileName,
+  //         UtilService.convertBase64ToBlob(
+  //           base64File,
+  //           "data:" + mimeType + ";base64"
+  //         ),
+  //         { replace: true }
+  //       )
+  //       .then(() => {
+  //         callBack(writeDirectory + fileName);
+  //       })
+  //       .catch(() => {
+  //         console.error("Error writing pdf file");
+  //         callBack(false);
+  //       });
+  //   } catch (error) {
+  //     callBack(false);
+  //   }
+  // }
+
+  saveFileOnDevice(path, fileName: string, callBack) {
     const extension = fileName.split(".").pop();
     const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
 
+    const folderName = localStorage.getItem(
+      EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
+    );
+
     const writeDirectory = this.platform.is("ios")
       ? this.file.dataDirectory
-      : this.file.externalDataDirectory;
+      : this.file.dataDirectory;
     try {
       this.file
         .writeFile(
           writeDirectory,
-          fileName,
-          UtilService.convertBase64ToBlob(
-            base64File,
-            "data:" + mimeType + ";base64"
-          ),
+          folderName + "/offline_added/" + fileName,
+          path,
           { replace: true }
         )
-        .then(() => {
+        .then((res) => {
+          debugger;
           callBack(writeDirectory + fileName);
         })
         .catch(() => {
-          console.error("Error writing pdf file");
+          debugger;
+          console.error("Error writing  file");
           callBack(false);
         });
     } catch (error) {
+      debugger;
       callBack(false);
     }
   }
@@ -102,22 +130,43 @@ export class FilehandlerService {
             reject(error);
           });
       } catch (error) {
+        reject(error);
         console.log("File removed error" + JSON.stringify(error));
       }
     });
   }
 
-  saveAndOpenFile(base64File: string, fileName: string) {
-    this.utilService.presentLoadingWithOptions("Loading...");
-
-    this.saveBinaryFileOnDevice(base64File, fileName, (url) => {
-      this.utilService.hideLoading();
-
-      if (url) {
-        this.openDownloadedFile(url, fileName);
+  removeDirectory(directory: string, directoryName: string) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.file
+          .removeDir(directory, directoryName)
+          .then((res) => {
+            console.log("Directory removed successfully");
+            resolve(res);
+          })
+          .catch((error) => {
+            console.log("Directory removed error" + JSON.stringify(error));
+            reject(error);
+          });
+      } catch (error) {
+        reject(error);
+        console.log("Directory removed error" + JSON.stringify(error));
       }
     });
   }
+
+  // saveAndOpenFile(base64File: string, fileName: string) {
+  //   this.utilService.presentLoadingWithOptions("Loading...");
+
+  //   this.saveBinaryFileOnDevice(base64File, fileName, (url) => {
+  //     this.utilService.hideLoading();
+
+  //     if (url) {
+  //       this.openDownloadedFile(url, fileName);
+  //     }
+  //   });
+  // }
 
   showErrorAlert = (error, defaultErrorMessage = "") => {
     let errorMessage = defaultErrorMessage;

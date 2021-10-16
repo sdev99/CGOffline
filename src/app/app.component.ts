@@ -213,9 +213,8 @@ export class AppComponent {
         this.sharedDataService.deviceUID = "";
         if (UtilService.isLocalHost()) {
           this.sharedDataService.deviceUID =
-            "67DA70A1-FD31-4B48-81F6-74E9EB356632";
+            "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
         }
-        console.log("Device UID ", this.sharedDataService.deviceUID);
         UtilService.fireCallBack(callBack);
       });
   };

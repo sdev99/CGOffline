@@ -187,12 +187,12 @@ export class DeviceSyncDmPage implements OnInit {
     if (offlineDataFiles) {
       try {
         const files = JSON.parse(offlineDataFiles);
-        // files.forEach((fileUrl) => {
-        //   this.filehandlerService.removeFile(fileUrl);
-        // });
-        // localStorage.removeItem(
-        //   EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
-        // );
+        files.forEach((fileUrl) => {
+          this.filehandlerService.removeFile(fileUrl);
+        });
+        localStorage.removeItem(
+          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES
+        );
       } catch (error) {}
     }
 
@@ -286,90 +286,116 @@ export class DeviceSyncDmPage implements OnInit {
                   totalSizeWillBeDownloadB + zipFileSizeBytes;
               });
 
-              this.isSpaceAvailableInDevice(totalSizeWillBeDownloadB).then(
-                (isAvailable) => {
-                  if (isAvailable) {
-                    this.offlineApiService
-                      .getDeviceOfflineFile(files, (zipProgress) => {
-                        this.updateProgress(zipProgress, 2);
-                      })
-                      .then(async (jsonFiles: any) => {
-                        localStorage.setItem(
-                          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
-                          JSON.stringify(jsonFiles)
-                        );
+              // First Remove folder that contains all file before download new offline files
+              this.filehandlerService
+                .removeDirectory(
+                  this.sharedDataService.saveZipFileLocation(),
+                  localStorage.getItem(
+                    EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
+                  )
+                )
+                .then(() => {
+                  getOfflineDataFromServer();
+                })
+                .catch(() => {
+                  getOfflineDataFromServer();
+                });
 
-                        // Empty all sqlite tables data
-                        this.offlineManagerService.emptyAllTables(() => {
-                          jsonFiles.map((jsonFile) => {
-                            this.filehandlerService
-                              .readJsonFile(
-                                Capacitor.convertFileSrc(jsonFile),
-                                this.sharedDataService.deviceUID
-                              )
-                              .then((offlineData: any) => {
-                                this.updateSyncState(
-                                  EnumService.SyncProcessState
-                                    .OFFLINE_DATA_INSERT_START
-                                );
+              const getOfflineDataFromServer = () => {
+                this.isSpaceAvailableInDevice(totalSizeWillBeDownloadB).then(
+                  (isAvailable) => {
+                    if (isAvailable) {
+                      this.offlineApiService
+                        .getDeviceOfflineFile(files, (zipProgress) => {
+                          this.updateProgress(zipProgress, 2);
+                        })
+                        .then(async (jsonFiles: any) => {
+                          localStorage.setItem(
+                            EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
+                            JSON.stringify(jsonFiles)
+                          );
 
-                                let progressCount = 0;
+                          // Empty all sqlite tables data
+                          this.offlineManagerService.emptyAllTables(() => {
+                            const readJsonFileAndInsertInDb = (fileIndex) => {
+                              const jsonFile = jsonFiles[fileIndex];
+                              this.filehandlerService
+                                .readJsonFile(
+                                  Capacitor.convertFileSrc(jsonFile),
+                                  this.sharedDataService.deviceUID
+                                )
+                                .then((offlineData: any) => {
+                                  this.updateSyncState(
+                                    EnumService.SyncProcessState
+                                      .OFFLINE_DATA_INSERT_START
+                                  );
 
-                                this.offlineManagerService.insertOfflineData(
-                                  offlineData,
-                                  (insertionDone) => {
-                                    progressCount += 2;
+                                  let progressCount = 0;
 
-                                    this.updateProgress(progressCount, 3);
-                                    if (insertionDone) {
-                                      callBack && callBack();
+                                  this.offlineManagerService.insertOfflineData(
+                                    offlineData,
+                                    (insertionDone) => {
+                                      progressCount += 2;
+
+                                      this.updateProgress(progressCount, 3);
+                                      if (insertionDone) {
+                                        if (jsonFiles?.length > ++fileIndex) {
+                                          readJsonFileAndInsertInDb(fileIndex);
+                                        } else {
+                                          callBack && callBack();
+                                        }
+                                      }
                                     }
-                                  }
-                                );
-                              })
-                              .catch((error) => {
-                                this.synchProgressState = "failed";
-                                localStorage.setItem(
-                                  EnumService.LocalStorageKeys
-                                    .OFFLINEMODE_SYNC_STATE,
-                                  "failed"
-                                );
-                                this.updateSyncState(
-                                  EnumService.SyncProcessState.FAILED
-                                );
+                                  );
+                                })
+                                .catch((error) => {
+                                  this.synchProgressState = "failed";
+                                  localStorage.setItem(
+                                    EnumService.LocalStorageKeys
+                                      .OFFLINEMODE_SYNC_STATE,
+                                    "failed"
+                                  );
+                                  this.updateSyncState(
+                                    EnumService.SyncProcessState.FAILED
+                                  );
 
-                                this.synchronisationErrorMessage =
-                                  error?.message || "File Read error";
-                              });
+                                  this.synchronisationErrorMessage =
+                                    error?.message || "File Read error";
+                                });
+                            };
+
+                            if (jsonFiles?.length > 0) {
+                              readJsonFileAndInsertInDb(0);
+                            }
                           });
+                        })
+                        .catch((error) => {
+                          this.synchProgressState = "failed";
+                          localStorage.setItem(
+                            EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+                            "failed"
+                          );
+                          this.updateSyncState(
+                            EnumService.SyncProcessState.FAILED
+                          );
+
+                          this.synchronisationErrorMessage =
+                            error?.message || "File download error";
                         });
-                      })
-                      .catch((error) => {
-                        this.synchProgressState = "failed";
-                        localStorage.setItem(
-                          EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
-                          "failed"
-                        );
-                        this.updateSyncState(
-                          EnumService.SyncProcessState.FAILED
-                        );
+                    } else {
+                      this.synchProgressState = "failed";
+                      localStorage.setItem(
+                        EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
+                        "failed"
+                      );
+                      this.updateSyncState(EnumService.SyncProcessState.FAILED);
 
-                        this.synchronisationErrorMessage =
-                          error?.message || "File download error";
-                      });
-                  } else {
-                    this.synchProgressState = "failed";
-                    localStorage.setItem(
-                      EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
-                      "failed"
-                    );
-                    this.updateSyncState(EnumService.SyncProcessState.FAILED);
-
-                    this.synchronisationErrorMessage =
-                      "No enough space available in your device";
+                      this.synchronisationErrorMessage =
+                        "No enough space available in your device";
+                    }
                   }
-                }
-              );
+                );
+              };
             }
           }
         },

@@ -140,6 +140,15 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     }, true);
   }
 
+  tet(path) {
+    // this.filehandlerService.saveFileOnDevice(
+    //   path,
+    //   this.utilService.Uniqueid(),
+    //   ()=>{
+    //   }
+    // );
+  }
+
   sanitize(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }

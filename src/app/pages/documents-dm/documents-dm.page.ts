@@ -12,6 +12,7 @@ import { ActivatedRoute } from "@angular/router";
 import { DynamicRouteService } from "src/app/services/dynamic-route.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import { ObservablesService } from "src/app/services/observables.service";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 @Component({
   selector: "app-documents-dm",
@@ -46,7 +47,8 @@ export class DocumentsDmPage implements OnInit {
     public observablesService: ObservablesService,
     public offlineManagerService: OfflineManagerService,
     public apiService: ApiService,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    public sanitizer: DomSanitizer
   ) {
     this.activatedRoute.queryParams.subscribe((res) => {
       if (res) {
@@ -151,16 +153,6 @@ export class DocumentsDmPage implements OnInit {
     }
   }
 
-  getArchivedDocumentIcon = (item) => {
-    if (this.sharedDataService.offlineMode) {
-      if (!item.document_BinaryFile) {
-        return UtilService.FileIcon("pdf");
-      }
-      return "data:image/png;base64," + item.documentIcon_BinaryFile;
-    }
-    return item.documentFileIconURL;
-  };
-
   searchbarShowHide(visible) {
     if (!visible) {
       this.searchQuery = "";
@@ -182,35 +174,33 @@ export class DocumentsDmPage implements OnInit {
     }
   }
 
+  sanitize(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+
   openArchivedDocument(item: ArchivedDocumentDetail) {
-    if (this.sharedDataService.offlineMode) {
-      const docDetail = item as any;
-      if (docDetail.document_BinaryFile) {
-        const document_BinaryFile = docDetail.document_BinaryFile;
-        const documentFileName = docDetail.documentFileName;
-        this.filehandlerService.saveAndOpenFile(
-          document_BinaryFile,
-          documentFileName
+    if (item.documentFileName) {
+      if (this.sharedDataService.offlineMode) {
+        const documentFileUrl = this.utilService.getOfflineFileUrl(
+          item.documentFileName,
+          "document"
+        );
+        this.filehandlerService.openDownloadedFile(
+          documentFileUrl,
+          item.documentFileName
         );
       } else {
-        this.utilService.showAlert(
-          "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
-          "File Not Available Yet"
-        );
-      }
-    } else {
-      if (item.documentFileName) {
         this.filehandlerService.openFile(
           this.sharedDataService.globalDirectories?.documentDirectory +
             "" +
             item.documentFileName
         );
-      } else {
-        this.utilService.showAlert(
-          "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
-          "File Not Available Yet"
-        );
       }
+    } else {
+      this.utilService.showAlert(
+        "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
+        "File Not Available Yet"
+      );
     }
   }
 

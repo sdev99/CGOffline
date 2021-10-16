@@ -151,16 +151,6 @@ export class FormsDmPage implements OnInit {
     }
   }
 
-  getArchivedFormIcon = (item) => {
-    if (this.sharedDataService.offlineMode) {
-      if (!item.document_BinaryFile) {
-        return UtilService.FileIcon("pdf");
-      }
-      return "data:image/png;base64," + item.documentIcon_BinaryFile;
-    }
-    return item.documentFileIconURL;
-  };
-
   segmentChanged(event) {
     this.listType = event;
     if (event === EnumService.DedicatedModeFormListType.Available) {
@@ -214,34 +204,29 @@ export class FormsDmPage implements OnInit {
   }
 
   openArchivedForm(item: ArchivedDocumentDetail) {
-    if (this.sharedDataService.offlineMode) {
-      const docDetail = item as any;
-      if (docDetail.document_BinaryFile) {
-        const document_BinaryFile = docDetail.document_BinaryFile;
-        const documentFileName = docDetail.documentFileName;
-        this.filehandlerService.saveAndOpenFile(
-          document_BinaryFile,
-          documentFileName
+    if (item.documentFileName) {
+      if (this.sharedDataService.offlineMode) {
+        const fileUrl = this.utilService.getOfflineFileUrl(
+          item.documentFileName,
+          "document"
+        );
+
+        this.filehandlerService.openDownloadedFile(
+          fileUrl,
+          item.documentFileName
         );
       } else {
-        this.utilService.showAlert(
-          "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
-          "File Not Available Yet"
-        );
-      }
-    } else {
-      if (item.documentFileName) {
         this.filehandlerService.openFile(
           this.sharedDataService.globalDirectories?.documentDirectory +
             "" +
             item.documentFileName
         );
-      } else {
-        this.utilService.showAlert(
-          "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
-          "File Not Available Yet"
-        );
       }
+    } else {
+      this.utilService.showAlert(
+        "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
+        "File Not Available Yet"
+      );
     }
   }
 

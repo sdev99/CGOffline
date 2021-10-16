@@ -105,7 +105,17 @@ export class OfflineApiService {
             // UnZipping completed
             if (result === 0) {
               // For json file only
-              unZippedFiles.push(localFilePath.replace(".zip", ".json"));
+              const fileDetail = files[fileIndex];
+              if (fileDetail.name !== "All_Files") {
+                unZippedFiles.push(localFilePath.replace(".zip", ".json"));
+              } else {
+                const zipFileName = fileDetail.zipFileName;
+
+                localStorage.setItem(
+                  EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME,
+                  zipFileName.replace(".zip", "")
+                );
+              }
               // Delete zip file
               this.filehandlerService
                 .removeFile(localFilePath)
@@ -150,6 +160,7 @@ export class OfflineApiService {
             const deviceFilePath =
               this.sharedDataService.saveZipFileLocation() + fileName;
 
+            console.log("Device_file_path ", deviceFilePath);
             if (UtilService.isLocalHost()) {
               resolve([serverFileUrl]);
             } else {
@@ -186,7 +197,7 @@ export class OfflineApiService {
               };
 
               if (this.platform.is("android")) {
-                // Loading with timer becuase this.http.downloadFile doest
+                // Loading with timer becuase
                 let totalLoad = 100;
                 let loaded = 1;
                 const intervalRef = setInterval(() => {

@@ -12,6 +12,7 @@ import { AttachmentItem } from "../../_models/attachmentItem";
 import { SharedDataService } from "../../services/shared-data.service";
 import { FilehandlerService } from "../../services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-question-list-header",
@@ -26,7 +27,6 @@ export class QuestionListHeaderComponent implements OnInit {
   @Input() questionTitle: string;
   @Input() note: string;
   @Input() attachmentIcon: string;
-  @Input() attachmentIconBinaryFile: string; // For offline mode
   @Input() required: boolean;
   @Input() isError: boolean;
 
@@ -35,18 +35,11 @@ export class QuestionListHeaderComponent implements OnInit {
   constructor(
     public sharedDataService: SharedDataService,
     private filehandlerService: FilehandlerService,
+    private utilService: UtilService,
     private ngZone: NgZone
   ) {}
 
   ngOnInit() {
-    if (this.sharedDataService.offlineMode && this.attachments?.length > 0) {
-      this.attachmentIcon =
-        "data:image/png;base64," +
-        (this.attachmentIconBinaryFile
-          ? this.attachmentIconBinaryFile
-          : this.attachments[0].documentIcon_BinaryFile);
-    }
-
     let attachmentsList = [];
 
     this.attachments.forEach((attachment) => {
@@ -54,12 +47,14 @@ export class QuestionListHeaderComponent implements OnInit {
 
       if (isImageType) {
         if (this.sharedDataService.offlineMode) {
-          const extension = attachment.fileExtension;
-          const mimeType =
-            StaticDataService.fileMimeTypes[extension.toLowerCase()];
-          const base64 =
-            "data:" + mimeType + ";base64," + attachment.fileName_BinaryFile;
-          attachmentsList.push(base64);
+          attachmentsList.push(
+            Capacitor.convertFileSrc(
+              this.utilService.getOfflineFileUrl(
+                attachment.fileName,
+                "document"
+              )
+            )
+          );
         } else {
           attachmentsList.push(
             this.sharedDataService.globalDirectories.documentDirectory +
@@ -79,9 +74,11 @@ export class QuestionListHeaderComponent implements OnInit {
 
   openFile(attachment) {
     if (this.sharedDataService.offlineMode) {
-      const fileName_BinaryFile = attachment.fileName_BinaryFile;
-      const fileName = attachment.fileName;
-      this.filehandlerService.saveAndOpenFile(fileName_BinaryFile, fileName);
+      const filrUrl = this.utilService.getOfflineFileUrl(
+        attachment.fileName,
+        "document"
+      );
+      this.filehandlerService.openDownloadedFile(filrUrl, attachment.fileName);
     } else {
       if (
         this.sharedDataService.globalDirectories &&

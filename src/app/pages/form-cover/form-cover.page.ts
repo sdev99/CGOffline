@@ -89,12 +89,13 @@ export class FormCoverPage {
 
   openFile(attachmentItem: AttachmentItem) {
     if (this.sharedDataService.offlineMode) {
-      const docDetail = attachmentItem as any;
-      const document_BinaryFile = docDetail.document_BinaryFile;
-      const documentFileName = docDetail.documentFileName;
-      this.filehandlerService.saveAndOpenFile(
-        document_BinaryFile,
-        documentFileName
+      const fileUrl = this.utilService.getOfflineFileUrl(
+        attachmentItem.documentFileName,
+        "document"
+      );
+      this.filehandlerService.openDownloadedFile(
+        fileUrl,
+        attachmentItem.documentFileName
       );
     } else {
       this.filehandlerService.openFile(
@@ -104,17 +105,6 @@ export class FormCoverPage {
       );
     }
   }
-
-  getAttachmentIcon = (attachment) => {
-    if (this.sharedDataService.offlineMode) {
-      const extension = attachment.documentFileFormat;
-      const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
-      const base64 =
-        "data:" + mimeType + ";base64," + attachment.documentIcon_BinaryFile;
-      return base64;
-    }
-    return attachment.documentFileIconURL;
-  };
 
   onClose() {
     if (

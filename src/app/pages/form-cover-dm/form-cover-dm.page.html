@@ -1,46 +1,55 @@
 <ion-header mode="ios">
-    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-                         (closeModal)="onClose()"></app-modal-header-dm>
+  <app-modal-header-dm
+    [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+    (closeModal)="onClose()"
+  ></app-modal-header-dm>
 </ion-header>
 
 <ion-content fullscreen="true">
+  <div class="top-content">
+    <div class="text-1">You are about to fill</div>
+    <div class="text-2">{{signOffFormDetail?.formData?.formTitle}}</div>
+    <div class="text-3">{{signOffFormDetail?.formData?.formType}}</div>
 
-    <div class="top-content">
-        <div class="text-1">You are about to fill</div>
-        <div class="text-2">{{signOffFormDetail?.formData?.formTitle}}</div>
-        <div class="text-3">{{signOffFormDetail?.formData?.formType}}</div>
+    <div
+      *ngIf="signOffFormDetail?.formData?.formattedDescription"
+      class="text-4"
+      [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"
+    ></div>
+  </div>
 
-        <div *ngIf="signOffFormDetail?.formData?.formattedDescription" class="text-4"
-             [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"></div>
+  <div class="bottom-content">
+    <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
+      <div class="text-5">INSTRUCTIONS</div>
+
+      <div
+        class="text-4"
+        [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"
+      ></div>
+    </ng-container>
+
+    <div
+      *ngIf="signOffFormDetail && signOffFormDetail.formAttachments?.length>0"
+      class="ion-margin-top"
+    >
+      <div class="text-5">ATTACHMENTS</div>
+
+      <ion-item
+        lines="none"
+        class="form-item"
+        (click)="openFile(attachmentItem)"
+        *ngFor="let attachmentItem of signOffFormDetail.formAttachments"
+      >
+        <ion-img
+          slot="start"
+          [src]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(attachmentItem.documentFileIconURL, 'icon'): attachmentItem.documentFileIconURL"
+        ></ion-img>
+        <ion-label>{{attachmentItem.documentFileName}}</ion-label>
+      </ion-item>
     </div>
 
-
-    <div class="bottom-content">
-        <ng-container *ngIf="signOffFormDetail?.formData?.formattedInstructions">
-            <div class="text-5">
-                INSTRUCTIONS
-            </div>
-
-            <div class="text-4"
-                 [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"></div>
-        </ng-container>
-
-        <div *ngIf="signOffFormDetail && signOffFormDetail.formAttachments?.length>0" class="ion-margin-top">
-            <div class="text-5">
-                ATTACHMENTS
-            </div>
-
-            <ion-item lines="none" class="form-item" (click)="openFile(attachmentItem)"
-                      *ngFor="let attachmentItem of signOffFormDetail.formAttachments">
-                <ion-img slot="start" [src]="getAttachmentIcon(attachmentItem)"></ion-img>
-                <ion-label>{{attachmentItem.documentFileName}}</ion-label>
-            </ion-item>
-        </div>
-
-        <ion-button expand="full" class="action-btn" (click)="onContinue()">Launch the Form</ion-button>
-
-    </div>
-
+    <ion-button expand="full" class="action-btn" (click)="onContinue()"
+      >Launch the Form</ion-button
+    >
+  </div>
 </ion-content>
-
-

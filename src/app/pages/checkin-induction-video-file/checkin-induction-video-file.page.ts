@@ -9,6 +9,7 @@ import { EnumService } from "../../services/enum.service";
 import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { StaticDataService } from "../../services/static-data.service";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-checkin-induction-video-file",
@@ -53,14 +54,15 @@ export class CheckinInductionVideoFilePage implements OnInit {
         this.videoFileType = StaticDataService.fileMimeTypes[extension];
 
         if (this.sharedDataService.offlineMode) {
-          if (this.inductionItem.document_BinaryFile) {
+          if (this.inductionItem.documentFileName) {
             this.ngZone.run(() => {
               setTimeout(() => {
-                this.videoUrl =
-                  "data:" +
-                  this.videoFileType +
-                  ";base64," +
-                  this.inductionItem.document_BinaryFile;
+                this.videoUrl = Capacitor.convertFileSrc(
+                  this.utilService.getOfflineFileUrl(
+                    this.inductionItem.documentFileName,
+                    "document"
+                  )
+                );
               }, 0);
             });
           }

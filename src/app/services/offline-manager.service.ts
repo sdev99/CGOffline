@@ -187,6 +187,22 @@ export class OfflineManagerService {
     return condition;
   }
 
+  emptyCond(key: string | Array<string>) {
+    const createCond = (key) => {
+      return " (" + key + " is NULL OR " + key + " = 0 OR " + key + " = '') ";
+    };
+    if (typeof key === "string") {
+      return createCond(key);
+    } else if (Array.isArray(key)) {
+      const allKeys: Array<string> = [];
+      key.forEach((element) => {
+        allKeys.push(createCond(element));
+      });
+      return "(" + allKeys.join("AND") + ")";
+    }
+    return " ";
+  }
+
   checkPreviousSyncDataProgress = () => {
     const syncState = localStorage.getItem(
       EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE
@@ -1197,12 +1213,13 @@ export class OfflineManagerService {
         condition =
           "(" +
           condition +
-          " OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))" +
+          " OR " +
+          this.emptyCond(["projectID", "locationID", "inventoryItemID"]) +
+          ") " +
           " AND  parentFolderID = " +
           folderId;
       } else {
-        condition =
-          condition + " AND  (parentFolderID is NULL OR parentFolderID = 0)";
+        condition = condition + " AND " + this.emptyCond("parentFolderID");
       }
 
       const query =
@@ -1262,13 +1279,13 @@ export class OfflineManagerService {
         condition =
           "(" +
           condition +
-          " OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))" +
+          " OR " +
+          this.emptyCond(["projectID", "locationID", "inventoryItemID"]) +
+          ") " +
           " AND  parentFormFolderID = " +
           folderId;
       } else {
-        condition =
-          condition +
-          " AND  (parentFormFolderID is NULL OR parentFormFolderID = 0)";
+        condition = condition + " AND  " + this.emptyCond("parentFormFolderID");
       }
 
       const query =
@@ -1392,13 +1409,13 @@ export class OfflineManagerService {
         condition =
           "(" +
           condition +
-          " OR (projectID is NULL AND locationID is NULL AND inventoryItemID is NULL))" +
+          " OR " +
+          this.emptyCond(["projectID", "locationID", "inventoryItemID"]) +
+          ") " +
           " AND  parentFormFolderID = " +
           folderId;
       } else {
-        condition =
-          condition +
-          " AND  (parentFormFolderID is NULL OR parentFormFolderID = 0)";
+        condition = condition + " AND  " + this.emptyCond("parentFormFolderID");
       }
 
       const query =
@@ -2228,9 +2245,7 @@ export class OfflineManagerService {
       if (folderId) {
         condition = " AND  parentFormFolderID = " + folderId;
       } else {
-        condition =
-          condition +
-          " AND  (parentFormFolderID is NULL OR parentFormFolderID = 0)";
+        condition = condition + " AND  " + this.emptyCond("parentFormFolderID");
       }
       const query = "SELECT * FROM DeviceFormDetails" + " WHERE " + condition;
 
@@ -2922,7 +2937,9 @@ export class OfflineManagerService {
   getOfflineUserCheckinDetails = () => {
     return new Promise((resolve) => {
       const query =
-        'SELECT * FROM DeviceUserCheckinDetails WHERE (userCheckInDetailID is NULL OR userCheckInDetailID="") AND (isOfflineDone = true OR isOfflineDone = "true")';
+        "SELECT * FROM DeviceUserCheckinDetails WHERE " +
+        this.emptyCond("userCheckInDetailID") +
+        ' AND (isOfflineDone = true OR isOfflineDone = "true")';
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {

@@ -110,6 +110,7 @@ export class EnumService {
     OFFLINE_MODE_ENABLE: "offline_mode_enable",
     OFFLINEMODE_SYNC_STATE: "offline_mode_sync_state",
     OFFLINE_DATA_FILES: "OFFLINE_DATA_FILES",
+    OFFLINE_FILES_FOLDER_NAME: "offline_files_folder_name",
   };
 
   static ApiMethods = {

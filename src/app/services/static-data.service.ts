@@ -776,6 +776,7 @@ export class StaticDataService {
           type: "INTEGER PRIMARY KEY AUTOINCREMENT",
         },
         { name: "firstAndLastName", type: "VARCHAR(32)" },
+        { name: "userId", type: "VARCHAR(32)" },
         { name: "firstName", type: "VARCHAR(32)" },
         { name: "inventoryItemID", type: "INTEGER" },
         { name: "lastName", type: "VARCHAR(32)" },

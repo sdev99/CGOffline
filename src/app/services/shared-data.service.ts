@@ -55,6 +55,7 @@ import { DeviceUserDetail } from "../_models/offline/DeviceUserDetail";
 import { File } from "@ionic-native/file/ngx";
 import { Base64 } from "@ionic-native/base64/ngx";
 import { InductionItem } from "../_models/inductionItem";
+import { FilehandlerService } from "./filehandler.service";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -78,6 +79,7 @@ export class SharedDataService {
 
   deviceUID = ""; // For simulator ipad
   // deviceUID = '33F3FF08-8A4E-4E24-84DC-D8AF80B8EAC1';
+  // deviceUID = '5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE'; ipad
   // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC1"; // For test dedicated mode
   // deviceUID = "33F3FF08-8A4E-4E24-14DC-D8AF80B8EAC12222"; // For test dedicated mode assign one location
   // deviceUID = 'f5aa72ed-21ca-4b12-8485-a24447cb420d'; // Arvin ipad device id
@@ -178,6 +180,7 @@ export class SharedDataService {
     public utilService: UtilService,
     public file: File,
     private base64: Base64,
+    private filehandlerService: FilehandlerService,
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {
     // Set dynamic api url for WebApp based on domain
@@ -267,7 +270,10 @@ export class SharedDataService {
   }
 
   saveZipFileLocation = () => {
-    return this.file.dataDirectory;
+    const deviceDirectory = this.platform.is("ios")
+      ? this.file.dataDirectory
+      : this.file.dataDirectory;
+    return deviceDirectory;
   };
 
   setAnnotationImage(image) {
@@ -2455,11 +2461,11 @@ export class SharedDataService {
           documentFileName: "",
           createdDate: createdDateStr,
           formattedCreatedDate: "",
-          timeDifference: "",
           todayDate: "",
-          signedByName: signedByName,
+          timeDifference: "",
           document_BinaryFile: "",
           inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
+          signedByName: signedByName,
           locationID: this.dedicatedModeLocationUse?.locationID,
           projectID: this.dedicatedModeLocationUse?.projectID,
         };

@@ -58,7 +58,7 @@
         <app-archived-item
           *ngIf="item.documentID>0"
           (itemSelect)="openAvailableDocument(item)"
-          [icon]="sharedDataService.offlineMode?'data:image/png;base64,'+item.documentIcon_BinaryFile:item.documentFileIconURL"
+          [icon]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(item.documentFileIconURL, 'icon'):item.documentFileIconURL"
           [colFirst]="item.documentTitle"
           colThird="Signed"
           [colThirdHighlighted]="item.formattedCreatedDate"
@@ -72,10 +72,10 @@
       <app-archived-item
         *ngFor="let item of archivedDocuments | listFilter:searchQuery:'documentTitle';"
         (itemSelect)="openArchivedDocument(item)"
-        [icon]="getArchivedDocumentIcon(item)"
+        [icon]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(item.documentFileIconURL, 'icon'):item.documentFileIconURL"
         [colFirst]="item.documentTitle"
         colSecond="Signed by"
-        [disabled]="sharedDataService.offlineMode?!item.document_BinaryFile:false"
+        [disabled]="sharedDataService.offlineMode?!item.documentFileName:false"
         [colSecondHighlighted]="item.signedByName"
         colThird="Signed"
         [colThirdHighlighted]="item.formattedCreatedDate"

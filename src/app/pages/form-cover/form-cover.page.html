@@ -121,7 +121,7 @@
       >
         <ion-img
           slot="start"
-          [src]="getAttachmentIcon(attachmentItem)"
+          [src]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(attachmentItem.documentFileIconURL,'icon'):attachmentItem.documentFileIconURL"
         ></ion-img>
         <ion-label>{{attachmentItem.documentFileName}}</ion-label>
       </ion-item>
