@@ -4,5 +4,4 @@ export class DeviceGuestUserDetail {
 	guestMiddleName: string;
 	guestPhone: string;
 	guestPhoto: string;
-	guestPhoto_BinaryImage: string;
 }

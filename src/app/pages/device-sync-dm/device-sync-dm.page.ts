@@ -1,5 +1,5 @@
 import { Component, NgZone, OnInit } from "@angular/core";
-import { AlertController, NavController } from "@ionic/angular";
+import { AlertController, NavController, Platform } from "@ionic/angular";
 import { UtilService } from "../../services/util.service";
 import { ActivatedRoute } from "@angular/router";
 import { EnumService } from "../../services/enum.service";
@@ -40,7 +40,8 @@ export class DeviceSyncDmPage implements OnInit {
     public sharedDataService: SharedDataService,
     public observablesService: ObservablesService,
     public filehandlerService: FilehandlerService,
-    public ngZone: NgZone
+    public ngZone: NgZone,
+    public platform: Platform
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
       if (data && data.startSync) {
@@ -108,11 +109,17 @@ export class DeviceSyncDmPage implements OnInit {
       const info = await Device.getInfo();
       debugger;
       const availableSpaceInBytes = info.diskFree;
-      if (availableSpaceInBytes > fileSizeInBytes) {
+      if (this.platform.is("ios")) {
+        if (availableSpaceInBytes > fileSizeInBytes) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      } else {
         resolve(true);
       }
+
       // Insert condition for space check in device
-      resolve(false);
     });
   };
 
