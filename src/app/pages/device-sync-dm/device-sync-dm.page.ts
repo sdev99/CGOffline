@@ -13,6 +13,8 @@ import * as JSZip from "jszip";
 import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
 
+const { Device } = Capacitor.Plugins;
+
 @Component({
   selector: "app-device-sync-dm",
   templateUrl: "./device-sync-dm.page.html",
@@ -101,10 +103,16 @@ export class DeviceSyncDmPage implements OnInit {
     }
   }
 
-  isSpaceAvailableInDevice = (fileSize = 0) => {
-    return new Promise((resolve, reject) => {
+  isSpaceAvailableInDevice = (fileSizeInBytes = 0) => {
+    return new Promise(async (resolve) => {
+      const info = await Device.getInfo();
+      debugger;
+      const availableSpaceInBytes = info.diskFree;
+      if (availableSpaceInBytes > fileSizeInBytes) {
+        resolve(true);
+      }
       // Insert condition for space check in device
-      resolve(true);
+      resolve(false);
     });
   };
 
@@ -121,6 +129,16 @@ export class DeviceSyncDmPage implements OnInit {
         )
         .then((postJsonData) => {
           if (postJsonData) {
+            let progress = 0;
+            const timerRef = setInterval(() => {
+              if (progress < 100) {
+                this.updateProgress(progress, 0);
+              } else {
+                clearInterval(timerRef);
+              }
+              progress++;
+            }, 2000);
+
             this.updateSyncState(
               EnumService.SyncProcessState.OFFLINE_DATA_UPLOAD_START
             );
@@ -144,19 +162,23 @@ export class DeviceSyncDmPage implements OnInit {
                       .postOfflineZipFile(fileObj, fileName + ".zip")
                       .subscribe(
                         (res) => {
+                          clearInterval(timerRef);
                           resolve(res);
                         },
                         (error) => {
                           debugger;
+                          clearInterval(timerRef);
                           reject(error);
                         }
                       );
                   })
                   .catch((error) => {
+                    clearInterval(timerRef);
                     reject(error);
                   });
               })
               .catch((error) => {
+                clearInterval(timerRef);
                 reject(error);
               });
           } else {
@@ -283,7 +305,8 @@ export class DeviceSyncDmPage implements OnInit {
                 const zipFileSizeBytes = fileDetail.zipFileSize;
                 const jsonFileSizeBytes = fileDetail.jsonFileSize;
                 totalSizeWillBeDownloadB =
-                  totalSizeWillBeDownloadB + zipFileSizeBytes;
+                  totalSizeWillBeDownloadB +
+                  UtilService.formattedNumberToNumber(zipFileSizeBytes);
               });
 
               // First Remove folder that contains all file before download new offline files
