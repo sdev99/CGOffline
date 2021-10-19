@@ -79,6 +79,11 @@ export class EvacuationDmPage implements OnInit {
           evacuationUserDetail.userDetailPhoto,
           "user"
         );
+      } else if (evacuationUserDetail.offlineUserPhoto) {
+        return this.utilService.getOfflineFileUrl(
+          evacuationUserDetail.offlineUserPhoto,
+          "offline_user"
+        );
       }
     } else {
       if (evacuationUserDetail.userPhoto) {

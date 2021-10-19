@@ -3,6 +3,4 @@ export class AttachmentItem {
 	documentFileName: string;
 	documentFileFormat: string;
 	documentFileIconURL: string;
-	documentIcon_BinaryFile: string;
-	document_BinaryFile: string;
 }

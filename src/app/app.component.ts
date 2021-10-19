@@ -201,7 +201,9 @@ export class AppComponent {
       .then((uuid: any) => {
         console.log("Device UUID ", uuid);
         if (uuid && uuid.length > 0) {
-          this.sharedDataService.deviceUID = uuid;
+          // this.sharedDataService.deviceUID = uuid;
+          this.sharedDataService.deviceUID =
+            "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
         } else {
           this.sharedDataService.deviceUID = "";
         }

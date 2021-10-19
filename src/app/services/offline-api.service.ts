@@ -80,7 +80,7 @@ export class OfflineApiService {
         this.zip
           .unzip(
             localFilePath,
-            this.sharedDataService.saveZipFileLocation(),
+            this.filehandlerService.offlineFilesDirectory(),
             (progress) => {
               if (progress.total > 0) {
                 const percent = Math.round(
@@ -158,7 +158,7 @@ export class OfflineApiService {
             let serverFileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
 
             const deviceFilePath =
-              this.sharedDataService.saveZipFileLocation() + fileName;
+              this.filehandlerService.offlineFilesDirectory() + fileName;
 
             console.log("Device_file_path ", deviceFilePath);
             if (UtilService.isLocalHost()) {
@@ -333,9 +333,8 @@ export class OfflineApiService {
         files.map((obj: any) => {
           const fileName = obj.jsonFileName;
           let fileUrl = `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDeviceOfflineFile}?fileName=${fileName}`;
-          const writeDirectory = this.platform.is("ios")
-            ? this.file.dataDirectory
-            : this.file.dataDirectory;
+          const writeDirectory =
+            this.filehandlerService.offlineFilesDirectory();
           const localFilePath = writeDirectory + fileName;
 
           const fileTransfer = this.fileTransfer.create();

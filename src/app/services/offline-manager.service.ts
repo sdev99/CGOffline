@@ -41,6 +41,7 @@ import { EntityItem } from "../_models/entityItem";
 import { EnumService } from "./enum.service";
 import * as moment from "moment";
 import { FilehandlerService } from "./filehandler.service";
+import { Capacitor } from "@capacitor/core";
 
 declare var window: any;
 
@@ -1440,7 +1441,7 @@ export class OfflineManagerService {
       let condition = this.appendEntityCondition(entity);
 
       const query =
-        "SELECT * FROM DeviceEvacuations" +
+        "SELECT DeviceEvacuations.*, ImageVideoFiles.fileName as offlineUserPhoto  FROM DeviceEvacuations LEFT JOIN ImageVideoFiles ON DeviceEvacuations.userPhotoImageVideoFileId=ImageVideoFiles.imageVideoFileId" +
         (condition ? " WHERE " + condition : "");
       this.dbQuery(query, [])
         .then((res: any) => {
@@ -2598,9 +2599,9 @@ export class OfflineManagerService {
               locationID: data.locationID || 0,
               projectID: data.projectID || 0,
               userDetailPhoto: data.userDetailPhoto || "",
-              userDetailPhoto_BinaryImage: data.userPhotoBinaryFile || "",
               userPhoto: data.userPhoto || "",
-              userPhoto_BinaryImage: data.userPhotoBinaryFile || "",
+              userPhotoImageVideoFileId:
+                data.userSignaturePhotoImageVideoFileId || "",
             };
 
             let evacCondition = {};
@@ -2651,13 +2652,13 @@ export class OfflineManagerService {
 
   insertGuestCheckinDetails = (data) => {
     if (!data.isGuestReturning) {
+      // Insert guest to the db if never checked in before
       const guestUser = {
         guestFirsName: data.guestFirsName || "",
         guestLastName: data.guestLastName || "",
         guestMiddleName: data.guestMiddleName || "",
         guestPhone: data.guestPhone || "",
-        guestPhotoFileName: data.guestPhotoFileName || "",
-        guestPhotoBinaryFile: data.guestPhotoBinaryFile || "",
+        guestPhotoImageVideoFileId: data.guestPhotoImageVideoFileId || "",
         isOfflineDone: data.isOfflineDone || false,
       };
 
@@ -2701,9 +2702,8 @@ export class OfflineManagerService {
             locationID: data.locationID || 0,
             projectID: data.projectID || 0,
             userDetailPhoto: data.guestPhotoFileName || "",
-            userDetailPhoto_BinaryImage: data.guestPhotoBinaryFile || "",
             userPhoto: data.guestPhotoFileName || "",
-            userPhoto_BinaryImage: data.guestPhotoBinaryFile || "",
+            userPhotoImageVideoFileId: data.guestPhotoImageVideoFileId || 0,
           };
 
           let evacCondition = {};
@@ -3024,6 +3024,8 @@ export class OfflineManagerService {
                     "imageVideoFileId_" +
                       questionAsnwerObj.answerData.accidentAttachmentFileId
                   ];
+
+                delete questionAsnwerObj.answerData.accidentAttachmentFileId;
               }
               if (questionAsnwerObj.arAnswerData.accidentAttachmentFileId) {
                 questionAsnwerObj.arAnswerData["accidentAttachmentFileName"] =
@@ -3031,6 +3033,7 @@ export class OfflineManagerService {
                     "imageVideoFileId_" +
                       questionAsnwerObj.arAnswerData.accidentAttachmentFileId
                   ];
+                delete questionAsnwerObj.arAnswerData.accidentAttachmentFileId;
               }
             } else {
               if (questionAsnwerObj.answerData.imageVideoFileId) {
@@ -3039,6 +3042,7 @@ export class OfflineManagerService {
                     "imageVideoFileId_" +
                       questionAsnwerObj.answerData.imageVideoFileId
                   ];
+                delete questionAsnwerObj.answerData.imageVideoFileId;
               }
             }
           });
@@ -3054,6 +3058,7 @@ export class OfflineManagerService {
                   "imageVideoFileId_" +
                     questionAsnwerObj.accidentAttachmentFileId
                 ];
+              delete questionAsnwerObj.accidentAttachmentFileId;
             }
           }
         );
@@ -3066,12 +3071,14 @@ export class OfflineManagerService {
               uploadedFiles[
                 "imageVideoFileId_" + questionAsnwerObj.imageVideoFileId
               ];
+            delete questionAsnwerObj.imageVideoFileId;
           }
           if (questionAsnwerObj.accidentAttachmentFileId) {
             questionAsnwerObj["accidentAttachmentFileName"] =
               uploadedFiles[
                 "imageVideoFileId_" + questionAsnwerObj.accidentAttachmentFileId
               ];
+            delete questionAsnwerObj.accidentAttachmentFileId;
           }
         });
       } catch (error) {}
@@ -3090,33 +3097,56 @@ export class OfflineManagerService {
     let isDataAvailableForPost = false;
 
     return new Promise(async (resolve, reject) => {
-      const downloadAllFormOfflineFile = async () => {
+      const uploadAllFormOfflineFile = async () => {
         // getAllFormSubmittedFiles
         const allFiles: any = await this.getAllFormSubmittedFiles();
+        debugger;
 
         if (allFiles && allFiles.length > 0) {
           let convertedFileCount = 0;
           const formData = new FormData();
-          allFiles.forEach((fileData: any) => {
-            this.utilService
-              .dataUriToFile(
-                fileData.binaryFile,
-                fileData.fileName,
-                fileData.mimeType
-              )
-              .then((fileObj: any) => {
-                if (fileObj) {
-                  formData.append(
-                    "files",
-                    fileObj,
-                    fileData.imageVideoFileId + "|" + fileData.fileName
-                  );
-                }
-                convertedFileCount++;
-                if (convertedFileCount === allFiles.length) {
-                  onAllBinaryToFileCoverted(formData);
-                }
-              });
+          allFiles.forEach(async (fileData: any) => {
+            const offlineFileName = fileData.fileName;
+            const offlineFileDirectory =
+              this.filehandlerService.offlineFilesDirectory() +
+              StaticDataService.offlineFilesFolderName +
+              "/" +
+              offlineFileName;
+
+            const response = await fetch(
+              Capacitor.convertFileSrc(offlineFileDirectory)
+            );
+            debugger;
+            const blob = await response.blob();
+            formData.append(
+              "files",
+              blob,
+              fileData.imageVideoFileId + "|" + offlineFileName
+            );
+            convertedFileCount++;
+            if (convertedFileCount === allFiles.length) {
+              onAllBinaryToFileCoverted(formData);
+            }
+
+            // this.utilService
+            //   .dataUriToFile(
+            //     fileData.binaryFile,
+            //     fileData.fileName,
+            //     fileData.mimeType
+            //   )
+            //   .then((fileObj: any) => {
+            //     if (fileObj) {
+            //       formData.append(
+            //         "files",
+            //         fileObj,
+            //         fileData.imageVideoFileId + "|" + fileData.fileName
+            //       );
+            //     }
+            //     convertedFileCount++;
+            //     if (convertedFileCount === allFiles.length) {
+            //       onAllBinaryToFileCoverted(formData);
+            //     }
+            //   });
           });
         } else {
           getSignOffDetails();
@@ -3125,9 +3155,9 @@ export class OfflineManagerService {
 
       // Get all offline files for submitted form and
       const onAllBinaryToFileCoverted = (formData) => {
-        offlineApiService
-          .uploadMultipleFiles(formData)
-          .subscribe((response: any) => {
+        offlineApiService.uploadMultipleFiles(formData).subscribe(
+          (response: any) => {
+            debugger;
             if (response.Result) {
               const uploadedFiles = response.Result;
               let uploadedFilesObj = {};
@@ -3152,7 +3182,11 @@ export class OfflineManagerService {
             } else {
               getSignOffDetails();
             }
-          });
+          },
+          (error) => {
+            debugger;
+          }
+        );
       };
 
       // getSignOffDetails
@@ -3175,14 +3209,20 @@ export class OfflineManagerService {
               latitude: dataObj.latitude || "",
               longitude: dataObj.longitude || "",
               documentID: dataObj.documentID || 0,
-              userSignaturePhotoFileName:
-                dataObj.userSignaturePhotoFileName || "",
-              userSignaturePhotoBinaryFile:
-                dataObj.userSignaturePhotoBinaryFile || "",
-              digitalInkSignatureFileName:
-                dataObj.digitalInkSignatureFileName || "",
-              digitalInkSignatureBinaryFile:
-                dataObj.digitalInkSignatureBinaryFile || "",
+              userSignaturePhotoFileName: "",
+              userSignaturePhotoBinaryFile: "",
+              userSignaturePhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" +
+                    dataObj.userSignaturePhotoImageVideoFileId
+                ] || "",
+              digitalInkSignatureFileName: "",
+              digitalInkSignatureBinaryFile: "",
+              digitalInkSignature:
+                uploadedFiles[
+                  "imageVideoFileId_" +
+                    dataObj.digitalInkSignatureImageVideoFileId
+                ] || "",
               formAnswerData: dataObj.submittedFormData || "",
               signOffDate: dataObj.signOffDate || "",
             };
@@ -3228,20 +3268,29 @@ export class OfflineManagerService {
             checkinDetailsList.push({
               userId: obj.userId || "",
               companyID: obj.companyID || 0,
-              userPhotoFileName: obj.userPhotoFileName || "",
-              userPhotoBinaryFile: obj.userPhotoBinaryFile || "",
+              userPhotoFileName: "",
+              userPhotoBinaryFile: "",
+              userPhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userPhotoImageVideoFileId
+                ] || "",
               locationID: obj.locationID || 0,
               projectID: obj.projectID || "",
               inventoryItemID: obj.inventoryItemID || "",
               checkInLatitude: obj.checkInLatitude || "",
               checkInLongitude: obj.checkInLongitude || "",
-              digitalInkSignatureFileName:
-                obj.digitalInkSignatureFileName || "",
-              digitalInkSignatureBinaryFile:
-                obj.digitalInkSignatureBinaryFile || "",
-              userSignaturePhotoFileName: obj.userSignaturePhotoFileName || "",
-              userSignaturePhotoBinaryFile:
-                obj.userSignaturePhotoBinaryFile || "",
+              digitalInkSignatureFileName: "",
+              digitalInkSignatureBinaryFile: "",
+              digitalInkSignature:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
+                ] || "",
+              userSignaturePhotoFileName: "",
+              userSignaturePhotoBinaryFile: "",
+              userSignaturePhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userSignaturePhotoImageVideoFileId
+                ] || "",
               checkInDate: obj.checkInDate || "",
               formAnswerData: obj.formAnswerData || "",
               offlineUserCheckInDetailID: obj.deviceUserCheckinDetailId,
@@ -3285,8 +3334,12 @@ export class OfflineManagerService {
           const addToCheckinDetailList = (obj) => {
             checkinDetailsList.push({
               companyID: obj.companyID || 0,
-              userPhotoFileName: obj.userPhotoFileName || "",
-              userPhotoBinaryFile: obj.userPhotoBinaryFile || "",
+              userPhotoFileName: "",
+              userPhotoBinaryFile: "",
+              userPhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userPhotoImageVideoFileId
+                ] || "",
               locationID: obj.locationID || 0,
               projectID: obj.projectID || 0,
               inventoryItemID: obj.inventoryItemID || 0,
@@ -3297,15 +3350,24 @@ export class OfflineManagerService {
               guestFirsName: obj.guestFirsName || "",
               guestMiddleName: obj.guestMiddleName || "",
               guestLastName: obj.guestLastName || "",
-              guestPhotoFileName: obj.guestPhotoFileName || "",
-              guestPhotoBinaryFile: obj.guestPhotoBinaryFile || "",
-              digitalInkSignatureFileName:
-                obj.digitalInkSignatureFileName || "",
-              digitalInkSignatureBinaryFile:
-                obj.digitalInkSignatureBinaryFile || "",
-              userSignaturePhotoFileName: obj.userSignaturePhotoFileName || "",
-              userSignaturePhotoBinaryFile:
-                obj.userSignaturePhotoBinaryFile || "",
+              guestPhotoFileName: "",
+              guestPhotoBinaryFile: "",
+              guestPhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.guestPhotoImageVideoFileId
+                ] || "",
+              digitalInkSignatureFileName: "",
+              digitalInkSignatureBinaryFile: "",
+              digitalInkSignature:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
+                ] || "",
+              userSignaturePhotoFileName: "",
+              userSignaturePhotoBinaryFile: "",
+              userSignaturePhoto:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userSignaturePhotoImageVideoFileId
+                ] || "",
               checkInDate: obj.checkInDate || "",
               formAnswerData: obj.formAnswerData || "",
               offlineUserCheckInDetailID: obj.deviceGuestUserCheckinDetailId,
@@ -3408,7 +3470,7 @@ export class OfflineManagerService {
         }
       };
 
-      downloadAllFormOfflineFile();
+      uploadAllFormOfflineFile();
     });
   }
 }

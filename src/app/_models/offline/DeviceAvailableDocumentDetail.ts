@@ -15,9 +15,7 @@ export class DeviceAvailableDocumentDetail {
 	isEmailReviewer: boolean;
 	isSmsReviewer: boolean;
 	createdDate: string;
-	documentIcon_BinaryFile: string;
 	documentVersionNo: number;
-	document_BinaryFile: string;
 	expirationDate: string;
 	formattedCreatedDate: string;
 	inventoryItemID: number;

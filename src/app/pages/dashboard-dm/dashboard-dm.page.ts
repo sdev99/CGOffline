@@ -22,50 +22,10 @@ export class DashboardDmPage implements OnInit {
     public navController: NavController,
     public sharedDataService: SharedDataService,
     private apiService: ApiService,
-    private file: File,
     private accountService: AccountService
   ) {
     this.dedicatedModeDeviceDetailData =
       this.sharedDataService.dedicatedModeDeviceDetailData;
-
-    setTimeout(() => {
-      this.forTestOnly();
-    }, 10000);
-  }
-
-  ionViewDidLoad() {
-    debugger;
-    setTimeout(() => {
-      // this.forTestOnly();
-    }, 10000);
-  }
-
-  forTestOnly() {
-    const folderName = localStorage.getItem(
-      EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
-    );
-    const subfiles = (dir) => {
-      debugger;
-
-      this.file
-        .listDir(this.sharedDataService.saveZipFileLocation(), dir)
-        .then((res) => {
-          debugger;
-        })
-        .catch((error) => {
-          debugger;
-        });
-    };
-    this.file
-      .listDir(this.sharedDataService.saveZipFileLocation(), folderName)
-      .then((res) => {
-        debugger;
-        subfiles(folderName);
-      })
-      .catch((error) => {
-        debugger;
-        subfiles(folderName);
-      });
   }
 
   ngOnInit() {

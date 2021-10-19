@@ -4,7 +4,6 @@ export class DedicatedModeGuestDetail {
 	guestLastName?: string;
 	guestPhone?: string;
 	guestPhoto?: string;
-	guestPhotoBinaryFile?: string; // For offline mode
 	guestPhoto_BinaryImage?: string; // For offline mode
-	guestPhotoFileName?: string; // For offline mode
+	guestPhotoImageVideoFileId?: number; // For offline mode
 }

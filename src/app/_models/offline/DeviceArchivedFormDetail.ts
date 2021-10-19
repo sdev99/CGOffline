@@ -4,9 +4,7 @@ export class DeviceArchivedFormDetail {
 	documentFileIconURL: string;
 	documentFileName: string;
 	documentID: number;
-	documentIcon_BinaryFile: string;
 	documentTitle: string;
-	document_BinaryFile: null;
 	formattedCreatedDate: string;
 	inventoryItemID: number;
 	locationID: number;

@@ -76,6 +76,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
   addPhotoFromCamera() {
     this.photoService.takePhotoFromCamera((photo) => {
       this.isVideo = false;
+
       this.openImageAnnotation(photo);
     });
   }
@@ -138,15 +139,6 @@ export class PhotoFieldComponent implements ControlValueAccessor {
         this.openImageAnnotation(photo);
       }
     }, true);
-  }
-
-  tet(path) {
-    // this.filehandlerService.saveFileOnDevice(
-    //   path,
-    //   this.utilService.Uniqueid(),
-    //   ()=>{
-    //   }
-    // );
   }
 
   sanitize(url: string): SafeUrl {

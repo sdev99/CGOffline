@@ -8,6 +8,7 @@ import { Platform } from "@ionic/angular";
 import { HttpClient } from "@angular/common/http";
 import { Capacitor } from "@capacitor/core";
 import { EnumService } from "./enum.service";
+import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 
 @Injectable({
   providedIn: "root",
@@ -19,6 +20,7 @@ export class FilehandlerService {
     private platform: Platform,
     private file: File,
     public utilService: UtilService,
+    public fileTransfer: FileTransfer,
     private http: HTTP
   ) {}
 
@@ -68,45 +70,84 @@ export class FilehandlerService {
   //   }
   // }
 
-  saveFileOnDevice(path, fileName: string, callBack) {
-    const extension = fileName.split(".").pop();
-    const mimeType = StaticDataService.fileMimeTypes[extension.toLowerCase()];
+  offlineFilesDirectory = () => {
+    return this.file.dataDirectory;
+  };
 
-    const folderName = localStorage.getItem(
-      EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
-    );
+  async saveFileOnDevice(path, callBack) {
+    let targetFileName: string = this.utilService.Uniqueid();
+    const folderName = StaticDataService.offlineFilesFolderName;
+    const writeDirectory = this.offlineFilesDirectory();
 
-    const writeDirectory = this.platform.is("ios")
-      ? this.file.dataDirectory
-      : this.file.dataDirectory;
+    //Create folder if not exist
     try {
+      await this.file.createDir(writeDirectory, folderName, false);
+    } catch (error) {}
+    debugger;
+
+    if (
+      UtilService.IsBase64Sring(path.dataUrl) ||
+      UtilService.IsBase64Sring(path)
+    ) {
+      const base64Data = path.dataUrl || path;
+      let extension = "jpeg";
+      try {
+        extension = base64Data.split(";")[0].split("/")[1];
+      } catch (error) {}
+
+      targetFileName += "." + extension;
+      const blob = UtilService.convertBase64ToBlob(
+        UtilService.FixBase64String(base64Data),
+        "image/" + extension
+      );
       this.file
-        .writeFile(
-          writeDirectory,
-          folderName + "/offline_added/" + fileName,
-          path,
-          { replace: true }
-        )
+        .writeFile(writeDirectory, folderName + "/" + targetFileName, blob)
         .then((res) => {
           debugger;
-          callBack(writeDirectory + fileName);
+          callBack(true, targetFileName);
         })
-        .catch(() => {
+        .catch((error) => {
           debugger;
-          console.error("Error writing  file");
-          callBack(false);
+
+          callBack(false, error);
         });
-    } catch (error) {
-      debugger;
-      callBack(false);
+    } else {
+      const extension = path.split(".").pop();
+      targetFileName += "." + extension;
+
+      try {
+        const sourceFileName = path.split("\\").pop().split("/").pop();
+        const sourceDirectory = UtilService.fixDeviceDirPath(
+          path.replace(sourceFileName, "")
+        );
+
+        debugger;
+
+        this.file
+          .copyFile(
+            sourceDirectory,
+            sourceFileName,
+            writeDirectory,
+            folderName + "/" + targetFileName
+          )
+          .then((res) => {
+            debugger;
+            callBack(true, targetFileName);
+          })
+          .catch((error) => {
+            debugger;
+            callBack(false, error);
+          });
+      } catch (error) {
+        debugger;
+        callBack(false, error);
+      }
     }
   }
 
   removeSavedFile(fileName) {
     try {
-      const writeDirectory = this.platform.is("ios")
-        ? this.file.dataDirectory
-        : this.file.externalDataDirectory;
+      const writeDirectory = this.offlineFilesDirectory();
       this.file.removeFile(writeDirectory, fileName).then((res) => {
         console.log("File remove successfully");
       });

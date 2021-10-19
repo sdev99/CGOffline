@@ -9,8 +9,6 @@ export class DeviceArchivedDocumentDetail {
 	signedByName: string;
 	documentFileFormat: string;
 	documentFileIconURL: string;
-	documentIcon_BinaryFile: string;
-	document_BinaryFile: string;
 	inventoryItemID: number;
 	locationID: number;
 	projectID: number;

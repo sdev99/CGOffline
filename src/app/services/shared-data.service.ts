@@ -269,13 +269,6 @@ export class SharedDataService {
     }
   }
 
-  saveZipFileLocation = () => {
-    const deviceDirectory = this.platform.is("ios")
-      ? this.file.dataDirectory
-      : this.file.dataDirectory;
-    return deviceDirectory;
-  };
-
   setAnnotationImage(image) {
     this.annotationImage = image;
   }
@@ -945,10 +938,8 @@ export class SharedDataService {
         guestFirsName: dedicatedModeGuestDetail.guestFirsName,
         guestMiddleName: dedicatedModeGuestDetail.guestMiddleName,
         guestLastName: dedicatedModeGuestDetail.guestLastName,
-        guestPhotoBinaryFile: UtilService.FixBase64String(
-          dedicatedModeGuestDetail.guestPhoto_BinaryImage ||
-            dedicatedModeGuestDetail.guestPhotoFileName
-        ),
+        guestPhotoImageVideoFileId:
+          dedicatedModeGuestDetail.guestPhotoImageVideoFileId,
         guestPhoto: dedicatedModeGuestDetail.guestPhoto,
         companyID: dedicatedModeDeviceDetailData.companyID,
       } as unknown as CheckInPostData;
@@ -1011,11 +1002,21 @@ export class SharedDataService {
     ) {
       if (this.dedicatedModeCapturedSelfieForCheckinProcess) {
         if (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
-          this.checkInPostData.guestPhoto =
-            this.dedicatedModeCapturedSelfieForCheckinProcess;
+          if (this.offlineMode) {
+            this.checkInPostData.guestPhotoImageVideoFileId =
+              this.dedicatedModeCapturedSelfieForCheckinProcess;
+          } else {
+            this.checkInPostData.guestPhoto =
+              this.dedicatedModeCapturedSelfieForCheckinProcess;
+          }
         } else if (this.checkinoutDmAs === EnumService.CheckInType.MY_NAME) {
-          this.checkInPostData.userPhoto =
-            this.dedicatedModeCapturedSelfieForCheckinProcess;
+          if (this.offlineMode) {
+            this.checkInPostData.userPhotoImageVideoFileId =
+              this.dedicatedModeCapturedSelfieForCheckinProcess;
+          } else {
+            this.checkInPostData.userPhoto =
+              this.dedicatedModeCapturedSelfieForCheckinProcess;
+          }
         }
         this.processCheckinDetailsStepInduction(apiService, isGuest);
       } else {
@@ -1319,53 +1320,33 @@ export class SharedDataService {
                         }
                       };
 
-                      const insertImageVideoFileToDb = (binaryFile) => {
+                      const insertImageVideoFileToDb = (offlineFileName) => {
                         this.offlineManagerService
                           .insertImageVideoFile({
-                            fileName: fileName || "",
-                            mimeType: mimeType || "",
-                            isVideo: isVideo || false,
-                            binaryFile: binaryFile || "",
+                            fileName: offlineFileName,
+                            fileUsedIn: "form",
                           })
                           .then((res) => {
                             attachemtUploaded[question.questionId] = res;
                             attachmentProcessDone();
                           })
-                          .catch((error) => {});
+                          .catch((error) => {
+                            attachmentProcessDone();
+                          });
                       };
 
-                      if (isVideo) {
-                        let path = control.value;
+                      let filePathOrBinaryData = control.value;
 
-                        if (this.platform.is("ios")) {
-                          this.utilService
-                            .urlToBase64(path, fileName, mimeType)
-                            .then((base64Str: any) => {
-                              debugger;
-                              insertImageVideoFileToDb(
-                                base64Str.split(",").pop()
-                              );
-                            })
-                            .catch((err) => {
-                              attachmentProcessDone();
-                              console.log(err);
-                            });
-                        } else {
-                          this.base64.encodeFile(path).then(
-                            (base64File: string) => {
-                              insertImageVideoFileToDb(
-                                base64File.split(",").pop()
-                              );
-                            },
-                            (err) => {
-                              attachmentProcessDone();
-                              console.log(err);
-                            }
-                          );
+                      this.filehandlerService.saveFileOnDevice(
+                        filePathOrBinaryData,
+                        (status, res) => {
+                          if (status) {
+                            insertImageVideoFileToDb(res);
+                          } else {
+                            attachmentProcessDone();
+                          }
                         }
-                      } else {
-                        insertImageVideoFileToDb(control.value);
-                      }
+                      );
                     } else {
                       this.utilService
                         .dataUriToFile(control.value, fileName, mimeType)
@@ -2318,11 +2299,8 @@ export class SharedDataService {
         checkInLongitude: this.checkInPostData.checkInLongitude || "",
         companyID: this.checkInPostData.companyID || "",
         currentUTCDate: utcDateTime || "",
-        digitalInkSignatureFileName:
-          this.checkInPostData.digitalInkSignatureFileName || "",
-        digitalInkSignatureBinaryFile: UtilService.FixBase64String(
-          this.checkInPostData.digitalInkSignatureBinaryFile || ""
-        ),
+        digitalInkSignatureImageVideoFileId:
+          this.checkInPostData.digitalInkSignatureImageVideoFileId || "",
         entityName:
           this.dedicatedModeLocationUse.projectName ||
           this.dedicatedModeLocationUse.locationName ||
@@ -2344,13 +2322,8 @@ export class SharedDataService {
         locationID: this.dedicatedModeLocationUse.locationID || 0,
         userDetailPhoto: dedicatedModeUserDetail.userPhoto || "",
         userId: this.checkInPostData.userId || "",
-        userPhotoFileName: this.checkInPostData.userPhotoFileName || "",
-        userPhotoBinaryFile: UtilService.FixBase64String(
-          this.checkInPostData.userPhotoBinaryFile ||
-            dedicatedModeUserDetail.photo_BinaryImage ||
-            dedicatedModeUserDetail.userPhoto_BinaryImage ||
-            ""
-        ),
+        userSignaturePhotoImageVideoFileId:
+          this.checkInPostData.userSignaturePhotoImageVideoFileId || "",
         locationAutoCheckOutHour: entityData.autoCheckOutHour || "",
         locationAutoCheckOutTime: entityData.autoCheckOutTime || "",
         userAutoCheckOutTime:
@@ -2463,7 +2436,6 @@ export class SharedDataService {
           formattedCreatedDate: "",
           todayDate: "",
           timeDifference: "",
-          document_BinaryFile: "",
           inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
           signedByName: signedByName,
           locationID: this.dedicatedModeLocationUse?.locationID,
@@ -2543,11 +2515,8 @@ export class SharedDataService {
         checkInLongitude: this.checkInPostData.checkInLongitude || "",
         companyID: this.checkInPostData.companyID || "",
         currentUTCDate: utcDateTime || "",
-        digitalInkSignatureFileName:
-          this.checkInPostData.digitalInkSignatureFileName || "",
-        digitalInkSignatureBinaryFile: UtilService.FixBase64String(
-          this.checkInPostData.digitalInkSignatureBinaryFile || ""
-        ),
+        digitalInkSignatureImageVideoFileId:
+          this.checkInPostData.digitalInkSignatureImageVideoFileId || "",
         entityName:
           this.dedicatedModeLocationUse.projectName ||
           this.dedicatedModeLocationUse.locationName ||
@@ -2557,13 +2526,8 @@ export class SharedDataService {
         guestFirsName: this.checkInPostData.guestFirsName || "",
         guestLastName: this.checkInPostData.guestLastName || "",
         guestMiddleName: this.checkInPostData.guestMiddleName || "",
-        guestPhotoFileName: this.checkInPostData.guestPhotoFileName || "",
-        guestPhotoBinaryFile: UtilService.FixBase64String(
-          this.checkInPostData.guestPhotoBinaryFile ||
-            this.dedicatedModeGuestDetail.guestPhotoBinaryFile ||
-            this.dedicatedModeGuestDetail.guestPhoto_BinaryImage ||
-            ""
-        ),
+        guestPhotoImageVideoFileId:
+          this.dedicatedModeGuestDetail.guestPhotoImageVideoFileId || "",
         isOfflineDone: true,
         isGuestReturning: this.checkInPostData.isGuestReturning || false,
         isSimultaneousCheckIn: entityData.isSimultaneousCheckIn || false,
@@ -2964,18 +2928,11 @@ export class SharedDataService {
         projectID: this.signOffDetailsPostData.projectID || 0,
         inventoryItemID: this.signOffDetailsPostData.inventoryItemID || 0,
         signOffDate: this.signOffDetailsPostData.signOffDate || "",
-        digitalInkSignatureFileName:
-          this.signOffDetailsPostData.digitalInkSignatureFileName || "",
-        digitalInkSignatureBinaryFile:
-          UtilService.FixBase64String(
-            this.signOffDetailsPostData.digitalInkSignatureBinaryFile
-          ) || "",
-        userSignaturePhotoFileName:
-          this.signOffDetailsPostData.userSignaturePhotoFileName || "",
-        userSignaturePhotoBinaryFile:
-          UtilService.FixBase64String(
-            this.signOffDetailsPostData.userSignaturePhotoBinaryFile
-          ) || "",
+        digitalInkSignatureImageVideoFileId:
+          this.signOffDetailsPostData.digitalInkSignatureImageVideoFileId || "",
+        userSignaturePhotoImageVideoFileId:
+          this.signOffDetailsPostData.userSignaturePhotoImageVideoFileId || "",
+
         formSubmitDataId: this.signOffDetailsPostData.formSubmitDataId || "",
       };
 
@@ -3016,7 +2973,6 @@ export class SharedDataService {
               timeDifference: "",
               todayDate: "",
               signedByName: signedByName,
-              document_BinaryFile: "",
               inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
               locationID: this.dedicatedModeLocationUse?.locationID,
               projectID: this.dedicatedModeLocationUse?.projectID,
@@ -3043,7 +2999,6 @@ export class SharedDataService {
               timeDifference: "",
               todayDate: "",
               signedByName: signedByName,
-              document_BinaryFile: "",
               inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
               locationID: this.dedicatedModeLocationUse?.locationID,
               projectID: this.dedicatedModeLocationUse?.projectID,
@@ -3218,8 +3173,14 @@ export class SharedDataService {
         this.signOffFor = EnumService.SignOffType.INDUCTION;
         if (this.dedicatedMode) {
           if (this.dedicatedModeCapturedSelfieForCheckinProcess) {
-            this.checkInPostData.userSignaturePhoto =
-              this.dedicatedModeCapturedSelfieForCheckinProcess;
+            if (this.offlineMode) {
+              this.checkInPostData.userSignaturePhotoImageVideoFileId =
+                this.dedicatedModeCapturedSelfieForCheckinProcess;
+            } else {
+              this.checkInPostData.userSignaturePhoto =
+                this.dedicatedModeCapturedSelfieForCheckinProcess;
+            }
+
             if (this.checkinoutDmAs === EnumService.CheckInType.AS_GUEST) {
               this.submitInductionCheckInDataGuest(this.apiServiceRerence);
             } else {

@@ -125,7 +125,7 @@ export class DeviceSyncDmPage implements OnInit {
               EnumService.SyncProcessState.OFFLINE_DATA_UPLOAD_START
             );
 
-            const fileName = "OfflinePost";
+            const fileName = "Offline" + this.utilService.Uniqueid();
             var jsZipObj = new JSZip();
             debugger;
             jsZipObj.file(fileName + ".json", JSON.stringify(postJsonData));
@@ -289,7 +289,7 @@ export class DeviceSyncDmPage implements OnInit {
               // First Remove folder that contains all file before download new offline files
               this.filehandlerService
                 .removeDirectory(
-                  this.sharedDataService.saveZipFileLocation(),
+                  this.filehandlerService.offlineFilesDirectory(),
                   localStorage.getItem(
                     EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
                   )

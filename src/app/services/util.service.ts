@@ -90,6 +90,16 @@ export class UtilService {
       : base64String;
   }
 
+  static IsBase64Sring(base64String) {
+    try {
+      return (
+        btoa(atob(UtilService.FixBase64String(base64String))) ==
+        UtilService.FixBase64String(base64String)
+      );
+    } catch (error) {}
+    return false;
+  }
+
   static InductionContentTypeScreenIdentify(
     contentType,
     isDedicatedMode = false
@@ -295,6 +305,10 @@ export class UtilService {
     return value.replace("T", " ");
   }
 
+  static fixDeviceDirPath(dirpath) {
+    return dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+  }
+
   static convertToQuerystring(obj) {
     let str = [];
     for (const p in obj)
@@ -388,6 +402,14 @@ export class UtilService {
       case "checkin":
         localFilePath += slash + "user_checkin_signoff" + slash + fileName;
         break;
+      case "offline_user":
+        localFilePath =
+          deviceDirectory +
+          "" +
+          StaticDataService.offlineFilesFolderName +
+          slash +
+          fileName;
+        break;
       default:
         break;
     }
@@ -398,7 +420,7 @@ export class UtilService {
   urlToBase64(url, filename, mimeType) {
     return new Promise(async (resolve, reject) => {
       let dirpath = url.substr(0, url.lastIndexOf("/") + 1);
-      dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+      dirpath = UtilService.fixDeviceDirPath(dirpath);
       debugger;
       try {
         const dirUrl = await this.file.resolveDirectoryUrl(dirpath);
@@ -432,7 +454,7 @@ export class UtilService {
         ) !== -1
       ) {
         let dirpath = url.substr(0, url.lastIndexOf("/") + 1);
-        dirpath = dirpath.includes("file://") ? dirpath : "file://" + dirpath;
+        dirpath = UtilService.fixDeviceDirPath(dirpath);
 
         try {
           const dirUrl = await this.file.resolveDirectoryUrl(dirpath);

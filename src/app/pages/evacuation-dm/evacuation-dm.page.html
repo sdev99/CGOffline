@@ -1,85 +1,114 @@
 <ion-header>
-    <app-modal-header-dm [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()" showEvacuation="true"
-                         (closeModal)="onClose()"></app-modal-header-dm>
+  <app-modal-header-dm
+    [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+    showEvacuation="true"
+    (closeModal)="onClose()"
+  ></app-modal-header-dm>
 </ion-header>
 <ion-content mode="md">
-    <div class="content-view">
-        <div class="ion-no-padding ion-no-margin users-view">
-            <ion-toolbar
-                    [ngClass]="{'evacuated-completed':isEvacuatedCompleted(),'user-present':!isEvacuatedCompleted()}">
-                <ion-title *ngIf="evacuationList?.length>0; else noUsersPresentForHeader">
-                    {{evacuationList?.length}} Users Present
-                </ion-title>
-                <ng-template #noUsersPresentForHeader>
-                    <ion-title *ngIf="isEvacuatedCompleted(); else noUsersPresent">Evacuation Completed</ion-title>
-                    <ng-template #noUsersPresent>
-                        <ion-title>No users present.</ion-title>
-                    </ng-template>
-                </ng-template>
+  <div class="content-view">
+    <div class="ion-no-padding ion-no-margin users-view">
+      <ion-toolbar
+        [ngClass]="{'evacuated-completed':isEvacuatedCompleted(),'user-present':!isEvacuatedCompleted()}"
+      >
+        <ion-title
+          *ngIf="evacuationList?.length>0; else noUsersPresentForHeader"
+        >
+          {{evacuationList?.length}} Users Present
+        </ion-title>
+        <ng-template #noUsersPresentForHeader>
+          <ion-title *ngIf="isEvacuatedCompleted(); else noUsersPresent"
+            >Evacuation Completed</ion-title
+          >
+          <ng-template #noUsersPresent>
+            <ion-title>No users present.</ion-title>
+          </ng-template>
+        </ng-template>
+      </ion-toolbar>
 
-            </ion-toolbar>
+      <ion-searchbar
+        [(ngModel)]="searchUser"
+        searchIcon="./assets/icon/search.svg"
+        placeholder="Search any user by name"
+      >
+      </ion-searchbar>
 
-            <ion-searchbar [(ngModel)]="searchUser" searchIcon="./assets/icon/search.svg"
-                           placeholder="Search any user by name">
-            </ion-searchbar>
+      <div class="list-container">
+        <ion-list
+          lines="full"
+          *ngIf="evacuationList && evacuationList.length>0;else listEmpty"
+        >
+          <ion-item
+            *ngFor="let item of evacuationList | listFilter:searchUser:'firstAndLastName';let idx=index"
+          >
+            <ion-avatar slot="start">
+              <img [src]="getUserPhoto(item) | safeurl" />
+            </ion-avatar>
+            <ion-label>{{item.firstAndLastName}}</ion-label>
+            <ion-button
+              slot="end"
+              class="evacuate-btn"
+              (click)="evacuateUser(item,idx)"
+              >Evacuate
+            </ion-button>
+          </ion-item>
+        </ion-list>
 
-            <div class="list-container">
-                <ion-list lines="full" *ngIf="evacuationList && evacuationList.length>0;else listEmpty">
-                    <ion-item
-                            *ngFor="let item of evacuationList | listFilter:searchUser:'firstAndLastName';let idx=index">
-                        <ion-avatar slot="start">
-                            <img [src]="getUserPhoto(item)">
-                        </ion-avatar>
-                        <ion-label>{{item.firstAndLastName}}</ion-label>
-                        <ion-button slot="end" class="evacuate-btn" (click)="evacuateUser(item,idx)">Evacuate
-                        </ion-button>
-                    </ion-item>
-                </ion-list>
+        <ng-template #listEmpty>
+          <app-empty-message
+            *ngIf="evacuatedList && evacuatedList.length>0; else noUsersPresents"
+            icon="./assets/icon/CheckSuccessOutline.svg"
+            message="All Users Evacuated"
+          >
+          </app-empty-message>
 
-                <ng-template #listEmpty>
-                    <app-empty-message *ngIf="evacuatedList && evacuatedList.length>0; else noUsersPresents"
-                                       icon="./assets/icon/CheckSuccessOutline.svg" message="All Users Evacuated">
-                    </app-empty-message>
-
-
-                    <ng-template #noUsersPresents>
-                        <app-empty-message message="No users present."
-                                           icon="./assets/icon/NoEvecuated.svg"></app-empty-message>
-                    </ng-template>
-
-                </ng-template>
-            </div>
-
-
-        </div>
-
-        <div class="ion-no-padding ion-no-margin evacuated-view">
-            <ion-toolbar>
-                <ion-title>
-                    {{(evacuatedList && evacuatedList.length > 0) ? evacuatedList.length + ' Users Evacuated' : 'No Users Evacuated Yet'}}
-                </ion-title>
-            </ion-toolbar>
-
-            <ion-searchbar [(ngModel)]="searchEvacuatedUser" searchIcon="./assets/icon/search.svg"
-                           placeholder="Search any user by name">
-            </ion-searchbar>
-
-            <div class="list-container">
-                <ion-list lines="full" *ngIf="evacuatedList && evacuatedList.length>0;else noUserEvacuated">
-                    <ion-item *ngFor="let item of evacuatedList | listFilter:searchEvacuatedUser:'firstAndLastName'">
-                        <ion-avatar slot="start">
-                            <img [src]="getUserPhoto(item)">
-                        </ion-avatar>
-                        <ion-label>{{item.firstAndLastName}}</ion-label>
-                    </ion-item>
-                </ion-list>
-
-                <ng-template #noUserEvacuated>
-                    <app-empty-message message="No users evacuated yet."
-                                       icon="./assets/icon/NoEvecuated.svg"></app-empty-message>
-                </ng-template>
-            </div>
-        </div>
+          <ng-template #noUsersPresents>
+            <app-empty-message
+              message="No users present."
+              icon="./assets/icon/NoEvecuated.svg"
+            ></app-empty-message>
+          </ng-template>
+        </ng-template>
+      </div>
     </div>
 
+    <div class="ion-no-padding ion-no-margin evacuated-view">
+      <ion-toolbar>
+        <ion-title>
+          {{(evacuatedList && evacuatedList.length > 0) ? evacuatedList.length +
+          ' Users Evacuated' : 'No Users Evacuated Yet'}}
+        </ion-title>
+      </ion-toolbar>
+
+      <ion-searchbar
+        [(ngModel)]="searchEvacuatedUser"
+        searchIcon="./assets/icon/search.svg"
+        placeholder="Search any user by name"
+      >
+      </ion-searchbar>
+
+      <div class="list-container">
+        <ion-list
+          lines="full"
+          *ngIf="evacuatedList && evacuatedList.length>0;else noUserEvacuated"
+        >
+          <ion-item
+            *ngFor="let item of evacuatedList | listFilter:searchEvacuatedUser:'firstAndLastName'"
+          >
+            <ion-avatar slot="start">
+              <img [src]="getUserPhoto(item)" />
+            </ion-avatar>
+            <ion-label>{{item.firstAndLastName}}</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ng-template #noUserEvacuated>
+          <app-empty-message
+            message="No users evacuated yet."
+            icon="./assets/icon/NoEvecuated.svg"
+          ></app-empty-message>
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </ion-content>

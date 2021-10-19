@@ -8,7 +8,6 @@ export class DeviceCheckInInductionItemDetail {
 	documentFileName: string;
 	documentID: number;
 	documentTitle: string;
-	document_BinaryFile: string;
 	formID: number;
 	formType: string;
 }
