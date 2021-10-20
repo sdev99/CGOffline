@@ -39,6 +39,7 @@ import { TemplateDropdownComponent } from "./components/template-dropdown/templa
 import { SQLite } from "@ionic-native/sqlite/ngx";
 import { Base64 } from "@ionic-native/base64/ngx";
 import { Device } from "@ionic-native/device/ngx";
+import { Insomnia } from "@ionic-native/insomnia/ngx";
 
 @NgModule({
   declarations: [AppComponent, TemplateDropdownComponent],
@@ -84,6 +85,7 @@ import { Device } from "@ionic-native/device/ngx";
     Badge,
     MediaCapture,
     ScreenOrientation,
+    Insomnia,
     HTTP,
     SQLite,
     RouterOutlet,

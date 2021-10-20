@@ -12,6 +12,7 @@ import { Capacitor, Network, PluginListenerHandle } from "@capacitor/core";
 import * as JSZip from "jszip";
 import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
+import { Insomnia } from "@ionic-native/insomnia/ngx";
 
 const { Device } = Capacitor.Plugins;
 
@@ -41,7 +42,8 @@ export class DeviceSyncDmPage implements OnInit {
     public observablesService: ObservablesService,
     public filehandlerService: FilehandlerService,
     public ngZone: NgZone,
-    public platform: Platform
+    public platform: Platform,
+    private insomnia: Insomnia
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
       if (data && data.startSync) {
@@ -195,7 +197,26 @@ export class DeviceSyncDmPage implements OnInit {
     });
   };
 
+  onSyncFailed = (message) => {
+    this.insomnia.allowSleepAgain().then(
+      () => console.log("success"),
+      (error) => console.log(" allowSleepAgain error", error)
+    );
+
+    this.updateSyncState(EnumService.SyncProcessState.FAILED);
+    this.ngZone.run(() => {
+      this.progress = 0;
+      this.synchProgressState = "failed";
+      this.synchronisationErrorMessage = message;
+    });
+  };
+
   onSyncCompleted = () => {
+    this.insomnia.allowSleepAgain().then(
+      () => console.log("success"),
+      (error) => console.log(" allowSleepAgain error", error)
+    );
+
     this.synchProgressState = "completed";
     localStorage.setItem(
       EnumService.LocalStorageKeys.SYNC_DATE_TIME,
@@ -238,8 +259,11 @@ export class DeviceSyncDmPage implements OnInit {
   onSync() {
     this.progress = 0;
     this.synchProgressState = "processing";
-
     this.updateSyncState(EnumService.SyncProcessState.STARTED);
+    this.insomnia.keepAwake().then(
+      () => console.log("keepAwake success"),
+      (error) => console.log("keepAwake error", error)
+    );
 
     this.postOfflineDataToServerIfAvailable()
       .then((res) => {
@@ -255,13 +279,7 @@ export class DeviceSyncDmPage implements OnInit {
         });
       })
       .catch((error) => {
-        this.progress = 0;
-        this.synchProgressState = "failed";
-        localStorage.setItem(
-          EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
-          "failed"
-        );
-        this.synchronisationErrorMessage = error.message;
+        this.onSyncFailed(error.message);
       });
   }
 
@@ -379,18 +397,9 @@ export class DeviceSyncDmPage implements OnInit {
                                   );
                                 })
                                 .catch((error) => {
-                                  this.synchProgressState = "failed";
-                                  localStorage.setItem(
-                                    EnumService.LocalStorageKeys
-                                      .OFFLINEMODE_SYNC_STATE,
-                                    "failed"
+                                  this.onSyncFailed(
+                                    error?.message || "File Read error"
                                   );
-                                  this.updateSyncState(
-                                    EnumService.SyncProcessState.FAILED
-                                  );
-
-                                  this.synchronisationErrorMessage =
-                                    error?.message || "File Read error";
                                 });
                             };
 
@@ -400,28 +409,14 @@ export class DeviceSyncDmPage implements OnInit {
                           });
                         })
                         .catch((error) => {
-                          this.synchProgressState = "failed";
-                          localStorage.setItem(
-                            EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
-                            "failed"
+                          this.onSyncFailed(
+                            error?.message || "File download error"
                           );
-                          this.updateSyncState(
-                            EnumService.SyncProcessState.FAILED
-                          );
-
-                          this.synchronisationErrorMessage =
-                            error?.message || "File download error";
                         });
                     } else {
-                      this.synchProgressState = "failed";
-                      localStorage.setItem(
-                        EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE,
-                        "failed"
+                      this.onSyncFailed(
+                        "No enough space available in your device"
                       );
-                      this.updateSyncState(EnumService.SyncProcessState.FAILED);
-
-                      this.synchronisationErrorMessage =
-                        "No enough space available in your device";
                     }
                   }
                 );

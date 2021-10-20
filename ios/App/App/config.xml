@@ -39,6 +39,10 @@
     <param name="ios-package" value="CDVGlobalization"/>
   </feature>
 
+  <feature name="Insomnia">
+    <param name="ios-package" value="Insomnia"/>
+  </feature>
+
   <feature name="Capture">
     <param name="ios-package" value="CDVCapture"/>
   </feature>

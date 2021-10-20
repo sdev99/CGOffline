@@ -2462,6 +2462,8 @@ export class SharedDataService {
             });
         }
       });
+    } else {
+      callBack();
     }
   }
 
