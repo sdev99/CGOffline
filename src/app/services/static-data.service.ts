@@ -1075,6 +1075,45 @@ export class StaticDataService {
       ],
     },
     {
+      table_name: "DeviceUserLastCheckinDetailList",
+      columns: [
+        {
+          name: "deviceUserLastCheckinDetailId",
+          type: "INTEGER PRIMARY KEY AUTOINCREMENT",
+        },
+        { name: "checkInDate", type: "VARCHAR(32)" },
+        { name: "checkOutDate", type: "VARCHAR(32)" },
+        { name: "inventoryItemID", type: "INTEGER" },
+        { name: "locationID", type: "INTEGER" },
+        { name: "projectID", type: "INTEGER" },
+        { name: "showInductionSteps", type: "BOOLEAN" },
+        { name: "todayDate", type: "VARCHAR(32)" },
+        { name: "userCheckInDetailID", type: "INTEGER" },
+        { name: "userId", type: "VARCHAR(32)" },
+      ],
+    },
+    {
+      table_name: "DeviceGuestUserLastCheckinDetailList",
+      columns: [
+        {
+          name: "deviceGuestUserLastCheckinDetailId",
+          type: "INTEGER PRIMARY KEY AUTOINCREMENT",
+        },
+        { name: "checkInDate", type: "VARCHAR(32)" },
+        { name: "checkOutDate", type: "VARCHAR(32)" },
+        { name: "guestFirsName", type: "VARCHAR(32)" },
+        { name: "guestLastName", type: "VARCHAR(32)" },
+        { name: "guestMiddleName", type: "VARCHAR(32)" },
+        { name: "guestPhone", type: "VARCHAR(32)" },
+        { name: "inventoryItemID", type: "INTEGER" },
+        { name: "locationID", type: "INTEGER" },
+        { name: "projectID", type: "INTEGER" },
+        { name: "showInductionSteps", type: "BOOLEAN" },
+        { name: "todayDate", type: "VARCHAR(32)" },
+        { name: "userCheckInDetailID", type: "INTEGER" },
+      ],
+    },
+    {
       table_name: "DeviceLocationItems",
       columns: [
         {

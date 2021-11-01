@@ -31,6 +31,8 @@ import { DeviceGuestUserCheckinDetail } from "./DeviceGuestUserCheckinDetail";
 import { DeviceArchivedFormDetail } from "./DeviceArchivedFormDetail";
 import { DeviceCheckInInductionDetail } from "./DeviceCheckInInductionDetail";
 import { DeviceFormBuilderDetail } from "./DeviceFormBuilderDetail";
+import { DeviceGuestUserLastCheckinDetail } from "./DeviceGuestUserLastCheckinDetail";
+import { DeviceUserLastCheckinDetail } from "./DeviceUserLastCheckinDetail";
 
 export class DeviceOfflineDetailViewModels {
   deviceDetailData: DeviceDetailData;
@@ -58,6 +60,8 @@ export class DeviceOfflineDetailViewModels {
   deviceGuestUserCheckinDetailList: Array<DeviceGuestUserCheckinDetail>;
   deviceCheckInGuestInductionList: Array<DeviceCheckInGuestInductionDetail>;
   deviceCheckInGuestInductionItemList: Array<DeviceCheckInGuestInductionItemDetail>;
+  deviceUserLastCheckinDetailList: Array<DeviceUserLastCheckinDetail>;
+  deviceGuestUserLastCheckinDetailList: Array<DeviceGuestUserLastCheckinDetail>;
   deviceCompanyUserList: Array<DeviceCompanyUserDetail>;
   deviceCompanyUserGroupList: Array<DeviceCompanyUserGroupDetail>;
   deviceHAVManufacturerList: Array<DeviceHAVManufacturerDetail>;

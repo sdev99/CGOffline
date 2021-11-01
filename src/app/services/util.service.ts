@@ -379,6 +379,9 @@ export class UtilService {
   ) {}
 
   getOfflineFileUrl(fileName, type) {
+    if (!fileName && type === "icon") {
+      return UtilService.FileIcon("pdf");
+    }
     const deviceDirectory = this.file.dataDirectory;
     let localFilePath =
       deviceDirectory +

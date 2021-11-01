@@ -42,6 +42,8 @@ import { EnumService } from "./enum.service";
 import * as moment from "moment";
 import { FilehandlerService } from "./filehandler.service";
 import { Capacitor } from "@capacitor/core";
+import { DeviceUserLastCheckinDetail } from "../_models/offline/DeviceUserLastCheckinDetail";
+import { DeviceGuestUserLastCheckinDetail } from "../_models/offline/DeviceGuestUserLastCheckinDetail";
 
 declare var window: any;
 
@@ -857,6 +859,73 @@ export class OfflineManagerService {
       console.log("DeviceCheckInGuestInductionItems Inserted");
     }
 
+    // deviceUserLastCheckinDetailList
+    const deviceUserLastCheckinDetailList =
+      offlineData.deviceUserLastCheckinDetailList;
+    if (deviceUserLastCheckinDetailList) {
+      for (
+        let index = 0;
+        index < deviceUserLastCheckinDetailList.length;
+        index++
+      ) {
+        const value: DeviceUserLastCheckinDetail =
+          deviceUserLastCheckinDetailList[index];
+
+        const condition: any = {
+          userCheckInDetailID: value.userCheckInDetailID,
+          userId: value.userId,
+        };
+        if (value.locationID > 0) {
+          condition.locationID = value.locationID;
+        } else if (value.projectID > 0) {
+          condition.projectID = value.projectID;
+        } else if (value.inventoryItemID > 0) {
+          condition.inventoryItemID = value.inventoryItemID;
+        }
+
+        await this.insertData(
+          "DeviceUserLastCheckinDetailList",
+          value,
+          condition
+        );
+      }
+      callBack && callBack();
+      console.log("DeviceUserLastCheckinDetailList Inserted");
+    }
+
+    // deviceGuestUserLastCheckinDetailList
+    const deviceGuestUserLastCheckinDetailList =
+      offlineData.deviceGuestUserLastCheckinDetailList;
+    if (deviceGuestUserLastCheckinDetailList) {
+      for (
+        let index = 0;
+        index < deviceGuestUserLastCheckinDetailList.length;
+        index++
+      ) {
+        const value: DeviceGuestUserLastCheckinDetail =
+          deviceGuestUserLastCheckinDetailList[index];
+
+        const condition: any = {
+          userCheckInDetailID: value.userCheckInDetailID,
+        };
+        if (value.locationID > 0) {
+          condition.locationID = value.locationID;
+        } else if (value.projectID > 0) {
+          condition.projectID = value.projectID;
+        } else if (value.inventoryItemID > 0) {
+          condition.inventoryItemID = value.inventoryItemID;
+        }
+
+        await this.insertData(
+          "DeviceGuestUserLastCheckinDetailList",
+          value,
+          condition
+        );
+      }
+      callBack && callBack();
+      console.log("DeviceGuestUserLastCheckinDetailList Inserted");
+    }
+
     // deviceCompanyUserList
     const deviceCompanyUserList = offlineData.deviceCompanyUserList;
     if (deviceCompanyUserList) {
@@ -1229,7 +1298,24 @@ export class OfflineManagerService {
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {
-            resolve(this.convertToArray(res.rows));
+            const list = this.convertToArray(res.rows);
+            resolve(
+              list.filter((item) => {
+                if (
+                  item.expirationDate &&
+                  item.expirationDate !== StaticDataService.userDefaultDate
+                ) {
+                  const expireyDate = moment(
+                    moment(item.expirationDate),
+                    "YYYY-MM-DD"
+                  );
+                  const currDate = moment(moment(), "YYYY-MM-DD");
+                  const diff = expireyDate.diff(currDate, "days");
+                  return diff >= 0;
+                }
+                return true;
+              })
+            );
           } else {
             resolve([]);
           }
@@ -1343,10 +1429,7 @@ export class OfflineManagerService {
 
   getDeviceLiveWorkPermits(entity: DeviceEntityDetail) {
     return new Promise((resolve, reject) => {
-      let condition =
-        this.appendEntityCondition(entity) +
-        ' AND expiryDate >= datetime("now")';
-
+      let condition = this.appendEntityCondition(entity);
       const query =
         "SELECT * FROM DeviceLiveWorkPermits" +
         (condition ? " WHERE " + condition : "");
@@ -1354,24 +1437,43 @@ export class OfflineManagerService {
         .then((res: any) => {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
+            let filteredList = [];
             list.map((item: any) => {
-              const issuedDateObj = moment(item.issuedDate);
-              const expiryDateObj = moment(item.expiryDate);
-              const currentDate = moment();
+              if (
+                item.expiryDate &&
+                item.expiryDate !== StaticDataService.userDefaultDate
+              ) {
+                const expireyDate = moment(
+                  moment(item.expiryDate),
+                  "YYYY-MM-DD"
+                );
+                const currDate = moment(moment(), "YYYY-MM-DD");
+                const diff = expireyDate.diff(currDate, "days");
 
-              const formattedIssuedDate = issuedDateObj.from(currentDate);
-              const formattedExpiryDate =
-                expiryDateObj.from(currentDate, true) +
-                " (" +
-                moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
-                ")";
+                if (diff >= 0) {
+                  const issuedDateObj = moment(item.issuedDate);
+                  const expiryDateObj = moment(item.expiryDate);
+                  const currentDate = moment();
 
-              item.formattedIssuedDate = formattedIssuedDate;
-              item.formattedExpiryDate = formattedExpiryDate;
-              item.todayDate = currentDate.format("YYYY-MM-DDTHH:mm:00.000");
+                  const formattedIssuedDate = issuedDateObj.from(currentDate);
+                  const formattedExpiryDate =
+                    expiryDateObj.from(currentDate, true) +
+                    " (" +
+                    moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+                    ")";
+
+                  item.formattedIssuedDate = formattedIssuedDate;
+                  item.formattedExpiryDate = formattedExpiryDate;
+                  item.todayDate = currentDate.format(
+                    "YYYY-MM-DDTHH:mm:00.000"
+                  );
+
+                  filteredList.push(item);
+                }
+              }
             });
 
-            resolve(list);
+            resolve(filteredList);
           } else {
             resolve([]);
           }
@@ -1386,15 +1488,50 @@ export class OfflineManagerService {
     return new Promise((resolve, reject) => {
       let condition = this.appendEntityCondition(entity);
 
+      const getExpiredPermits = (archivedPermitList) => {
+        let expiredCondition = this.appendEntityCondition(entity);
+        const qxpiredQuery =
+          "SELECT * FROM DeviceLiveWorkPermits" +
+          (expiredCondition ? " WHERE " + expiredCondition : "");
+
+        this.dbQuery(qxpiredQuery, [])
+          .then((res: any) => {
+            if (res.rows?.length > 0) {
+              const list = this.convertToArray(res.rows);
+              const filteredList = list.filter((item: any) => {
+                if (
+                  item.expiryDate &&
+                  item.expiryDate !== StaticDataService.userDefaultDate
+                ) {
+                  const expireyDate = moment(
+                    moment(item.expiryDate),
+                    "YYYY-MM-DD"
+                  );
+                  const currDate = moment(moment(), "YYYY-MM-DD");
+                  const diff = expireyDate.diff(currDate, "days");
+                  return diff < 0;
+                }
+                return false;
+              });
+              resolve(filteredList.concat(archivedPermitList));
+            } else {
+              resolve(archivedPermitList);
+            }
+          })
+          .catch((error) => {
+            resolve(archivedPermitList);
+          });
+      };
+
       const query =
         "SELECT * FROM DeviceArchivedWorkPermits" +
         (condition ? " WHERE " + condition : "");
       this.dbQuery(query, [])
         .then((res: any) => {
           if (res.rows?.length > 0) {
-            resolve(this.convertToArray(res.rows));
+            getExpiredPermits(this.convertToArray(res.rows));
           } else {
-            resolve([]);
+            getExpiredPermits([]);
           }
         })
         .catch((error) => {
@@ -1686,13 +1823,13 @@ export class OfflineManagerService {
         condition =
           condition + ' AND guestPhone = "' + userIdOrGuestPhone + '"';
         query =
-          "SELECT * FROM DeviceGuestUserCheckinDetails" +
+          "SELECT * FROM DeviceGuestUserLastCheckinDetailList" +
           (condition ? " WHERE " + condition : "") +
           " ORDER BY checkInDate DESC";
       } else {
         condition = condition + ' AND userId = "' + userIdOrGuestPhone + '"';
         query =
-          "SELECT * FROM DeviceUserCheckinDetails" +
+          "SELECT * FROM DeviceUserLastCheckinDetailList" +
           (condition ? " WHERE " + condition : "") +
           " ORDER BY checkInDate DESC";
       }
@@ -1742,28 +1879,38 @@ export class OfflineManagerService {
           ? await this.getDeviceCheckInGuestInductionDetail(entity)
           : await this.getDeviceCheckInInductionDetail(entity);
         let checkInInductionItems: any = [];
+
         if (inductionDetail) {
-          // Check process induction
+          // Check induction process
           const lastCheckinForCurrentLocation: any =
             await this.getDeviceUserLastCheckinDetail(
               entity,
               userIdOrGuestPhone,
               isGuest
             );
+          debugger;
           if (lastCheckinForCurrentLocation) {
-            const lastCheckinDate = lastCheckinForCurrentLocation.checkInDate;
-            const lastCheckinDateObj = moment(lastCheckinDate);
-            const currentDate = moment();
+            if (lastCheckinForCurrentLocation.ShowInductionSteps) {
+              checkInEntityDetail.processInduction = true;
+            } else {
+              const renewEveryPeriodType = inductionDetail.renewEveryPeriodType;
+              const renewEveryPeriod = inductionDetail.renewEveryPeriod;
+              if (renewEveryPeriodType && renewEveryPeriod) {
+                const lastCheckinDate =
+                  lastCheckinForCurrentLocation.checkInDate;
+                const lastCheckinDateObj = moment(
+                  moment(lastCheckinDate).format("YYYY-MM-DD")
+                );
+                const currentDate = moment(moment().format("YYYY-MM-DD"));
 
-            const renewEveryPeriodType = inductionDetail.renewEveryPeriodType;
-            const renewEveryPeriod = inductionDetail.renewEveryPeriod;
-            if (renewEveryPeriodType && renewEveryPeriod) {
-              const diff = currentDate.diff(
-                lastCheckinDateObj,
-                renewEveryPeriodType.toLowerCase()
-              );
-              if (diff >= renewEveryPeriod) {
-                checkInEntityDetail.processInduction = true;
+                const diff = currentDate.diff(
+                  lastCheckinDateObj,
+                  renewEveryPeriodType.toLowerCase(),
+                  true
+                );
+                if (diff >= renewEveryPeriod) {
+                  checkInEntityDetail.processInduction = true;
+                }
               }
             }
           } else {
@@ -1778,6 +1925,7 @@ export class OfflineManagerService {
                 inductionDetail.checkInInductionID
               );
         }
+
         resolve({
           checkInEntityDetail: checkInEntityDetail,
           checkInInduction: inductionDetail,
@@ -2254,11 +2402,15 @@ export class OfflineManagerService {
         .then((res: any) => {
           if (res.rows?.length > 0) {
             const formDetail = this.convertToObject(res.rows);
-            this.getDeviceFormAttachments(formId).then((attachments) => {
+            this.getDeviceFormAttachments(formId).then((attachments: any) => {
+              let formAttachments = [];
               if (attachments) {
-                formDetail.formAttachments = attachments;
+                formAttachments = attachments;
               }
-              resolve(formDetail);
+              resolve({
+                formData: formDetail,
+                formAttachments: formAttachments,
+              });
             });
           } else {
             resolve(null);
@@ -2535,6 +2687,7 @@ export class OfflineManagerService {
   };
 
   insertCheckinDetails = async (data) => {
+    // Check user qualifications and location required qualifications
     let userQualified = false;
     const checkinQualifications: any =
       await this.getDeviceUserCheckInQualifications(data);
@@ -2589,7 +2742,57 @@ export class OfflineManagerService {
           "";
 
         this.dbQuery(query, dataVals)
-          .then((res: any) => {
+          .then(async (res: any) => {
+            //Insert or update last checkin details
+            const lastCheckinForCurrentLocation: any =
+              await this.getDeviceUserLastCheckinDetail(
+                data,
+                data.userId,
+                false
+              );
+            if (lastCheckinForCurrentLocation) {
+              let query =
+                "UPDATE DeviceUserLastCheckinDetailList SET checkInDate=? WHERE deviceUserLastCheckinDetailId=" +
+                lastCheckinForCurrentLocation.deviceUserLastCheckinDetailId;
+              this.dbQuery(query, [
+                moment().format(StaticDataService.dateTimeFormatForDb),
+              ]);
+            } else {
+              const lastCheckinData = {
+                checkInDate: moment().format(
+                  StaticDataService.dateTimeFormatForDb
+                ),
+                checkOutDate: "",
+                showInductionSteps: false,
+                todayDate: moment().format(
+                  StaticDataService.dateTimeFormatForDb
+                ),
+                userCheckInDetailID: 0,
+                userId: data.userId,
+              };
+              const lastCheckinDataCondition = {
+                userId: data.userId,
+              };
+              if (data.inventoryItemID) {
+                lastCheckinData["inventoryItemID"] = data.inventoryItemID;
+                lastCheckinDataCondition["inventoryItemID"] =
+                  data.inventoryItemID;
+              } else if (data.locationID) {
+                lastCheckinData["locationID"] = data.locationID;
+                lastCheckinDataCondition["locationID"] = data.locationID;
+              } else if (data.projectID) {
+                lastCheckinData["projectID"] = data.projectID;
+                lastCheckinDataCondition["projectID"] = data.projectID;
+              }
+              this.insertData(
+                "DeviceUserLastCheckinDetailList",
+                lastCheckinData,
+                lastCheckinDataCondition
+              );
+            }
+
+            // ----End Insert last checkin details
+
             // Insert user checkin detail to Evacuation List
             const evacuationData = {
               firstAndLastName: data.firstAndLastName || "",
@@ -2688,7 +2891,58 @@ export class OfflineManagerService {
         "";
 
       this.dbQuery(query, dataVals)
-        .then((res: any) => {
+        .then(async (res: any) => {
+          //Insert last checkin details
+          const lastCheckinForCurrentLocation: any =
+            await this.getDeviceUserLastCheckinDetail(
+              data,
+              data.guestPhone,
+              true
+            );
+          if (lastCheckinForCurrentLocation) {
+            let query =
+              "UPDATE DeviceGuestUserLastCheckinDetailList SET checkInDate=? WHERE deviceGuestUserLastCheckinDetailId=" +
+              lastCheckinForCurrentLocation.deviceGuestUserLastCheckinDetailId;
+            this.dbQuery(query, [
+              moment().format(StaticDataService.dateTimeFormatForDb),
+            ]);
+          } else {
+            const lastCheckinData = {
+              guestFirsName: data.guestFirsName,
+              guestLastName: data.guestLastName,
+              guestMiddleName: data.guestMiddleName,
+              guestPhone: data.guestPhone,
+              checkInDate: moment().format(
+                StaticDataService.dateTimeFormatForDb
+              ),
+              checkOutDate: data.checkOutDate,
+              showInductionSteps: false,
+              todayDate: moment().format(StaticDataService.dateTimeFormatForDb),
+              userCheckInDetailID: 0,
+            };
+            const lastCheckinDataCondition = {
+              guestPhone: data.guestPhone,
+            };
+            if (data.inventoryItemID) {
+              lastCheckinData["inventoryItemID"] = data.inventoryItemID;
+              lastCheckinDataCondition["inventoryItemID"] =
+                data.inventoryItemID;
+            } else if (data.locationID) {
+              lastCheckinData["locationID"] = data.locationID;
+              lastCheckinDataCondition["locationID"] = data.locationID;
+            } else if (data.projectID) {
+              lastCheckinData["projectID"] = data.projectID;
+              lastCheckinDataCondition["projectID"] = data.projectID;
+            }
+            this.insertData(
+              "DeviceGuestUserLastCheckinDetailList",
+              lastCheckinData,
+              lastCheckinDataCondition
+            );
+          }
+
+          // ----End Insert last checkin details
+
           // Insert user checkin detail to Evacuation List
           const evacuationData = {
             firstAndLastName:

@@ -2435,6 +2435,8 @@ export class SharedDataService {
           createdDate: createdDateStr,
           formattedCreatedDate: "",
           todayDate: "",
+          documentFileIconURL: "",
+          documentFileFormat: "",
           timeDifference: "",
           inventoryItemID: this.dedicatedModeLocationUse?.inventoryItemID,
           signedByName: signedByName,

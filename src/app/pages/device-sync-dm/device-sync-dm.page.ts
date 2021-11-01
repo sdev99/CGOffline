@@ -13,6 +13,7 @@ import * as JSZip from "jszip";
 import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
+import { StaticDataService } from "src/app/services/static-data.service";
 
 const { Device } = Capacitor.Plugins;
 
@@ -109,19 +110,18 @@ export class DeviceSyncDmPage implements OnInit {
   isSpaceAvailableInDevice = (fileSizeInBytes = 0) => {
     return new Promise(async (resolve) => {
       const info = await Device.getInfo();
-      debugger;
       const availableSpaceInBytes = info.diskFree;
-      if (this.platform.is("ios")) {
+      const bytesInMb = 1048576;
+      console.log("Available Free Space ", availableSpaceInBytes / bytesInMb);
+      if (UtilService.isLocalHost()) {
+        resolve(true);
+      } else {
         if (availableSpaceInBytes > fileSizeInBytes) {
           resolve(true);
         } else {
           resolve(false);
         }
-      } else {
-        resolve(true);
       }
-
-      // Insert condition for space check in device
     });
   };
 
@@ -175,7 +175,6 @@ export class DeviceSyncDmPage implements OnInit {
                           resolve(res);
                         },
                         (error) => {
-                          debugger;
                           clearInterval(timerRef);
                           reject(error);
                         }
@@ -265,18 +264,36 @@ export class DeviceSyncDmPage implements OnInit {
       (error) => console.log("keepAwake error", error)
     );
 
+    const onOfflineRemoved = () => {
+      this.updateSyncState(
+        EnumService.SyncProcessState.OFFLINE_DATA_DOWNLOAD_START
+      );
+      this.offlineManagerService.emptyAllTables(() => {
+        this.callOfflineApi((status, res) => {
+          if (status) {
+            this.onSyncCompleted();
+          } else {
+            this.onSyncFailed(res.message);
+          }
+        });
+      });
+    };
+
     this.postOfflineDataToServerIfAvailable()
       .then((res) => {
         this.updateProgress(100, 0);
-
-        this.updateSyncState(
-          EnumService.SyncProcessState.OFFLINE_DATA_DOWNLOAD_START
-        );
-        this.offlineManagerService.emptyAllTables(() => {
-          this.callOfflineApi(() => {
-            this.onSyncCompleted();
+        // First Remove folder that contains all offline created files before download new offline files
+        this.filehandlerService
+          .removeDirectory(
+            this.filehandlerService.offlineFilesDirectory(),
+            StaticDataService.offlineFilesFolderName
+          )
+          .then(() => {
+            onOfflineRemoved();
+          })
+          .catch(() => {
+            onOfflineRemoved();
           });
-        });
       })
       .catch((error) => {
         this.onSyncFailed(error.message);
@@ -390,7 +407,11 @@ export class DeviceSyncDmPage implements OnInit {
                                         if (jsonFiles?.length > ++fileIndex) {
                                           readJsonFileAndInsertInDb(fileIndex);
                                         } else {
-                                          callBack && callBack();
+                                          callBack &&
+                                            callBack(
+                                              true,
+                                              "All data inserted success"
+                                            );
                                         }
                                       }
                                     }
@@ -425,7 +446,7 @@ export class DeviceSyncDmPage implements OnInit {
           }
         },
         (error) => {
-          callBack && callBack();
+          callBack && callBack(false, error);
         }
       );
   };

@@ -180,7 +180,7 @@ export class FormsDmPage implements OnInit {
         )
         .then((res) => {
           if (res) {
-            const signOffFormDetail = { formData: res } as SignOffFormDetail;
+            const signOffFormDetail = res as SignOffFormDetail;
             callBack(signOffFormDetail);
           }
         });

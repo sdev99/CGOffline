@@ -181,7 +181,7 @@ export class FilehandlerService {
     return new Promise((resolve, reject) => {
       try {
         this.file
-          .removeDir(directory, directoryName)
+          .removeRecursively(directory, directoryName)
           .then((res) => {
             console.log("Directory removed successfully");
             resolve(res);
