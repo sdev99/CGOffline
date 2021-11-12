@@ -20,8 +20,9 @@ export class CheckInPostData {
   digitalInkSignatureImageVideoFileId?: number; //For offline mode
   userSignaturePhoto: string;
   userSignaturePhotoImageVideoFileId?: number; //For offline mode
+  inductionFormList: Array<any>;
+  formSubmitDataId: Array<any>; // For offline mode
   inductionFormContent: string;
-  formSubmitDataId: string | Array<any>; // For offline mode
   answerNotificationList: string;
   signOffDate: string;
 }

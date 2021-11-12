@@ -2110,10 +2110,23 @@ export class SharedDataService {
             }
             this.checkInPostData.formSubmitDataId.push(formSubmitDataId);
           } else {
-            this.checkInPostData.inductionFormContent =
-              result.formAnswerHtmlString;
-            this.checkInPostData.answerNotificationList =
-              result.answerNotificationList;
+            if (
+              !this.checkInPostData.inductionFormList ||
+              !Array.isArray(this.checkInPostData.inductionFormList)
+            ) {
+              this.checkInPostData.inductionFormList = [];
+            }
+
+            //It is old keys , not used now
+            this.checkInPostData.inductionFormContent = "";
+            this.checkInPostData.answerNotificationList = "";
+
+            // For support multiple induction forms list
+            this.checkInPostData.inductionFormList.push({
+              formId: formBuilderDetail.formId,
+              inductionFormContent: result.formAnswerHtmlString,
+              answerNotificationList: result.answerNotificationList,
+            });
           }
         }
         this.inductionNavigationProcess(userId, this.inductionContentItemIndex);
