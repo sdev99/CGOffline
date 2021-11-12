@@ -343,21 +343,24 @@ export class DeviceSyncDmPage implements OnInit {
             if (res.Result) {
               const files = res.Result;
               let totalSizeWillBeDownloadB = 0;
+              let totalSizeWillBeAfterExtract = 0;
               files.map((fileDetail) => {
                 const zipFileSizeBytes = fileDetail.zipFileSize;
                 const jsonFileSizeBytes = fileDetail.jsonFileSize;
-                totalSizeWillBeDownloadB =
-                  totalSizeWillBeDownloadB +
+                const totalFileSize = fileDetail.totalFileSize;
+                totalSizeWillBeDownloadB +=
                   UtilService.formattedNumberToNumber(zipFileSizeBytes);
+
+                totalSizeWillBeAfterExtract +=
+                  UtilService.formattedNumberToNumber(totalFileSize) +
+                  UtilService.formattedNumberToNumber(jsonFileSizeBytes);
               });
 
               // First Remove folder that contains all file before download new offline files
               this.filehandlerService
                 .removeDirectory(
                   this.filehandlerService.offlineFilesDirectory(),
-                  localStorage.getItem(
-                    EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
-                  )
+                  "/"
                 )
                 .then(() => {
                   getOfflineDataFromServer();
@@ -367,80 +370,80 @@ export class DeviceSyncDmPage implements OnInit {
                 });
 
               const getOfflineDataFromServer = () => {
-                this.isSpaceAvailableInDevice(totalSizeWillBeDownloadB).then(
-                  (isAvailable) => {
-                    if (isAvailable) {
-                      this.offlineApiService
-                        .getDeviceOfflineFile(files, (zipProgress) => {
-                          this.updateProgress(zipProgress, 2);
-                        })
-                        .then(async (jsonFiles: any) => {
-                          localStorage.setItem(
-                            EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
-                            JSON.stringify(jsonFiles)
-                          );
+                this.isSpaceAvailableInDevice(
+                  totalSizeWillBeDownloadB + totalSizeWillBeAfterExtract
+                ).then((isAvailable) => {
+                  if (isAvailable) {
+                    this.offlineApiService
+                      .getDeviceOfflineFile(files, (zipProgress) => {
+                        this.updateProgress(zipProgress, 2);
+                      })
+                      .then(async (jsonFiles: any) => {
+                        localStorage.setItem(
+                          EnumService.LocalStorageKeys.OFFLINE_DATA_FILES,
+                          JSON.stringify(jsonFiles)
+                        );
 
-                          // Empty all sqlite tables data
-                          this.offlineManagerService.emptyAllTables(() => {
-                            const readJsonFileAndInsertInDb = (fileIndex) => {
-                              const jsonFile = jsonFiles[fileIndex];
-                              this.filehandlerService
-                                .readJsonFile(
-                                  Capacitor.convertFileSrc(jsonFile),
-                                  this.sharedDataService.deviceUID
-                                )
-                                .then((offlineData: any) => {
-                                  this.updateSyncState(
-                                    EnumService.SyncProcessState
-                                      .OFFLINE_DATA_INSERT_START
-                                  );
+                        // Empty all sqlite tables data
+                        this.offlineManagerService.emptyAllTables(() => {
+                          const readJsonFileAndInsertInDb = (fileIndex) => {
+                            const jsonFile = jsonFiles[fileIndex];
+                            this.filehandlerService
+                              .readJsonFile(
+                                Capacitor.convertFileSrc(jsonFile),
+                                this.sharedDataService.deviceUID
+                              )
+                              .then((offlineData: any) => {
+                                this.updateSyncState(
+                                  EnumService.SyncProcessState
+                                    .OFFLINE_DATA_INSERT_START
+                                );
 
-                                  let progressCount = 0;
+                                let progressCount = 0;
 
-                                  this.offlineManagerService.insertOfflineData(
-                                    offlineData,
-                                    (insertionDone) => {
-                                      progressCount += 2;
+                                this.offlineManagerService.insertOfflineData(
+                                  offlineData,
+                                  (insertionDone) => {
+                                    progressCount += 2;
 
-                                      this.updateProgress(progressCount, 3);
-                                      if (insertionDone) {
-                                        if (jsonFiles?.length > ++fileIndex) {
-                                          readJsonFileAndInsertInDb(fileIndex);
-                                        } else {
-                                          callBack &&
-                                            callBack(
-                                              true,
-                                              "All data inserted success"
-                                            );
-                                        }
+                                    this.updateProgress(progressCount, 3);
+                                    if (insertionDone) {
+                                      if (jsonFiles?.length > ++fileIndex) {
+                                        readJsonFileAndInsertInDb(fileIndex);
+                                      } else {
+                                        callBack &&
+                                          callBack(
+                                            true,
+                                            "All data inserted success"
+                                          );
                                       }
                                     }
-                                  );
-                                })
-                                .catch((error) => {
-                                  this.onSyncFailed(
-                                    error?.message || "File Read error"
-                                  );
-                                });
-                            };
+                                  }
+                                );
+                              })
+                              .catch((error) => {
+                                this.onSyncFailed(
+                                  error?.message || "File Read error"
+                                );
+                              });
+                          };
 
-                            if (jsonFiles?.length > 0) {
-                              readJsonFileAndInsertInDb(0);
-                            }
-                          });
-                        })
-                        .catch((error) => {
-                          this.onSyncFailed(
-                            error?.message || "File download error"
-                          );
+                          if (jsonFiles?.length > 0) {
+                            readJsonFileAndInsertInDb(0);
+                          }
                         });
-                    } else {
-                      this.onSyncFailed(
-                        "No enough space available in your device"
-                      );
-                    }
+                      })
+                      .catch((error) => {
+                        this.onSyncFailed(
+                          error?.message || "File download error"
+                        );
+                      });
+                  } else {
+                    this.onSyncFailed(
+                      "No enough space available in your device"
+                    );
                   }
-                );
+                });
               };
             }
           }

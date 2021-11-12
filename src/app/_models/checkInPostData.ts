@@ -21,7 +21,7 @@ export class CheckInPostData {
   userSignaturePhoto: string;
   userSignaturePhotoImageVideoFileId?: number; //For offline mode
   inductionFormContent: string;
-  formSubmitDataId: string; // For offline mode
+  formSubmitDataId: string | Array<any>; // For offline mode
   answerNotificationList: string;
   signOffDate: string;
 }

@@ -11,6 +11,7 @@ import { SharedDataService } from "src/app/services/shared-data.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import { EnumService } from "src/app/services/enum.service";
 import { ObservablesService } from "src/app/services/observables.service";
+import { DeviceDetailData } from "src/app/_models/offline/DeviceDetailData";
 
 @Component({
   selector: "app-device-offline",
@@ -49,6 +50,14 @@ export class DeviceOfflinePage implements OnInit {
 
   loadDataset() {
     this.sharedDataService.offlineMode = true;
+    this.offlineManagerService
+      .getDeviceDetail()
+      .then((deviceDetail: DeviceDetailData) => {
+        this.sharedDataService.dedicatedModeOfflineDeviceDetailData =
+          deviceDetail;
+      })
+      .catch((error) => {});
+
     localStorage.setItem(
       EnumService.LocalStorageKeys.OFFLINE_MODE_ENABLE,
       "true"

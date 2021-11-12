@@ -1,480 +1,615 @@
-<app-portrait-orientation *ngIf="isShowOritationPortrait;else formView" (close)="isShowOritationPortrait=false"></app-portrait-orientation>
+<app-portrait-orientation
+  *ngIf="isShowOritationPortrait;else formView"
+  (close)="isShowOritationPortrait=false"
+></app-portrait-orientation>
 
 <ng-template #formView>
-	<ion-header mode="ios">
-		<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
+  <ion-header mode="ios">
+    <app-modal-header
+      *ngIf="!sharedDataService.dedicatedMode"
+      [modalTitle]="formBuilderDetail?.title"
+      (closeModal)="onClose()"
+    ></app-modal-header>
 
-		<app-modal-header-dm
-			*ngIf="sharedDataService.dedicatedMode"
-			[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-			(closeModal)="onClose()"
-			[modalSubTitle]="formBuilderDetail?.title"
-		></app-modal-header-dm>
+    <app-modal-header-dm
+      *ngIf="sharedDataService.dedicatedMode"
+      [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+      (closeModal)="onClose()"
+      [modalSubTitle]="formBuilderDetail?.title"
+    ></app-modal-header-dm>
 
-		<app-warning-component *ngIf="errorMessage" [message]="errorMessage"></app-warning-component>
-	</ion-header>
+    <app-warning-component
+      *ngIf="errorMessage"
+      [message]="errorMessage"
+    ></app-warning-component>
+  </ion-header>
 
-	<ion-content #content mode="ios" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-		<div class="content-container">
-			<form [formGroup]="formGroup" (ngSubmit)="onContinue()" *ngIf="formBuilderDetail">
-				<ion-list lines="none">
-					<ng-container *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index">
-						<ng-container *ngIf="utilService.shouldShowSection(section)">
-							<app-section-title
-								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
-							>
-							</app-section-title>
+  <ion-content
+    #content
+    mode="ios"
+    [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}"
+  >
+    <div class="content-container">
+      <form
+        [formGroup]="formGroup"
+        (ngSubmit)="onContinue()"
+        *ngIf="formBuilderDetail"
+      >
+        <ion-list lines="none">
+          <ng-container
+            *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index"
+          >
+            <ng-container *ngIf="utilService.shouldShowSection(section)">
+              <app-section-title
+                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
+              >
+              </app-section-title>
 
-							<ng-container *ngIf="section.isAccidentReportSection; else customQuestions">
-								<ng-container *ngFor="let question of section.questions; let questionIndex=index">
-									<ng-container *ngIf="utilService.shouldShowQuestion(question)">
-										<app-date-time-field
-											*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
-											[form]="formGroup"
-											[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-											[inputName]="UtilService.FCUniqueName(section, question)"
-											[isError]="isError(section, question)"
-											[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-										></app-date-time-field>
+              <ng-container
+                *ngIf="section.isAccidentReportSection; else customQuestions"
+              >
+                <ng-container
+                  *ngFor="let question of section.questions; let questionIndex=index"
+                >
+                  <ng-container
+                    *ngIf="utilService.shouldShowQuestion(question)"
+                  >
+                    <app-date-time-field
+                      *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateTimeField"
+                      [form]="formGroup"
+                      [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
+                      [inputName]="UtilService.FCUniqueName(section, question)"
+                      [isError]="isError(section, question)"
+                      [placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+                    ></app-date-time-field>
 
-										<div
-											class="radio-input-view"
-											style="padding-top: 8px"
-											*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText || question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-											[ngClass]="{'error':isError(section, question)}"
-										>
-											<h2>
-												{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
-												sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
-											</h2>
+                    <div
+                      class="radio-input-view"
+                      style="padding-top: 8px"
+                      *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet || question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText || question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
+                      [ngClass]="{'error':isError(section, question)}"
+                    >
+                      <h2>
+                        {{UtilService.findObj(question.questionTranslations,
+                        'questionTranslationLanguageId',
+                        sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+                      </h2>
 
-											<app-single-choice-field
-												*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
-												[form]="formGroup"
-												[inputName]="UtilService.FCUniqueName(section, question)"
-												[list]="question.answerChoiceAttributes"
-											></app-single-choice-field>
+                      <app-single-choice-field
+                        *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.SingleChoiceSet"
+                        [form]="formGroup"
+                        [inputName]="UtilService.FCUniqueName(section, question)"
+                        [list]="question.answerChoiceAttributes"
+                      ></app-single-choice-field>
 
-											<app-multiple-choice-field
-												*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
-												[form]="formGroup"
-												[inputName]="UtilService.FCUniqueName(section, question)"
-												[list]="question.answerChoiceAttributes"
-											></app-multiple-choice-field>
+                      <app-multiple-choice-field
+                        *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultipleChoiceSet"
+                        [form]="formGroup"
+                        [inputName]="UtilService.FCUniqueName(section, question)"
+                        [list]="question.answerChoiceAttributes"
+                      ></app-multiple-choice-field>
 
-											<app-multiline-text-field
-												*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
-												[form]="formGroup"
-												[inputName]="UtilService.FCUniqueName(section, question)"
-											></app-multiline-text-field>
+                      <app-multiline-text-field
+                        *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.MultiLineText"
+                        [form]="formGroup"
+                        [inputName]="UtilService.FCUniqueName(section, question)"
+                      ></app-multiline-text-field>
 
-											<app-photo-field
-												*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
-												[formControlName]="UtilService.FCUniqueName(section, question)"
-											></app-photo-field>
-										</div>
+                      <app-photo-field
+                        *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.PhotoVideoUpload"
+                        [formControlName]="UtilService.FCUniqueName(section, question)"
+                      ></app-photo-field>
+                    </div>
 
-										<app-dropdown-field
-											*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
-											[form]="formGroup"
-											[label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
-											[inputName]="UtilService.FCUniqueName(section, question)"
-											[list]="question.answerChoiceAttributes"
-											[listLabelKey]="question.listLabelKey"
-											[listValueKey]="question.listValueKey"
-											[isError]="isError(section, question)"
-											[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-										></app-dropdown-field>
+                    <app-dropdown-field
+                      *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
+                      [form]="formGroup"
+                      [label]="UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle"
+                      [inputName]="UtilService.FCUniqueName(section, question)"
+                      [list]="question.answerChoiceAttributes"
+                      [listLabelKey]="question.listLabelKey"
+                      [listValueKey]="question.listValueKey"
+                      [isError]="isError(section, question)"
+                      [placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+                    ></app-dropdown-field>
 
-										<div
-											*ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection"
-											[ngClass]="{'error': (isSubmitted && !isLocationSelected())}"
-											style="padding-bottom: 16px"
-										>
-											<ion-item class="drop-down-item">
-												<ion-label position="stacked">
-													<h4>
-														{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
-														sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
-													</h4>
-													<p class="ion-text-wrap">
-														{{'PAGESPECIFIC_TEXT.FORM_LIST.NOTE' |
-														translate}}:&nbsp;{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.MANUAL_LOCATION_SUGGESTION' | translate}}
-													</p>
-												</ion-label>
-												<div class="custom-dropdown-mask">
-													<ion-select
-														[interfaceOptions]="accidentAlertOptions"
-														[formControlName]="UtilService.FCUniqueName(section, question)"
-														[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-														[cancelText]="'SHARED_TEXT.CANCEL' | translate"
-														[okText]="'SHARED_TEXT.OK' | translate"
-														(ionChange)="placeInTheListChange($event)"
-													>
-														<ion-select-option *ngFor="let item of locations" [value]="item.locationID">{{item.locationName}}</ion-select-option>
-													</ion-select>
+                    <div
+                      *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.LocationSelection"
+                      [ngClass]="{'error': (isSubmitted && !isLocationSelected())}"
+                      style="padding-bottom: 16px"
+                    >
+                      <ion-item class="drop-down-item">
+                        <ion-label position="stacked">
+                          <h4>
+                            {{UtilService.findObj(question.questionTranslations,
+                            'questionTranslationLanguageId',
+                            sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+                          </h4>
+                          <p class="ion-text-wrap">
+                            {{'PAGESPECIFIC_TEXT.FORM_LIST.NOTE' |
+                            translate}}:&nbsp;{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.MANUAL_LOCATION_SUGGESTION'
+                            | translate}}
+                          </p>
+                        </ion-label>
+                        <div class="custom-dropdown-mask">
+                          <ion-select
+                            [interfaceOptions]="accidentAlertOptions"
+                            [formControlName]="UtilService.FCUniqueName(section, question)"
+                            [placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+                            [cancelText]="'SHARED_TEXT.CANCEL' | translate"
+                            [okText]="'SHARED_TEXT.OK' | translate"
+                            (ionChange)="placeInTheListChange($event)"
+                          >
+                            <ion-select-option
+                              *ngFor="let item of locations"
+                              [value]="item.locationID"
+                              >{{item.locationName}}</ion-select-option
+                            >
+                          </ion-select>
 
-													<div class="qr-scan-btn">
-														<ion-button fill="clear" (click)="scanUserQrCode($event, UtilService.FCUniqueName(section, question))">
-															<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
-														</ion-button>
-													</div>
-												</div>
-											</ion-item>
+                          <div class="qr-scan-btn">
+                            <ion-button
+                              fill="clear"
+                              (click)="scanUserQrCode($event, UtilService.FCUniqueName(section, question))"
+                            >
+                              <ion-icon
+                                slot="icon-only"
+                                src="./assets/icon/qrscan-blue-1.svg"
+                              ></ion-icon>
+                            </ion-button>
+                          </div>
+                        </div>
+                      </ion-item>
 
-											<ion-item>
-												<ion-checkbox
-													slot="start"
-													[formControlName]="EnumService.AccidentCustomLocationControlsName.PlaceNotintheList"
-													(ionChange)="placeNotintheListChange($event,UtilService.FCUniqueName(section, question))"
-												></ion-checkbox>
-												<ion-label>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.PLACE_NOT_IN_THE_LIST' | translate}}</ion-label>
-											</ion-item>
+                      <ion-item>
+                        <ion-checkbox
+                          slot="start"
+                          [formControlName]="EnumService.AccidentCustomLocationControlsName.PlaceNotintheList"
+                          (ionChange)="placeNotintheListChange($event,UtilService.FCUniqueName(section, question))"
+                        ></ion-checkbox>
+                        <ion-label
+                          >{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.PLACE_NOT_IN_THE_LIST'
+                          | translate}}</ion-label
+                        >
+                      </ion-item>
 
-											<ion-item class="input-item" *ngIf="formGroup.controls[EnumService.AccidentCustomLocationControlsName.PlaceNotintheList].value">
-												<ion-label position="stacked">
-													{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.LOCATION_NAME' | translate}}
-													<ion-note style="font-size: 90%"
-														>({{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.IF_NOT_AVAILABLE_IN_DROPDOWN' | translate}})
-													</ion-note>
-												</ion-label>
-												<ion-input [formControlName]="EnumService.AccidentCustomLocationControlsName.LocationName"></ion-input>
-											</ion-item>
-										</div>
+                      <ion-item
+                        class="input-item"
+                        *ngIf="formGroup.controls[EnumService.AccidentCustomLocationControlsName.PlaceNotintheList].value"
+                      >
+                        <ion-label position="stacked">
+                          {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.LOCATION_NAME'
+                          | translate}}
+                          <ion-note style="font-size: 90%"
+                            >({{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.IF_NOT_AVAILABLE_IN_DROPDOWN'
+                            | translate}})
+                          </ion-note>
+                        </ion-label>
+                        <ion-input
+                          [formControlName]="EnumService.AccidentCustomLocationControlsName.LocationName"
+                        ></ion-input>
+                      </ion-item>
+                    </div>
 
-										<ng-container *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl">
-											<div class="affected-body-part-view" [ngClass]="{'error': isError(section, question)}">
-												<ion-label>
-													<h4>
-														{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
-														sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
-														<br />
-														({{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.TAP_ON_AFFECTED_BODYPART' | translate}})
-													</h4>
-												</ion-label>
+                    <ng-container
+                      *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.BodyPartControl"
+                    >
+                      <div
+                        class="affected-body-part-view"
+                        [ngClass]="{'error': isError(section, question)}"
+                      >
+                        <ion-label>
+                          <h4>
+                            {{UtilService.findObj(question.questionTranslations,
+                            'questionTranslationLanguageId',
+                            sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+                            <br />
+                            ({{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.TAP_ON_AFFECTED_BODYPART'
+                            | translate}})
+                          </h4>
+                        </ion-label>
 
-												<div class="visual-body-part">
-													<svg width="100%" height="700" viewBox="0 0 183 459" fill="none" xmlns="http://www.w3.org/2000/svg">
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.FullBody)"
-															fill-rule="evenodd"
-															clip-rule="evenodd"
-															d="M107.22 45.2356C107.048 47.2852 106.789 49.1082 106.249 50.9204C105.926 51.9992 105.149 52.9053 104.944 53.8438C104.48 56.0228 105.074 58.8814 105.106 61.3193C105.138 63.6169 105.095 66.7021 105.591 68.3094C106.789 72.1388 112.959 73.6382 116.799 75.2995C118.115 75.8712 119.41 76.7449 120.855 77.4137C129.453 81.3726 140.574 82.063 145.547 89.9269C149.981 96.9385 151.189 108.945 150.261 120.627C150.035 123.453 149.29 126.377 149.29 129.074C149.29 132.849 150.164 136.743 149.938 140.605C149.733 144.229 148.557 147.822 148.632 151.327C148.708 154.218 150.272 157.886 151.394 160.906C152.516 163.938 153.131 167.303 154.155 170.324C156.14 176.181 158.093 182.697 159.193 189.654C160.843 200.096 161.21 211.951 162.925 222.469C163.529 226.169 163.519 230.106 164.554 233.029C165.773 236.492 169.829 237.571 172.839 240.02C174.155 241.087 174.975 242.576 175.924 244.41C176.765 246.028 177.963 247.571 178.685 248.962C179.128 249.804 179.268 250.785 179.656 251.562C180.53 253.277 182.299 254.518 182.256 256.599C179.753 257.657 177.38 255.715 175.762 254.162C174.5 252.953 173.917 250.882 172.353 250.753C171.684 255.154 173.076 258.962 173.162 263.59C173.205 265.628 173.054 268.12 173.162 270.741C173.238 272.521 173.594 276.469 172.191 276.912C169.16 277.883 168.847 272.349 168.459 270.256C167.855 267.052 167.65 264.183 167.488 261.001C166.636 262.025 166.97 264.345 167.003 266.2C167.024 267.937 167.251 269.771 167.326 271.399C167.477 274.528 168.34 280.418 165.698 280.655C162.591 280.935 163.141 275.045 162.774 272.532C162.278 269.188 161.372 266.329 161.469 262.78C160.8 265.154 161.167 268.012 161.307 270.903C161.437 273.611 162.095 277.009 160.66 278.864C158.147 279.08 158.201 276.243 157.898 274.312C157.219 269.922 156.787 263.892 156.108 259.21C155.849 260.386 155.223 262.597 155.137 265.057C155.051 267.365 156.065 271.734 154.166 272.047C151.922 272.413 151.933 266.47 151.728 264.086C151.469 260.968 151.566 256.438 151.243 254.334C150.919 252.241 150.078 250.3 149.938 248.164C149.797 245.834 150.045 243.579 150.261 241.508C150.477 239.448 151.21 237.344 151.07 235.5C150.898 233.04 148.621 229.707 147.661 227.053C144.415 218.143 141.955 209.114 138.73 200.571C136.486 194.616 134.577 188.845 133.045 182.697C132.247 179.482 131.34 176.213 131.092 172.783C130.844 169.288 130.931 165.577 130.445 161.737C129.895 157.347 127.996 152.741 128.007 147.929C127.565 150.788 126.119 153.409 125.731 156.214C125.31 159.278 125.72 162.805 125.569 166.127C125.418 169.385 124.911 172.751 125.084 175.545C125.235 177.983 126.163 180.291 126.378 182.697C126.616 185.242 126.238 187.982 126.54 190.819C126.777 193.117 127.684 195.436 128.169 197.809C129.561 204.627 131.049 212.048 132.236 219.254C133.002 223.968 134.426 228.52 135.321 233.224C136.249 238.078 136.939 243.029 137.759 247.84C138.611 252.824 139.366 257.818 139.711 262.953C140.412 273.471 140.51 285.38 138.902 295.606C138.352 299.133 137.877 302.822 137.273 306.652C137.09 307.817 136.637 309.155 136.626 310.222C136.605 311.7 137.338 313.502 137.597 315.422C138.298 320.427 138.384 327.05 139.226 332.153C140.218 338.215 142.494 344.267 143.282 350.998C143.681 354.342 144.447 357.6 144.587 361.073C145.17 375.56 144.619 390.964 144.263 405.915C144.145 410.78 143.379 416.131 144.425 420.37C144.706 421.503 145.418 422.355 145.731 423.294C146.594 425.915 146.022 428.957 146.54 431.416C146.885 433.067 149.226 435.289 150.272 437.101C152.785 441.405 156.011 444.49 160.024 447.338C160.013 449.129 162.634 450.013 162.785 451.567C162.893 452.699 162.052 453.271 161.652 454.49C160.477 455.159 158.654 455.17 158.082 456.443C156.55 455.871 155.827 457.5 154.673 457.737C153.238 458.028 152.17 457.651 151.103 456.928C149.085 458.578 142.063 459.905 141.685 455.795C137.834 454.824 137.241 450.607 136.486 446.54C133.681 445.742 131.545 445.267 131.125 442.646C130.801 440.672 132.085 439.01 132.096 437.123C132.106 434.75 130.068 431.233 129.819 428.353C129.42 423.747 130.769 418.698 130.467 414.06C130.262 410.91 129.054 408.224 128.029 405.29C127.08 402.582 126.206 399.724 125.429 396.843C123.897 391.159 121.697 385.474 120.715 379.465C119.173 370.037 117.306 360.944 117.306 349.736C117.306 346.187 117.598 342.206 116.983 339.013C116.713 337.611 115.548 336.069 114.868 334.461C112.97 329.985 110.726 324.936 109.507 319.845C107.803 312.682 106.886 304.85 105.613 297.105C105.009 293.438 102.69 289.824 101.384 286.059C97.5334 274.851 92.841 263.622 90.662 251.454C89.2705 260.267 85.7646 269.005 83.6719 278.422C82.2049 285.045 80.2955 292.003 78.1489 298.4C77.4585 300.471 76.3906 302.488 75.8728 304.57C74.5891 309.769 74.8372 316.037 73.7585 321.625C73.2515 324.267 72.3778 326.619 71.4824 328.938C70.5655 331.311 69.3789 333.976 69.0445 336.09C68.5267 339.38 69.0553 343.318 69.2063 346.974C69.6594 357.708 70.188 368.398 68.5591 378.98C67.6314 385.042 65.7329 391.288 64.6649 397.663C64.1364 400.781 63.4999 404.038 63.0361 407.242C62.5507 410.586 61.7848 414.286 61.9034 417.318C62.0329 420.618 63.6725 423.714 63.3705 426.907C63.0469 430.251 61.3425 433.876 61.418 437.306C61.4612 439.226 62.7556 440.898 62.3889 442.829C61.8063 445.936 57.9122 446.033 55.0752 447.22C54.0504 449.075 53.8238 452.214 51.8282 454.21C51.2781 454.749 50.4367 454.652 49.7139 455.18C49.2177 455.547 48.8186 456.41 48.4195 456.809C46.4886 458.719 40.8685 460.283 38.3443 457.457C36.0574 459.301 33.8244 457.672 31.1924 457.133C30.6098 455.342 29.1536 454.404 29.4017 452.095C29.7037 449.312 33.695 446.874 35.8956 445.105C38.4305 443.077 41.602 441.168 43.2093 438.935C43.9859 437.856 44.5792 436.303 45.3236 435.041C46.0139 433.854 47.3407 432.42 47.5996 431.308C48.0095 429.539 47.6967 427.274 48.0851 425.3C48.4626 423.369 49.1638 421.611 49.2177 419.939C49.304 417.458 48.5705 414.632 48.2469 411.978C46.6396 398.828 45.3343 385.733 44.0183 372.011C43.5221 366.855 42.713 361.623 42.713 355.604C42.713 348.366 44.3527 342.455 45.4746 335.95C45.8306 333.922 46.4778 331.829 46.6072 329.78C46.8014 326.835 46.2728 323.685 46.4454 320.686C46.5317 319.111 47.0387 317.633 47.0927 316.134C47.2113 313.157 46.7151 309.64 46.2836 306.555C45.0431 297.655 43.8565 288.044 43.1985 278.778C42.7131 272.079 41.7206 265.715 42.0658 259.285C42.3894 253.212 43.3711 247.193 44.1801 240.926C45.7119 228.984 47.5457 216.806 49.2177 204.864C50.0267 199.028 51.6017 193.182 52.3028 187.324C52.6588 184.379 53.004 181.305 53.7699 178.554C54.7515 175.005 56.2078 172.255 55.8842 167.994C55.3125 160.432 52.5294 153.032 50.6848 145.74C50.2964 153.366 48.7647 159.839 46.6288 165.718C47.5241 168.565 48.3547 173.754 47.9233 177.734C47.6751 180.075 46.8769 182.513 46.2944 184.886C45.1617 189.546 43.9104 194.163 42.4002 198.532C40.2536 204.713 36.5644 211.39 34.2775 217.863C33.4792 220.128 32.6271 222.436 31.8396 224.68C31.0306 226.999 30.0058 229.297 29.4017 231.508C28.8407 233.536 28.323 235.985 28.4308 237.841C28.5495 239.987 29.4772 242.285 29.7253 244.831C29.9734 247.333 30.0381 250.095 29.8871 252.792C29.7469 255.37 28.83 257.743 28.7545 259.943C28.7113 261.216 29.132 262.748 29.2399 264.496C29.4772 268.26 29.4233 275.66 26.4784 275.056C24.8711 274.722 24.925 270.526 24.8495 268.401C24.7524 265.51 24.2562 262.888 24.0405 261.087C21.6781 261.626 22.9833 266.675 22.9078 269.048C22.8323 271.356 22.239 273.773 21.937 276.362C21.7212 278.217 21.5594 282.23 19.0136 281.561C17.3848 281.14 18.1075 274.722 18.0428 273.115C17.8918 269.458 18.237 266.621 17.7192 263.859C16.3384 263.913 16.8346 265.402 16.7483 266.297C16.2737 271.108 15.4539 275.768 14.4722 280.428C14.1163 282.111 13.523 284.538 11.3871 283.837C10.0711 283.406 10.5133 281.302 10.5781 279.619C10.7291 275.682 10.7722 271.691 10.9017 267.926C9.52093 269.382 9.69351 271.842 9.27281 274.743C8.99234 276.674 8.29119 280.471 5.86408 279.781C4.36466 279.36 4.90402 275.164 5.05504 273.287C5.41101 268.767 5.31392 265.143 6.02588 261.27C7.25999 256.723 2.27393 266.783 0.500112 262.5C-0.25499 260.677 1.61128 259.402 1.99962 258C2.13985 257.515 3.16728 255.898 3.26436 255.413C3.52326 254.172 4.48331 252.479 5.21684 250.699C6.03666 248.714 6.40343 246.535 7.00751 245.338C8.74425 241.897 12.0235 239.89 13.3396 237.539C14.2241 232.339 15.1518 227.485 16.2629 222.598C17.3524 217.798 19.1539 212.998 19.5098 207.982C19.8658 202.998 19.7364 198.424 19.9953 194.012C20.6533 183.085 23.1883 172.966 26.4891 164.445C27.1579 162.729 28.4093 160.96 28.6034 159.407C28.7545 158.156 28.3877 156.43 28.2798 154.855C27.762 147.347 28.0209 138.857 28.7652 131.457C29.0565 128.556 30.1352 125.546 30.0705 123.173C30.0381 122.105 29.434 121.005 29.2614 119.926C28.3661 114.414 28.6682 106.28 29.4233 100.757C29.5851 99.5814 29.4125 98.3516 29.5851 97.3484C29.9087 95.4822 31.3434 93.0875 32.3466 91.34C34.504 87.586 37.9667 85.6767 42.26 83.8645C44.3203 82.9907 46.4562 81.8796 48.4303 81.4266C49.509 81.1785 50.6632 81.4481 51.6772 81.2648C53.2413 80.9843 55.4958 79.6575 57.6856 78.8269C59.9617 77.9639 62.4212 77.2411 64.1795 76.389C65.625 75.6878 67.0273 74.4796 68.5699 73.4656C70.0477 72.4948 71.8384 71.7073 73.1221 70.7041C73.8125 70.1648 75.2364 68.6869 75.3982 68.1044C75.8728 66.3353 75.2364 62.4196 75.0746 60.3053C74.8804 57.8027 74.9451 54.9441 74.4273 52.9916C73.7801 50.5753 71.3422 48.5904 71.3422 45.1925C70.3606 44.6099 70.1448 45.5592 68.9043 44.8688C67.6314 44.1569 66.8008 40.1548 66.6282 37.3933C66.434 34.3082 66.5311 29.5618 69.3897 31.5467C67.7717 23.8878 66.5527 16.0132 70.6842 9.93998C72.7445 6.91957 77.5772 2.66943 81.2448 1.33182C82.2265 0.975839 83.5964 0.846393 84.8154 0.684585C85.9588 0.522778 87.167 0.166802 88.2241 0.0373555C89.8961 -0.167601 91.9133 0.522778 93.909 0.846393C96.0125 1.19158 97.6629 1.68779 98.9466 2.31345C101.945 3.7805 104.459 5.27992 106.422 7.67467C109.982 12.0327 110.985 18.6884 110.651 24.891C110.564 26.5306 109.755 28.44 110.003 30.2522C110.101 30.9857 111.244 31.4712 111.47 32.6901C111.848 34.8476 111.546 43.9627 110.165 45.2032C109.54 45.6239 108.224 45.7642 107.22 45.2356Z"
-															fill="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.FullBody"
-														/>
+                        <div class="visual-body-part">
+                          <svg
+                            width="100%"
+                            height="700"
+                            viewBox="0 0 183 459"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.FullBody)"
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M107.22 45.2356C107.048 47.2852 106.789 49.1082 106.249 50.9204C105.926 51.9992 105.149 52.9053 104.944 53.8438C104.48 56.0228 105.074 58.8814 105.106 61.3193C105.138 63.6169 105.095 66.7021 105.591 68.3094C106.789 72.1388 112.959 73.6382 116.799 75.2995C118.115 75.8712 119.41 76.7449 120.855 77.4137C129.453 81.3726 140.574 82.063 145.547 89.9269C149.981 96.9385 151.189 108.945 150.261 120.627C150.035 123.453 149.29 126.377 149.29 129.074C149.29 132.849 150.164 136.743 149.938 140.605C149.733 144.229 148.557 147.822 148.632 151.327C148.708 154.218 150.272 157.886 151.394 160.906C152.516 163.938 153.131 167.303 154.155 170.324C156.14 176.181 158.093 182.697 159.193 189.654C160.843 200.096 161.21 211.951 162.925 222.469C163.529 226.169 163.519 230.106 164.554 233.029C165.773 236.492 169.829 237.571 172.839 240.02C174.155 241.087 174.975 242.576 175.924 244.41C176.765 246.028 177.963 247.571 178.685 248.962C179.128 249.804 179.268 250.785 179.656 251.562C180.53 253.277 182.299 254.518 182.256 256.599C179.753 257.657 177.38 255.715 175.762 254.162C174.5 252.953 173.917 250.882 172.353 250.753C171.684 255.154 173.076 258.962 173.162 263.59C173.205 265.628 173.054 268.12 173.162 270.741C173.238 272.521 173.594 276.469 172.191 276.912C169.16 277.883 168.847 272.349 168.459 270.256C167.855 267.052 167.65 264.183 167.488 261.001C166.636 262.025 166.97 264.345 167.003 266.2C167.024 267.937 167.251 269.771 167.326 271.399C167.477 274.528 168.34 280.418 165.698 280.655C162.591 280.935 163.141 275.045 162.774 272.532C162.278 269.188 161.372 266.329 161.469 262.78C160.8 265.154 161.167 268.012 161.307 270.903C161.437 273.611 162.095 277.009 160.66 278.864C158.147 279.08 158.201 276.243 157.898 274.312C157.219 269.922 156.787 263.892 156.108 259.21C155.849 260.386 155.223 262.597 155.137 265.057C155.051 267.365 156.065 271.734 154.166 272.047C151.922 272.413 151.933 266.47 151.728 264.086C151.469 260.968 151.566 256.438 151.243 254.334C150.919 252.241 150.078 250.3 149.938 248.164C149.797 245.834 150.045 243.579 150.261 241.508C150.477 239.448 151.21 237.344 151.07 235.5C150.898 233.04 148.621 229.707 147.661 227.053C144.415 218.143 141.955 209.114 138.73 200.571C136.486 194.616 134.577 188.845 133.045 182.697C132.247 179.482 131.34 176.213 131.092 172.783C130.844 169.288 130.931 165.577 130.445 161.737C129.895 157.347 127.996 152.741 128.007 147.929C127.565 150.788 126.119 153.409 125.731 156.214C125.31 159.278 125.72 162.805 125.569 166.127C125.418 169.385 124.911 172.751 125.084 175.545C125.235 177.983 126.163 180.291 126.378 182.697C126.616 185.242 126.238 187.982 126.54 190.819C126.777 193.117 127.684 195.436 128.169 197.809C129.561 204.627 131.049 212.048 132.236 219.254C133.002 223.968 134.426 228.52 135.321 233.224C136.249 238.078 136.939 243.029 137.759 247.84C138.611 252.824 139.366 257.818 139.711 262.953C140.412 273.471 140.51 285.38 138.902 295.606C138.352 299.133 137.877 302.822 137.273 306.652C137.09 307.817 136.637 309.155 136.626 310.222C136.605 311.7 137.338 313.502 137.597 315.422C138.298 320.427 138.384 327.05 139.226 332.153C140.218 338.215 142.494 344.267 143.282 350.998C143.681 354.342 144.447 357.6 144.587 361.073C145.17 375.56 144.619 390.964 144.263 405.915C144.145 410.78 143.379 416.131 144.425 420.37C144.706 421.503 145.418 422.355 145.731 423.294C146.594 425.915 146.022 428.957 146.54 431.416C146.885 433.067 149.226 435.289 150.272 437.101C152.785 441.405 156.011 444.49 160.024 447.338C160.013 449.129 162.634 450.013 162.785 451.567C162.893 452.699 162.052 453.271 161.652 454.49C160.477 455.159 158.654 455.17 158.082 456.443C156.55 455.871 155.827 457.5 154.673 457.737C153.238 458.028 152.17 457.651 151.103 456.928C149.085 458.578 142.063 459.905 141.685 455.795C137.834 454.824 137.241 450.607 136.486 446.54C133.681 445.742 131.545 445.267 131.125 442.646C130.801 440.672 132.085 439.01 132.096 437.123C132.106 434.75 130.068 431.233 129.819 428.353C129.42 423.747 130.769 418.698 130.467 414.06C130.262 410.91 129.054 408.224 128.029 405.29C127.08 402.582 126.206 399.724 125.429 396.843C123.897 391.159 121.697 385.474 120.715 379.465C119.173 370.037 117.306 360.944 117.306 349.736C117.306 346.187 117.598 342.206 116.983 339.013C116.713 337.611 115.548 336.069 114.868 334.461C112.97 329.985 110.726 324.936 109.507 319.845C107.803 312.682 106.886 304.85 105.613 297.105C105.009 293.438 102.69 289.824 101.384 286.059C97.5334 274.851 92.841 263.622 90.662 251.454C89.2705 260.267 85.7646 269.005 83.6719 278.422C82.2049 285.045 80.2955 292.003 78.1489 298.4C77.4585 300.471 76.3906 302.488 75.8728 304.57C74.5891 309.769 74.8372 316.037 73.7585 321.625C73.2515 324.267 72.3778 326.619 71.4824 328.938C70.5655 331.311 69.3789 333.976 69.0445 336.09C68.5267 339.38 69.0553 343.318 69.2063 346.974C69.6594 357.708 70.188 368.398 68.5591 378.98C67.6314 385.042 65.7329 391.288 64.6649 397.663C64.1364 400.781 63.4999 404.038 63.0361 407.242C62.5507 410.586 61.7848 414.286 61.9034 417.318C62.0329 420.618 63.6725 423.714 63.3705 426.907C63.0469 430.251 61.3425 433.876 61.418 437.306C61.4612 439.226 62.7556 440.898 62.3889 442.829C61.8063 445.936 57.9122 446.033 55.0752 447.22C54.0504 449.075 53.8238 452.214 51.8282 454.21C51.2781 454.749 50.4367 454.652 49.7139 455.18C49.2177 455.547 48.8186 456.41 48.4195 456.809C46.4886 458.719 40.8685 460.283 38.3443 457.457C36.0574 459.301 33.8244 457.672 31.1924 457.133C30.6098 455.342 29.1536 454.404 29.4017 452.095C29.7037 449.312 33.695 446.874 35.8956 445.105C38.4305 443.077 41.602 441.168 43.2093 438.935C43.9859 437.856 44.5792 436.303 45.3236 435.041C46.0139 433.854 47.3407 432.42 47.5996 431.308C48.0095 429.539 47.6967 427.274 48.0851 425.3C48.4626 423.369 49.1638 421.611 49.2177 419.939C49.304 417.458 48.5705 414.632 48.2469 411.978C46.6396 398.828 45.3343 385.733 44.0183 372.011C43.5221 366.855 42.713 361.623 42.713 355.604C42.713 348.366 44.3527 342.455 45.4746 335.95C45.8306 333.922 46.4778 331.829 46.6072 329.78C46.8014 326.835 46.2728 323.685 46.4454 320.686C46.5317 319.111 47.0387 317.633 47.0927 316.134C47.2113 313.157 46.7151 309.64 46.2836 306.555C45.0431 297.655 43.8565 288.044 43.1985 278.778C42.7131 272.079 41.7206 265.715 42.0658 259.285C42.3894 253.212 43.3711 247.193 44.1801 240.926C45.7119 228.984 47.5457 216.806 49.2177 204.864C50.0267 199.028 51.6017 193.182 52.3028 187.324C52.6588 184.379 53.004 181.305 53.7699 178.554C54.7515 175.005 56.2078 172.255 55.8842 167.994C55.3125 160.432 52.5294 153.032 50.6848 145.74C50.2964 153.366 48.7647 159.839 46.6288 165.718C47.5241 168.565 48.3547 173.754 47.9233 177.734C47.6751 180.075 46.8769 182.513 46.2944 184.886C45.1617 189.546 43.9104 194.163 42.4002 198.532C40.2536 204.713 36.5644 211.39 34.2775 217.863C33.4792 220.128 32.6271 222.436 31.8396 224.68C31.0306 226.999 30.0058 229.297 29.4017 231.508C28.8407 233.536 28.323 235.985 28.4308 237.841C28.5495 239.987 29.4772 242.285 29.7253 244.831C29.9734 247.333 30.0381 250.095 29.8871 252.792C29.7469 255.37 28.83 257.743 28.7545 259.943C28.7113 261.216 29.132 262.748 29.2399 264.496C29.4772 268.26 29.4233 275.66 26.4784 275.056C24.8711 274.722 24.925 270.526 24.8495 268.401C24.7524 265.51 24.2562 262.888 24.0405 261.087C21.6781 261.626 22.9833 266.675 22.9078 269.048C22.8323 271.356 22.239 273.773 21.937 276.362C21.7212 278.217 21.5594 282.23 19.0136 281.561C17.3848 281.14 18.1075 274.722 18.0428 273.115C17.8918 269.458 18.237 266.621 17.7192 263.859C16.3384 263.913 16.8346 265.402 16.7483 266.297C16.2737 271.108 15.4539 275.768 14.4722 280.428C14.1163 282.111 13.523 284.538 11.3871 283.837C10.0711 283.406 10.5133 281.302 10.5781 279.619C10.7291 275.682 10.7722 271.691 10.9017 267.926C9.52093 269.382 9.69351 271.842 9.27281 274.743C8.99234 276.674 8.29119 280.471 5.86408 279.781C4.36466 279.36 4.90402 275.164 5.05504 273.287C5.41101 268.767 5.31392 265.143 6.02588 261.27C7.25999 256.723 2.27393 266.783 0.500112 262.5C-0.25499 260.677 1.61128 259.402 1.99962 258C2.13985 257.515 3.16728 255.898 3.26436 255.413C3.52326 254.172 4.48331 252.479 5.21684 250.699C6.03666 248.714 6.40343 246.535 7.00751 245.338C8.74425 241.897 12.0235 239.89 13.3396 237.539C14.2241 232.339 15.1518 227.485 16.2629 222.598C17.3524 217.798 19.1539 212.998 19.5098 207.982C19.8658 202.998 19.7364 198.424 19.9953 194.012C20.6533 183.085 23.1883 172.966 26.4891 164.445C27.1579 162.729 28.4093 160.96 28.6034 159.407C28.7545 158.156 28.3877 156.43 28.2798 154.855C27.762 147.347 28.0209 138.857 28.7652 131.457C29.0565 128.556 30.1352 125.546 30.0705 123.173C30.0381 122.105 29.434 121.005 29.2614 119.926C28.3661 114.414 28.6682 106.28 29.4233 100.757C29.5851 99.5814 29.4125 98.3516 29.5851 97.3484C29.9087 95.4822 31.3434 93.0875 32.3466 91.34C34.504 87.586 37.9667 85.6767 42.26 83.8645C44.3203 82.9907 46.4562 81.8796 48.4303 81.4266C49.509 81.1785 50.6632 81.4481 51.6772 81.2648C53.2413 80.9843 55.4958 79.6575 57.6856 78.8269C59.9617 77.9639 62.4212 77.2411 64.1795 76.389C65.625 75.6878 67.0273 74.4796 68.5699 73.4656C70.0477 72.4948 71.8384 71.7073 73.1221 70.7041C73.8125 70.1648 75.2364 68.6869 75.3982 68.1044C75.8728 66.3353 75.2364 62.4196 75.0746 60.3053C74.8804 57.8027 74.9451 54.9441 74.4273 52.9916C73.7801 50.5753 71.3422 48.5904 71.3422 45.1925C70.3606 44.6099 70.1448 45.5592 68.9043 44.8688C67.6314 44.1569 66.8008 40.1548 66.6282 37.3933C66.434 34.3082 66.5311 29.5618 69.3897 31.5467C67.7717 23.8878 66.5527 16.0132 70.6842 9.93998C72.7445 6.91957 77.5772 2.66943 81.2448 1.33182C82.2265 0.975839 83.5964 0.846393 84.8154 0.684585C85.9588 0.522778 87.167 0.166802 88.2241 0.0373555C89.8961 -0.167601 91.9133 0.522778 93.909 0.846393C96.0125 1.19158 97.6629 1.68779 98.9466 2.31345C101.945 3.7805 104.459 5.27992 106.422 7.67467C109.982 12.0327 110.985 18.6884 110.651 24.891C110.564 26.5306 109.755 28.44 110.003 30.2522C110.101 30.9857 111.244 31.4712 111.47 32.6901C111.848 34.8476 111.546 43.9627 110.165 45.2032C109.54 45.6239 108.224 45.7642 107.22 45.2356Z"
+                              fill="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.FullBody"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsToeLeft)"
-															d="M158.001 450.5C154.801 449.7 148.001 453.5 145.001 455.5C143.057 456.7 145.523 458.333 148.5 459L160 456.5L163 454C163 452.667 161.201 451.3 158.001 450.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsToeLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsToeLeft)"
+                              d="M158.001 450.5C154.801 449.7 148.001 453.5 145.001 455.5C143.057 456.7 145.523 458.333 148.5 459L160 456.5L163 454C163 452.667 161.201 451.3 158.001 450.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsToeLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsToeRight)"
-															d="M34.3079 450.5C37.5079 449.7 44.3079 453.5 47.3079 455.5C49.2521 456.7 46.7853 458.333 43.8086 459L32.3086 456.5L29.3081 454C29.3081 452.667 31.1079 451.3 34.3079 450.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsToeRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsToeRight)"
+                              d="M34.3079 450.5C37.5079 449.7 44.3079 453.5 47.3079 455.5C49.2521 456.7 46.7853 458.333 43.8086 459L32.3086 456.5L29.3081 454C29.3081 452.667 31.1079 451.3 34.3079 450.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsToeRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsFootLeft)"
-															d="M135.583 442.173C133.05 440.494 134.317 436.295 134.317 436.295C145.291 431.677 143.603 435.456 145.714 435.456C147.824 435.456 148.246 439.654 151.201 442.173C153.5 444.133 157 446.335 157 447.175C157 447.847 152.467 449.59 151.201 450.15L145.714 451C144.307 450.72 141.915 450.234 140.226 448.891C138.538 447.547 138.538 446.372 138.116 444.692C138.116 444.692 136.747 442.945 135.583 442.173Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsFootLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsFootLeft)"
+                              d="M135.583 442.173C133.05 440.494 134.317 436.295 134.317 436.295C145.291 431.677 143.603 435.456 145.714 435.456C147.824 435.456 148.246 439.654 151.201 442.173C153.5 444.133 157 446.335 157 447.175C157 447.847 152.467 449.59 151.201 450.15L145.714 451C144.307 450.72 141.915 450.234 140.226 448.891C138.538 447.547 138.538 446.372 138.116 444.692C138.116 444.692 136.747 442.945 135.583 442.173Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsFootLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsFootRight)"
-															d="M57.4171 442.173C59.9498 440.494 58.6834 436.295 58.6834 436.295C47.7085 431.677 49.397 435.456 47.2864 435.456C45.1759 435.456 44.7538 439.654 41.799 442.173C39.5 444.133 36 446.335 36 447.175C36 447.847 40.5327 449.59 41.799 450.15L47.2864 451C48.6935 450.72 51.0854 450.234 52.7739 448.891C54.4623 447.547 54.4623 446.372 54.8844 444.692C54.8844 444.692 56.2532 442.945 57.4171 442.173Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsFootRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsFootRight)"
+                              d="M57.4171 442.173C59.9498 440.494 58.6834 436.295 58.6834 436.295C47.7085 431.677 49.397 435.456 47.2864 435.456C45.1759 435.456 44.7538 439.654 41.799 442.173C39.5 444.133 36 446.335 36 447.175C36 447.847 40.5327 449.59 41.799 450.15L47.2864 451C48.6935 450.72 51.0854 450.234 52.7739 448.891C54.4623 447.547 54.4623 446.372 54.8844 444.692C54.8844 444.692 56.2532 442.945 57.4171 442.173Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsFootRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsAnkleLeft)"
-															d="M141.105 421.572C138.789 419.909 134.737 422.264 133 423.65C133 430.714 136.474 432.827 138.211 433L144 429.883C144 427.805 143.421 423.234 141.105 421.572Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsAnkleLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsAnkleLeft)"
+                              d="M141.105 421.572C138.789 419.909 134.737 422.264 133 423.65C133 430.714 136.474 432.827 138.211 433L144 429.883C144 427.805 143.421 423.234 141.105 421.572Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsAnkleLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsAnkleRight)"
-															d="M52.8947 421.55C55.2105 419.95 59.2632 422.217 61 423.55C61 430.35 57.5263 432.384 55.7895 432.55L50 429.55C50 427.55 50.5789 423.15 52.8947 421.55Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsAnkleRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsAnkleRight)"
+                              d="M52.8947 421.55C55.2105 419.95 59.2632 422.217 61 423.55C61 430.35 57.5263 432.384 55.7895 432.55L50 429.55C50 427.55 50.5789 423.15 52.8947 421.55Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsAnkleRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsKneeLeft)"
-															d="M131.263 323.858C127.474 321.364 120.842 324.897 118 326.974C118 337.572 123.684 340.74 126.526 341L136 336.325C136 333.208 135.053 326.351 131.263 323.858Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsKneeLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsKneeLeft)"
+                              d="M131.263 323.858C127.474 321.364 120.842 324.897 118 326.974C118 337.572 123.684 340.74 126.526 341L136 336.325C136 333.208 135.053 326.351 131.263 323.858Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsKneeLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsKneeRight)"
-															d="M53.7368 323.858C57.5263 321.364 64.1579 324.897 67 326.974C67 337.572 61.3158 340.74 58.4737 341L49 336.325C49 333.208 49.9474 326.351 53.7368 323.858Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsKneeRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsKneeRight)"
+                              d="M53.7368 323.858C57.5263 321.364 64.1579 324.897 67 326.974C67 337.572 61.3158 340.74 58.4737 341L49 336.325C49 333.208 49.9474 326.351 53.7368 323.858Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsKneeRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsUpperLeft)"
-															d="M110.5 286.5C110.5 278.9 102.167 266.5 100.501 261C98.5867 254 120.5 253.5 128.5 256.5C134.9 258.9 134.5 274.167 133.5 281.5C133.167 287 134.701 300.2 131.501 309C128.301 317.8 117.834 315.667 114.5 313.5L111.5 306.5C111.5 306.5 110.5 296 110.5 286.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsUpperLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsUpperLeft)"
+                              d="M110.5 286.5C110.5 278.9 102.167 266.5 100.501 261C98.5867 254 120.5 253.5 128.5 256.5C134.9 258.9 134.5 274.167 133.5 281.5C133.167 287 134.701 300.2 131.501 309C128.301 317.8 117.834 315.667 114.5 313.5L111.5 306.5C111.5 306.5 110.5 296 110.5 286.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsUpperLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsUpperRight)"
-															d="M72.9547 286.5C72.9547 278.9 81.2877 266.5 82.9544 261C84.8684 254 62.9547 253.5 54.9547 256.5C48.5547 258.9 48.9547 274.167 49.9547 281.5C50.288 287 48.7541 300.2 51.9541 309C55.1541 317.8 65.6214 315.667 68.9547 313.5L71.9547 306.5C71.9547 306.5 72.9547 296 72.9547 286.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.LegsUpperRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LegsUpperRight)"
+                              d="M72.9547 286.5C72.9547 278.9 81.2877 266.5 82.9544 261C84.8684 254 62.9547 253.5 54.9547 256.5C48.5547 258.9 48.9547 274.167 49.9547 281.5C50.288 287 48.7541 300.2 51.9541 309C55.1541 317.8 65.6214 315.667 68.9547 313.5L71.9547 306.5C71.9547 306.5 72.9547 296 72.9547 286.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LegsUpperRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.BackButtocks)"
-															d="M66.1279 248.996C75.928 251.017 83.575 246.471 86.1736 243.945C88.7721 241.419 91.2279 241.419 93.8264 243.945C96.425 246.471 104.072 251.017 113.872 248.996C126.122 246.471 131.691 243.945 131.691 239.398C131.691 234.852 134.475 222.844 123.338 218.181C116.099 215.151 110.532 216.666 102.179 219.192C93.8264 221.717 86.1736 221.717 77.8208 219.192C69.468 216.666 63.9006 215.151 56.6618 218.181C45.5248 222.844 48.3095 234.852 48.3095 239.398C48.3095 243.945 53.8777 246.471 66.1279 248.996Z"
-															fill="#8B93B8"
-															[id]="EnumService.AccidentBodyPartsIds.BackButtocks"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.BackButtocks)"
+                              d="M66.1279 248.996C75.928 251.017 83.575 246.471 86.1736 243.945C88.7721 241.419 91.2279 241.419 93.8264 243.945C96.425 246.471 104.072 251.017 113.872 248.996C126.122 246.471 131.691 243.945 131.691 239.398C131.691 234.852 134.475 222.844 123.338 218.181C116.099 215.151 110.532 216.666 102.179 219.192C93.8264 221.717 86.1736 221.717 77.8208 219.192C69.468 216.666 63.9006 215.151 56.6618 218.181C45.5248 222.844 48.3095 234.852 48.3095 239.398C48.3095 243.945 53.8777 246.471 66.1279 248.996Z"
+                              fill="#8B93B8"
+                              [id]="EnumService.AccidentBodyPartsIds.BackButtocks"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.BackLowerBack)"
-															d="M58 165.07C58 157.495 63.7897 154.601 66.631 154.996C68.327 154.996 83.6185 151.5 90.0149 151.5L113.946 154.996C116.787 154.601 123 157.495 123 165.07C123 174.539 121.522 182.811 117.734 186.953C113.946 191.096 112.525 194.647 105.422 195.239C99.7393 195.712 94.5303 195.436 92.6362 195.239H87.9404C86.0462 195.436 80.8372 195.712 75.1547 195.239C68.0516 194.647 66.631 191.096 62.8426 186.953C59.0543 182.811 58 174.539 58 165.07Z"
-															fill="#8B93B8"
-															[id]="EnumService.AccidentBodyPartsIds.BackLowerBack"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.BackLowerBack)"
+                              d="M58 165.07C58 157.495 63.7897 154.601 66.631 154.996C68.327 154.996 83.6185 151.5 90.0149 151.5L113.946 154.996C116.787 154.601 123 157.495 123 165.07C123 174.539 121.522 182.811 117.734 186.953C113.946 191.096 112.525 194.647 105.422 195.239C99.7393 195.712 94.5303 195.436 92.6362 195.239H87.9404C86.0462 195.436 80.8372 195.712 75.1547 195.239C68.0516 194.647 66.631 191.096 62.8426 186.953C59.0543 182.811 58 174.539 58 165.07Z"
+                              fill="#8B93B8"
+                              [id]="EnumService.AccidentBodyPartsIds.BackLowerBack"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.BackUpperBack)"
-															d="M51.0702 115.53C51.0702 124.499 56.3659 127.925 60.1066 127.458H90.1381H122.399C126.14 127.925 131.993 124.499 131.993 115.53C131.993 104.319 132.375 94.5245 127.387 89.6195C122.399 84.7145 120.529 80.5102 111.177 79.8095C103.696 79.2489 96.838 79.5759 94.3442 79.8095H88.1619C85.6681 79.576 78.8101 79.249 71.3287 79.8095C61.9769 80.5102 60.1066 84.7145 55.119 89.6195C50.1314 94.5245 51.0702 104.319 51.0702 115.53Z"
-															fill="#8B93B8"
-															[id]="EnumService.AccidentBodyPartsIds.BackUpperBack"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.BackUpperBack)"
+                              d="M51.0702 115.53C51.0702 124.499 56.3659 127.925 60.1066 127.458H90.1381H122.399C126.14 127.925 131.993 124.499 131.993 115.53C131.993 104.319 132.375 94.5245 127.387 89.6195C122.399 84.7145 120.529 80.5102 111.177 79.8095C103.696 79.2489 96.838 79.5759 94.3442 79.8095H88.1619C85.6681 79.576 78.8101 79.249 71.3287 79.8095C61.9769 80.5102 60.1066 84.7145 55.119 89.6195C50.1314 94.5245 51.0702 104.319 51.0702 115.53Z"
+                              fill="#8B93B8"
+                              [id]="EnumService.AccidentBodyPartsIds.BackUpperBack"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoAbdomen)"
-															d="M117.831 194.939C117.831 194.939 115.018 219.118 110.018 225.162C104.305 232.069 97.9851 233.162 91.2671 233.162C84.501 233.162 78.715 231.117 72.9984 224.206C67.9982 218.162 65.1855 193.983 65.1855 193.983C65.1855 193.983 65.1852 176.805 85.0171 176.801C93.5 176.801 93.5 176.805 97.5174 176.805C117.831 176.801 117.831 194.939 117.831 194.939Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.TorsoAbdomen"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoAbdomen)"
+                              d="M117.831 194.939C117.831 194.939 115.018 219.118 110.018 225.162C104.305 232.069 97.9851 233.162 91.2671 233.162C84.501 233.162 78.715 231.117 72.9984 224.206C67.9982 218.162 65.1855 193.983 65.1855 193.983C65.1855 193.983 65.1852 176.805 85.0171 176.801C93.5 176.801 93.5 176.805 97.5174 176.805C117.831 176.801 117.831 194.939 117.831 194.939Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.TorsoAbdomen"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsWristLeft)"
-															d="M160 230.5C158 228.9 154.5 231.167 153 232.5C153 239.3 156 241.333 157.5 241.5L162.5 238.5C162.5 236.5 162 232.1 160 230.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsWristLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsWristLeft)"
+                              d="M160 230.5C158 228.9 154.5 231.167 153 232.5C153 239.3 156 241.333 157.5 241.5L162.5 238.5C162.5 236.5 162 232.1 160 230.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsWristLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsHandLeft)"
-															d="M165.263 244.119C161.474 242.319 154.842 244.87 152 246.37C152 254.024 157.684 256.312 160.526 256.5L170 253.123C170 250.872 169.053 245.92 165.263 244.119Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsHandLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsHandLeft)"
+                              d="M165.263 244.119C161.474 242.319 154.842 244.87 152 246.37C152 254.024 157.684 256.312 160.526 256.5L170 253.123C170 250.872 169.053 245.92 165.263 244.119Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsHandLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsFingerLeft)"
-															d="M156.396 259.047C159.092 256.211 167.978 257.707 170 260.071C170 272.126 170 278.5 163.135 278.5C163.135 278.5 157.197 275.94 156.396 273.182C155.596 270.423 153.701 261.884 156.396 259.047Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsFingerLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsFingerLeft)"
+                              d="M156.396 259.047C159.092 256.211 167.978 257.707 170 260.071C170 272.126 170 278.5 163.135 278.5C163.135 278.5 157.197 275.94 156.396 273.182C155.596 270.423 153.701 261.884 156.396 259.047Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsFingerLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsFingerRight)"
-															d="M21.6036 259.047C18.9082 256.211 10.0216 257.707 8 260.071C8 272.126 8 278.5 14.865 278.5C14.865 278.5 20.8034 275.94 21.6036 273.182C22.4039 270.423 24.2991 261.884 21.6036 259.047Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsFingerRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsFingerRight)"
+                              d="M21.6036 259.047C18.9082 256.211 10.0216 257.707 8 260.071C8 272.126 8 278.5 14.865 278.5C14.865 278.5 20.8034 275.94 21.6036 273.182C22.4039 270.423 24.2991 261.884 21.6036 259.047Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsFingerRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsHandRight)"
-															d="M13.7368 244.119C17.5263 242.319 24.1579 244.87 27 246.37C27 254.024 21.3158 256.312 18.4737 256.5L9 253.123C9 250.872 9.94737 245.92 13.7368 244.119Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsHandRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsHandRight)"
+                              d="M13.7368 244.119C17.5263 242.319 24.1579 244.87 27 246.37C27 254.024 21.3158 256.312 18.4737 256.5L9 253.123C9 250.872 9.94737 245.92 13.7368 244.119Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsHandRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsWristRight)"
-															d="M18.5 230.5C20.5 228.9 24 231.167 25.5 232.5C25.5 239.3 22.5 241.333 21 241.5L16 238.5C16 236.5 16.5 232.1 18.5 230.5Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsWristRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsWristRight)"
+                              d="M18.5 230.5C20.5 228.9 24 231.167 25.5 232.5C25.5 239.3 22.5 241.333 21 241.5L16 238.5C16 236.5 16.5 232.1 18.5 230.5Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsWristRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsLowerLeft)"
-															d="M158.999 218C159.399 200.8 153.166 181.833 149.999 174.5C143.499 174.5 138.499 174.5 138.999 180C139.399 184.4 146.499 207.167 149.999 218C152.833 225.167 158.599 235.2 158.999 218Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsLowerLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsLowerLeft)"
+                              d="M158.999 218C159.399 200.8 153.166 181.833 149.999 174.5C143.499 174.5 138.499 174.5 138.999 180C139.399 184.4 146.499 207.167 149.999 218C152.833 225.167 158.599 235.2 158.999 218Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsLowerLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsLowerRight)"
-															d="M21.9831 218C21.5831 200.8 27.8164 181.833 30.9831 174.5C37.4831 174.5 42.4831 174.5 41.9831 180C41.5831 184.4 34.4831 207.167 30.9831 218C28.1498 225.167 22.3831 235.2 21.9831 218Z"
-															fill="#A0A8C9"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsLowerRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsLowerRight)"
+                              d="M21.9831 218C21.5831 200.8 27.8164 181.833 30.9831 174.5C37.4831 174.5 42.4831 174.5 41.9831 180C41.5831 184.4 34.4831 207.167 30.9831 218C28.1498 225.167 22.3831 235.2 21.9831 218Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsLowerRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsElbowLeft)"
-															d="M150 165.327L148.812 155.779C140.5 146.217 133.375 151.798 131 155.779V162.945L139.312 172.5H145.25C147.15 172.5 149.604 168.114 150 165.327Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															stroke-width="2.44942"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsElbowLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsElbowLeft)"
+                              d="M150 165.327L148.812 155.779C140.5 146.217 133.375 151.798 131 155.779V162.945L139.312 172.5H145.25C147.15 172.5 149.604 168.114 150 165.327Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              stroke-width="2.44942"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsElbowLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsElbowRight)"
-															d="M28 165.327L29.1875 155.779C37.5 146.217 44.625 151.798 47 155.779V162.945L38.6875 172.5H32.75C30.85 172.5 28.3958 168.114 28 165.327Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															stroke-width="2.44942"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsElbowRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsElbowRight)"
+                              d="M28 165.327L29.1875 155.779C37.5 146.217 44.625 151.798 47 155.779V162.945L38.6875 172.5H32.75C30.85 172.5 28.3958 168.114 28 165.327Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              stroke-width="2.44942"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsElbowRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsShoulderRight)"
-															d="M38.7166 108.767L57.1457 89.9797C47.8239 77.517 34.9561 90.8114 31.9864 100.568C29.0168 110.325 35.2358 110.099 38.7166 108.767Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsShoulderRight"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsShoulderRight)"
+                              d="M38.7166 108.767L57.1457 89.9797C47.8239 77.517 34.9561 90.8114 31.9864 100.568C29.0168 110.325 35.2358 110.099 38.7166 108.767Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsShoulderRight"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsShoulderLeft)"
-															d="M140.61 109.203L122.181 90.4156C131.502 77.9529 144.37 91.2472 147.34 101.004C150.309 110.761 144.09 110.535 140.61 109.203Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.ArmsShoulderLeft"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.ArmsShoulderLeft)"
+                              d="M140.61 109.203L122.181 90.4156C131.502 77.9529 144.37 91.2472 147.34 101.004C150.309 110.761 144.09 110.535 140.61 109.203Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.ArmsShoulderLeft"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoChest)"
-															d="M60 101.031C60 90.5756 65.3857 89.0509 68.0785 89.5955H88.2748H92.7252H112.921C115.614 89.0509 121 90.5756 121 101.031C121 114.1 120.102 127.986 116.512 133.704C112.921 139.421 111.575 144.322 104.843 145.139C99.4573 145.793 94.5205 145.411 92.7252 145.139H88.2748C86.4795 145.411 81.5427 145.793 76.157 145.139C69.4249 144.322 68.0785 139.421 64.4881 133.704C60.8976 127.986 60 114.1 60 101.031Z"
-															fill="#A0A8C9"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.TorsoChest"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoChest)"
+                              d="M60 101.031C60 90.5756 65.3857 89.0509 68.0785 89.5955H88.2748H92.7252H112.921C115.614 89.0509 121 90.5756 121 101.031C121 114.1 120.102 127.986 116.512 133.704C112.921 139.421 111.575 144.322 104.843 145.139C99.4573 145.793 94.5205 145.411 92.7252 145.139H88.2748C86.4795 145.411 81.5427 145.793 76.157 145.139C69.4249 144.322 68.0785 139.421 64.4881 133.704C60.8976 127.986 60 114.1 60 101.031Z"
+                              fill="#A0A8C9"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.TorsoChest"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoRibs)"
-															d="M106.334 89.407C106.334 93.0951 100.011 94.0172 97.2013 92.9107C95.6342 92.4405 92 91.5 90 91.5C88 91.5 84.3658 92.4405 82.7987 92.9107C79.9885 94.0172 73.6657 93.0951 73.6657 89.407C73.6657 85.7188 77.354 83.8748 79.4616 83.6904C81.1477 83.5428 81.5693 82.1536 81.5693 81.4775C80.2227 80.7399 77.1433 79.7072 75.5977 81.4775C73.6657 83.6904 68.7479 87.5629 69.6261 89.407C70.5043 91.2511 71.5587 94.5704 77.1787 95.8613C82.7987 97.1521 84.9066 96.7833 84.9066 100.656C84.9066 104.528 83.3256 104.528 79.4616 104.528C75.5977 104.528 67.8701 103.606 66.465 100.656C65.0599 97.7053 63.6548 96.4145 65.0599 92.9107C66.465 89.407 62.9521 90.1446 62.9521 91.2511C62.9521 92.3575 60.4932 98.0741 64.3571 101.947C68.2211 105.819 76.6516 107.295 79.9887 106.926C83.3257 106.557 85.7846 105.819 85.7846 108.401C85.7846 110.983 86.1357 111.351 82.7987 111.905C79.4616 112.458 74.7196 113.749 70.1531 112.827C65.5866 111.905 60.4932 108.585 59.7907 107.295C59.0882 106.004 56.9805 105.819 58.3856 108.401C59.7907 110.983 63.8302 115.04 70.1531 115.408C76.476 115.777 78.408 116.146 83.3258 115.04C87.26 114.154 86.6043 117.007 85.7846 118.543C84.6723 119.404 81.4992 121.273 77.7055 121.863C72.9633 122.6 67.5185 123.154 64.3571 121.863C61.8281 120.83 58.9711 118.851 57.8588 117.99C57.0391 116.761 55.5053 115.335 55.9268 119.465C56.4538 121.309 62.601 123.891 63.8305 124.444C65.0599 124.998 69.9777 127.21 82.4477 124.076C86.663 121.125 87.6582 125.735 84.0284 128.133C81.0426 129.915 74.3685 133.517 71.5584 133.665C68.0457 133.849 61.5472 134.034 56.6294 127.395C54.5214 125.551 54.5214 129.239 56.2781 131.083C57.3319 132.62 60.1415 134.956 64.3571 136.062C70.504 137.168 75.5977 134.956 75.5977 134.956C77.0027 134.218 79.6721 133.37 79.1101 135.878C78.5481 138.386 75.9487 140.242 74.7192 140.857C73.0802 142.209 68.6078 144.508 63.8305 142.885C59.0531 141.262 57.0392 138.521 56.6294 137.353C55.5756 137.168 53.9597 137.464 55.9268 140.119C58.3856 143.438 62.601 147.864 71.5584 144.914C74.7192 144.36 73.6073 148.11 70.1531 151.183C69.1579 151.921 66.1137 153.175 61.8985 152.29C59.7907 150.446 55.4 148.602 56.2781 148.602C55.6927 148.602 55.0488 149.339 57.1563 152.29C59.2638 155.24 64.8256 155.978 67.3431 155.978C67.8115 156.285 68.4672 157.232 67.3431 158.56C65.9381 160.219 65.5868 162.617 63.3035 161.879C61.4769 161.289 59.2638 158.806 58.3856 157.638C57.5075 156.654 55.7161 155.351 55.5756 158.006C57.1563 160.035 58.3271 161.695 59.7907 161.879C60.9616 162.555 63.3035 164.203 63.3035 165.383C63.3035 166.858 64.0062 168.702 61.8985 168.149C60.2122 167.706 58.854 166.12 58.3856 165.383C57.8002 165.875 57.0509 167.153 58.737 168.333C60.4231 169.513 61.7814 170.546 62.2497 170.915C62.8937 171.714 64.4979 172.316 65.7624 168.333C67.3431 163.354 80.6914 134.587 90 134.956C99.3086 134.587 112.657 163.354 114.238 168.333C115.502 172.316 117.106 171.714 117.75 170.915C118.219 170.546 119.577 169.513 121.263 168.333C122.949 167.153 122.2 165.875 121.614 165.383C121.146 166.12 119.788 167.706 118.102 168.149C115.994 168.702 116.696 166.858 116.696 165.383C116.696 164.203 119.038 162.555 120.209 161.879C121.673 161.695 122.844 160.035 124.424 158.006C124.284 155.351 122.493 156.654 121.614 157.638C120.736 158.806 118.523 161.289 116.696 161.879C114.413 162.617 114.062 160.219 112.657 158.56C111.533 157.232 112.189 156.285 112.657 155.978C115.174 155.978 120.736 155.24 122.844 152.29C124.951 149.339 124.307 148.602 123.722 148.602C124.6 148.602 120.209 150.446 118.102 152.29C113.886 153.175 110.842 151.921 109.847 151.183C106.393 148.11 105.281 144.36 108.442 144.914C117.399 147.864 121.614 143.438 124.073 140.119C126.04 137.464 124.424 137.168 123.371 137.353C122.961 138.521 120.947 141.262 116.17 142.885C111.392 144.508 106.92 142.209 105.281 140.857C104.051 140.242 101.452 138.386 100.89 135.878C100.328 133.37 102.997 134.218 104.402 134.956C104.402 134.956 109.496 137.168 115.643 136.062C119.859 134.956 122.668 132.62 123.722 131.083C125.479 129.239 125.479 125.551 123.371 127.395C118.453 134.034 111.954 133.849 108.442 133.665C105.631 133.517 98.9574 129.915 95.9716 128.133C92.3418 125.735 93.337 121.125 97.5523 124.076C110.022 127.21 114.94 124.998 116.17 124.444C117.399 123.891 123.546 121.309 124.073 119.465C124.495 115.335 122.961 116.761 122.141 117.99C121.029 118.851 118.172 120.83 115.643 121.863C112.482 123.154 107.037 122.6 102.295 121.863C98.5008 121.273 95.3277 119.404 94.2154 118.543C93.3957 117.007 92.74 114.154 96.6742 115.04C101.592 116.146 103.524 115.777 109.847 115.408C116.17 115.04 120.209 110.983 121.614 108.401C123.019 105.819 120.912 106.004 120.209 107.295C119.507 108.585 114.413 111.905 109.847 112.827C105.28 113.749 100.538 112.458 97.2013 111.905C93.8642 111.351 94.2154 110.983 94.2154 108.401C94.2154 105.819 96.6743 106.557 100.011 106.926C103.348 107.295 111.779 105.819 115.643 101.947C119.507 98.0741 117.048 92.3575 117.048 91.2511C117.048 90.1446 113.535 89.407 114.94 92.9107C116.345 96.4145 114.94 97.7053 113.535 100.656C112.13 103.606 104.402 104.528 100.538 104.528C96.6744 104.528 95.0934 104.528 95.0934 100.656C95.0934 96.7833 97.2013 97.1521 102.821 95.8613C108.441 94.5704 109.496 91.2511 110.374 89.407C111.252 87.5629 106.334 83.6904 104.402 81.4775C102.857 79.7072 99.7773 80.7399 98.4307 81.4775C98.4307 82.1536 98.8523 83.5428 100.538 83.6904C102.646 83.8748 106.334 85.7188 106.334 89.407Z"
-															fill="#B6BEDF"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.TorsoRibs"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoRibs)"
+                              d="M106.334 89.407C106.334 93.0951 100.011 94.0172 97.2013 92.9107C95.6342 92.4405 92 91.5 90 91.5C88 91.5 84.3658 92.4405 82.7987 92.9107C79.9885 94.0172 73.6657 93.0951 73.6657 89.407C73.6657 85.7188 77.354 83.8748 79.4616 83.6904C81.1477 83.5428 81.5693 82.1536 81.5693 81.4775C80.2227 80.7399 77.1433 79.7072 75.5977 81.4775C73.6657 83.6904 68.7479 87.5629 69.6261 89.407C70.5043 91.2511 71.5587 94.5704 77.1787 95.8613C82.7987 97.1521 84.9066 96.7833 84.9066 100.656C84.9066 104.528 83.3256 104.528 79.4616 104.528C75.5977 104.528 67.8701 103.606 66.465 100.656C65.0599 97.7053 63.6548 96.4145 65.0599 92.9107C66.465 89.407 62.9521 90.1446 62.9521 91.2511C62.9521 92.3575 60.4932 98.0741 64.3571 101.947C68.2211 105.819 76.6516 107.295 79.9887 106.926C83.3257 106.557 85.7846 105.819 85.7846 108.401C85.7846 110.983 86.1357 111.351 82.7987 111.905C79.4616 112.458 74.7196 113.749 70.1531 112.827C65.5866 111.905 60.4932 108.585 59.7907 107.295C59.0882 106.004 56.9805 105.819 58.3856 108.401C59.7907 110.983 63.8302 115.04 70.1531 115.408C76.476 115.777 78.408 116.146 83.3258 115.04C87.26 114.154 86.6043 117.007 85.7846 118.543C84.6723 119.404 81.4992 121.273 77.7055 121.863C72.9633 122.6 67.5185 123.154 64.3571 121.863C61.8281 120.83 58.9711 118.851 57.8588 117.99C57.0391 116.761 55.5053 115.335 55.9268 119.465C56.4538 121.309 62.601 123.891 63.8305 124.444C65.0599 124.998 69.9777 127.21 82.4477 124.076C86.663 121.125 87.6582 125.735 84.0284 128.133C81.0426 129.915 74.3685 133.517 71.5584 133.665C68.0457 133.849 61.5472 134.034 56.6294 127.395C54.5214 125.551 54.5214 129.239 56.2781 131.083C57.3319 132.62 60.1415 134.956 64.3571 136.062C70.504 137.168 75.5977 134.956 75.5977 134.956C77.0027 134.218 79.6721 133.37 79.1101 135.878C78.5481 138.386 75.9487 140.242 74.7192 140.857C73.0802 142.209 68.6078 144.508 63.8305 142.885C59.0531 141.262 57.0392 138.521 56.6294 137.353C55.5756 137.168 53.9597 137.464 55.9268 140.119C58.3856 143.438 62.601 147.864 71.5584 144.914C74.7192 144.36 73.6073 148.11 70.1531 151.183C69.1579 151.921 66.1137 153.175 61.8985 152.29C59.7907 150.446 55.4 148.602 56.2781 148.602C55.6927 148.602 55.0488 149.339 57.1563 152.29C59.2638 155.24 64.8256 155.978 67.3431 155.978C67.8115 156.285 68.4672 157.232 67.3431 158.56C65.9381 160.219 65.5868 162.617 63.3035 161.879C61.4769 161.289 59.2638 158.806 58.3856 157.638C57.5075 156.654 55.7161 155.351 55.5756 158.006C57.1563 160.035 58.3271 161.695 59.7907 161.879C60.9616 162.555 63.3035 164.203 63.3035 165.383C63.3035 166.858 64.0062 168.702 61.8985 168.149C60.2122 167.706 58.854 166.12 58.3856 165.383C57.8002 165.875 57.0509 167.153 58.737 168.333C60.4231 169.513 61.7814 170.546 62.2497 170.915C62.8937 171.714 64.4979 172.316 65.7624 168.333C67.3431 163.354 80.6914 134.587 90 134.956C99.3086 134.587 112.657 163.354 114.238 168.333C115.502 172.316 117.106 171.714 117.75 170.915C118.219 170.546 119.577 169.513 121.263 168.333C122.949 167.153 122.2 165.875 121.614 165.383C121.146 166.12 119.788 167.706 118.102 168.149C115.994 168.702 116.696 166.858 116.696 165.383C116.696 164.203 119.038 162.555 120.209 161.879C121.673 161.695 122.844 160.035 124.424 158.006C124.284 155.351 122.493 156.654 121.614 157.638C120.736 158.806 118.523 161.289 116.696 161.879C114.413 162.617 114.062 160.219 112.657 158.56C111.533 157.232 112.189 156.285 112.657 155.978C115.174 155.978 120.736 155.24 122.844 152.29C124.951 149.339 124.307 148.602 123.722 148.602C124.6 148.602 120.209 150.446 118.102 152.29C113.886 153.175 110.842 151.921 109.847 151.183C106.393 148.11 105.281 144.36 108.442 144.914C117.399 147.864 121.614 143.438 124.073 140.119C126.04 137.464 124.424 137.168 123.371 137.353C122.961 138.521 120.947 141.262 116.17 142.885C111.392 144.508 106.92 142.209 105.281 140.857C104.051 140.242 101.452 138.386 100.89 135.878C100.328 133.37 102.997 134.218 104.402 134.956C104.402 134.956 109.496 137.168 115.643 136.062C119.859 134.956 122.668 132.62 123.722 131.083C125.479 129.239 125.479 125.551 123.371 127.395C118.453 134.034 111.954 133.849 108.442 133.665C105.631 133.517 98.9574 129.915 95.9716 128.133C92.3418 125.735 93.337 121.125 97.5523 124.076C110.022 127.21 114.94 124.998 116.17 124.444C117.399 123.891 123.546 121.309 124.073 119.465C124.495 115.335 122.961 116.761 122.141 117.99C121.029 118.851 118.172 120.83 115.643 121.863C112.482 123.154 107.037 122.6 102.295 121.863C98.5008 121.273 95.3277 119.404 94.2154 118.543C93.3957 117.007 92.74 114.154 96.6742 115.04C101.592 116.146 103.524 115.777 109.847 115.408C116.17 115.04 120.209 110.983 121.614 108.401C123.019 105.819 120.912 106.004 120.209 107.295C119.507 108.585 114.413 111.905 109.847 112.827C105.28 113.749 100.538 112.458 97.2013 111.905C93.8642 111.351 94.2154 110.983 94.2154 108.401C94.2154 105.819 96.6743 106.557 100.011 106.926C103.348 107.295 111.779 105.819 115.643 101.947C119.507 98.0741 117.048 92.3575 117.048 91.2511C117.048 90.1446 113.535 89.407 114.94 92.9107C116.345 96.4145 114.94 97.7053 113.535 100.656C112.13 103.606 104.402 104.528 100.538 104.528C96.6744 104.528 95.0934 104.528 95.0934 100.656C95.0934 96.7833 97.2013 97.1521 102.821 95.8613C108.441 94.5704 109.496 91.2511 110.374 89.407C111.252 87.5629 106.334 83.6904 104.402 81.4775C102.857 79.7072 99.7773 80.7399 98.4307 81.4775C98.4307 82.1536 98.8523 83.5428 100.538 83.6904C102.646 83.8748 106.334 85.7188 106.334 89.407Z"
+                              fill="#B6BEDF"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.TorsoRibs"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoNeck)"
-															d="M98.2643 75.4318H82.2648C74.2651 73.8138 76.9316 68.1785 79.5982 63.3336C81.7315 59.4576 86.1166 60.9029 87.598 62.5179H93.82C94.7089 60.1111 98.6397 60.4505 100.042 61.7238C100.931 62.531 102.175 64.2936 103.597 68.1677C105.02 72.0419 100.635 74.6247 98.2643 75.4318Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.TorsoNeck"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.TorsoNeck)"
+                              d="M98.2643 75.4318H82.2648C74.2651 73.8138 76.9316 68.1785 79.5982 63.3336C81.7315 59.4576 86.1166 60.9029 87.598 62.5179H93.82C94.7089 60.1111 98.6397 60.4505 100.042 61.7238C100.931 62.531 102.175 64.2936 103.597 68.1677C105.02 72.0419 100.635 74.6247 98.2643 75.4318Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.TorsoNeck"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.HeadFace)"
-															d="M94.3706 21.1489H89.1791L83.9877 21.1481C82.6033 20.3536 79.2116 19.2412 76.7197 21.1481C73.6048 23.5317 63.2219 43.7924 89.1791 59.2859C115.136 43.7924 104.753 23.5325 101.639 21.1489C99.1467 19.242 95.7549 20.3543 94.3706 21.1489Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.HeadFace"
-														/>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.HeadFace)"
+                              d="M94.3706 21.1489H89.1791L83.9877 21.1481C82.6033 20.3536 79.2116 19.2412 76.7197 21.1481C73.6048 23.5317 63.2219 43.7924 89.1791 59.2859C115.136 43.7924 104.753 23.5325 101.639 21.1489C99.1467 19.242 95.7549 20.3543 94.3706 21.1489Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.HeadFace"
+                            />
 
-														<path
-															(click)="pathSelect(EnumService.AccidentBodyPartsIds.HeadSoftTissue)"
-															d="M92.9984 3C103.499 4.5 108.999 19.5 105.998 19.5L72.0002 19.5C68.5 19.4999 72.9988 6 84.9547 3H92.9984Z"
-															fill="#A1A8CA"
-															stroke="#CACEE1"
-															[id]="EnumService.AccidentBodyPartsIds.HeadSoftTissue"
-														/>
-													</svg>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.HeadSoftTissue)"
+                              d="M92.9984 3C103.499 4.5 108.999 19.5 105.998 19.5L72.0002 19.5C68.5 19.4999 72.9988 6 84.9547 3H92.9984Z"
+                              fill="#A1A8CA"
+                              stroke="#CACEE1"
+                              [id]="EnumService.AccidentBodyPartsIds.HeadSoftTissue"
+                            />
 
-													<div class="parts-view">
-														<ion-toolbar mode="ios">
-															<ion-buttons slot="start">
-																<ion-button class="arrow-button left" size="small" fill="clear" (click)="previousPart()">
-																	<ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-																</ion-button>
-															</ion-buttons>
-															<ion-title>
-																{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+ bodyParts[currentBodyPartIndex].langkey | translate}}
-															</ion-title>
-															<ion-buttons slot="end">
-																<ion-button class="arrow-button right" size="small" fill="clear" (click)="nextPart()">
-																	<ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-																</ion-button>
-															</ion-buttons>
-														</ion-toolbar>
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LowerLegRight)"
+                              d="M54.3444 345C60.7444 343 62.6777 348.167 62.8444 351C65.8443 360.5 60.3445 409 57.8445 412C55.3445 415 54.3444 413.5 52.8445 412C51.3446 410.5 49.3444 367.5 48.3444 362C47.3444 356.5 46.3444 347.5 54.3444 345Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LowerLegRight"
+                            />
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.LowerLegLeft)"
+                              d="M132.057 344.955C125.524 343.447 123.989 348.746 124.038 351.584C121.77 361.285 130.944 409.226 133.665 412.027C136.386 414.828 137.269 413.256 138.65 411.646C140.032 410.037 138.755 367.009 139.333 361.449C139.912 355.889 140.224 346.839 132.057 344.955Z"
+                              fill="#A0A8C9"
+                              [id]="EnumService.AccidentBodyPartsIds.LowerLegLeft"
+                            />
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.UpperArmRight)"
+                              d="M34.8771 120.5C35.5869 113.757 41.3352 109.139 45.0669 107.485C45.6944 107.207 46.3397 107.71 46.3015 108.395C45.5728 121.468 43.6921 145.571 41.3772 147.5C38.9772 149.5 37.3771 147.667 36.8771 146.5C35.8771 141 34.0771 128.1 34.8771 120.5Z"
+                              fill="#A1A8CA"
+                              [id]="EnumService.AccidentBodyPartsIds.UpperArmRight"
+                            />
+                            <path
+                              (click)="pathSelect(EnumService.AccidentBodyPartsIds.UpperArmLeft)"
+                              d="M144.49 121.721C143.828 115.413 138.497 111.08 134.987 109.492C134.362 109.209 133.715 109.709 133.753 110.394C134.442 122.731 136.207 145.348 138.379 147.162C140.635 149.046 142.14 147.319 142.61 146.219C143.55 141.037 145.242 128.882 144.49 121.721Z"
+                              fill="#A1A8CA"
+                              [id]="EnumService.AccidentBodyPartsIds.UpperArmLeft"
+                            />
+                          </svg>
 
-														<div class="parts-checkboxes" [formGroupName]="UtilService.FCUniqueName(section, question)">
-															<ion-item *ngFor="let item of bodyParts[currentBodyPartIndex].parts">
-																<ion-checkbox
-																	slot="start"
-																	[formControlName]="UtilService.SubFCName(UtilService.FCUniqueName(section, question),item.id)"
-																	(ionChange)="partSelectChange(item, $event)"
-																></ion-checkbox>
-																<ion-label>{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+item.langkey | translate}}</ion-label>
-															</ion-item>
-														</div>
-													</div>
-												</div>
+                          <div class="parts-view">
+                            <ion-toolbar mode="ios">
+                              <ion-buttons slot="start">
+                                <ion-button
+                                  class="arrow-button left"
+                                  size="small"
+                                  fill="clear"
+                                  (click)="previousPart()"
+                                >
+                                  <ion-icon
+                                    slot="icon-only"
+                                    name="chevron-back-outline"
+                                  ></ion-icon>
+                                </ion-button>
+                              </ion-buttons>
+                              <ion-title>
+                                {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+
+                                bodyParts[currentBodyPartIndex].langkey |
+                                translate}}
+                              </ion-title>
+                              <ion-buttons slot="end">
+                                <ion-button
+                                  class="arrow-button right"
+                                  size="small"
+                                  fill="clear"
+                                  (click)="nextPart()"
+                                >
+                                  <ion-icon
+                                    slot="icon-only"
+                                    name="chevron-forward-outline"
+                                  ></ion-icon>
+                                </ion-button>
+                              </ion-buttons>
+                            </ion-toolbar>
 
-												<div class="selected-parts-view">
-													<ng-container *ngFor="let item of selectedBodyParts | keyvalue">
-														<div class="body-part" *ngIf="item.value.checked">
-															<div class="name">{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+item.value.langkey | translate}}</div>
-															<ion-button fill="clear" (click)="removeSelectedBodyPart(item.value)">
-																<ion-icon slot="icon-only" name="close"></ion-icon>
-															</ion-button>
-														</div>
-													</ng-container>
-												</div>
-											</div>
-										</ng-container>
-									</ng-container>
-								</ng-container>
-							</ng-container>
+                            <div
+                              class="parts-checkboxes"
+                              [formGroupName]="UtilService.FCUniqueName(section, question)"
+                            >
+                              <ion-item
+                                *ngFor="let item of bodyParts[currentBodyPartIndex].parts"
+                              >
+                                <ion-checkbox
+                                  slot="start"
+                                  [formControlName]="UtilService.SubFCName(UtilService.FCUniqueName(section, question),item.id)"
+                                  (ionChange)="partSelectChange(item, $event)"
+                                ></ion-checkbox>
+                                <ion-label
+                                  >{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+item.langkey
+                                  | translate}}</ion-label
+                                >
+                              </ion-item>
+                            </div>
+                          </div>
+                        </div>
 
-							<ng-template #customQuestions>
-								<app-custom-questions-container
-									[sectionId]="section.sectionId"
-									[questions]="section.questions"
-									[isSubmitted]="isSubmitted"
-									[formGroup]="formGroup"
-									[sectionIndex]="sectionIndex"
-									[questionElementIds]="questionElementIds"
-									[section]="section"
-								></app-custom-questions-container>
-							</ng-template>
-						</ng-container>
-					</ng-container>
+                        <div class="selected-parts-view">
+                          <ng-container
+                            *ngFor="let item of selectedBodyParts | keyvalue"
+                          >
+                            <div class="body-part" *ngIf="item.value.checked">
+                              <div class="name">
+                                {{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.ACCIDENTREPORT_FORM.BODY_PARTS.'+item.value.langkey
+                                | translate}}
+                              </div>
+                              <ion-button
+                                fill="clear"
+                                (click)="removeSelectedBodyPart(item.value)"
+                              >
+                                <ion-icon
+                                  slot="icon-only"
+                                  name="close"
+                                ></ion-icon>
+                              </ion-button>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
 
-					<!--        End of form -->
-					<ng-container *ngIf="!sharedDataService.dedicatedMode">
-						<div class="hr-line-full ion-margin-top"></div>
+              <ng-template #customQuestions>
+                <app-custom-questions-container
+                  [sectionId]="section.sectionId"
+                  [questions]="section.questions"
+                  [isSubmitted]="isSubmitted"
+                  [formGroup]="formGroup"
+                  [sectionIndex]="sectionIndex"
+                  [questionElementIds]="questionElementIds"
+                  [section]="section"
+                ></app-custom-questions-container>
+              </ng-template>
+            </ng-container>
+          </ng-container>
 
-						<ion-item class="text-bottom-msg">
-							<ion-label class="ion-text-wrap ion-text-center">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-						</ion-item>
-						<ion-item class="ion-margin-vertical ion-padding-bottom">
-							<ion-button expand="full" type="submit" class="action-btn">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
-						</ion-item>
-					</ng-container>
-				</ion-list>
-			</form>
-			<div class="fill-vertical-space"></div>
-			<!--        End of form -->
-			<ng-container *ngIf="sharedDataService.dedicatedMode">
-				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-					<ion-button slot="end" (click)="onContinue()" class="action-btn">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
-				</ion-item>
-			</ng-container>
-		</div>
-	</ion-content>
+          <!--        End of form -->
+          <ng-container *ngIf="!sharedDataService.dedicatedMode">
+            <div class="hr-line-full ion-margin-top"></div>
+
+            <ion-item class="text-bottom-msg">
+              <ion-label class="ion-text-wrap ion-text-center"
+                >{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' |
+                translate}}</ion-label
+              >
+            </ion-item>
+            <ion-item class="ion-margin-vertical ion-padding-bottom">
+              <ion-button expand="full" type="submit" class="action-btn"
+                >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' |
+                translate}}</ion-button
+              >
+            </ion-item>
+          </ng-container>
+        </ion-list>
+      </form>
+      <div class="fill-vertical-space"></div>
+      <!--        End of form -->
+      <ng-container *ngIf="sharedDataService.dedicatedMode">
+        <ion-item class="text-bottom-msg" lines="none">
+          <ion-label class="ion-text-wrap ion-padding"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' |
+            translate}}</ion-label
+          >
+          <ion-button slot="end" (click)="onContinue()" class="action-btn"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button
+          >
+        </ion-item>
+      </ng-container>
+    </div>
+  </ion-content>
 </ng-template>

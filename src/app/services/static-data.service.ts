@@ -143,6 +143,22 @@ export class StaticDataService {
           },
         },
         {
+          name: "Upper Arm - Right",
+          langkey: "UPPER_ARM_RIGHT",
+          id: EnumService.AccidentBodyPartsIds.UpperArmRight,
+          path: {
+            fill: "#A1A8CA",
+          },
+        },
+        {
+          name: "Upper Arm - Left",
+          langkey: "UPPER_ARM_LEFT",
+          id: EnumService.AccidentBodyPartsIds.UpperArmLeft,
+          path: {
+            fill: "#A1A8CA",
+          },
+        },
+        {
           name: "Elbow - Right",
           langkey: "ELBOW_RIGHT",
           id: EnumService.AccidentBodyPartsIds.ArmsElbowRight,
@@ -264,6 +280,23 @@ export class StaticDataService {
             fill: "#A0A8C9",
           },
         },
+        {
+          name: "Lower Leg - Right",
+          langkey: "LOWER_LEG_RIGHT",
+          id: EnumService.AccidentBodyPartsIds.LowerLegRight,
+          path: {
+            fill: "#A0A8C9",
+          },
+        },
+        {
+          name: "Lower Leg - Left",
+          langkey: "LOWER_LEG_LEFT",
+          id: EnumService.AccidentBodyPartsIds.LowerLegLeft,
+          path: {
+            fill: "#A0A8C9",
+          },
+        },
+
         {
           name: "Knee - Right",
           langkey: "KNEE_RIGHT",

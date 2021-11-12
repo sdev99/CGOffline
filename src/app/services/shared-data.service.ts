@@ -56,6 +56,7 @@ import { File } from "@ionic-native/file/ngx";
 import { Base64 } from "@ionic-native/base64/ngx";
 import { InductionItem } from "../_models/inductionItem";
 import { FilehandlerService } from "./filehandler.service";
+import { DeviceDetailData } from "../_models/offline/DeviceDetailData";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -95,6 +96,7 @@ export class SharedDataService {
   offlineMode = true;
   // when open form or document , useful for next screens
 
+  dedicatedModeOfflineDeviceDetailData: DeviceDetailData;
   dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;
   dedicatedModeAssignedEntities: Array<DeviceEntityDetail>;
 
@@ -2100,7 +2102,13 @@ export class SharedDataService {
         if (this.checkInPostData) {
           if (this.offlineMode) {
             const formSubmitDataId = result;
-            this.checkInPostData.formSubmitDataId = formSubmitDataId;
+            if (
+              !this.checkInPostData.formSubmitDataId ||
+              !Array.isArray(this.checkInPostData.formSubmitDataId)
+            ) {
+              this.checkInPostData.formSubmitDataId = [];
+            }
+            this.checkInPostData.formSubmitDataId.push(formSubmitDataId);
           } else {
             this.checkInPostData.inductionFormContent =
               result.formAnswerHtmlString;

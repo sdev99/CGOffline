@@ -44,6 +44,7 @@ import { FilehandlerService } from "./filehandler.service";
 import { Capacitor } from "@capacitor/core";
 import { DeviceUserLastCheckinDetail } from "../_models/offline/DeviceUserLastCheckinDetail";
 import { DeviceGuestUserLastCheckinDetail } from "../_models/offline/DeviceGuestUserLastCheckinDetail";
+import { DeviceDetailData } from "../_models/offline/DeviceDetailData";
 
 declare var window: any;
 
@@ -1299,22 +1300,33 @@ export class OfflineManagerService {
         .then((res: any) => {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
-            resolve(
-              list.filter((item) => {
-                if (
-                  item.expirationDate &&
-                  item.expirationDate !== StaticDataService.userDefaultDate
-                ) {
-                  const expireyDate = moment(
-                    moment(item.expirationDate),
-                    "YYYY-MM-DD"
-                  );
-                  const currDate = moment(moment(), "YYYY-MM-DD");
-                  const diff = expireyDate.diff(currDate, "days");
-                  return diff >= 0;
-                }
-                return true;
-              })
+            this.getDeviceDetail().then(
+              (deviceDetailData: DeviceDetailData) => {
+                const timeDifference = parseInt(
+                  deviceDetailData.timeDifference
+                );
+
+                resolve(
+                  list.filter((item) => {
+                    if (
+                      item.expirationDate &&
+                      item.expirationDate !== StaticDataService.userDefaultDate
+                    ) {
+                      const expireyDate = moment(
+                        moment(item.expirationDate),
+                        "YYYY-MM-DD"
+                      );
+                      const currentDateTime = moment();
+                      currentDateTime.add(timeDifference, "minutes");
+
+                      const currDate = moment(currentDateTime, "YYYY-MM-DD");
+                      const diff = expireyDate.diff(currDate, "days");
+                      return diff >= 0;
+                    }
+                    return true;
+                  })
+                );
+              }
             );
           } else {
             resolve([]);
@@ -1438,40 +1450,54 @@ export class OfflineManagerService {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
             let filteredList = [];
-            list.map((item: any) => {
-              if (
-                item.expiryDate &&
-                item.expiryDate !== StaticDataService.userDefaultDate
-              ) {
-                const expireyDate = moment(
-                  moment(item.expiryDate),
-                  "YYYY-MM-DD"
+
+            this.getDeviceDetail().then(
+              (deviceDetailData: DeviceDetailData) => {
+                const timeDifference = parseInt(
+                  deviceDetailData.timeDifference
                 );
-                const currDate = moment(moment(), "YYYY-MM-DD");
-                const diff = expireyDate.diff(currDate, "days");
+                list.map((item: any) => {
+                  if (
+                    item.expiryDate &&
+                    item.expiryDate !== StaticDataService.userDefaultDate
+                  ) {
+                    const currentDateTime = moment();
+                    currentDateTime.add(timeDifference, "minutes");
 
-                if (diff >= 0) {
-                  const issuedDateObj = moment(item.issuedDate);
-                  const expiryDateObj = moment(item.expiryDate);
-                  const currentDate = moment();
+                    const expireyDate = moment(
+                      moment(item.expiryDate),
+                      StaticDataService.dateFormat
+                    );
+                    const currDate = moment(
+                      currentDateTime,
+                      StaticDataService.dateFormat
+                    );
+                    const diff = expireyDate.diff(currDate, "days");
 
-                  const formattedIssuedDate = issuedDateObj.from(currentDate);
-                  const formattedExpiryDate =
-                    expiryDateObj.from(currentDate, true) +
-                    " (" +
-                    moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
-                    ")";
+                    if (diff >= 0) {
+                      const issuedDateObj = moment(item.issuedDate);
+                      const expiryDateObj = moment(item.expiryDate);
 
-                  item.formattedIssuedDate = formattedIssuedDate;
-                  item.formattedExpiryDate = formattedExpiryDate;
-                  item.todayDate = currentDate.format(
-                    "YYYY-MM-DDTHH:mm:00.000"
-                  );
+                      const formattedIssuedDate =
+                        issuedDateObj.from(currentDateTime);
+                      const formattedExpiryDate =
+                        expiryDateObj.from(currentDateTime, true) +
+                        " (" +
+                        moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+                        ")";
 
-                  filteredList.push(item);
-                }
+                      item.formattedIssuedDate = formattedIssuedDate;
+                      item.formattedExpiryDate = formattedExpiryDate;
+                      item.todayDate = currentDateTime.format(
+                        "YYYY-MM-DDTHH:mm:00.000"
+                      );
+
+                      filteredList.push(item);
+                    }
+                  }
+                });
               }
-            });
+            );
 
             resolve(filteredList);
           } else {
@@ -1498,22 +1524,37 @@ export class OfflineManagerService {
           .then((res: any) => {
             if (res.rows?.length > 0) {
               const list = this.convertToArray(res.rows);
-              const filteredList = list.filter((item: any) => {
-                if (
-                  item.expiryDate &&
-                  item.expiryDate !== StaticDataService.userDefaultDate
-                ) {
-                  const expireyDate = moment(
-                    moment(item.expiryDate),
-                    "YYYY-MM-DD"
+
+              this.getDeviceDetail().then(
+                (deviceDetailData: DeviceDetailData) => {
+                  const timeDifference = parseInt(
+                    deviceDetailData.timeDifference
                   );
-                  const currDate = moment(moment(), "YYYY-MM-DD");
-                  const diff = expireyDate.diff(currDate, "days");
-                  return diff < 0;
+
+                  const filteredList = list.filter((item: any) => {
+                    if (
+                      item.expiryDate &&
+                      item.expiryDate !== StaticDataService.userDefaultDate
+                    ) {
+                      const expireyDate = moment(
+                        moment(item.expiryDate),
+                        StaticDataService.dateFormat
+                      );
+                      const currentDateTime = moment();
+                      currentDateTime.add(timeDifference, "minutes");
+
+                      const currDate = moment(
+                        currentDateTime,
+                        StaticDataService.dateFormat
+                      );
+                      const diff = expireyDate.diff(currDate, "days");
+                      return diff < 0;
+                    }
+                    return false;
+                  });
+                  resolve(filteredList.concat(archivedPermitList));
                 }
-                return false;
-              });
-              resolve(filteredList.concat(archivedPermitList));
+              );
             } else {
               resolve(archivedPermitList);
             }
@@ -1899,9 +1940,11 @@ export class OfflineManagerService {
                 const lastCheckinDate =
                   lastCheckinForCurrentLocation.checkInDate;
                 const lastCheckinDateObj = moment(
-                  moment(lastCheckinDate).format("YYYY-MM-DD")
+                  moment(lastCheckinDate).format(StaticDataService.dateFormat)
                 );
-                const currentDate = moment(moment().format("YYYY-MM-DD"));
+                const currentDate = moment(
+                  moment().format(StaticDataService.dateFormat)
+                );
 
                 const diff = currentDate.diff(
                   lastCheckinDateObj,
@@ -3546,7 +3589,7 @@ export class OfflineManagerService {
                   "imageVideoFileId_" + obj.userSignaturePhotoImageVideoFileId
                 ] || "",
               checkInDate: obj.checkInDate || "",
-              formAnswerData: obj.formAnswerData || "",
+              formAnswerData: obj.formAnswerData || [],
               offlineUserCheckInDetailID: obj.deviceUserCheckinDetailId,
             });
             if (checkinDetails.length === checkinDetailsList.length) {
@@ -3557,16 +3600,35 @@ export class OfflineManagerService {
           };
 
           checkinDetails.map((checkinDetailObj) => {
-            if (checkinDetailObj.formSubmitDataId) {
-              this.getOfflineSubmittedFormData(
-                checkinDetailObj.formSubmitDataId
-              ).then((submittedFormData: any) => {
-                this.replaceImageNameInFormData(
-                  submittedFormData,
-                  uploadedFiles
+            if (
+              checkinDetailObj.formSubmitDataId &&
+              checkinDetailObj.formSubmitDataId.length > 0
+            ) {
+              let countSubmittedForm = 0;
+              checkinDetailObj.formSubmitDataId.forEach((formSubmitDataId) => {
+                this.getOfflineSubmittedFormData(formSubmitDataId).then(
+                  (submittedFormData: any) => {
+                    this.replaceImageNameInFormData(
+                      submittedFormData,
+                      uploadedFiles
+                    );
+                    if (
+                      !checkinDetailObj.formAnswerData ||
+                      !Array.isArray(checkinDetailObj.formAnswerData)
+                    ) {
+                      checkinDetailObj.formAnswerData = [];
+                    }
+                    checkinDetailObj.formAnswerData.push(submittedFormData);
+
+                    countSubmittedForm++;
+                    if (
+                      checkinDetailObj.formSubmitDataId.length ===
+                      countSubmittedForm
+                    ) {
+                      addToCheckinDetailList(checkinDetailObj);
+                    }
+                  }
                 );
-                checkinDetailObj.formAnswerData = submittedFormData;
-                addToCheckinDetailList(checkinDetailObj);
               });
             } else {
               addToCheckinDetailList(checkinDetailObj);

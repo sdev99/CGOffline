@@ -22,6 +22,7 @@ import { environment } from "src/environments/environment";
 import { StaticDataService } from "./services/static-data.service";
 import { OfflineManagerService } from "./services/offline-manager.service";
 import { DeviceOfflinePage } from "./modals/device-offline/device-offline.page";
+import { DeviceDetailData } from "./_models/offline/DeviceDetailData";
 
 const { Geolocation, Permissions, App, SplashScreen, Network } = Plugins;
 
@@ -70,6 +71,16 @@ export class AppComponent {
         ) === "true"
           ? true
           : false;
+
+      if (this.sharedDataService.offlineMode) {
+        this.offlineManagerService
+          .getDeviceDetail()
+          .then((deviceDetail: DeviceDetailData) => {
+            this.sharedDataService.dedicatedModeOfflineDeviceDetailData =
+              deviceDetail;
+          })
+          .catch((error) => {});
+      }
 
       const appLang = localStorage.getItem(
         EnumService.LocalStorageKeys.APP_LANGUAGE
@@ -322,6 +333,13 @@ export class AppComponent {
     );
     if (isOfflineModeEnable === "true") {
       this.sharedDataService.offlineMode = true;
+      this.offlineManagerService
+        .getDeviceDetail()
+        .then((deviceDetail: DeviceDetailData) => {
+          this.sharedDataService.dedicatedModeOfflineDeviceDetailData =
+            deviceDetail;
+        })
+        .catch((error) => {});
     } else {
       if (!this.deviceOfflineModal) {
         this.deviceOfflineModal = await this.modalController.create({
