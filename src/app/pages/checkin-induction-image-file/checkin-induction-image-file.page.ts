@@ -1,72 +1,83 @@
-import {Component, OnInit} from '@angular/core';
-import {NavController} from '@ionic/angular';
-import {DemoDataService} from '../../services/demo-data.service';
-import {ActivatedRoute} from '@angular/router';
-import {SharedDataService} from '../../services/shared-data.service';
-import {InductionItem} from '../../_models/inductionItem';
-import {UtilService} from '../../services/util.service';
-import {EnumService} from '../../services/enum.service';
-import {AccountService} from '../../services/account.service';
-import {User} from '../../_models';
-import {FilehandlerService} from '../../services/filehandler.service';
+import { Component, OnInit } from "@angular/core";
+import { NavController } from "@ionic/angular";
+import { DemoDataService } from "../../services/demo-data.service";
+import { ActivatedRoute } from "@angular/router";
+import { SharedDataService } from "../../services/shared-data.service";
+import { InductionItem } from "../../_models/inductionItem";
+import { UtilService } from "../../services/util.service";
+import { EnumService } from "../../services/enum.service";
+import { AccountService } from "../../services/account.service";
+import { User } from "../../_models";
+import { FilehandlerService } from "../../services/filehandler.service";
 
 @Component({
-    selector: 'app-checkin-induction-image-file',
-    templateUrl: './checkin-induction-image-file.page.html',
-    styleUrls: ['./checkin-induction-image-file.page.scss'],
+  selector: "app-checkin-induction-image-file",
+  templateUrl: "./checkin-induction-image-file.page.html",
+  styleUrls: ["./checkin-induction-image-file.page.scss"],
 })
 export class CheckinInductionImageFilePage implements OnInit {
-    user: User;
+  user: User;
 
-    inductionItem: InductionItem;
+  inductionItem: InductionItem;
 
-    constructor(
-        public navCtrl: NavController,
-        public route: ActivatedRoute,
-        public sharedDataService: SharedDataService,
-        public utilService: UtilService,
-        public accountService: AccountService,
-        public filehandlerService: FilehandlerService,
-    ) {
-        if (!sharedDataService.dedicatedMode) {
-            this.user = accountService.userValue;
-        }
-
-        this.route.queryParams.subscribe((parameters) => {
-            const inductionContentItemIndex = parameters.inductionContentItemIndex;
-            if (this.sharedDataService.checkInDetail?.checkInInductionItems?.length > inductionContentItemIndex) {
-                this.inductionItem = this.sharedDataService.checkInDetail?.checkInInductionItems[inductionContentItemIndex];
-            }
-        });
+  constructor(
+    public navCtrl: NavController,
+    public route: ActivatedRoute,
+    public sharedDataService: SharedDataService,
+    public utilService: UtilService,
+    public accountService: AccountService,
+    public filehandlerService: FilehandlerService
+  ) {
+    if (!sharedDataService.dedicatedMode) {
+      this.user = accountService.userValue;
     }
 
-    ngOnInit() {
-    }
+    this.route.queryParams.subscribe((parameters) => {
+      const inductionContentItemIndex = parameters.inductionContentItemIndex;
+      if (
+        this.sharedDataService.checkInDetail?.checkInInductionItems?.length >
+        inductionContentItemIndex
+      ) {
+        this.inductionItem =
+          this.sharedDataService.checkInDetail?.checkInInductionItems[
+            inductionContentItemIndex
+          ];
+      }
+    });
+  }
 
-    onBack() {
-        this.navCtrl.back();
-    }
+  ngOnInit() {}
 
-    onClose() {
-        if (this.sharedDataService.dedicatedMode) {
-            this.navCtrl.navigateRoot('dashboard-dm', {replaceUrl: true});
-        } else {
-            this.navCtrl.navigateBack('/checkinout-confirm', {replaceUrl: true});
-        }
-    }
+  onBack() {
+    this.navCtrl.back();
+  }
 
-    onContinue() {
-        let userId;
-        if (this.sharedDataService.dedicatedMode) {
-            userId = this.sharedDataService.dedicatedModeUserDetail.userId;
-        } else {
-            userId = this.user?.userId;
-        }
-        this.sharedDataService.inductionNavigationProcess(userId, this.sharedDataService.inductionContentItemIndex);
+  onClose() {
+    if (this.sharedDataService.dedicatedMode) {
+      this.navCtrl.navigateRoot("dashboard-dm", { replaceUrl: true });
+    } else {
+      this.navCtrl.navigateBack("/checkinout-confirm", { replaceUrl: true });
     }
+  }
 
-    fullScreenImg() {
-        const url = this.sharedDataService.globalDirectories.documentDirectory + '' + this.inductionItem.documentFileName;
-        this.filehandlerService.openFile(url, true);
+  onContinue() {
+    let userId;
+    if (this.sharedDataService.dedicatedMode) {
+      userId = this.sharedDataService.dedicatedModeUserDetail?.userId;
+    } else {
+      userId = this.user?.userId;
     }
+    this.sharedDataService.inductionNavigationProcess(
+      userId,
+      this.sharedDataService.inductionContentItemIndex
+    );
+  }
+
+  fullScreenImg() {
+    const url =
+      this.sharedDataService.globalDirectories.documentDirectory +
+      "" +
+      this.inductionItem.documentFileName;
+    this.filehandlerService.openFile(url, true);
+  }
 }

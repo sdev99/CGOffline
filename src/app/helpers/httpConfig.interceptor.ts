@@ -54,7 +54,7 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 		} else {
 			if (this.sharedDataService.dedicatedModeUserDetail?.userId) {
 				request = request.clone({
-					headers: request.headers.set('userID', this.sharedDataService.dedicatedModeUserDetail.userId),
+					headers: request.headers.set('userID', this.sharedDataService.dedicatedModeUserDetail?.userId),
 				});
 			}
 		}

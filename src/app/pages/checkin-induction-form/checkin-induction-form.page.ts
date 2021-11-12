@@ -88,7 +88,7 @@ export class CheckinInductionFormPage implements OnInit {
 		if (isValid) {
 			let userId;
 			if (this.sharedDataService.dedicatedMode) {
-				userId = this.sharedDataService.dedicatedModeUserDetail.userId;
+				userId = this.sharedDataService.dedicatedModeUserDetail?.userId;
 			} else {
 				userId = this.user?.userId;
 			}
