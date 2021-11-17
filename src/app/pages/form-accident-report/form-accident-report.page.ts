@@ -31,6 +31,7 @@ export class FormAccidentReportPage {
 
   isSubmitted = false;
   errorMessage = "";
+  isFormSubmitting = false;
 
   formGroup: FormGroup;
   locations: Array<LocationItem>;
@@ -615,12 +616,14 @@ export class FormAccidentReportPage {
     }
 
     if (!this.errorMessage) {
+      this.isFormSubmitting = true;
       this.sharedDataService.saveFormAnswers(
         this.apiService,
         this.formGroup,
         this.formBuilderDetail,
         this.user,
         (status, result) => {
+          this.isFormSubmitting = false;
           if (status) {
           } else {
             this.errorMessage = result;

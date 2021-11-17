@@ -161,77 +161,87 @@ export class FormsDmPage implements OnInit {
   }
 
   openForm(item: FormItem) {
-    const callBack = (signOffFormDetail) => {
-      this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
-      this.sharedDataService.viewFormFor = EnumService.ViewFormForType.FormDM;
-      this.sharedDataService.signOffFormDetail = signOffFormDetail;
-      this.sharedDataService.dedicatedModeTempAuthFor =
-        EnumService.DedicatedModeTempAuthType.Form;
-      this.navController.navigateForward("/form-open-auth-dm");
-    };
-
-    if (this.sharedDataService.offlineMode) {
-      this.offlineManagerService
-        .getFormDetail(
-          item.formID,
-          item.formVersionID,
-          item.formVersionNo,
-          item.formFolderID
-        )
-        .then((res) => {
-          if (res) {
-            const signOffFormDetail = res as SignOffFormDetail;
-            callBack(signOffFormDetail);
-          }
-        });
+    if (item.isLimitAccessApplied) {
+      this.sharedDataService.showLimitedAccessAlert();
     } else {
-      this.utilService.presentLoadingWithOptions();
-      this.apiService.getDedicatedModeSignOffFormDetail(item.formID).subscribe(
-        (response: Response) => {
-          this.utilService.hideLoading();
-          if (
-            response.StatusCode ===
-            EnumService.ApiResponseCode.RequestSuccessful
-          ) {
-            callBack(response.Result as SignOffFormDetail);
-          }
-        },
-        (error) => {
-          this.utilService.hideLoading();
-        }
-      );
+      const callBack = (signOffFormDetail) => {
+        this.sharedDataService.signOffFor = EnumService.SignOffType.FORMS_DM;
+        this.sharedDataService.viewFormFor = EnumService.ViewFormForType.FormDM;
+        this.sharedDataService.signOffFormDetail = signOffFormDetail;
+        this.sharedDataService.dedicatedModeTempAuthFor =
+          EnumService.DedicatedModeTempAuthType.Form;
+        this.navController.navigateForward("/form-open-auth-dm");
+      };
+
+      if (this.sharedDataService.offlineMode) {
+        this.offlineManagerService
+          .getFormDetail(
+            item.formID,
+            item.formVersionID,
+            item.formVersionNo,
+            item.formFolderID
+          )
+          .then((res) => {
+            if (res) {
+              const signOffFormDetail = res as SignOffFormDetail;
+              callBack(signOffFormDetail);
+            }
+          });
+      } else {
+        this.utilService.presentLoadingWithOptions();
+        this.apiService
+          .getDedicatedModeSignOffFormDetail(item.formID)
+          .subscribe(
+            (response: Response) => {
+              this.utilService.hideLoading();
+              if (
+                response.StatusCode ===
+                EnumService.ApiResponseCode.RequestSuccessful
+              ) {
+                callBack(response.Result as SignOffFormDetail);
+              }
+            },
+            (error) => {
+              this.utilService.hideLoading();
+            }
+          );
+      }
     }
   }
 
   openArchivedForm(item: ArchivedDocumentDetail) {
-    if (item.documentFileName) {
-      if (this.sharedDataService.offlineMode) {
-        const fileUrl = this.utilService.getOfflineFileUrl(
-          item.documentFileName,
-          "document"
-        );
+    if (item.isLimitAccessApplied) {
+      this.sharedDataService.showLimitedAccessAlert();
+    } else {
+      if (item.documentFileName) {
+        if (this.sharedDataService.offlineMode) {
+          const fileUrl = this.utilService.getOfflineFileUrl(
+            item.documentFileName,
+            "document"
+          );
 
-        this.filehandlerService.openDownloadedFile(
-          fileUrl,
-          item.documentFileName
-        );
-      } else {
-        this.filehandlerService.openFile(
-          this.sharedDataService.globalDirectories?.documentDirectory +
-            "" +
+          this.filehandlerService.openDownloadedFile(
+            fileUrl,
             item.documentFileName
+          );
+        } else {
+          this.filehandlerService.openFile(
+            this.sharedDataService.globalDirectories?.documentDirectory +
+              "" +
+              item.documentFileName
+          );
+        }
+      } else {
+        this.utilService.showAlert(
+          "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
+          "File Not Available Yet"
         );
       }
-    } else {
-      this.utilService.showAlert(
-        "This device needs to be synced first in order to show the selected file. Please sync device and try again.",
-        "File Not Available Yet"
-      );
     }
   }
 
   openFormFolder(item: FormItem) {
-    const newPath = "documents-dm/" + item.formFolderID;
+    const newPath = "forms-dm/" + item.formFolderID;
     this.dynamicRouteService.addDynamicRoute(newPath, FormsDmPage, true);
     this.navController.navigateForward([newPath], {
       queryParams: { itemDetail: JSON.stringify(item) },

@@ -96,7 +96,6 @@ export class SharedDataService {
   offlineMode = true;
   // when open form or document , useful for next screens
 
-  dedicatedModeOfflineDeviceDetailData: DeviceDetailData;
   dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;
   dedicatedModeAssignedEntities: Array<DeviceEntityDetail>;
 
@@ -634,6 +633,13 @@ export class SharedDataService {
       });
     }
   }
+
+  showLimitedAccessAlert = () => {
+    this.utilService.showAlert(
+      "Access to this document has been limited",
+      "Restricted File"
+    );
+  };
 
   /**
    * For dedicated mode
@@ -2146,7 +2152,10 @@ export class SharedDataService {
               .insertHAVExposureForDate({
                 userId: userId,
                 exposure: havAnswerDetail.totalExposure,
-                date: moment().format("YYYY-MM-DDT00:00:00.000"),
+                date: UtilService.todayCompanyDate(
+                  this.offlineManagerService.offlineDeviceDetailData
+                    .timeDifference
+                ).format("YYYY-MM-DDT00:00:00.000"),
               })
               .then((res) => {});
           }
@@ -2263,7 +2272,6 @@ export class SharedDataService {
 
   submitInductionCheckInData = async (apiService: ApiService) => {
     const nextScreen = this.dedicatedMode ? "/dashboard-dm" : "/tabs/dashboard";
-    const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
 
     const onSuccess = (data) => {
       this.observablesService.publishSomeData(
@@ -2295,6 +2303,11 @@ export class SharedDataService {
     };
 
     if (this.offlineMode) {
+      const utcDateTime = UtilService.todayCompanyDate(
+        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+        false
+      ).format(StaticDataService.dateTimeFormatForDb);
+
       let entityData: any;
       if (this.dedicatedModeLocationUse.locationID) {
         entityData = await this.offlineManagerService.getDeviceLocationDetail(
@@ -2355,18 +2368,23 @@ export class SharedDataService {
       this.offlineManagerService
         .insertCheckinDetails(checkinData)
         .then((res) => {
-          this.insertInductionItemsArchiveRecords(() => {
-            this.observablesService.publishSomeData(
-              EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
-              true
-            );
+          if (this.checkInDetail?.checkInEntityDetail?.processInduction) {
+            this.insertInductionItemsArchiveRecords(() => {
+              this.observablesService.publishSomeData(
+                EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
+                true
+              );
+              onSuccess(checkinData);
+            });
+          } else {
             onSuccess(checkinData);
-          });
+          }
         })
         .catch((error) => {
           this.processCheckInError(error, nextScreen);
         });
     } else {
+      const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
       this.utilService.presentLoadingWithOptions();
       this.checkInPostData.signOffDate = utcDateTime;
 
@@ -2447,7 +2465,9 @@ export class SharedDataService {
             this.dedicatedModeLocationUse.locationName) +
           " by " +
           signedByName;
-        const createdDateStr = moment().toISOString(true);
+        const createdDateStr = UtilService.todayCompanyDate(
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference
+        ).toISOString(true);
 
         const archiveData = {
           documentID: item.checkInInductionItemID,
@@ -2493,9 +2513,6 @@ export class SharedDataService {
   submitInductionCheckInDataGuest = async (apiService: ApiService) => {
     const nextScreen = this.dedicatedMode ? "/dashboard-dm" : "/tabs/dashboard";
 
-    const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
-    this.checkInPostData.signOffDate = utcDateTime;
-
     const onSuccess = () => {
       this.translateService
         .get([
@@ -2518,6 +2535,12 @@ export class SharedDataService {
     };
 
     if (this.offlineMode) {
+      const utcDateTime = UtilService.todayCompanyDate(
+        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+        false
+      ).format(StaticDataService.dateTimeFormatForDb);
+      this.checkInPostData.signOffDate = utcDateTime;
+
       let entityData: any;
       if (this.dedicatedModeLocationUse.locationID) {
         entityData = await this.offlineManagerService.getDeviceLocationDetail(
@@ -2566,16 +2589,25 @@ export class SharedDataService {
       this.offlineManagerService
         .insertGuestCheckinDetails(checkinData)
         .then((res) => {
-          this.observablesService.publishSomeData(
-            EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
-            true
-          );
-          onSuccess();
+          if (this.checkInDetail?.checkInEntityDetail?.processInduction) {
+            this.insertInductionItemsArchiveRecords(() => {
+              this.observablesService.publishSomeData(
+                EnumService.ObserverKeys.OFFLINE_DATA_SYNC_NEEDED,
+                true
+              );
+              onSuccess();
+            });
+          } else {
+            onSuccess();
+          }
         })
         .catch((error) => {
           this.processCheckInError(error, nextScreen);
         });
     } else {
+      const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
+      this.checkInPostData.signOffDate = utcDateTime;
+
       this.utilService.presentLoadingWithOptions();
       apiService.insertCheckInDetailsGuest(this.checkInPostData).subscribe(
         (response: Response) => {
@@ -2745,20 +2777,31 @@ export class SharedDataService {
             this.workPermitAnswer.totalScore
           ) {
             if (this.dedicatedMode && this.offlineMode) {
-              const dateTimeNow = moment().format("YYYY-MM-DDTHH:mm:00.000");
+              const todayDateTime = UtilService.todayCompanyDate(
+                this.offlineManagerService.offlineDeviceDetailData
+                  .timeDifference
+              );
+
+              const dateTimeNow = todayDateTime.format(
+                "YYYY-MM-DDTHH:mm:00.000"
+              );
               const hasExpiresOn = this.workPermitAnswer.hasExpiresOn;
               const hasExpiresAfter = this.workPermitAnswer.hasExpiresAfter;
-              let expiryDate = moment().add(60, "days");
+              let expiryDate = todayDateTime.add(60, "days");
               if (hasExpiresAfter) {
                 const durations = ["days", "weeks", "months", "years"];
                 const unit: any =
                   durations[this.workPermitAnswer.durationTypeID - 1];
-                expiryDate = moment().add(
+                expiryDate = todayDateTime.add(
                   this.workPermitAnswer.durationValue,
                   unit
                 );
               } else if (hasExpiresOn) {
-                expiryDate = moment(this.workPermitAnswer.expiresOnDate);
+                expiryDate = moment(
+                  moment(this.workPermitAnswer.expiresOnDate).format(
+                    StaticDataService.dateFormat
+                  )
+                );
               }
 
               const permitData = {
@@ -2938,10 +2981,13 @@ export class SharedDataService {
         });
     };
 
-    const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
-    this.signOffDetailsPostData.signOffDate = utcDateTime;
-
     if (this.offlineMode) {
+      const utcDateTime = UtilService.todayCompanyDate(
+        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+        false
+      ).format(StaticDataService.dateTimeFormatForDb);
+      this.signOffDetailsPostData.signOffDate = utcDateTime;
+
       const signOffData = {
         userId: this.signOffDetailsPostData.userId || "",
         documentID: this.signOffDetailsPostData.documentID || 0,
@@ -2971,7 +3017,10 @@ export class SharedDataService {
 
           //Add sign off form/document in archive list
 
-          const createdDateStr = moment().toISOString(true);
+          const createdDateStr = UtilService.todayCompanyDate(
+            this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+            false
+          ).toISOString(true);
           const signedByName =
             (this.dedicatedModeUserDetail.firstName || "") +
             " " +
@@ -3036,6 +3085,9 @@ export class SharedDataService {
           }
         });
     } else {
+      const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
+      this.signOffDetailsPostData.signOffDate = utcDateTime;
+
       this.utilService.presentLoadingWithOptions();
 
       apiService

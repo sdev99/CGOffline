@@ -48,6 +48,7 @@ export class FormRiskassessmentPage implements OnInit {
 
   isSubmitted = false;
   formGroup: FormGroup;
+  isFormSubmitting = false;
 
   list = DemoDataService.riskAssesmentQuestions.clone();
   riskRatings: [RiskRatingItem];
@@ -1043,12 +1044,15 @@ export class FormRiskassessmentPage implements OnInit {
     this.isSubmitted = true;
     this.errorMessage = "";
 
+    this.isFormSubmitting = true;
     this.sharedDataService.saveFormAnswers(
       this.apiService,
       this.formGroup,
       this.formBuilderDetail,
       this.user,
       (status, result) => {
+        this.isFormSubmitting = false;
+
         if (status) {
         } else {
           this.errorMessage = result;

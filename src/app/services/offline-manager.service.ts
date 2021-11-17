@@ -56,12 +56,17 @@ export class OfflineManagerService {
   readonly db_name: string = "compliancegenie.db";
   readonly db_table: string = "userTable";
 
+  public offlineDeviceDetailData: DeviceDetailData = null;
+
   constructor(
     private platform: Platform,
     private sqlite: SQLite,
-    private utilService: UtilService,
     private filehandlerService: FilehandlerService
-  ) {}
+  ) {
+    this.getDeviceDetail().then((deviceDetailData: DeviceDetailData) => {
+      this.offlineDeviceDetailData = deviceDetailData;
+    });
+  }
 
   public dbSetUp() {
     if (UtilService.isLocalHost()) {
@@ -328,6 +333,7 @@ export class OfflineManagerService {
 
       callBack && callBack();
       console.log("DeviceDetails Inserted");
+      this.offlineDeviceDetailData = deviceDetailData;
     }
 
     // deviceEntityData
@@ -1300,33 +1306,20 @@ export class OfflineManagerService {
         .then((res: any) => {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
-            this.getDeviceDetail().then(
-              (deviceDetailData: DeviceDetailData) => {
-                const timeDifference = parseInt(
-                  deviceDetailData.timeDifference
-                );
 
-                resolve(
-                  list.filter((item) => {
-                    if (
-                      item.expirationDate &&
-                      item.expirationDate !== StaticDataService.userDefaultDate
-                    ) {
-                      const expireyDate = moment(
-                        moment(item.expirationDate),
-                        "YYYY-MM-DD"
-                      );
-                      const currentDateTime = moment();
-                      currentDateTime.add(timeDifference, "minutes");
-
-                      const currDate = moment(currentDateTime, "YYYY-MM-DD");
-                      const diff = expireyDate.diff(currDate, "days");
-                      return diff >= 0;
-                    }
-                    return true;
-                  })
-                );
-              }
+            resolve(
+              list.filter((item) => {
+                if (
+                  item.expirationDate &&
+                  item.expirationDate !== StaticDataService.userDefaultDate
+                ) {
+                  return !UtilService.isExpired(
+                    item.expirationDate,
+                    this.offlineDeviceDetailData.timeDifference
+                  );
+                }
+                return true;
+              })
             );
           } else {
             resolve([]);
@@ -1352,7 +1345,10 @@ export class OfflineManagerService {
             const list = this.convertToArray(res.rows);
             list.map((item: any) => {
               const createdDate = moment(item.createdDate);
-              const currentDate = moment();
+              const currentDate = UtilService.todayCompanyDate(
+                this.offlineDeviceDetailData.timeDifference,
+                false
+              );
 
               const formattedCreatedDate = createdDate.from(currentDate);
 
@@ -1418,7 +1414,10 @@ export class OfflineManagerService {
             const list = this.convertToArray(res.rows);
             list.map((item: any) => {
               const createdDate = moment(item.createdDate);
-              const currentDate = moment();
+              const currentDate = UtilService.todayCompanyDate(
+                this.offlineDeviceDetailData.timeDifference,
+                false
+              );
 
               const formattedCreatedDate = createdDate.from(currentDate);
 
@@ -1451,53 +1450,46 @@ export class OfflineManagerService {
             const list = this.convertToArray(res.rows);
             let filteredList = [];
 
-            this.getDeviceDetail().then(
-              (deviceDetailData: DeviceDetailData) => {
-                const timeDifference = parseInt(
-                  deviceDetailData.timeDifference
+            list.map((item: any) => {
+              let isAvailable = false;
+
+              if (
+                item.expiryDate &&
+                item.expiryDate !== StaticDataService.userDefaultDate
+              ) {
+                isAvailable = !UtilService.isExpired(
+                  item.expiryDate,
+                  this.offlineDeviceDetailData.timeDifference
                 );
-                list.map((item: any) => {
-                  if (
-                    item.expiryDate &&
-                    item.expiryDate !== StaticDataService.userDefaultDate
-                  ) {
-                    const currentDateTime = moment();
-                    currentDateTime.add(timeDifference, "minutes");
-
-                    const expireyDate = moment(
-                      moment(item.expiryDate),
-                      StaticDataService.dateFormat
-                    );
-                    const currDate = moment(
-                      currentDateTime,
-                      StaticDataService.dateFormat
-                    );
-                    const diff = expireyDate.diff(currDate, "days");
-
-                    if (diff >= 0) {
-                      const issuedDateObj = moment(item.issuedDate);
-                      const expiryDateObj = moment(item.expiryDate);
-
-                      const formattedIssuedDate =
-                        issuedDateObj.from(currentDateTime);
-                      const formattedExpiryDate =
-                        expiryDateObj.from(currentDateTime, true) +
-                        " (" +
-                        moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
-                        ")";
-
-                      item.formattedIssuedDate = formattedIssuedDate;
-                      item.formattedExpiryDate = formattedExpiryDate;
-                      item.todayDate = currentDateTime.format(
-                        "YYYY-MM-DDTHH:mm:00.000"
-                      );
-
-                      filteredList.push(item);
-                    }
-                  }
-                });
+              } else {
+                isAvailable = true;
               }
-            );
+
+              if (isAvailable) {
+                const currentDateTime = UtilService.todayCompanyDate(
+                  this.offlineDeviceDetailData.timeDifference,
+                  false
+                );
+
+                const issuedDateObj = moment(item.issuedDate);
+                const expiryDateObj = moment(item.expiryDate);
+
+                const formattedIssuedDate = issuedDateObj.from(currentDateTime);
+                const formattedExpiryDate =
+                  expiryDateObj.from(currentDateTime, true) +
+                  " (" +
+                  moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+                  ")";
+
+                item.formattedIssuedDate = formattedIssuedDate;
+                item.formattedExpiryDate = formattedExpiryDate;
+                item.todayDate = currentDateTime.format(
+                  "YYYY-MM-DDTHH:mm:00.000"
+                );
+
+                filteredList.push(item);
+              }
+            });
 
             resolve(filteredList);
           } else {
@@ -1525,36 +1517,19 @@ export class OfflineManagerService {
             if (res.rows?.length > 0) {
               const list = this.convertToArray(res.rows);
 
-              this.getDeviceDetail().then(
-                (deviceDetailData: DeviceDetailData) => {
-                  const timeDifference = parseInt(
-                    deviceDetailData.timeDifference
+              const filteredList = list.filter((item: any) => {
+                if (
+                  item.expiryDate &&
+                  item.expiryDate !== StaticDataService.userDefaultDate
+                ) {
+                  return UtilService.isExpired(
+                    item.expiryDate,
+                    this.offlineDeviceDetailData.timeDifference
                   );
-
-                  const filteredList = list.filter((item: any) => {
-                    if (
-                      item.expiryDate &&
-                      item.expiryDate !== StaticDataService.userDefaultDate
-                    ) {
-                      const expireyDate = moment(
-                        moment(item.expiryDate),
-                        StaticDataService.dateFormat
-                      );
-                      const currentDateTime = moment();
-                      currentDateTime.add(timeDifference, "minutes");
-
-                      const currDate = moment(
-                        currentDateTime,
-                        StaticDataService.dateFormat
-                      );
-                      const diff = expireyDate.diff(currDate, "days");
-                      return diff < 0;
-                    }
-                    return false;
-                  });
-                  resolve(filteredList.concat(archivedPermitList));
                 }
-              );
+                return false;
+              });
+              resolve(filteredList.concat(archivedPermitList));
             } else {
               resolve(archivedPermitList);
             }
@@ -1942,8 +1917,8 @@ export class OfflineManagerService {
                 const lastCheckinDateObj = moment(
                   moment(lastCheckinDate).format(StaticDataService.dateFormat)
                 );
-                const currentDate = moment(
-                  moment().format(StaticDataService.dateFormat)
+                const currentDate = UtilService.todayCompanyDate(
+                  this.offlineDeviceDetailData.timeDifference
                 );
 
                 const diff = currentDate.diff(
@@ -2543,11 +2518,15 @@ export class OfflineManagerService {
 
   getUserTotalHAVExposureForToday(userId) {
     return new Promise((resolve) => {
+      const todayDate = UtilService.todayCompanyDate(
+        this.offlineDeviceDetailData.timeDifference
+      );
+
       let condition =
         'userId = "' +
         userId +
         '" AND date="' +
-        moment().format("YYYY-MM-DDT00:00:00.000") +
+        todayDate.format("YYYY-MM-DDT00:00:00.000") +
         '"';
       const query =
         "SELECT exposure as total_exposure FROM UserHavExposure" +
@@ -2695,11 +2674,15 @@ export class OfflineManagerService {
 
   insertHAVExposureForDate = (data) => {
     return new Promise((resolve, reject) => {
+      const todayDate = UtilService.todayCompanyDate(
+        this.offlineDeviceDetailData.timeDifference
+      );
+
       const condition =
         'userId="' +
         data.userId +
         '" AND date="' +
-        moment().format("YYYY-MM-DDT00:00:00.000") +
+        todayDate.format("YYYY-MM-DDT00:00:00.000") +
         '"';
       let query =
         "SELECT userHavExposureId FROM UserHavExposure WHERE " + condition;
@@ -2750,11 +2733,12 @@ export class OfflineManagerService {
                 userQualObj.expireDate &&
                 userQualObj.expireDate !== StaticDataService.userDefaultDate
               ) {
-                const expireDate = moment(userQualObj.expireDate);
-                const todayDate = moment();
-
-                const validTilDays = expireDate.diff(todayDate, "days");
-                if (validTilDays > 0) {
+                if (
+                  !UtilService.isExpired(
+                    userQualObj.expireDate,
+                    this.offlineDeviceDetailData.timeDifference
+                  )
+                ) {
                   matchedQualificationCount++;
                 }
               } else {
@@ -2793,23 +2777,26 @@ export class OfflineManagerService {
                 data.userId,
                 false
               );
+
+            const todayDate = UtilService.todayCompanyDate(
+              this.offlineDeviceDetailData.timeDifference,
+              false
+            );
+            const checkInDate = todayDate.format(
+              StaticDataService.dateTimeFormatForDb
+            );
+
             if (lastCheckinForCurrentLocation) {
               let query =
                 "UPDATE DeviceUserLastCheckinDetailList SET checkInDate=? WHERE deviceUserLastCheckinDetailId=" +
                 lastCheckinForCurrentLocation.deviceUserLastCheckinDetailId;
-              this.dbQuery(query, [
-                moment().format(StaticDataService.dateTimeFormatForDb),
-              ]);
+              this.dbQuery(query, [checkInDate]);
             } else {
               const lastCheckinData = {
-                checkInDate: moment().format(
-                  StaticDataService.dateTimeFormatForDb
-                ),
+                checkInDate: checkInDate,
                 checkOutDate: "",
                 showInductionSteps: false,
-                todayDate: moment().format(
-                  StaticDataService.dateTimeFormatForDb
-                ),
+                todayDate: checkInDate,
                 userCheckInDetailID: 0,
                 userId: data.userId,
               };
@@ -2942,25 +2929,30 @@ export class OfflineManagerService {
               data.guestPhone,
               true
             );
+
+          const todayDate = UtilService.todayCompanyDate(
+            this.offlineDeviceDetailData.timeDifference,
+            false
+          );
+          const checkinDate = todayDate.format(
+            StaticDataService.dateTimeFormatForDb
+          );
+
           if (lastCheckinForCurrentLocation) {
             let query =
               "UPDATE DeviceGuestUserLastCheckinDetailList SET checkInDate=? WHERE deviceGuestUserLastCheckinDetailId=" +
               lastCheckinForCurrentLocation.deviceGuestUserLastCheckinDetailId;
-            this.dbQuery(query, [
-              moment().format(StaticDataService.dateTimeFormatForDb),
-            ]);
+            this.dbQuery(query, [checkinDate]);
           } else {
             const lastCheckinData = {
               guestFirsName: data.guestFirsName,
               guestLastName: data.guestLastName,
               guestMiddleName: data.guestMiddleName,
               guestPhone: data.guestPhone,
-              checkInDate: moment().format(
-                StaticDataService.dateTimeFormatForDb
-              ),
+              checkInDate: checkinDate,
               checkOutDate: data.checkOutDate,
               showInductionSteps: false,
-              todayDate: moment().format(StaticDataService.dateTimeFormatForDb),
+              todayDate: checkinDate,
               userCheckInDetailID: 0,
             };
             const lastCheckinDataCondition = {
@@ -3074,12 +3066,13 @@ export class OfflineManagerService {
     });
   };
   insertCheckOutDetails_Guest = (data, cond: any = {}) => {
-    const userCheckInDetailID = cond.userCheckInDetailID;
+    const deviceGuestUserCheckinDetailId = cond.deviceGuestUserCheckinDetailId;
 
     return new Promise((resolve, reject) => {
       const { dataCols, dataVals } =
         this.convertObjectToColValPlaceholders(data);
-      let condition = "deviceGuestUserCheckinDetailId = " + userCheckInDetailID;
+      let condition =
+        "deviceGuestUserCheckinDetailId = " + deviceGuestUserCheckinDetailId;
       let query =
         "UPDATE DeviceGuestUserCheckinDetails SET " +
         dataCols.join(" = ?,") +

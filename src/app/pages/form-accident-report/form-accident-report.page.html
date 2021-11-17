@@ -589,7 +589,11 @@
               >
             </ion-item>
             <ion-item class="ion-margin-vertical ion-padding-bottom">
-              <ion-button expand="full" type="submit" class="action-btn"
+              <ion-button
+                expand="full"
+                type="submit"
+                class="action-btn"
+                [disabled]="isFormSubmitting"
                 >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' |
                 translate}}</ion-button
               >
@@ -605,7 +609,11 @@
             >{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' |
             translate}}</ion-label
           >
-          <ion-button slot="end" (click)="onContinue()" class="action-btn"
+          <ion-button
+            slot="end"
+            (click)="onContinue()"
+            class="action-btn"
+            [disabled]="isFormSubmitting"
             >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button
           >
         </ion-item>

@@ -76,8 +76,7 @@ export class AppComponent {
         this.offlineManagerService
           .getDeviceDetail()
           .then((deviceDetail: DeviceDetailData) => {
-            this.sharedDataService.dedicatedModeOfflineDeviceDetailData =
-              deviceDetail;
+            this.offlineManagerService.offlineDeviceDetailData = deviceDetail;
           })
           .catch((error) => {});
       }
@@ -336,8 +335,7 @@ export class AppComponent {
       this.offlineManagerService
         .getDeviceDetail()
         .then((deviceDetail: DeviceDetailData) => {
-          this.sharedDataService.dedicatedModeOfflineDeviceDetailData =
-            deviceDetail;
+          this.offlineManagerService.offlineDeviceDetailData = deviceDetail;
         })
         .catch((error) => {});
     } else {

@@ -9,6 +9,7 @@ import { EnumService } from "../../services/enum.service";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
+import { StaticDataService } from "src/app/services/static-data.service";
 
 @Component({
   selector: "app-checkinout-alreadycheckin-dm",
@@ -62,6 +63,10 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     ) {
       debugger;
       if (this.sharedDataService.offlineMode) {
+        const utcDateTime = UtilService.todayCompanyDate(
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference
+        ).format(StaticDataService.dateTimeFormatForDb);
+
         this.offlineManagerService
           .insertCheckOutDetails_Guest(
             {
@@ -77,6 +82,8 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
               guestLastName:
                 this.sharedDataService.dedicatedModeGuestDetail.guestLastName ||
                 "",
+              checkOutDate: utcDateTime || "",
+              isOfflineDone: true,
               checkOutLatitude:
                 this.sharedDataService.myCurrentGeoLocation?.coords?.latitude ||
                 "",
@@ -84,7 +91,7 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
                 this.sharedDataService.myCurrentGeoLocation?.coords
                   ?.longitude || "",
             },
-            { userCheckInDetailID: this.locationId }
+            { deviceGuestUserCheckinDetailId: this.locationId }
           )
           .then(() => {
             this.observablesService.publishSomeData(
@@ -182,7 +189,9 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
       };
 
       if (this.sharedDataService.offlineMode) {
-        const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
+        const utcDateTime = UtilService.todayCompanyDate(
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference
+        ).format(StaticDataService.dateTimeFormatForDb);
 
         this.offlineManagerService
           .insertCheckOutDetails(
@@ -198,7 +207,7 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
                 this.sharedDataService.myCurrentGeoLocation?.coords
                   ?.longitude || "",
             },
-            { userCheckInDetailID: this.locationId }
+            { deviceUserCheckinDetailId: this.locationId }
           )
           .then((response) => {
             this.observablesService.publishSomeData(

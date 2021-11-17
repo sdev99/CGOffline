@@ -35,6 +35,7 @@ export class FormHavPage implements OnInit {
   user: User;
 
   isSubmitted = false;
+  isFormSubmitting = false;
   formGroup: FormGroup;
   errorMessage = "";
 
@@ -750,12 +751,14 @@ export class FormHavPage implements OnInit {
     }
 
     if (!this.errorMessage) {
+      this.isFormSubmitting = true;
       this.sharedDataService.saveFormAnswers(
         this.apiService,
         this.formGroup,
         this.formBuilderDetail,
         this.user,
         (status, result) => {
+          this.isFormSubmitting = false;
           if (status) {
           } else {
             this.errorMessage = result;

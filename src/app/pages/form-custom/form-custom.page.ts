@@ -1,212 +1,233 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-import { IonContent, ModalController, NavController } from '@ionic/angular';
-import { DemoDataService } from '../../services/demo-data.service';
-import { PhotoService } from '../../services/photo.service';
-import { SharedDataService } from '../../services/shared-data.service';
-import { ExitConfirmationPage } from '../../modals/exit-confirmation/exit-confirmation.page';
-import { FormGroup } from '@angular/forms';
-import { EnumService } from '../../services/enum.service';
-import { ActivatedRoute } from '@angular/router';
-import { ObservablesService } from '../../services/observables.service';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-import { AccountService } from '../../services/account.service';
-import { User } from '../../_models';
-import { UtilService } from '../../services/util.service';
-import { ApiService } from '../../services/api.service';
+import { Component, NgZone, ViewChild } from "@angular/core";
+import { IonContent, ModalController, NavController } from "@ionic/angular";
+import { DemoDataService } from "../../services/demo-data.service";
+import { PhotoService } from "../../services/photo.service";
+import { SharedDataService } from "../../services/shared-data.service";
+import { ExitConfirmationPage } from "../../modals/exit-confirmation/exit-confirmation.page";
+import { FormGroup } from "@angular/forms";
+import { EnumService } from "../../services/enum.service";
+import { ActivatedRoute } from "@angular/router";
+import { ObservablesService } from "../../services/observables.service";
+import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
+import { AccountService } from "../../services/account.service";
+import { User } from "../../_models";
+import { UtilService } from "../../services/util.service";
+import { ApiService } from "../../services/api.service";
 
 @Component({
-	selector: 'app-form-custom',
-	templateUrl: './form-custom.page.html',
-	styleUrls: ['./form-custom.page.scss'],
+  selector: "app-form-custom",
+  templateUrl: "./form-custom.page.html",
+  styleUrls: ["./form-custom.page.scss"],
 })
 export class FormCustomPage {
-	@ViewChild(IonContent) content: IonContent;
-	EnumService = EnumService;
-	UtilService = UtilService;
-	user: User;
+  @ViewChild(IonContent) content: IonContent;
+  EnumService = EnumService;
+  UtilService = UtilService;
+  user: User;
 
-	errorMessage = '';
+  errorMessage = "";
 
-	isSubmitted = false;
-	formGroup: FormGroup;
+  isSubmitted = false;
+  isFormSubmitting = false;
 
-	list = DemoDataService.activityCustomForm.clone();
-	answer = {};
+  formGroup: FormGroup;
 
-	totalPage = 32;
+  list = DemoDataService.activityCustomForm.clone();
+  answer = {};
 
-	screenOrientationSubscribe;
-	isShowOritationPortrait = false;
+  totalPage = 32;
 
-	formBuilderDetail;
+  screenOrientationSubscribe;
+  isShowOritationPortrait = false;
 
-	questionElementIds = [];
-	currentQuestionIndex = 0;
-	scrollingDetail: any;
+  formBuilderDetail;
 
-	constructor(
-		public navCtrl: NavController,
-		public photoService: PhotoService,
-		public sharedDataService: SharedDataService,
-		public observablesService: ObservablesService,
-		public modalController: ModalController,
-		public route: ActivatedRoute,
-		private screenOrientation: ScreenOrientation,
-		private ngZone: NgZone,
-		private apiService: ApiService,
-		public utilService: UtilService,
-		public accountService: AccountService
-	) {
-		this.user = accountService.userValue;
+  questionElementIds = [];
+  currentQuestionIndex = 0;
+  scrollingDetail: any;
 
-		if (sharedDataService.formBuilderDetails) {
-			this.formBuilderDetail = sharedDataService.formBuilderDetails;
-		}
+  constructor(
+    public navCtrl: NavController,
+    public photoService: PhotoService,
+    public sharedDataService: SharedDataService,
+    public observablesService: ObservablesService,
+    public modalController: ModalController,
+    public route: ActivatedRoute,
+    private screenOrientation: ScreenOrientation,
+    private ngZone: NgZone,
+    private apiService: ApiService,
+    public utilService: UtilService,
+    public accountService: AccountService
+  ) {
+    this.user = accountService.userValue;
 
-		// Dynamic form controls add
-		this.formGroup = new FormGroup({});
-		const sections = this.formBuilderDetail.sections;
-		this.utilService.questionElementIdsUpdate = (questionElementIds) => {
-			this.questionElementIds = questionElementIds;
-		};
-		this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
-		// --End
-	}
+    if (sharedDataService.formBuilderDetails) {
+      this.formBuilderDetail = sharedDataService.formBuilderDetails;
+    }
 
-	handleOrientation = () => {
-		if (this.sharedDataService.dedicatedMode) {
-			if (this.screenOrientation.type.includes('landscape')) {
-				this.screenOrientation.unlock();
-				this.isShowOritationPortrait = true;
-			} else {
-				if (!UtilService.isLocalHost()) {
-					this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-				}
-			}
+    // Dynamic form controls add
+    this.formGroup = new FormGroup({});
+    const sections = this.formBuilderDetail.sections;
+    this.utilService.questionElementIdsUpdate = (questionElementIds) => {
+      this.questionElementIds = questionElementIds;
+    };
+    this.utilService.addFormControlsForVisibleFields(sections, this.formGroup);
+    // --End
+  }
 
-			this.screenOrientationSubscribe = this.screenOrientation.onChange().subscribe(() => {
-				this.ngZone.run(() => {
-					if (this.screenOrientation.type.includes('portrait')) {
-						if (!UtilService.isLocalHost()) {
-							this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-						}
-						this.isShowOritationPortrait = false;
-					}
-					if (this.screenOrientation.type.includes('landscape')) {
-						this.isShowOritationPortrait = true;
-					}
-				});
-			});
-		}
-	};
+  handleOrientation = () => {
+    if (this.sharedDataService.dedicatedMode) {
+      if (this.screenOrientation.type.includes("landscape")) {
+        this.screenOrientation.unlock();
+        this.isShowOritationPortrait = true;
+      } else {
+        if (!UtilService.isLocalHost()) {
+          this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.PORTRAIT
+          );
+        }
+      }
 
-	ionViewDidEnter() {
-		this.sharedDataService.isOpenSubScreen = false;
-	}
+      this.screenOrientationSubscribe = this.screenOrientation
+        .onChange()
+        .subscribe(() => {
+          this.ngZone.run(() => {
+            if (this.screenOrientation.type.includes("portrait")) {
+              if (!UtilService.isLocalHost()) {
+                this.screenOrientation.lock(
+                  this.screenOrientation.ORIENTATIONS.PORTRAIT
+                );
+              }
+              this.isShowOritationPortrait = false;
+            }
+            if (this.screenOrientation.type.includes("landscape")) {
+              this.isShowOritationPortrait = true;
+            }
+          });
+        });
+    }
+  };
 
-	ionViewWillEnter() {
-		this.handleOrientation();
-	}
+  ionViewDidEnter() {
+    this.sharedDataService.isOpenSubScreen = false;
+  }
 
-	ionViewDidLeave(): void {
-		if (this.sharedDataService.dedicatedMode) {
-			if (!this.sharedDataService.isOpenSubScreen) {
-				if (!UtilService.isLocalHost()) {
-					this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-					this.screenOrientationSubscribe.unsubscribe();
-				}
-			}
-		}
-	}
+  ionViewWillEnter() {
+    this.handleOrientation();
+  }
 
-	async onClose() {
-		const modal = await this.modalController.create({
-			component: ExitConfirmationPage,
-			swipeToClose: false,
-			showBackdrop: false,
-			backdropDismiss: false,
-			animated: true,
-			componentProps: {},
-		});
-		await modal.present();
+  ionViewDidLeave(): void {
+    if (this.sharedDataService.dedicatedMode) {
+      if (!this.sharedDataService.isOpenSubScreen) {
+        if (!UtilService.isLocalHost()) {
+          this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
+          );
+          this.screenOrientationSubscribe.unsubscribe();
+        }
+      }
+    }
+  }
 
-		modal.onWillDismiss().then(({ data }) => {
-			if (data) {
-				this.onBack();
-			}
-		});
-	}
+  async onClose() {
+    const modal = await this.modalController.create({
+      component: ExitConfirmationPage,
+      swipeToClose: false,
+      showBackdrop: false,
+      backdropDismiss: false,
+      animated: true,
+      componentProps: {},
+    });
+    await modal.present();
 
-	onBack() {
-		if (this.sharedDataService.viewFormFor === EnumService.ViewFormForType.Induction) {
-			if (this.sharedDataService.dedicatedMode) {
-				this.navCtrl.navigateBack('/checkinout-option-dm');
-			} else {
-				this.navCtrl.navigateBack('/checkinout-confirm');
-			}
-		} else {
-			this.navCtrl.back();
-		}
-	}
+    modal.onWillDismiss().then(({ data }) => {
+      if (data) {
+        this.onBack();
+      }
+    });
+  }
 
-	onSubmit() {
-		this.isSubmitted = true;
-		this.errorMessage = '';
+  onBack() {
+    if (
+      this.sharedDataService.viewFormFor ===
+      EnumService.ViewFormForType.Induction
+    ) {
+      if (this.sharedDataService.dedicatedMode) {
+        this.navCtrl.navigateBack("/checkinout-option-dm");
+      } else {
+        this.navCtrl.navigateBack("/checkinout-confirm");
+      }
+    } else {
+      this.navCtrl.back();
+    }
+  }
 
-		this.sharedDataService.saveFormAnswers(this.apiService, this.formGroup, this.formBuilderDetail, this.user, (status, result) => {
-			if (status) {
-			} else {
-				this.errorMessage = result;
-				this._scrollToTop();
-			}
-		});
-	}
+  onSubmit() {
+    this.isSubmitted = true;
+    this.errorMessage = "";
 
-	_scrollToTop() {
-		this.content.scrollToTop(200);
-	}
+    this.isFormSubmitting = true;
+    this.sharedDataService.saveFormAnswers(
+      this.apiService,
+      this.formGroup,
+      this.formBuilderDetail,
+      this.user,
+      (status, result) => {
+        this.isFormSubmitting = false;
+        if (status) {
+        } else {
+          this.errorMessage = result;
+          this._scrollToTop();
+        }
+      }
+    );
+  }
 
-	// Navigate to question
-	previous() {
-		if (this.currentQuestionIndex > 0) {
-			this.currentQuestionIndex--;
-			this.scrollToQuestion();
-		}
-	}
+  _scrollToTop() {
+    this.content.scrollToTop(200);
+  }
 
-	next() {
-		if (this.currentQuestionIndex < this.questionElementIds.length - 1) {
-			this.currentQuestionIndex++;
-			this.scrollToQuestion();
-		}
-	}
+  // Navigate to question
+  previous() {
+    if (this.currentQuestionIndex > 0) {
+      this.currentQuestionIndex--;
+      this.scrollToQuestion();
+    }
+  }
 
-	onScrollEnd = (event) => {
-		if (this.scrollingDetail) {
-			const scrollTop = this.scrollingDetail.scrollTop;
-			if (scrollTop === 0) {
-				this.currentQuestionIndex = 0;
-			} else {
-				this.questionElementIds.map((elementId, key) => {
-					const y = document.getElementById(elementId)?.offsetTop;
-					if (scrollTop >= y) {
-						this.currentQuestionIndex = key;
-						return;
-					}
-				});
-			}
-		}
-	};
+  next() {
+    if (this.currentQuestionIndex < this.questionElementIds.length - 1) {
+      this.currentQuestionIndex++;
+      this.scrollToQuestion();
+    }
+  }
 
-	onScroll = (event) => {
-		this.scrollingDetail = event.detail;
-	};
+  onScrollEnd = (event) => {
+    if (this.scrollingDetail) {
+      const scrollTop = this.scrollingDetail.scrollTop;
+      if (scrollTop === 0) {
+        this.currentQuestionIndex = 0;
+      } else {
+        this.questionElementIds.map((elementId, key) => {
+          const y = document.getElementById(elementId)?.offsetTop;
+          if (scrollTop >= y) {
+            this.currentQuestionIndex = key;
+            return;
+          }
+        });
+      }
+    }
+  };
 
-	scrollToQuestion = () => {
-		const elementId = this.questionElementIds[this.currentQuestionIndex];
-		const y = document.getElementById(elementId)?.offsetTop;
-		this.content.scrollToPoint(0, y, 500);
-	};
+  onScroll = (event) => {
+    this.scrollingDetail = event.detail;
+  };
 
-	// -- End -- Navigate to question
+  scrollToQuestion = () => {
+    const elementId = this.questionElementIds[this.currentQuestionIndex];
+    const y = document.getElementById(elementId)?.offsetTop;
+    this.content.scrollToPoint(0, y, 500);
+  };
+
+  // -- End -- Navigate to question
 }

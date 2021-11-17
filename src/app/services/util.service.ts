@@ -45,6 +45,32 @@ export class UtilService {
     return udid;
   }
 
+  static isExpired(expirationDate, companyTimeDifference) {
+    const timeDifference = parseInt(companyTimeDifference);
+    const expiryDate = moment(expirationDate);
+    const currDate = moment.utc();
+    currDate.add(timeDifference, "minutes");
+
+    const finalCurrentDate = moment(
+      currDate.format(StaticDataService.dateFormat)
+    );
+    const finalExpiryDate = moment(
+      expiryDate.format(StaticDataService.dateFormat)
+    );
+
+    const daysCount = finalExpiryDate.diff(finalCurrentDate, "days");
+    return daysCount <= 0;
+  }
+
+  static todayCompanyDate(timeDifference, isOnlyDate = true) {
+    const currentDate = moment.utc();
+
+    currentDate.add(parseInt(timeDifference), "minutes");
+    return isOnlyDate
+      ? moment(currentDate.format(StaticDataService.dateFormat))
+      : currentDate;
+  }
+
   static isLocalHost() {
     return !environment.production && !Capacitor.isNative;
   }
@@ -233,13 +259,12 @@ export class UtilService {
     if (section) {
       isSectionDuplicate =
         section[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-    } else {
     }
+
     let isQuestionDuplicate = false;
     if (question) {
       isQuestionDuplicate =
         question[EnumService.QuestionLogic.ActionTypeForForm.Duplicate];
-    } else {
     }
     if (
       section &&

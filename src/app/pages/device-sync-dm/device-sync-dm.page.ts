@@ -116,7 +116,9 @@ export class DeviceSyncDmPage implements OnInit {
       if (UtilService.isLocalHost()) {
         resolve(true);
       } else {
-        if (availableSpaceInBytes > fileSizeInBytes) {
+        const sizeToBeNeededInBytes = fileSizeInBytes + 2 * 1024 * 1024 * 1024;
+        debugger;
+        if (availableSpaceInBytes > sizeToBeNeededInBytes) {
           resolve(true);
         } else {
           resolve(false);
@@ -346,21 +348,27 @@ export class DeviceSyncDmPage implements OnInit {
               let totalSizeWillBeAfterExtract = 0;
               files.map((fileDetail) => {
                 const zipFileSizeBytes = fileDetail.zipFileSize;
-                const jsonFileSizeBytes = fileDetail.jsonFileSize;
-                const totalFileSize = fileDetail.totalFileSize;
                 totalSizeWillBeDownloadB +=
                   UtilService.formattedNumberToNumber(zipFileSizeBytes);
 
-                totalSizeWillBeAfterExtract +=
-                  UtilService.formattedNumberToNumber(totalFileSize) +
-                  UtilService.formattedNumberToNumber(jsonFileSizeBytes);
+                const jsonFileSizeBytes = fileDetail.jsonFileSize;
+                const totalFileSize = fileDetail.totalFileSize;
+                if (jsonFileSizeBytes) {
+                  totalSizeWillBeAfterExtract +=
+                    UtilService.formattedNumberToNumber(jsonFileSizeBytes);
+                } else if (totalFileSize) {
+                  totalSizeWillBeAfterExtract +=
+                    UtilService.formattedNumberToNumber(totalFileSize);
+                }
               });
 
               // First Remove folder that contains all file before download new offline files
               this.filehandlerService
                 .removeDirectory(
                   this.filehandlerService.offlineFilesDirectory(),
-                  "/"
+                  localStorage.getItem(
+                    EnumService.LocalStorageKeys.OFFLINE_FILES_FOLDER_NAME
+                  )
                 )
                 .then(() => {
                   getOfflineDataFromServer();
