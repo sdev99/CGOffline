@@ -14,6 +14,7 @@ import * as moment from "moment";
 import { ObservablesService } from "src/app/services/observables.service";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { StaticDataService } from "src/app/services/static-data.service";
+import { File } from "@ionic-native/file/ngx";
 
 const { Device } = Capacitor.Plugins;
 
@@ -44,6 +45,7 @@ export class DeviceSyncDmPage implements OnInit {
     public filehandlerService: FilehandlerService,
     public ngZone: NgZone,
     public platform: Platform,
+    public file: File,
     private insomnia: Insomnia
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
@@ -109,21 +111,35 @@ export class DeviceSyncDmPage implements OnInit {
 
   isSpaceAvailableInDevice = (fileSizeInBytes = 0) => {
     return new Promise(async (resolve) => {
-      const info = await Device.getInfo();
-      const availableSpaceInBytes = info.diskFree;
-      const bytesInMb = 1048576;
-      console.log("Available Free Space ", availableSpaceInBytes / bytesInMb);
-      if (UtilService.isLocalHost()) {
-        resolve(true);
-      } else {
-        const sizeToBeNeededInBytes = fileSizeInBytes + 2 * 1024 * 1024 * 1024;
-        debugger;
-        if (availableSpaceInBytes > sizeToBeNeededInBytes) {
+      const onSpaceGetSuccess = (availableSpaceInBytes) => {
+        const bytesInMb = 1048576;
+        console.log("Available Free Space ", availableSpaceInBytes / bytesInMb);
+        if (UtilService.isLocalHost()) {
           resolve(true);
         } else {
-          resolve(false);
+          const sizeToBeNeededInBytes =
+            fileSizeInBytes + 0.2 * 1024 * 1024 * 1024;
+          debugger;
+          if (availableSpaceInBytes > sizeToBeNeededInBytes) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
         }
-      }
+      };
+
+      this.file
+        .getFreeDiskSpace()
+        .then((value) => {
+          debugger;
+          onSpaceGetSuccess(value);
+        })
+        .catch(async (error) => {
+          const info = await Device.getInfo();
+          const availableSpaceInBytes = info.diskFree;
+          debugger;
+          onSpaceGetSuccess(availableSpaceInBytes);
+        });
     });
   };
 
