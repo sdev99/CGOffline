@@ -15,6 +15,7 @@ import { ObservablesService } from "src/app/services/observables.service";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { File } from "@ionic-native/file/ngx";
+import { DiskCheckPlugin } from "@ionic-native/disk-check-plugin/ngx";
 
 const { Device } = Capacitor.Plugins;
 
@@ -46,6 +47,7 @@ export class DeviceSyncDmPage implements OnInit {
     public ngZone: NgZone,
     public platform: Platform,
     public file: File,
+    public diskCheckPlugin: DiskCheckPlugin,
     private insomnia: Insomnia
   ) {
     this.activatedRoute.queryParams.subscribe((data) => {
@@ -128,13 +130,14 @@ export class DeviceSyncDmPage implements OnInit {
         }
       };
 
-      this.file
-        .getFreeDiskSpace()
-        .then((value) => {
+      this.diskCheckPlugin
+        .info(null)
+        .then((res) => {
+          onSpaceGetSuccess(res.free);
           debugger;
-          onSpaceGetSuccess(value);
         })
         .catch(async (error) => {
+          debugger;
           const info = await Device.getInfo();
           const availableSpaceInBytes = info.diskFree;
           debugger;

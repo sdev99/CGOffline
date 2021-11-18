@@ -90,7 +90,7 @@ import { DiskCheckPlugin } from "@ionic-native/disk-check-plugin/ngx";
     HTTP,
     SQLite,
     RouterOutlet,
-    DiskCheckPlugin
+    DiskCheckPlugin,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,
