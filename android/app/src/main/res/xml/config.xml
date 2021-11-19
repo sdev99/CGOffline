@@ -72,5 +72,15 @@
     <param name="android-package" value="io.sqlc.SQLitePlugin"/>
   </feature>
 
+  <feature name="DiskCheckPlugin">
+    <param name="android-package" value="com.sdev99.cordova.diskCheck.DiskCheckPlugin"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+  <feature name="DiskSpacePlugin">
+    <param name="android-package" value="com.sqli.cordova.diskSpace.DiskSpacePlugin"/>
+    <param name="onload" value="true"/>
+  </feature>
+
   
 </widget>

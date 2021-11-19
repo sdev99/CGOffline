@@ -131,16 +131,15 @@ export class DeviceSyncDmPage implements OnInit {
       };
 
       this.diskCheckPlugin
-        .info(null)
+        .info({
+          location: 2,
+        })
         .then((res) => {
           onSpaceGetSuccess(res.free);
-          debugger;
         })
         .catch(async (error) => {
-          debugger;
           const info = await Device.getInfo();
           const availableSpaceInBytes = info.diskFree;
-          debugger;
           onSpaceGetSuccess(availableSpaceInBytes);
         });
     });
