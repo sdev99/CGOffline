@@ -150,24 +150,35 @@ export class OfflineManagerService {
     });
   };
 
-  convertObjectToColValPlaceholders = (data) => {
+  convertObjectToColValPlaceholders = (data, table) => {
     const dataCols = [];
     const dataVals = [];
     const dataValPlaceHolders = [];
 
+    let availableColumns = [];
+    if (table) {
+      const tableData = StaticDataService.offlineTables.find(
+        (item: any) => item.table_name === table
+      );
+      const columns = tableData?.columns || [];
+      availableColumns = columns.map((item) => item.name);
+      availableColumns.shift();
+    }
     Object.keys(data).map((colName) => {
-      const val = data[colName];
+      if (availableColumns.indexOf(colName) !== -1) {
+        const val = data[colName];
 
-      if (val !== null && val !== "") {
-        dataCols.push(colName);
-        dataValPlaceHolders.push("?");
+        if (val !== null && val !== "") {
+          dataCols.push(colName);
+          dataValPlaceHolders.push("?");
 
-        if (UtilService.isArray(val)) {
-          dataVals.push(escape(JSON.stringify(val)));
-        } else if (UtilService.isObject(val)) {
-          dataVals.push(escape(JSON.stringify(val)));
-        } else {
-          dataVals.push(val);
+          if (UtilService.isArray(val)) {
+            dataVals.push(escape(JSON.stringify(val)));
+          } else if (UtilService.isObject(val)) {
+            dataVals.push(escape(JSON.stringify(val)));
+          } else {
+            dataVals.push(val);
+          }
         }
       }
     });
@@ -253,7 +264,7 @@ export class OfflineManagerService {
    */
   insertData = (table, data = {}, condition = {}) => {
     const { dataCols, dataVals, dataValPlaceHolders } =
-      this.convertObjectToColValPlaceholders(data);
+      this.convertObjectToColValPlaceholders(data, table);
 
     let condCols = [];
     Object.keys(condition).map((colName) => {
@@ -2759,7 +2770,10 @@ export class OfflineManagerService {
     return new Promise((resolve, reject) => {
       if (userQualified) {
         const { dataCols, dataVals, dataValPlaceHolders } =
-          this.convertObjectToColValPlaceholders(data);
+          this.convertObjectToColValPlaceholders(
+            data,
+            "DeviceUserCheckinDetails"
+          );
 
         let query =
           "INSERT INTO DeviceUserCheckinDetails (" +
@@ -2896,7 +2910,7 @@ export class OfflineManagerService {
       };
 
       const { dataCols, dataVals, dataValPlaceHolders } =
-        this.convertObjectToColValPlaceholders(guestUser);
+        this.convertObjectToColValPlaceholders(guestUser, "DeviceGuestUsers");
       let query =
         "INSERT INTO DeviceGuestUsers (" +
         dataCols.join(",") +
@@ -2911,7 +2925,10 @@ export class OfflineManagerService {
 
     return new Promise((resolve, reject) => {
       const { dataCols, dataVals, dataValPlaceHolders } =
-        this.convertObjectToColValPlaceholders(data);
+        this.convertObjectToColValPlaceholders(
+          data,
+          "DeviceGuestUserCheckinDetails"
+        );
 
       let query =
         "INSERT INTO DeviceGuestUserCheckinDetails (" +
@@ -3020,8 +3037,10 @@ export class OfflineManagerService {
     const userCheckInDetailID = cond.userCheckInDetailID;
 
     return new Promise((resolve, reject) => {
-      const { dataCols, dataVals } =
-        this.convertObjectToColValPlaceholders(data);
+      const { dataCols, dataVals } = this.convertObjectToColValPlaceholders(
+        data,
+        "DeviceUserCheckinDetails"
+      );
       let condition = "deviceUserCheckinDetailId = " + userCheckInDetailID;
       let query =
         "UPDATE DeviceUserCheckinDetails SET " +
@@ -3069,8 +3088,10 @@ export class OfflineManagerService {
     const deviceGuestUserCheckinDetailId = cond.deviceGuestUserCheckinDetailId;
 
     return new Promise((resolve, reject) => {
-      const { dataCols, dataVals } =
-        this.convertObjectToColValPlaceholders(data);
+      const { dataCols, dataVals } = this.convertObjectToColValPlaceholders(
+        data,
+        "DeviceGuestUserCheckinDetails"
+      );
       let condition =
         "deviceGuestUserCheckinDetailId = " + deviceGuestUserCheckinDetailId;
       let query =
