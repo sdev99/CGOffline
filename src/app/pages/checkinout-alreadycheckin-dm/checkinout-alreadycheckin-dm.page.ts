@@ -197,7 +197,7 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
           .insertCheckOutDetails(
             {
               userId:
-                this.sharedDataService.dedicatedModeUserDetail.userId || "",
+                this.sharedDataService.dedicatedModeUserDetail?.userId || "",
               checkOutDate: utcDateTime || "",
               isOfflineDone: true,
               checkOutLatitude:
@@ -224,7 +224,7 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
         this.apiService
           .insertCheckOutDetails({
             userCheckInDetailID: this.locationId,
-            userId: this.sharedDataService.dedicatedModeUserDetail.userId,
+            userId: this.sharedDataService.dedicatedModeUserDetail?.userId,
             checkOutLatitude:
               this.sharedDataService.myCurrentGeoLocation?.coords?.latitude,
             checkOutLongitude:

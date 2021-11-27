@@ -15,6 +15,7 @@ export class StaticDataService {
   static photoQuality = 85;
   static photoMaxHeight = 2500;
   static userDefaultGuid = "00000000-0000-0000-0000-000000000000";
+  static dateZeroTimeFormat = "YYYY-MM-DDT00:00:00.000";
   static userDefaultDate = "0001-01-01T00:00:00";
   static offlineFilesFolderName = "offline_files";
 

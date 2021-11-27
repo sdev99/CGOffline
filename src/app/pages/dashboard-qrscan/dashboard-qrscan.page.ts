@@ -427,7 +427,7 @@ export class DashboardQrscanPage implements OnInit {
     switch (this.sharedDataService.dedicatedModeProcessType) {
       case EnumService.DedicatedModeProcessTypes.CheckinOut:
         this.sharedDataService.getCheckinDetailsForDedicatedMode(
-          this.sharedDataService.dedicatedModeUserDetail.userId,
+          this.sharedDataService.dedicatedModeUserDetail?.userId,
           this.apiService,
           null,
           ({ ischeckInPersonalQRNotAllowed }) => {

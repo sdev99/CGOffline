@@ -62,8 +62,24 @@ export class UtilService {
     return daysCount <= 0;
   }
 
+  static durationNow(date1, date2) {
+    let b = moment(date1),
+      a = moment(date2),
+      intervals: any = ["years", "months", "days", "hours", "minutes"],
+      out = [];
+
+    for (let i = 0; i < intervals.length; i++) {
+      let diff = a.diff(b, intervals[i]);
+      b.add(diff, intervals[i]);
+      if (diff > 0) {
+        out.push(diff + " " + intervals[i]);
+      }
+    }
+    return out.join(", ") + " ago";
+  }
+
   static todayCompanyDate(timeDifference, isOnlyDate = true) {
-    const currentDate = moment.utc();
+    const currentDate = moment().utc();
 
     currentDate.add(parseInt(timeDifference), "minutes");
     return isOnlyDate

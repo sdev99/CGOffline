@@ -307,7 +307,7 @@ export class FormWorkpermitPage {
           } else {
             workPermitAnswer.hasExpiresOn = true;
             workPermitAnswer.expiresOnDate = moment(expireDate).format(
-              "YYYY-MM-DD HH:mm:00.000"
+              "YYYY-MM-DD 00:00:00.000"
             );
           }
         } else if (this.selectedExpireDateType === "duration") {

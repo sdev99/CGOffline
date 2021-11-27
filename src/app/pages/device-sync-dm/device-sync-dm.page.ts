@@ -113,35 +113,42 @@ export class DeviceSyncDmPage implements OnInit {
 
   isSpaceAvailableInDevice = (fileSizeInBytes = 0) => {
     return new Promise(async (resolve) => {
-      const onSpaceGetSuccess = (availableSpaceInBytes) => {
-        const bytesInMb = 1048576;
-        console.log("Available Free Space ", availableSpaceInBytes / bytesInMb);
-        if (UtilService.isLocalHost()) {
-          resolve(true);
-        } else {
-          const sizeToBeNeededInBytes =
-            fileSizeInBytes + 0.2 * 1024 * 1024 * 1024;
-          debugger;
-          if (availableSpaceInBytes > sizeToBeNeededInBytes) {
+      if (UtilService.isLocalHost()) {
+        resolve(true);
+      } else {
+        const onSpaceGetSuccess = (availableSpaceInBytes) => {
+          const bytesInMb = 1048576;
+          console.log(
+            "Available Free Space ",
+            availableSpaceInBytes / bytesInMb
+          );
+          if (UtilService.isLocalHost()) {
             resolve(true);
           } else {
-            resolve(false);
+            const sizeToBeNeededInBytes =
+              fileSizeInBytes + 0.2 * 1024 * 1024 * 1024;
+            debugger;
+            if (availableSpaceInBytes > sizeToBeNeededInBytes) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
           }
-        }
-      };
+        };
 
-      this.diskCheckPlugin
-        .info({
-          location: 2,
-        })
-        .then((res) => {
-          onSpaceGetSuccess(res.free);
-        })
-        .catch(async (error) => {
-          const info = await Device.getInfo();
-          const availableSpaceInBytes = info.diskFree;
-          onSpaceGetSuccess(availableSpaceInBytes);
-        });
+        this.diskCheckPlugin
+          .info({
+            location: 2,
+          })
+          .then((res) => {
+            onSpaceGetSuccess(res.free);
+          })
+          .catch(async (error) => {
+            const info = await Device.getInfo();
+            const availableSpaceInBytes = info.diskFree;
+            onSpaceGetSuccess(availableSpaceInBytes);
+          });
+      }
     });
   };
 

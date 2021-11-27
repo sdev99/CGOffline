@@ -295,7 +295,7 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
               break;
             case EnumService.CheckInType.MY_NAME:
               this.sharedDataService.getCheckinDetailsForDedicatedMode(
-                this.sharedDataService.dedicatedModeUserDetail.userId,
+                this.sharedDataService.dedicatedModeUserDetail?.userId,
                 this.apiService,
                 photoName
               );

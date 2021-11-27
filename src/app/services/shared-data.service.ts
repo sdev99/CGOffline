@@ -2155,7 +2155,7 @@ export class SharedDataService {
                 date: UtilService.todayCompanyDate(
                   this.offlineManagerService.offlineDeviceDetailData
                     .timeDifference
-                ).format("YYYY-MM-DDT00:00:00.000"),
+                ).format(StaticDataService.dateZeroTimeFormat),
               })
               .then((res) => {});
           }

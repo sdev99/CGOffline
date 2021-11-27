@@ -1361,7 +1361,10 @@ export class OfflineManagerService {
                 false
               );
 
-              const formattedCreatedDate = createdDate.from(currentDate);
+              const formattedCreatedDate = UtilService.durationNow(
+                createdDate,
+                currentDate
+              );
 
               item.formattedCreatedDate = formattedCreatedDate;
               item.todayDate = currentDate.format("YYYY-MM-DDTHH:mm:00.000");
@@ -1430,7 +1433,10 @@ export class OfflineManagerService {
                 false
               );
 
-              const formattedCreatedDate = createdDate.from(currentDate);
+              const formattedCreatedDate = UtilService.durationNow(
+                createdDate,
+                currentDate
+              );
 
               item.formattedCreatedDate = formattedCreatedDate;
               item.todayDate = currentDate.format(
@@ -1485,9 +1491,12 @@ export class OfflineManagerService {
                 const issuedDateObj = moment(item.issuedDate);
                 const expiryDateObj = moment(item.expiryDate);
 
-                const formattedIssuedDate = issuedDateObj.from(currentDateTime);
+                const formattedIssuedDate = UtilService.durationNow(
+                  issuedDateObj,
+                  currentDateTime
+                );
                 const formattedExpiryDate =
-                  expiryDateObj.from(currentDateTime, true) +
+                  UtilService.durationNow(expiryDateObj, currentDateTime) +
                   " (" +
                   moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
                   ")";
@@ -1514,8 +1523,40 @@ export class OfflineManagerService {
   }
 
   getDeviceArchivedWorkPermits(entity: DeviceEntityDetail) {
+    debugger;
+
     return new Promise((resolve, reject) => {
       let condition = this.appendEntityCondition(entity);
+
+      const addFormattedExpiryDate = (list) => {
+        const currentDateTime = UtilService.todayCompanyDate(
+          this.offlineDeviceDetailData.timeDifference,
+          false
+        );
+
+        list.forEach((item: any) => {
+          const issuedDateObj = moment(item.issuedDate);
+          const expiryDateObj = moment(item.expiryDate);
+
+          const formattedIssuedDate = UtilService.durationNow(
+            issuedDateObj,
+            currentDateTime
+          );
+          const formattedExpiryDate =
+            UtilService.durationNow(expiryDateObj, currentDateTime) +
+            " (" +
+            moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+            ")";
+
+          item.formattedIssuedDate = formattedIssuedDate;
+          item.formattedExpiryDate = formattedExpiryDate;
+          item.todayDate = currentDateTime.format(
+            StaticDataService.dateTimeFormat
+          );
+        });
+
+        resolve(list);
+      };
 
       const getExpiredPermits = (archivedPermitList) => {
         let expiredCondition = this.appendEntityCondition(entity);
@@ -1540,13 +1581,16 @@ export class OfflineManagerService {
                 }
                 return false;
               });
-              resolve(filteredList.concat(archivedPermitList));
+
+              const finalList = filteredList.concat(archivedPermitList);
+
+              addFormattedExpiryDate(finalList);
             } else {
-              resolve(archivedPermitList);
+              addFormattedExpiryDate(archivedPermitList);
             }
           })
           .catch((error) => {
-            resolve(archivedPermitList);
+            addFormattedExpiryDate(archivedPermitList);
           });
       };
 
@@ -3034,7 +3078,7 @@ export class OfflineManagerService {
   };
 
   insertCheckOutDetails = (data, cond) => {
-    const userCheckInDetailID = cond.userCheckInDetailID;
+    const userCheckInDetailID = cond.deviceUserCheckinDetailId;
 
     return new Promise((resolve, reject) => {
       const { dataCols, dataVals } = this.convertObjectToColValPlaceholders(
