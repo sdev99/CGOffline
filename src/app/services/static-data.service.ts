@@ -8,7 +8,7 @@ export class StaticDataService {
   static OfflineModeSyncMinDays = 7;
 
   static dateTimeFormatForDb = "YYYY-MM-DDTHH:mm:ss";
-  static dateTimeFormat = "YYYY-MM-DD HH:mm:00.000";
+  static dateTimeFormat = "YYYY-MM-DD HH:mm:ss.000";
   static dateTimeFormatAMPM = "YYYY-MM-DD hh:mm A";
   static dateFormat = "YYYY-MM-DD";
   static timeFormat = "hh:mmA";
@@ -16,7 +16,9 @@ export class StaticDataService {
   static photoMaxHeight = 2500;
   static userDefaultGuid = "00000000-0000-0000-0000-000000000000";
   static dateZeroTimeFormat = "YYYY-MM-DDT00:00:00.000";
+  static dateZeroDateTimeFormat = "YYYY-MM-DD 00:00:00.000";
   static userDefaultDate = "0001-01-01T00:00:00";
+  static userUnsetDate = "0001-01-01";
   static offlineFilesFolderName = "offline_files";
 
   // Test demo - should be remove after development complete

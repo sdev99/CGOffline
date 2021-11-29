@@ -47,7 +47,10 @@ export class UtilService {
 
   static isExpired(expirationDate, companyTimeDifference) {
     const timeDifference = parseInt(companyTimeDifference);
-    const expiryDate = moment(expirationDate);
+    const expiryDate = moment(
+      UtilService.fixTimeString(expirationDate),
+      StaticDataService.dateTimeFormat
+    );
     const currDate = moment.utc();
     currDate.add(timeDifference, "minutes");
 
@@ -62,9 +65,15 @@ export class UtilService {
     return daysCount <= 0;
   }
 
-  static durationNow(date1, date2) {
-    let b = moment(date1),
-      a = moment(date2),
+  static durationNow(date1, date2, withAgo = true) {
+    let b = moment(
+        date1.format(StaticDataService.dateTimeFormatForDb),
+        StaticDataService.dateTimeFormatForDb
+      ),
+      a = moment(
+        date2.format(StaticDataService.dateTimeFormatForDb),
+        StaticDataService.dateTimeFormatForDb
+      ),
       intervals: any = ["years", "months", "days", "hours", "minutes"],
       out = [];
 
@@ -75,7 +84,7 @@ export class UtilService {
         out.push(diff + " " + intervals[i]);
       }
     }
-    return out.join(", ") + " ago";
+    return out.join(", ") + (withAgo ? " ago" : "");
   }
 
   static todayCompanyDate(timeDifference, isOnlyDate = true) {
@@ -83,7 +92,10 @@ export class UtilService {
 
     currentDate.add(parseInt(timeDifference), "minutes");
     return isOnlyDate
-      ? moment(currentDate.format(StaticDataService.dateFormat))
+      ? moment(
+          currentDate.format(StaticDataService.dateZeroTimeFormat),
+          StaticDataService.dateTimeFormatForDb
+        )
       : currentDate;
   }
 

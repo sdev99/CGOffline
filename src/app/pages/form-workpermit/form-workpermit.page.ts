@@ -16,6 +16,7 @@ import { WorkPermitAnswer } from "../../_models/workPermitAnswer";
 import { EnumService } from "../../services/enum.service";
 import * as moment from "moment";
 import { TranslateService } from "@ngx-translate/core";
+import { StaticDataService } from "src/app/services/static-data.service";
 
 @Component({
   selector: "app-form-workpermit",
@@ -307,7 +308,7 @@ export class FormWorkpermitPage {
           } else {
             workPermitAnswer.hasExpiresOn = true;
             workPermitAnswer.expiresOnDate = moment(expireDate).format(
-              "YYYY-MM-DD 00:00:00.000"
+              StaticDataService.dateZeroDateTimeFormat
             );
           }
         } else if (this.selectedExpireDateType === "duration") {

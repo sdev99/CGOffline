@@ -2152,10 +2152,9 @@ export class SharedDataService {
               .insertHAVExposureForDate({
                 userId: userId,
                 exposure: havAnswerDetail.totalExposure,
-                date: UtilService.todayCompanyDate(
-                  this.offlineManagerService.offlineDeviceDetailData
-                    .timeDifference
-                ).format(StaticDataService.dateZeroTimeFormat),
+                date: moment()
+                  .utc()
+                  .format(StaticDataService.dateZeroTimeFormat),
               })
               .then((res) => {});
           }
@@ -2303,10 +2302,9 @@ export class SharedDataService {
     };
 
     if (this.offlineMode) {
-      const utcDateTime = UtilService.todayCompanyDate(
-        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
-        false
-      ).format(StaticDataService.dateTimeFormatForDb);
+      const utcDateTime = moment()
+        .utc()
+        .format(StaticDataService.dateTimeFormat);
 
       let entityData: any;
       if (this.dedicatedModeLocationUse.locationID) {
@@ -2466,8 +2464,9 @@ export class SharedDataService {
           " by " +
           signedByName;
         const createdDateStr = UtilService.todayCompanyDate(
-          this.offlineManagerService.offlineDeviceDetailData.timeDifference
-        ).toISOString(true);
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+          false
+        ).format(StaticDataService.dateTimeFormatForDb);
 
         const archiveData = {
           documentID: item.checkInInductionItemID,
@@ -2535,10 +2534,9 @@ export class SharedDataService {
     };
 
     if (this.offlineMode) {
-      const utcDateTime = UtilService.todayCompanyDate(
-        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
-        false
-      ).format(StaticDataService.dateTimeFormatForDb);
+      const utcDateTime = moment()
+        .utc()
+        .format(StaticDataService.dateTimeFormat);
       this.checkInPostData.signOffDate = utcDateTime;
 
       let entityData: any;
@@ -2605,7 +2603,7 @@ export class SharedDataService {
           this.processCheckInError(error, nextScreen);
         });
     } else {
-      const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
+      const utcDateTime = moment().utc().format("DD.MM.YYYY HH:mm:ss");
       this.checkInPostData.signOffDate = utcDateTime;
 
       this.utilService.presentLoadingWithOptions();
@@ -2777,38 +2775,74 @@ export class SharedDataService {
             this.workPermitAnswer.totalScore
           ) {
             if (this.dedicatedMode && this.offlineMode) {
-              const todayDateTime = UtilService.todayCompanyDate(
+              const todayDate = UtilService.todayCompanyDate(
                 this.offlineManagerService.offlineDeviceDetailData
                   .timeDifference
               );
 
-              const dateTimeNow = todayDateTime.format(
-                "YYYY-MM-DDTHH:mm:00.000"
+              const todayDateTime = UtilService.todayCompanyDate(
+                this.offlineManagerService.offlineDeviceDetailData
+                  .timeDifference,
+                false
               );
-              const hasExpiresOn = this.workPermitAnswer.hasExpiresOn;
-              const hasExpiresAfter = this.workPermitAnswer.hasExpiresAfter;
-              let expiryDate = todayDateTime.add(60, "days");
-              if (hasExpiresAfter) {
-                const durations = ["days", "weeks", "months", "years"];
-                const unit: any =
-                  durations[this.workPermitAnswer.durationTypeID - 1];
-                expiryDate = todayDateTime.add(
-                  this.workPermitAnswer.durationValue,
-                  unit
-                );
-              } else if (hasExpiresOn) {
-                expiryDate = moment(
-                  moment(this.workPermitAnswer.expiresOnDate).format(
-                    StaticDataService.dateFormat
-                  )
-                );
+
+              const dateTimeNow = todayDateTime.format(
+                StaticDataService.dateTimeFormat
+              );
+
+              let expiryDate;
+              if (
+                this.formBuilderDetails?.workPermitDetails
+                  ?.whoDefinesDateType === "UserDefined"
+              ) {
+                const hasExpiresOn = this.workPermitAnswer.hasExpiresOn;
+                const hasExpiresAfter = this.workPermitAnswer.hasExpiresAfter;
+                expiryDate = moment(todayDate).add(60, "days");
+                if (hasExpiresAfter) {
+                  const durations = ["days", "weeks", "months", "years"];
+                  const unit: any =
+                    durations[this.workPermitAnswer.durationTypeID - 1];
+                  expiryDate = moment(todayDate).add(
+                    this.workPermitAnswer.durationValue,
+                    unit
+                  );
+                } else if (hasExpiresOn) {
+                  expiryDate = moment(
+                    UtilService.fixTimeString(
+                      this.workPermitAnswer.expiresOnDate
+                    ),
+                    StaticDataService.dateTimeFormat
+                  );
+                }
+              } else {
+                const workPermitDetail =
+                  this.formBuilderDetails?.workPermitDetails;
+                const hasExpiresOn = workPermitDetail.hasExpiresOn;
+                const hasExpiresAfter = workPermitDetail.hasExpiresAfter;
+                expiryDate = moment(todayDate).add(60, "days");
+                if (hasExpiresAfter) {
+                  const durations = ["days", "weeks", "months", "years"];
+                  const unit: any =
+                    durations[workPermitDetail.durationTypeID - 1];
+                  expiryDate = moment(todayDate).add(
+                    workPermitDetail.durationValue,
+                    unit
+                  );
+                } else if (hasExpiresOn) {
+                  expiryDate = moment(
+                    workPermitDetail.expiresOnDate,
+                    "DD/MM/YYYY"
+                  );
+                }
               }
 
               const permitData = {
                 locationID: this.dedicatedModeLocationUse.locationID,
                 projectID: this.dedicatedModeLocationUse.projectID,
                 inventoryItemID: this.dedicatedModeLocationUse.inventoryItemID,
-                expiryDate: expiryDate.format("YYYY-MM-DDTHH:mm:00.000"),
+                expiryDate: expiryDate.format(
+                  StaticDataService.dateTimeFormatForDb
+                ),
                 firstName: this.dedicatedModeUserDetail.firstName,
                 formTitle: this.formBuilderDetails.title,
                 formattedExpiryDate: "",
@@ -2982,10 +3016,9 @@ export class SharedDataService {
     };
 
     if (this.offlineMode) {
-      const utcDateTime = UtilService.todayCompanyDate(
-        this.offlineManagerService.offlineDeviceDetailData.timeDifference,
-        false
-      ).format(StaticDataService.dateTimeFormatForDb);
+      const utcDateTime = moment()
+        .utc()
+        .format(StaticDataService.dateTimeFormatForDb);
       this.signOffDetailsPostData.signOffDate = utcDateTime;
 
       const signOffData = {
@@ -3020,7 +3053,7 @@ export class SharedDataService {
           const createdDateStr = UtilService.todayCompanyDate(
             this.offlineManagerService.offlineDeviceDetailData.timeDifference,
             false
-          ).toISOString(true);
+          ).format(StaticDataService.dateTimeFormatForDb);
           const signedByName =
             (this.dedicatedModeUserDetail.firstName || "") +
             " " +
@@ -3085,7 +3118,7 @@ export class SharedDataService {
           }
         });
     } else {
-      const utcDateTime = moment().utc(false).format("DD.MM.YYYY HH:mm:ss");
+      const utcDateTime = moment().utc().format("DD.MM.YYYY HH:mm:ss");
       this.signOffDetailsPostData.signOffDate = utcDateTime;
 
       this.utilService.presentLoadingWithOptions();

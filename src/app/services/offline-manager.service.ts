@@ -1322,7 +1322,10 @@ export class OfflineManagerService {
               list.filter((item) => {
                 if (
                   item.expirationDate &&
-                  item.expirationDate !== StaticDataService.userDefaultDate
+                  item.expirationDate !== StaticDataService.userDefaultDate &&
+                  item.expirationDate.indexOf(
+                    StaticDataService.userUnsetDate
+                  ) === -1
                 ) {
                   return !UtilService.isExpired(
                     item.expirationDate,
@@ -1355,16 +1358,19 @@ export class OfflineManagerService {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
             list.map((item: any) => {
-              const createdDate = moment(item.createdDate);
-              const currentDate = UtilService.todayCompanyDate(
+              let createdDate = moment(
+                UtilService.fixTimeString(item.createdDate),
+                StaticDataService.dateTimeFormat
+              );
+              let currentDate = UtilService.todayCompanyDate(
                 this.offlineDeviceDetailData.timeDifference,
                 false
               );
-
-              const formattedCreatedDate = UtilService.durationNow(
-                createdDate,
-                currentDate
-              );
+              let formattedCreatedDate =
+                UtilService.durationNow(createdDate, currentDate) +
+                " (" +
+                createdDate.format("DD MMM YYYY HH:mm") +
+                ")";
 
               item.formattedCreatedDate = formattedCreatedDate;
               item.todayDate = currentDate.format("YYYY-MM-DDTHH:mm:00.000");
@@ -1427,16 +1433,21 @@ export class OfflineManagerService {
           if (res.rows?.length > 0) {
             const list = this.convertToArray(res.rows);
             list.map((item: any) => {
-              const createdDate = moment(item.createdDate);
+              let createdDate = moment(
+                UtilService.fixTimeString(item.createdDate),
+                StaticDataService.dateTimeFormat
+              );
+
               const currentDate = UtilService.todayCompanyDate(
                 this.offlineDeviceDetailData.timeDifference,
                 false
               );
 
-              const formattedCreatedDate = UtilService.durationNow(
-                createdDate,
-                currentDate
-              );
+              const formattedCreatedDate =
+                UtilService.durationNow(createdDate, currentDate) +
+                " (" +
+                createdDate.format("DD MMM YYYY HH:mm") +
+                ")";
 
               item.formattedCreatedDate = formattedCreatedDate;
               item.todayDate = currentDate.format(
@@ -1472,7 +1483,8 @@ export class OfflineManagerService {
 
               if (
                 item.expiryDate &&
-                item.expiryDate !== StaticDataService.userDefaultDate
+                item.expiryDate !== StaticDataService.userDefaultDate &&
+                item.expiryDate.indexOf(StaticDataService.userUnsetDate) === -1
               ) {
                 isAvailable = !UtilService.isExpired(
                   item.expiryDate,
@@ -1488,17 +1500,27 @@ export class OfflineManagerService {
                   false
                 );
 
-                const issuedDateObj = moment(item.issuedDate);
-                const expiryDateObj = moment(item.expiryDate);
+                const issuedDateObj = moment(
+                  UtilService.fixTimeString(item.issuedDate),
+                  StaticDataService.dateTimeFormat
+                );
+                const expiryDateObj = moment(
+                  UtilService.fixTimeString(item.expiryDate),
+                  StaticDataService.dateTimeFormat
+                );
 
                 const formattedIssuedDate = UtilService.durationNow(
                   issuedDateObj,
                   currentDateTime
                 );
                 const formattedExpiryDate =
-                  UtilService.durationNow(expiryDateObj, currentDateTime) +
+                  UtilService.durationNow(
+                    currentDateTime,
+                    expiryDateObj,
+                    false
+                  ) +
                   " (" +
-                  moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+                  expiryDateObj.format("DD MMM YYYY HH:mm") +
                   ")";
 
                 item.formattedIssuedDate = formattedIssuedDate;
@@ -1535,17 +1557,24 @@ export class OfflineManagerService {
         );
 
         list.forEach((item: any) => {
-          const issuedDateObj = moment(item.issuedDate);
-          const expiryDateObj = moment(item.expiryDate);
+          const issuedDateObj = moment(
+            UtilService.fixTimeString(item.issuedDate),
+            StaticDataService.dateTimeFormat
+          );
+          const expiryDateObj = moment(
+            UtilService.fixTimeString(item.expiryDate),
+            StaticDataService.dateTimeFormat
+          );
 
           const formattedIssuedDate = UtilService.durationNow(
             issuedDateObj,
             currentDateTime
           );
+
           const formattedExpiryDate =
             UtilService.durationNow(expiryDateObj, currentDateTime) +
             " (" +
-            moment(expiryDateObj).format("DD MMM YYYY HH:mm") +
+            expiryDateObj.format("DD MMM YYYY HH:mm") +
             ")";
 
           item.formattedIssuedDate = formattedIssuedDate;
@@ -1572,7 +1601,9 @@ export class OfflineManagerService {
               const filteredList = list.filter((item: any) => {
                 if (
                   item.expiryDate &&
-                  item.expiryDate !== StaticDataService.userDefaultDate
+                  item.expiryDate !== StaticDataService.userDefaultDate &&
+                  item.expiryDate.indexOf(StaticDataService.userUnsetDate) ===
+                    -1
                 ) {
                   return UtilService.isExpired(
                     item.expiryDate,
@@ -1967,14 +1998,18 @@ export class OfflineManagerService {
               const renewEveryPeriodType = inductionDetail.renewEveryPeriodType;
               const renewEveryPeriod = inductionDetail.renewEveryPeriod;
               if (renewEveryPeriodType && renewEveryPeriod) {
-                const lastCheckinDate =
-                  lastCheckinForCurrentLocation.checkInDate;
+                const lastCheckinDate = moment(
+                  UtilService.fixTimeString(
+                    lastCheckinForCurrentLocation.checkInDate
+                  ),
+                  StaticDataService.dateTimeFormat
+                ).format(StaticDataService.dateZeroTimeFormat);
+
                 const lastCheckinDateObj = moment(
-                  moment(lastCheckinDate).format(StaticDataService.dateFormat)
+                  UtilService.fixTimeString(lastCheckinDate),
+                  StaticDataService.dateTimeFormat
                 );
-                const currentDate = UtilService.todayCompanyDate(
-                  this.offlineDeviceDetailData.timeDifference
-                );
+                const currentDate = moment().utc();
 
                 const diff = currentDate.diff(
                   lastCheckinDateObj,
@@ -2573,9 +2608,7 @@ export class OfflineManagerService {
 
   getUserTotalHAVExposureForToday(userId) {
     return new Promise((resolve) => {
-      const todayDate = UtilService.todayCompanyDate(
-        this.offlineDeviceDetailData.timeDifference
-      );
+      const todayDate = moment().utc();
 
       let condition =
         'userId = "' +
@@ -2729,9 +2762,7 @@ export class OfflineManagerService {
 
   insertHAVExposureForDate = (data) => {
     return new Promise((resolve, reject) => {
-      const todayDate = UtilService.todayCompanyDate(
-        this.offlineDeviceDetailData.timeDifference
-      );
+      const todayDate = moment().utc();
 
       const condition =
         'userId="' +
@@ -2786,7 +2817,10 @@ export class OfflineManagerService {
             ) {
               if (
                 userQualObj.expireDate &&
-                userQualObj.expireDate !== StaticDataService.userDefaultDate
+                userQualObj.expireDate !== StaticDataService.userDefaultDate &&
+                userQualObj.expireDate.indexOf(
+                  StaticDataService.userUnsetDate
+                ) === -1
               ) {
                 if (
                   !UtilService.isExpired(
@@ -2836,10 +2870,7 @@ export class OfflineManagerService {
                 false
               );
 
-            const todayDate = UtilService.todayCompanyDate(
-              this.offlineDeviceDetailData.timeDifference,
-              false
-            );
+            const todayDate = moment().utc();
             const checkInDate = todayDate.format(
               StaticDataService.dateTimeFormatForDb
             );
@@ -2991,10 +3022,7 @@ export class OfflineManagerService {
               true
             );
 
-          const todayDate = UtilService.todayCompanyDate(
-            this.offlineDeviceDetailData.timeDifference,
-            false
-          );
+          const todayDate = moment().utc();
           const checkinDate = todayDate.format(
             StaticDataService.dateTimeFormatForDb
           );

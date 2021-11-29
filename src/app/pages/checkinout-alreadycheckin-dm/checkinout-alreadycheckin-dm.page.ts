@@ -63,9 +63,9 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     ) {
       debugger;
       if (this.sharedDataService.offlineMode) {
-        const utcDateTime = UtilService.todayCompanyDate(
-          this.offlineManagerService.offlineDeviceDetailData.timeDifference
-        ).format(StaticDataService.dateTimeFormatForDb);
+        const utcDateTime = moment()
+          .utc()
+          .format(StaticDataService.dateTimeFormatForDb);
 
         this.offlineManagerService
           .insertCheckOutDetails_Guest(
