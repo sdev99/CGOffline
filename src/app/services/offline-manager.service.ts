@@ -1488,7 +1488,8 @@ export class OfflineManagerService {
               ) {
                 isAvailable = !UtilService.isExpired(
                   item.expiryDate,
-                  this.offlineDeviceDetailData.timeDifference
+                  this.offlineDeviceDetailData.timeDifference,
+                  true
                 );
               } else {
                 isAvailable = true;
@@ -1607,7 +1608,8 @@ export class OfflineManagerService {
                 ) {
                   return UtilService.isExpired(
                     item.expiryDate,
-                    this.offlineDeviceDetailData.timeDifference
+                    this.offlineDeviceDetailData.timeDifference,
+                    true
                   );
                 }
                 return false;
@@ -1998,17 +2000,13 @@ export class OfflineManagerService {
               const renewEveryPeriodType = inductionDetail.renewEveryPeriodType;
               const renewEveryPeriod = inductionDetail.renewEveryPeriod;
               if (renewEveryPeriodType && renewEveryPeriod) {
-                const lastCheckinDate = moment(
+                const lastCheckinDateObj = moment.utc(
                   UtilService.fixTimeString(
                     lastCheckinForCurrentLocation.checkInDate
                   ),
                   StaticDataService.dateTimeFormat
-                ).format(StaticDataService.dateZeroTimeFormat);
-
-                const lastCheckinDateObj = moment(
-                  UtilService.fixTimeString(lastCheckinDate),
-                  StaticDataService.dateTimeFormat
                 );
+
                 const currentDate = moment().utc();
 
                 const diff = currentDate.diff(
@@ -2076,7 +2074,7 @@ export class OfflineManagerService {
           // Get list of assgined enity to the device
           let deviceAssginedLocationIds = [];
           let deviceAssginedProjectIds = [];
-          let deviceAssginedInventryItemIds = [];
+          let deviceAssginedInventoryItemIds = [];
           const deviceAssginedEntity = localStorage.getItem(
             EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES
           );
@@ -2089,7 +2087,7 @@ export class OfflineManagerService {
                 } else if (obj.projectID) {
                   deviceAssginedProjectIds.push(obj.projectID);
                 } else if (obj.inventoryItemID) {
-                  deviceAssginedInventryItemIds.push(obj.inventoryItemID);
+                  deviceAssginedInventoryItemIds.push(obj.inventoryItemID);
                 }
               });
             } catch (error) {}
@@ -2124,7 +2122,7 @@ export class OfflineManagerService {
                   (item.projectID &&
                     deviceAssginedProjectIds.indexOf(item.projectID) !== -1) ||
                   (item.inventoryItemID &&
-                    deviceAssginedInventryItemIds.indexOf(
+                    deviceAssginedInventoryItemIds.indexOf(
                       item.inventoryItemID
                     ) !== -1);
                 if (locationIsAssigned && !item.isSimultaneousCheckIn) {
@@ -2903,6 +2901,7 @@ export class OfflineManagerService {
                 lastCheckinData["projectID"] = data.projectID;
                 lastCheckinDataCondition["projectID"] = data.projectID;
               }
+
               this.insertData(
                 "DeviceUserLastCheckinDetailList",
                 lastCheckinData,
@@ -3592,14 +3591,22 @@ export class OfflineManagerService {
               latitude: dataObj.latitude || "",
               longitude: dataObj.longitude || "",
               documentID: dataObj.documentID || 0,
-              userSignaturePhotoFileName: "",
+              userSignaturePhotoFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" +
+                    dataObj.userSignaturePhotoImageVideoFileId
+                ] || "",
               userSignaturePhotoBinaryFile: "",
               userSignaturePhoto:
                 uploadedFiles[
                   "imageVideoFileId_" +
                     dataObj.userSignaturePhotoImageVideoFileId
                 ] || "",
-              digitalInkSignatureFileName: "",
+              digitalInkSignatureFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" +
+                    dataObj.digitalInkSignatureImageVideoFileId
+                ] || "",
               digitalInkSignatureBinaryFile: "",
               digitalInkSignature:
                 uploadedFiles[
@@ -3662,13 +3669,19 @@ export class OfflineManagerService {
               inventoryItemID: obj.inventoryItemID || "",
               checkInLatitude: obj.checkInLatitude || "",
               checkInLongitude: obj.checkInLongitude || "",
-              digitalInkSignatureFileName: "",
+              digitalInkSignatureFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
+                ] || "",
               digitalInkSignatureBinaryFile: "",
               digitalInkSignature:
                 uploadedFiles[
                   "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
                 ] || "",
-              userSignaturePhotoFileName: "",
+              userSignaturePhotoFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userSignaturePhotoImageVideoFileId
+                ] || "",
               userSignaturePhotoBinaryFile: "",
               userSignaturePhoto:
                 uploadedFiles[
@@ -3758,13 +3771,19 @@ export class OfflineManagerService {
                 uploadedFiles[
                   "imageVideoFileId_" + obj.guestPhotoImageVideoFileId
                 ] || "",
-              digitalInkSignatureFileName: "",
+              digitalInkSignatureFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
+                ] || "",
               digitalInkSignatureBinaryFile: "",
               digitalInkSignature:
                 uploadedFiles[
                   "imageVideoFileId_" + obj.digitalInkSignatureImageVideoFileId
                 ] || "",
-              userSignaturePhotoFileName: "",
+              userSignaturePhotoFileName:
+                uploadedFiles[
+                  "imageVideoFileId_" + obj.userSignaturePhotoImageVideoFileId
+                ] || "",
               userSignaturePhotoBinaryFile: "",
               userSignaturePhoto:
                 uploadedFiles[

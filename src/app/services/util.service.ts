@@ -45,24 +45,22 @@ export class UtilService {
     return udid;
   }
 
-  static isExpired(expirationDate, companyTimeDifference) {
+  static isExpired(
+    expirationDate,
+    companyTimeDifference,
+    isExpireAfterExpiryDate = false
+  ) {
     const timeDifference = parseInt(companyTimeDifference);
-    const expiryDate = moment(
+    const expiryDate = moment.utc(
       UtilService.fixTimeString(expirationDate),
       StaticDataService.dateTimeFormat
     );
+
     const currDate = moment.utc();
     currDate.add(timeDifference, "minutes");
 
-    const finalCurrentDate = moment(
-      currDate.format(StaticDataService.dateFormat)
-    );
-    const finalExpiryDate = moment(
-      expiryDate.format(StaticDataService.dateFormat)
-    );
-
-    const daysCount = finalExpiryDate.diff(finalCurrentDate, "days");
-    return daysCount <= 0;
+    const daysCount = expiryDate.diff(currDate, "minutes");
+    return isExpireAfterExpiryDate ? daysCount < 0 : daysCount <= 0;
   }
 
   static durationNow(date1, date2, withAgo = true) {

@@ -1635,6 +1635,8 @@ export class SharedDataService {
                 case EnumService.HavFormFieldOrder.Model:
                   if (question.value) {
                     havQuestionAnswerObject.hAVModelID = question.value;
+                    havQuestionAnswerObject.inventoryItemID =
+                      question.inventoryItemID;
                     isValueFilled = true;
                   }
                   break;

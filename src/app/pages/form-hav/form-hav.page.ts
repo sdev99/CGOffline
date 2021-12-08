@@ -181,7 +181,7 @@ export class FormHavPage implements OnInit {
     });
   };
 
-  setupHavData = (havAssessmentTool, entityItem) => {
+  setupHavData = (havAssessmentTool, entityItem: EntityItem) => {
     this.ngZone.run(() => {
       setTimeout(() => {
         havAssessmentTool.questions.map((questionItem) => {
@@ -200,6 +200,7 @@ export class FormHavPage implements OnInit {
             EnumService.HavFormFieldOrder.Model
           ) {
             questionItem.value = entityItem.havModelID;
+            questionItem.inventoryItemID = entityItem.entityID;
           }
         });
       }, 0);
@@ -674,6 +675,8 @@ export class FormHavPage implements OnInit {
                   case EnumService.HavFormFieldOrder.Model:
                     if (question.value) {
                       havQuestionAnswerObject.hAVModelID = question.value;
+                      havQuestionAnswerObject.inventoryItemID =
+                        question.inventoryItemID;
                       isValueFilled = true;
                     }
                     break;
