@@ -63,15 +63,16 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     ) {
       debugger;
       if (this.sharedDataService.offlineMode) {
-        const utcDateTime = moment()
-          .utc()
-          .format(StaticDataService.dateTimeFormatForDb);
+        const utcDateTime = UtilService.todayCompanyDate(
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+          false
+        ).format(StaticDataService.dateTimeFormatForDb);
 
         this.offlineManagerService
           .insertCheckOutDetails_Guest(
             {
               guestPhone:
-                this.sharedDataService.dedicatedModeGuestDetail.guestPhone ||
+                this.sharedDataService.dedicatedModeGuestDetail.guestPhone.toString() ||
                 "",
               guestFirsName:
                 this.sharedDataService.dedicatedModeGuestDetail.guestFirsName ||
@@ -190,7 +191,8 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
 
       if (this.sharedDataService.offlineMode) {
         const utcDateTime = UtilService.todayCompanyDate(
-          this.offlineManagerService.offlineDeviceDetailData.timeDifference
+          this.offlineManagerService.offlineDeviceDetailData.timeDifference,
+          false
         ).format(StaticDataService.dateTimeFormatForDb);
 
         this.offlineManagerService

@@ -13,6 +13,7 @@ import { EnumService } from "../services/enum.service";
 import { SharedDataService } from "../services/shared-data.service";
 import { AccountService } from "../services/account.service";
 import { Response } from "../_models/response";
+import { StaticDataService } from "../services/static-data.service";
 
 // WDEyREJVTTFqaEljUlc2U05HMlF1WWxNc3dXS2pVa3RKQ0F5c2drWnpSRU9GZWplTU02UHlKcU92a1FqRFF3dVBiNDhYUEFjdVoxT2grUmVRSjE5dkdzR1ZYWkFHWFdmNHU5T1pzbnk3ald0ckVuTkw1OHFvbEsrMXFvMURCb3E=
 @Injectable()

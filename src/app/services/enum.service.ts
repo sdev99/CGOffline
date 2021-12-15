@@ -187,7 +187,7 @@ export class EnumService {
     GetRiskAssessmentSeverityOptions: "GetRiskAssessmentSeverityOptions", // GET
     GetRiskAssessmentProbabilityOptions: "GetRiskAssessmentProbabilityOptions", // GET
     GetRiskItemList: "GetRiskItemList", // GET
-    GetHazardItemList: "GetHazardItemList", //	 GET
+    GetHazardItemList: "GetHazardItemList", // GET
     GetCompanyLanguageTemplate: "GetCompanyLanguageTemplate", // GET
     GetCompanyLanguageTemplateByCode: "GetCompanyLanguageTemplateByCode", // GET
     GetAnswerChoiceEntityByQRCode: "GetAnswerChoiceEntityByQRCode", // GET

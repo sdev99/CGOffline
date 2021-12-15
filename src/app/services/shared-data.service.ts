@@ -1547,8 +1547,8 @@ export class SharedDataService {
     const formattedSections = [];
 
     const userId = this.dedicatedMode
-      ? this.dedicatedModeUserDetail.userId
-      : personalModeLoggedUser.userId;
+      ? this.dedicatedModeUserDetail?.userId
+      : personalModeLoggedUser?.userId;
     const companyId = this.dedicatedMode
       ? this.dedicatedModeDeviceDetailData.companyID
       : personalModeLoggedUser.companyID;
@@ -2077,7 +2077,11 @@ export class SharedDataService {
       formVersionId,
       selectedLanguageID,
       formTypeId: formBuilderDetail.formTypeID,
-      userId,
+      userId: userId || StaticDataService.userDefaultGuid,
+      guest_FirstName: this.checkInPostData?.guestFirsName || "",
+      guest_MiddleName: this.checkInPostData?.guestMiddleName || "",
+      guest_LastName: this.checkInPostData?.guestLastName || "",
+      guest_Phone: this.checkInPostData?.guestPhone || "",
       companyId,
       questionAnswers,
       accidentReportQuestionAnswers,
@@ -2090,10 +2094,10 @@ export class SharedDataService {
       riskAssessmentAnswerDetails,
     };
 
-    // if (UtilService.isLocalHost()) {
-    // console.log('Submit Answers', JSON.stringify(submitAnswersObject));
-    // return;
-    // }
+    if (UtilService.isLocalHost()) {
+      console.log("Submit Answers", JSON.stringify(submitAnswersObject));
+      return;
+    }
 
     const saveFormSuccess = (result) => {
       if (
@@ -2355,7 +2359,8 @@ export class SharedDataService {
         projectID: this.dedicatedModeLocationUse.projectID || 0,
         locationID: this.dedicatedModeLocationUse.locationID || 0,
         userDetailPhoto: dedicatedModeUserDetail.userPhoto || "",
-        userId: this.checkInPostData.userId || "",
+        userId:
+          this.checkInPostData.userId || StaticDataService.userDefaultGuid,
         userSignaturePhotoImageVideoFileId:
           this.checkInPostData.userSignaturePhotoImageVideoFileId || "",
         locationAutoCheckOutHour: entityData.autoCheckOutHour || "",
@@ -2363,6 +2368,8 @@ export class SharedDataService {
         userAutoCheckOutTime:
           dedicatedModeUserDetail?.userAutoCheckOutTime || "",
         formSubmitDataId: this.checkInPostData?.formSubmitDataId || "",
+        processInductionsteps:
+          this.checkInDetail?.checkInEntityDetail?.processInduction,
       };
 
       this.offlineManagerService
@@ -2565,6 +2572,8 @@ export class SharedDataService {
         currentUTCDate: utcDateTime || "",
         digitalInkSignatureImageVideoFileId:
           this.checkInPostData.digitalInkSignatureImageVideoFileId || "",
+        userSignaturePhotoImageVideoFileId:
+          this.checkInPostData.userSignaturePhotoImageVideoFileId || "",
         entityName:
           this.dedicatedModeLocationUse.projectName ||
           this.dedicatedModeLocationUse.locationName ||
@@ -2584,6 +2593,9 @@ export class SharedDataService {
         locationID: this.dedicatedModeLocationUse.locationID || 0,
         locationAutoCheckOutHour: entityData.autoCheckOutHour || "",
         locationAutoCheckOutTime: entityData.autoCheckOutTime || "",
+        formSubmitDataId: this.checkInPostData?.formSubmitDataId || "",
+        processInductionsteps:
+          this.checkInDetail?.checkInEntityDetail?.processInduction,
       };
 
       this.offlineManagerService
@@ -3024,7 +3036,9 @@ export class SharedDataService {
       this.signOffDetailsPostData.signOffDate = utcDateTime;
 
       const signOffData = {
-        userId: this.signOffDetailsPostData.userId || "",
+        userId:
+          this.signOffDetailsPostData.userId ||
+          StaticDataService.userDefaultGuid,
         documentID: this.signOffDetailsPostData.documentID || 0,
         documentVersionID: this.signOffDetailsPostData.documentVersionID || 0,
         formVersionID: this.signOffDetailsPostData.formVersionID || 0,
