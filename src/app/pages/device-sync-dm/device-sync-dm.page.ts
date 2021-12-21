@@ -285,11 +285,78 @@ export class DeviceSyncDmPage implements OnInit {
   onSync() {
     this.progress = 0;
     this.synchProgressState = "processing";
-    this.updateSyncState(EnumService.SyncProcessState.STARTED);
-    this.insomnia.keepAwake().then(
-      () => console.log("keepAwake success"),
-      (error) => console.log("keepAwake error", error)
-    );
+
+    this.offlineManagerService.shouldOnlyUseInOfflineMode().then((res) => {
+      if (res) {
+        const prevSyncStatus = localStorage.getItem(
+          EnumService.LocalStorageKeys.OFFLINEMODE_SYNC_STATE
+        );
+        if (
+          prevSyncStatus &&
+          prevSyncStatus ===
+            EnumService.SyncProcessState.OFFLINE_DATA_UPLOAD_START
+        ) {
+          checkPrevSyncStaus();
+        } else {
+          startSyncProcess();
+        }
+      } else {
+        startSyncProcess();
+      }
+    });
+
+    const checkPrevSyncStaus = (checkForFailedSync = false, message = "") => {
+      this.offlineApiService
+        .getSynchStatus(
+          this.sharedDataService.dedicatedModeDeviceDetailData.deviceID
+        )
+        .subscribe(
+          (res: Response) => {
+            if (
+              res.StatusCode ===
+                EnumService.ApiResponseCode.RequestSuccessful &&
+              res.Result
+            ) {
+              if (res.Result.isSynchCompleted) {
+                if (checkForFailedSync) {
+                  this.onSyncFailed(message);
+                } else {
+                  onOfflineDataPostSuccess();
+                }
+              } else {
+                setTimeout(() => {
+                  checkPrevSyncStaus();
+                }, 5000);
+              }
+            } else {
+              if (checkForFailedSync) {
+                this.onSyncFailed(message);
+              } else {
+                startSyncProcess();
+              }
+            }
+          },
+          (error) => {
+            debugger;
+          }
+        );
+    };
+
+    const startSyncProcess = () => {
+      this.updateSyncState(EnumService.SyncProcessState.STARTED);
+      this.insomnia.keepAwake().then(
+        () => console.log("keepAwake success"),
+        (error) => console.log("keepAwake error", error)
+      );
+
+      this.postOfflineDataToServerIfAvailable()
+        .then((res) => {
+          onOfflineDataPostSuccess();
+        })
+        .catch((error) => {
+          checkPrevSyncStaus(true, error.message);
+        });
+    };
 
     const onOfflineRemoved = () => {
       this.updateSyncState(
@@ -306,25 +373,21 @@ export class DeviceSyncDmPage implements OnInit {
       });
     };
 
-    this.postOfflineDataToServerIfAvailable()
-      .then((res) => {
-        this.updateProgress(100, 0);
-        // First Remove folder that contains all offline created files before download new offline files
-        this.filehandlerService
-          .removeDirectory(
-            this.filehandlerService.offlineFilesDirectory(),
-            StaticDataService.offlineFilesFolderName
-          )
-          .then(() => {
-            onOfflineRemoved();
-          })
-          .catch(() => {
-            onOfflineRemoved();
-          });
-      })
-      .catch((error) => {
-        this.onSyncFailed(error.message);
-      });
+    const onOfflineDataPostSuccess = () => {
+      this.updateProgress(100, 0);
+      // First Remove folder that contains all offline created files before download new offline files
+      this.filehandlerService
+        .removeDirectory(
+          this.filehandlerService.offlineFilesDirectory(),
+          StaticDataService.offlineFilesFolderName
+        )
+        .then(() => {
+          onOfflineRemoved();
+        })
+        .catch(() => {
+          onOfflineRemoved();
+        });
+    };
   }
 
   onContinue() {

@@ -1169,11 +1169,7 @@ export class OfflineManagerService {
         index++
       ) {
         const value: any = deviceUserTotalHAVExposureList[index];
-        const condition: any = {
-          userID: value.userID,
-          modifiedDate: value.modifiedDate,
-        };
-        await this.insertData("DeviceUserTotalHAVExposures", value, condition);
+        await this.insertData("DeviceUserTotalHAVExposures", value);
       }
       callBack && callBack();
       console.log("DeviceUserTotalHAVExposures Inserted");
@@ -2614,13 +2610,13 @@ export class OfflineManagerService {
       const todayDate = moment().utc();
 
       let condition =
-        'userId = "' +
+        'userID = "' +
         userId +
-        '" AND date="' +
+        '" AND date(modifiedDate)=date("' +
         todayDate.format("YYYY-MM-DDT00:00:00.000") +
-        '"';
+        '")';
       const query =
-        "SELECT exposure as total_exposure FROM UserHavExposure" +
+        "SELECT SUM(exposurePoints) as total_exposure FROM DeviceUserTotalHAVExposures" +
         (condition ? " WHERE " + condition : "");
       this.dbQuery(query, [])
         .then((res: any) => {
@@ -2773,27 +2769,10 @@ export class OfflineManagerService {
         '" AND date="' +
         todayDate.format("YYYY-MM-DDT00:00:00.000") +
         '"';
-      let query =
-        "SELECT userHavExposureId FROM UserHavExposure WHERE " + condition;
-      this.dbQuery(query)
-        .then((res: any) => {
-          if (res && res.rows?.length > 0) {
-            let query =
-              "UPDATE UserHavExposure SET exposure=? WHERE " + condition;
-            this.dbQuery(query, [data.exposure])
-              .then((updateRes: any) => {
-                resolve(updateRes);
-              })
-              .catch((error) => {
-                reject(error);
-              });
-          } else {
-            this.insertData("UserHavExposure", data);
-          }
-        })
-        .catch(() => {
-          this.insertData("UserHavExposure", data);
-        });
+
+      this.insertData("DeviceUserTotalHAVExposures", data).finally(() => {
+        resolve(null);
+      });
     });
   };
 
@@ -3053,7 +3032,7 @@ export class OfflineManagerService {
           reject(error);
         });
 
-      const addLastCheckinDetails = (checkinDetail) => {
+      const addLastCheckinDetails = async (checkinDetail) => {
         const lastCheckinData = {
           checkInDate: checkinDetail.checkInDate,
           checkOutDate: checkinDetail.checkOutDate,
@@ -3064,20 +3043,49 @@ export class OfflineManagerService {
           isOfflineDone: true,
         };
 
-        if (checkinDetail.inventoryItemID) {
-          lastCheckinData["inventoryItemID"] = checkinDetail.inventoryItemID;
-        } else if (checkinDetail.locationID) {
-          lastCheckinData["locationID"] = checkinDetail.locationID;
-        } else if (checkinDetail.projectID) {
-          lastCheckinData["projectID"] = checkinDetail.projectID;
-        }
+        const getLastCheckinDetail: any =
+          await this.getDeviceUserLastCheckinDetail(
+            checkinDetail,
+            checkinDetail.userId,
+            false
+          );
+        if (getLastCheckinDetail) {
+          if (checkinDetail.processInductionsteps) {
+            const { dataCols, dataVals } =
+              this.convertObjectToColValPlaceholders(
+                lastCheckinData,
+                "DeviceUserLastCheckinDetailList"
+              );
+            let condition =
+              "deviceUserLastCheckinDetailId = " +
+              getLastCheckinDetail.deviceUserLastCheckinDetailId;
+            let query =
+              "UPDATE DeviceUserLastCheckinDetailList SET " +
+              dataCols.join(" = ?,") +
+              " = ? WHERE " +
+              condition;
+            this.dbQuery(query, dataVals).finally(() => {
+              resolve(checkinDetail);
+            });
+          } else {
+            resolve(checkinDetail);
+          }
+        } else {
+          if (checkinDetail.inventoryItemID) {
+            lastCheckinData["inventoryItemID"] = checkinDetail.inventoryItemID;
+          } else if (checkinDetail.locationID) {
+            lastCheckinData["locationID"] = checkinDetail.locationID;
+          } else if (checkinDetail.projectID) {
+            lastCheckinData["projectID"] = checkinDetail.projectID;
+          }
 
-        this.insertData(
-          "DeviceUserLastCheckinDetailList",
-          lastCheckinData
-        ).finally(() => {
-          resolve(checkinDetail);
-        });
+          this.insertData(
+            "DeviceUserLastCheckinDetailList",
+            lastCheckinData
+          ).finally(() => {
+            resolve(checkinDetail);
+          });
+        }
       };
     });
   };
@@ -3140,13 +3148,13 @@ export class OfflineManagerService {
           reject(error);
         });
 
-      const addLastCheckinDetails = (checkinDetail) => {
+      const addLastCheckinDetails = async (checkinDetail) => {
         const lastCheckinData = {
           guestFirsName: checkinDetail.guestFirsName,
           guestLastName: checkinDetail.guestLastName,
           guestMiddleName: checkinDetail.guestMiddleName,
-          guestPhone: checkinDetail.guestPhone,
-          checkInDate: checkinDetail.checkinDate,
+          guestPhone: checkinDetail.guestPhone.toString(),
+          checkInDate: checkinDetail.checkInDate,
           checkOutDate: checkinDetail.checkOutDate,
           showInductionSteps: false,
           todayDate: "",
@@ -3154,20 +3162,49 @@ export class OfflineManagerService {
           isOfflineDone: true,
         };
 
-        if (checkinDetail.inventoryItemID) {
-          lastCheckinData["inventoryItemID"] = checkinDetail.inventoryItemID;
-        } else if (checkinDetail.locationID) {
-          lastCheckinData["locationID"] = checkinDetail.locationID;
-        } else if (checkinDetail.projectID) {
-          lastCheckinData["projectID"] = checkinDetail.projectID;
-        }
+        const getLastCheckinDetail: any =
+          await this.getDeviceUserLastCheckinDetail(
+            checkinDetail,
+            checkinDetail.guestPhone.toString(),
+            true
+          );
+        if (getLastCheckinDetail) {
+          if (checkinDetail.processInductionsteps) {
+            const { dataCols, dataVals } =
+              this.convertObjectToColValPlaceholders(
+                lastCheckinData,
+                "DeviceGuestUserLastCheckinDetailList"
+              );
+            let condition =
+              "deviceGuestUserLastCheckinDetailId = " +
+              getLastCheckinDetail.deviceGuestUserLastCheckinDetailId;
+            let query =
+              "UPDATE DeviceGuestUserLastCheckinDetailList SET " +
+              dataCols.join(" = ?,") +
+              " = ? WHERE " +
+              condition;
+            this.dbQuery(query, dataVals).finally(() => {
+              resolve(checkinDetail);
+            });
+          } else {
+            resolve(checkinDetail);
+          }
+        } else {
+          if (checkinDetail.inventoryItemID) {
+            lastCheckinData["inventoryItemID"] = checkinDetail.inventoryItemID;
+          } else if (checkinDetail.locationID) {
+            lastCheckinData["locationID"] = checkinDetail.locationID;
+          } else if (checkinDetail.projectID) {
+            lastCheckinData["projectID"] = checkinDetail.projectID;
+          }
 
-        this.insertData(
-          "DeviceGuestUserLastCheckinDetailList",
-          lastCheckinData
-        ).finally(() => {
-          resolve(checkinDetail);
-        });
+          this.insertData(
+            "DeviceGuestUserLastCheckinDetailList",
+            lastCheckinData
+          ).finally(() => {
+            resolve(checkinDetail);
+          });
+        }
       };
     });
   };

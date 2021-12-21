@@ -63,10 +63,9 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     ) {
       debugger;
       if (this.sharedDataService.offlineMode) {
-        const utcDateTime = UtilService.todayCompanyDate(
-          this.offlineManagerService.offlineDeviceDetailData.timeDifference,
-          false
-        ).format(StaticDataService.dateTimeFormatForDb);
+        const utcDateTime = moment()
+          .utc()
+          .format(StaticDataService.dateTimeFormat);
 
         this.offlineManagerService
           .insertCheckOutDetails_Guest(
@@ -190,10 +189,9 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
       };
 
       if (this.sharedDataService.offlineMode) {
-        const utcDateTime = UtilService.todayCompanyDate(
-          this.offlineManagerService.offlineDeviceDetailData.timeDifference,
-          false
-        ).format(StaticDataService.dateTimeFormatForDb);
+        const utcDateTime = moment()
+          .utc()
+          .format(StaticDataService.dateTimeFormat);
 
         this.offlineManagerService
           .insertCheckOutDetails(

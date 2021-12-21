@@ -1221,7 +1221,7 @@ export class SharedDataService {
                       }
                     });
                     if (multipleChoiceValueIDs.length > 0) {
-                      filledFieldsValidCount++;
+                      filledFieldsCount++;
                       filledFieldsValidCount++;
                       if (question.questionIsRequired) {
                         requiredFieldsValidCount++;
@@ -1262,6 +1262,7 @@ export class SharedDataService {
           }
         });
       }
+
 
       if (
         formGroup.valid &&
@@ -2156,9 +2157,10 @@ export class SharedDataService {
           if (havAnswerDetail && havAnswerDetail.totalExposure) {
             this.offlineManagerService
               .insertHAVExposureForDate({
-                userId: userId,
-                exposure: havAnswerDetail.totalExposure,
-                date: moment()
+                userID: userId,
+                isOfflineDone: true,
+                exposurePoints: havAnswerDetail.calculatedExposure,
+                modifiedDate: moment
                   .utc()
                   .format(StaticDataService.dateZeroTimeFormat),
               })

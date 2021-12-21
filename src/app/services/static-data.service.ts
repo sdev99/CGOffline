@@ -1347,9 +1347,9 @@ export class StaticDataService {
         { name: "exposurePoints", type: "INTEGER" },
         { name: "modifiedDate", type: "VARCHAR(32)" },
         { name: "userID", type: "VARCHAR(32)" },
+        { name: "isOfflineDone", type: "BOOLEAN" },
       ],
     },
-
     {
       table_name: "DeviceFormBuilderDetails",
       columns: [
@@ -1417,18 +1417,6 @@ export class StaticDataService {
         { name: "workPermitDetails", type: "TEXT" },
         { name: "accidentReport", type: "TEXT" },
         { name: "riskAssessmentAnswerDetails", type: "TEXT" },
-      ],
-    },
-    {
-      table_name: "UserHavExposure",
-      columns: [
-        {
-          name: "userHavExposureId",
-          type: "INTEGER PRIMARY KEY AUTOINCREMENT",
-        },
-        { name: "userId", type: "VARCHAR(32)" },
-        { name: "exposure", type: "VARCHAR(32)" },
-        { name: "date", type: "VARCHAR(32)" },
       ],
     },
     {

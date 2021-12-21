@@ -214,10 +214,12 @@ export class AppComponent {
           this.sharedDataService.deviceUID = uuid;
 
           // For Test Purpose only
-          const sukhdevIphone12Mini = "00008101-001C2D120A29003A";
-          if (uuid === sukhdevIphone12Mini) {
-            this.sharedDataService.deviceUID =
-              "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
+          if (uuid === "67DA70A1-FD31-4B48-81F6-74E9EB356632") {
+            //Sukhdev iPhone 12 mini test id
+            localStorage.setItem(StaticDataService.isDeviceTestTablet, "true");
+            this.sharedDataService.deviceUID = localStorage.getItem("test-uid")
+              ? localStorage.getItem("test-uid")
+              : "0eab5395-a994-520b-5352-317105139432";
           }
           //end
         } else {
