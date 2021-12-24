@@ -1263,7 +1263,6 @@ export class SharedDataService {
         });
       }
 
-
       if (
         formGroup.valid &&
         requiredFieldsCount === requiredFieldsValidCount &&
@@ -2160,9 +2159,7 @@ export class SharedDataService {
                 userID: userId,
                 isOfflineDone: true,
                 exposurePoints: havAnswerDetail.calculatedExposure,
-                modifiedDate: moment
-                  .utc()
-                  .format(StaticDataService.dateZeroTimeFormat),
+                modifiedDate: moment.utc().format("YYYY-MM-DDT00:00:00"),
               })
               .then((res) => {});
           }

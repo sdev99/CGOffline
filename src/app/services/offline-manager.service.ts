@@ -2613,7 +2613,7 @@ export class OfflineManagerService {
         'userID = "' +
         userId +
         '" AND date(modifiedDate)=date("' +
-        todayDate.format("YYYY-MM-DDT00:00:00.000") +
+        todayDate.format("YYYY-MM-DDT00:00:00") +
         '")';
       const query =
         "SELECT SUM(exposurePoints) as total_exposure FROM DeviceUserTotalHAVExposures" +
@@ -2761,15 +2761,6 @@ export class OfflineManagerService {
 
   insertHAVExposureForDate = (data) => {
     return new Promise((resolve, reject) => {
-      const todayDate = moment().utc();
-
-      const condition =
-        'userId="' +
-        data.userId +
-        '" AND date="' +
-        todayDate.format("YYYY-MM-DDT00:00:00.000") +
-        '"';
-
       this.insertData("DeviceUserTotalHAVExposures", data).finally(() => {
         resolve(null);
       });

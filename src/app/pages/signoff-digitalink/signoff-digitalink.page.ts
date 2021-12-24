@@ -27,6 +27,8 @@ export class SignoffDigitalinkPage implements OnInit {
   isConfirm = false;
   canvasRef;
 
+  isSignatureFilled = false;
+
   pageTitle = "Sign-Off";
   title = "You are signing-off";
   subTitle = "Digital Ink Signature";
@@ -225,7 +227,15 @@ export class SignoffDigitalinkPage implements OnInit {
           height: (window.innerHeight * 28) / 100,
         });
       }
-      this.canvasRef.on("selection:created", () => {});
+      this.canvasRef.on("selection:created", () => {
+        console.log("selection:created");
+      });
+      this.canvasRef.on("path:created", () => {
+        console.log("path:created");
+        this.ngZone.run(() => {
+          this.isSignatureFilled = true;
+        });
+      });
       this.canvasRef.on("selection:cleared", () => {});
       this.canvasRef.freeDrawingBrush.color = "#171538";
       this.canvasRef.freeDrawingBrush.width = 4;
