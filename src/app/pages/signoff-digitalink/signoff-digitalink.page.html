@@ -25,9 +25,9 @@
 
       <div class="ion-text-center text-2" *ngIf="subTitle">{{subTitle}}</div>
 
-      <div class="agree-checkbox">
-        <ion-checkbox mode="md" [(ngModel)]="isConfirm"></ion-checkbox>
-        <ion-label (click)="isConfirm=!isConfirm">{{aggrementTitle}}</ion-label>
+      <div class="agree-checkbox" (click)="onConfirm()">
+        <ion-checkbox mode="md" [checked]="isConfirm"></ion-checkbox>
+        <ion-label>{{aggrementTitle}}</ion-label>
       </div>
 
       <ng-container *ngIf="showDigitalInk">

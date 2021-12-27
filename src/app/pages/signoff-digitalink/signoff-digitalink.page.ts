@@ -200,13 +200,18 @@ export class SignoffDigitalinkPage implements OnInit {
               this.pageTitle = res[signOffLangKey];
               this.title = res[signOffLangKey];
               this.aggrementTitle = res[signOffAgreementTitleLangKey];
-              this.showDigitalInk = true;
+              this.showDigitalInk = false;
               this.initialiseDrawing();
             }
         }
       });
   }
 
+  onConfirm = () => {
+    this.ngZone.run(() => {
+      this.isConfirm = !this.isConfirm;
+    });
+  };
   initialiseDrawing() {
     setTimeout(() => {
       if (!this.canvasRef) {
