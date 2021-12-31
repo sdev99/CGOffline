@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit } from "@angular/core";
 import { NavController } from "@ionic/angular";
 import { DemoDataService } from "../../services/demo-data.service";
 import { ActivatedRoute } from "@angular/router";
@@ -9,6 +9,8 @@ import { EnumService } from "../../services/enum.service";
 import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { FilehandlerService } from "../../services/filehandler.service";
+import { StaticDataService } from "src/app/services/static-data.service";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-checkin-induction-image-file",
@@ -19,6 +21,8 @@ export class CheckinInductionImageFilePage implements OnInit {
   user: User;
 
   inductionItem: InductionItem;
+  imageUrl: string = "";
+  imageMimeType: string = "";
 
   constructor(
     public navCtrl: NavController,
@@ -26,7 +30,8 @@ export class CheckinInductionImageFilePage implements OnInit {
     public sharedDataService: SharedDataService,
     public utilService: UtilService,
     public accountService: AccountService,
-    public filehandlerService: FilehandlerService
+    public filehandlerService: FilehandlerService,
+    public ngZone: NgZone
   ) {
     if (!sharedDataService.dedicatedMode) {
       this.user = accountService.userValue;
@@ -42,11 +47,35 @@ export class CheckinInductionImageFilePage implements OnInit {
           this.sharedDataService.checkInDetail?.checkInInductionItems[
             inductionContentItemIndex
           ];
+        if (this.sharedDataService.offlineMode) {
+          if (this.inductionItem.documentFileName) {
+            this.ngZone.run(() => {
+              setTimeout(() => {
+                this.imageUrl = Capacitor.convertFileSrc(
+                  this.utilService.getOfflineFileUrl(
+                    this.inductionItem.documentFileName,
+                    "document"
+                  )
+                );
+              }, 0);
+            });
+          }
+        } else {
+          this.imageUrl =
+            sharedDataService.globalDirectories.documentDirectory +
+            this.inductionItem.documentFileName;
+        }
       }
     });
   }
 
   ngOnInit() {}
+
+  ionViewWillLeave() {
+    this.filehandlerService.removeSavedFile(
+      this.inductionItem.documentFileName
+    );
+  }
 
   onBack() {
     this.navCtrl.back();

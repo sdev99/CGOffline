@@ -10,6 +10,7 @@ import { NavController } from "@ionic/angular";
 import { ApiService } from "../../services/api.service";
 import { EnumService } from "../../services/enum.service";
 import { WorkPermitDetail } from "../../_models/workPermitDetail";
+import { OfflineManagerService } from "src/app/services/offline-manager.service";
 
 @Component({
   selector: "app-permits-dm",
@@ -31,11 +32,10 @@ export class PermitsDmPage implements OnInit {
   isLoadingPermits = false;
 
   constructor(
-    private navController: NavController,
-    private filehandlerService: FilehandlerService,
     public utilService: UtilService,
     public sharedDataService: SharedDataService,
-    public apiService: ApiService
+    public apiService: ApiService,
+    public offlineManagerService: OfflineManagerService
   ) {}
 
   ngOnInit() {}
@@ -49,36 +49,58 @@ export class PermitsDmPage implements OnInit {
 
   getDedicatedModeLiveWorkPermits() {
     this.isLoadingPermits = true;
-    const companyID = this.sharedDataService.dedicatedModeDeviceDetailData
-      ?.companyID;
-    this.apiService.getDedicatedModeLiveWorkPermits(companyID).subscribe(
-      (response: Response) => {
-        this.isLoadingPermits = false;
-        if (response) {
-          this.liveWorkPermits = response.Result;
+    const companyID =
+      this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+    if (this.sharedDataService.offlineMode) {
+      this.offlineManagerService
+        .getDeviceLiveWorkPermits(
+          this.sharedDataService.dedicatedModeLocationUse
+        )
+        .then((res) => {
+          if (res) {
+            this.liveWorkPermits = res as any;
+          }
+        });
+    } else {
+      this.apiService.getDedicatedModeLiveWorkPermits(companyID).subscribe(
+        (response: Response) => {
+          this.isLoadingPermits = false;
+          if (response) {
+            this.liveWorkPermits = response.Result;
+          }
+        },
+        (error) => {
+          this.isLoadingPermits = false;
         }
-      },
-      (error) => {
-        this.isLoadingPermits = false;
-      }
-    );
+      );
+    }
   }
 
   getDedicatedModeArchiveWorkPermits() {
     this.isLoadingPermits = true;
-    const companyID = this.sharedDataService.dedicatedModeDeviceDetailData
-      ?.companyID;
-    this.apiService.getDedicatedModeArchiveWorkPermits(companyID).subscribe(
-      (response: Response) => {
-        this.isLoadingPermits = false;
-        if (response) {
-          this.archivedWorkPermits = response.Result;
+    const companyID =
+      this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+    if (this.sharedDataService.offlineMode) {
+      this.offlineManagerService
+        .getDeviceArchivedWorkPermits(
+          this.sharedDataService.dedicatedModeLocationUse
+        )
+        .then((res) => {
+          this.archivedWorkPermits = res as any;
+        });
+    } else {
+      this.apiService.getDedicatedModeArchiveWorkPermits(companyID).subscribe(
+        (response: Response) => {
+          this.isLoadingPermits = false;
+          if (response) {
+            this.archivedWorkPermits = response.Result;
+          }
+        },
+        (error) => {
+          this.isLoadingPermits = false;
         }
-      },
-      (error) => {
-        this.isLoadingPermits = false;
-      }
-    );
+      );
+    }
   }
 
   onSearch(search) {

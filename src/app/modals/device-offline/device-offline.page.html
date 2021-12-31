@@ -1,0 +1,45 @@
+<ion-content>
+  <div class="content">
+    <div class="device-is-offline">
+      <ion-icon src="./assets/icon/Warning-icon.svg"></ion-icon>
+      <ion-label>Device is Offline</ion-label>
+    </div>
+
+    <ng-container *ngIf="isDeviceHaveOfflineData; else noOfflineDataView">
+      <div class="offline-desc">
+        It appears that device has lost connectivity and is now offline.<br />In
+        order to continue using the application, you need to load <br />the
+        dataset from the latest synchronisation made.
+      </div>
+
+      <div class="last-sync-date-time">
+        <span class="heading">Last Sync</span
+        ><span>{{lastSyncDate|date:'d MMM y'}}</span>
+        <span>{{lastSyncDate|date:'HH:mm'}}</span>
+      </div>
+
+      <ion-button class="action-btn" (click)="loadDataset()">
+        Load Dataset and Continue
+      </ion-button>
+
+      <div class="attention-message">
+        <div class="title">Attention</div>
+        <div class="description">
+          Loading this dataset will show you data from that date.<br />
+          If there are any recent data on the server, you won't be able to reach
+          them until the device is back online and<br />
+          device is synched back.
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noOfflineDataView>
+      <div class="offline-desc">
+        It appears that device has lost connectivity and is now offline.This
+        device hasn't been synched with the server so it won't be possible to
+        use it while is offline.
+      </div>
+      <div class="offline-desc">Application will now exit.</div>
+      <ion-button class="action-btn" (click)="closeApp()"> Exit </ion-button>
+    </ng-template>
+  </div>
+</ion-content>

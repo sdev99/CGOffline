@@ -1,0 +1,104 @@
+ion-content {
+  --background: #edf4fc;
+  .content {
+    display: flex;
+    min-height: 100%;
+    width: 40%;
+    min-width: 320px;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .device-is-offline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 5%;
+      ion-icon {
+        width: 27px;
+        height: 27px;
+        stroke: #f29c00;
+      }
+      ion-label {
+        font-size: 16px;
+        line-height: 18.75px;
+        margin-top: 20px;
+        color: #f1a940;
+        font-weight: 600;
+      }
+    }
+
+    .offline-desc {
+      width: 100%;
+      font-family: IBM Plex Sans;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 21px;
+      text-align: center;
+      color: #444444;
+      margin-top: 25px;
+    }
+
+    .last-sync-date-time {
+      width: 100%;
+      text-align: center;
+      margin-top: 26px;
+      margin-bottom: 2%;
+
+      span {
+        padding-left: 10px;
+        color: #888888;
+        font-size: 14px;
+        line-height: 16px;
+        &.heading {
+          color: #444444;
+          font-size: 14px;
+          line-height: 16px;
+        }
+      }
+    }
+
+    .action-btn {
+      width: 368px;
+      height: 48px;
+      border-radius: 4px;
+      --background: #4a90e2;
+      font-size: 16px;
+      text-align: center;
+      color: #ffffff;
+      line-height: 18.75px;
+      font-weight: 600;
+      margin: 0;
+      margin-top: 26px;
+    }
+
+    .attention-message {
+      width: 100%;
+      text-align: center;
+      margin-top: 35px;
+      .title {
+        font-weight: bold;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-size: 14px;
+        line-height: 21px;
+        text-align: center;
+        color: #444444;
+      }
+
+      .description {
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 21px;
+        text-align: center;
+        color: #444444;
+        text-align: center;
+        width: 100%;
+      }
+    }
+  }
+}

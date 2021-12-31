@@ -14,6 +14,8 @@ import { UtilService } from "../../services/util.service";
 import { Response } from "../../_models";
 import { PhotoService } from "../../services/photo.service";
 import { StaticDataService } from "../../services/static-data.service";
+import { FilehandlerService } from "src/app/services/filehandler.service";
+import { OfflineManagerService } from "src/app/services/offline-manager.service";
 
 @Component({
   selector: "app-checkinout-photoidentity-dm",
@@ -38,6 +40,8 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     private cameraPreview: CameraPreview,
     public activatedRoute: ActivatedRoute,
     public sharedDataService: SharedDataService,
+    public filehandlerService: FilehandlerService,
+    public offlineManagerService: OfflineManagerService,
     public apiService: ApiService,
     public utilService: UtilService,
     public photoService: PhotoService
@@ -153,30 +157,67 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
   }
 
   onContinue() {
-    const fileName = "photo" + this.utilService.getCurrentTimeStamp() + ".jpeg";
-    const mimeType = "image/jpeg";
-    this.utilService
-      .dataUriToFile(this.photoCaptured, fileName, mimeType)
-      .then((file) => {
-        if (
-          (this.sharedDataService.dedicatedModeCapturePhotoFor ===
-            EnumService.DedicatedModeCapturePhotoForType.Auth ||
-            this.sharedDataService.dedicatedModeCapturePhotoFor ===
-              EnumService.DedicatedModeCapturePhotoForType.LocationPhoto) &&
-          this.sharedDataService.dedicatedModeProcessType ===
-            EnumService.DedicatedModeProcessTypes.CheckinOut
-        ) {
-          this.checkInPhotoUpload(file, fileName, (photoName) => {
-            this.sharedDataService.dedicatedModeCapturedSelfieForCheckinProcess =
-              photoName;
-            this.processToNextScreen(photoName);
-          });
-        } else {
-          this.uploadInductionPhoto(file, fileName, (photoName) => {
-            this.processToNextScreen(photoName);
-          });
+    if (this.sharedDataService.offlineMode) {
+      this.filehandlerService.saveFileOnDevice(
+        this.photoCaptured,
+        (status, res) => {
+          if (status) {
+            this.offlineManagerService
+              .insertImageVideoFile({
+                fileName: res,
+                fileUsedIn: "checkinout",
+              })
+              .then((id: number) => {
+                if (
+                  (this.sharedDataService.dedicatedModeCapturePhotoFor ===
+                    EnumService.DedicatedModeCapturePhotoForType.Auth ||
+                    this.sharedDataService.dedicatedModeCapturePhotoFor ===
+                      EnumService.DedicatedModeCapturePhotoForType
+                        .LocationPhoto) &&
+                  this.sharedDataService.dedicatedModeProcessType ===
+                    EnumService.DedicatedModeProcessTypes.CheckinOut
+                ) {
+                  this.sharedDataService.dedicatedModeCapturedSelfieForCheckinProcess =
+                    id;
+                }
+
+                this.processToNextScreen({
+                  photoImageVideoFileId: id,
+                });
+              });
+          } else {
+            this.errorMessage = res;
+          }
         }
-      });
+      );
+    } else {
+      const fileName =
+        "photo" + this.utilService.getCurrentTimeStamp() + ".jpeg";
+      const mimeType = "image/jpeg";
+
+      this.utilService
+        .dataUriToFile(this.photoCaptured, fileName, mimeType)
+        .then((file) => {
+          if (
+            (this.sharedDataService.dedicatedModeCapturePhotoFor ===
+              EnumService.DedicatedModeCapturePhotoForType.Auth ||
+              this.sharedDataService.dedicatedModeCapturePhotoFor ===
+                EnumService.DedicatedModeCapturePhotoForType.LocationPhoto) &&
+            this.sharedDataService.dedicatedModeProcessType ===
+              EnumService.DedicatedModeProcessTypes.CheckinOut
+          ) {
+            this.checkInPhotoUpload(file, fileName, (photoName) => {
+              this.sharedDataService.dedicatedModeCapturedSelfieForCheckinProcess =
+                photoName;
+              this.processToNextScreen({ photoName });
+            });
+          } else {
+            this.uploadInductionPhoto(file, fileName, (photoName) => {
+              this.processToNextScreen({ photoName });
+            });
+          }
+        });
+    }
 
     // if (this.nextPage) {
     //     this.navController.navigateForward(this.nextPage);
@@ -227,7 +268,10 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     );
   };
 
-  processToNextScreen = (photoName) => {
+  processToNextScreen = ({
+    photoName,
+    photoImageVideoFileId,
+  }: { photoName?: string; photoImageVideoFileId?: number } = {}) => {
     if (
       this.sharedDataService.dedicatedModeCapturePhotoFor ===
       EnumService.DedicatedModeCapturePhotoForType.Auth
@@ -236,11 +280,17 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         case EnumService.DedicatedModeProcessTypes.CheckinOut: {
           switch (this.sharedDataService.checkinoutDmAs) {
             case EnumService.CheckInType.AS_GUEST:
-              this.sharedDataService.dedicatedModeGuestDetail.guestPhoto =
-                photoName;
+              if (this.sharedDataService.offlineMode) {
+                this.sharedDataService.dedicatedModeGuestDetail.guestPhotoImageVideoFileId =
+                  photoImageVideoFileId;
+              } else {
+                this.sharedDataService.dedicatedModeGuestDetail.guestPhoto =
+                  photoName;
+              }
+              const isGuestReturning = true;
               this.sharedDataService.getCheckinDetailsGuest(
                 this.apiService,
-                true
+                isGuestReturning
               );
               break;
             case EnumService.CheckInType.MY_NAME:
@@ -272,10 +322,20 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     ) {
       switch (this.sharedDataService.checkinoutDmAs) {
         case EnumService.CheckInType.AS_GUEST:
-          this.sharedDataService.checkInPostData.guestPhoto = photoName;
+          if (this.sharedDataService.offlineMode) {
+            this.sharedDataService.checkInPostData.guestPhotoImageVideoFileId =
+              photoImageVideoFileId;
+          } else {
+            this.sharedDataService.checkInPostData.guestPhoto = photoName;
+          }
           break;
         case EnumService.CheckInType.MY_NAME:
-          this.sharedDataService.checkInPostData.userPhoto = photoName;
+          if (this.sharedDataService.offlineMode) {
+            this.sharedDataService.checkInPostData.userPhotoImageVideoFileId =
+              photoImageVideoFileId;
+          } else {
+            this.sharedDataService.checkInPostData.userPhoto = photoName;
+          }
           break;
       }
       this.sharedDataService.processCheckinDetailsStepInduction(
@@ -289,7 +349,13 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     ) {
       switch (this.sharedDataService.signOffFor) {
         case EnumService.SignOffType.INDUCTION:
-          this.sharedDataService.checkInPostData.userSignaturePhoto = photoName;
+          if (this.sharedDataService.offlineMode) {
+            this.sharedDataService.checkInPostData.userSignaturePhotoImageVideoFileId =
+              photoImageVideoFileId;
+          } else {
+            this.sharedDataService.checkInPostData.userSignaturePhoto =
+              photoName;
+          }
           this.sharedDataService.processCheckinDetailsStepSubmit(
             this.apiService,
             this.sharedDataService.checkinoutDmAs ===
@@ -300,8 +366,13 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
         case EnumService.SignOffType.DOCUMENT_DM:
         case EnumService.SignOffType.FORMS_DM:
         case EnumService.SignOffType.WORK_PERMIT_DM:
-          this.sharedDataService.signOffDetailsPostData.userSignaturePhoto =
-            photoName;
+          if (this.sharedDataService.offlineMode) {
+            this.sharedDataService.signOffDetailsPostData.userSignaturePhotoImageVideoFileId =
+              photoImageVideoFileId;
+          } else {
+            this.sharedDataService.signOffDetailsPostData.userSignaturePhoto =
+              photoName;
+          }
           this.sharedDataService.submitPersonalModeSignoffData(this.apiService);
           break;
 

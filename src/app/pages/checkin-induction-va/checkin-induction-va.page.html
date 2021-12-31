@@ -11,7 +11,7 @@
 	<app-back-continue-toolbar
 		*ngIf="sharedDataService.dedicatedMode"
 		(back)="onBack()"
-		title="'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.VISITOR_AGREEMENT' | translate"
+		[title]="'PAGESPECIFIC_TEXT.CHECK_IN_AND_OUT.VISITOR_AGREEMENT' | translate"
 		hideRightBtn="true"
 		(continue)="onContinue()"
 	></app-back-continue-toolbar>

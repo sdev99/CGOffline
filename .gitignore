@@ -27,6 +27,7 @@ npm-debug.log*
 /dist
 /node_modules
 !/node_modules/cordova-plugin-uniquedeviceid
+!/node_modules/@ionic-native/disk-check-plugin
 /platforms
 /plugins
 /www

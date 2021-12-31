@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit } from "@angular/core";
 import { NavController } from "@ionic/angular";
 import { DemoDataService } from "../../services/demo-data.service";
 import { ActivatedRoute } from "@angular/router";
@@ -9,6 +9,7 @@ import { EnumService } from "../../services/enum.service";
 import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { StaticDataService } from "../../services/static-data.service";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-checkin-induction-video-file",
@@ -20,13 +21,16 @@ export class CheckinInductionVideoFilePage implements OnInit {
   StaticDataService = StaticDataService;
 
   inductionItem: InductionItem;
+  videoUrl: string = "";
+  videoFileType: string = "";
 
   constructor(
     public navCtrl: NavController,
     public route: ActivatedRoute,
     public sharedDataService: SharedDataService,
     public utilService: UtilService,
-    public accountService: AccountService
+    public accountService: AccountService,
+    public ngZone: NgZone
   ) {
     if (!sharedDataService.dedicatedMode) {
       this.user = accountService.userValue;
@@ -42,6 +46,31 @@ export class CheckinInductionVideoFilePage implements OnInit {
           this.sharedDataService.checkInDetail?.checkInInductionItems[
             inductionContentItemIndex
           ];
+
+        const extension = this.inductionItem.documentFileName
+          .split(".")
+          ?.pop()
+          ?.toLowerCase();
+        this.videoFileType = StaticDataService.fileMimeTypes[extension];
+
+        if (this.sharedDataService.offlineMode) {
+          if (this.inductionItem.documentFileName) {
+            this.ngZone.run(() => {
+              setTimeout(() => {
+                this.videoUrl = Capacitor.convertFileSrc(
+                  this.utilService.getOfflineFileUrl(
+                    this.inductionItem.documentFileName,
+                    "document"
+                  )
+                );
+              }, 0);
+            });
+          }
+        } else {
+          this.videoUrl =
+            sharedDataService.globalDirectories.documentDirectory +
+            this.inductionItem.documentFileName;
+        }
       }
     });
   }

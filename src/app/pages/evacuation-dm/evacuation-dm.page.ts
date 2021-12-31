@@ -9,6 +9,7 @@ import { ApiService } from "../../services/api.service";
 import { UtilService } from "../../services/util.service";
 import { EnumService } from "../../services/enum.service";
 import { EvacuationUserDetail } from "../../_models/evacuationUserDetail";
+import { OfflineManagerService } from "src/app/services/offline-manager.service";
 
 @Component({
   selector: "app-evacuation-dm",
@@ -30,6 +31,7 @@ export class EvacuationDmPage implements OnInit {
     public navController: NavController,
     public modalController: ModalController,
     public sharedDataService: SharedDataService,
+    public offlineManagerService: OfflineManagerService,
     public apiService: ApiService,
     public utilService: UtilService
   ) {}
@@ -39,34 +41,67 @@ export class EvacuationDmPage implements OnInit {
   }
 
   getEvacuationList() {
-    this.utilService.presentLoadingWithOptions();
-    this.apiService.getEvacuationList().subscribe(
-      (response: Response) => {
-        this.utilService.hideLoading();
-        if (response) {
-          this.evacuationList = response.Result;
+    if (this.sharedDataService.offlineMode) {
+      this.offlineManagerService
+        .getDeviceEvacuations(this.sharedDataService.dedicatedModeLocationUse)
+        .then((res) => {
+          if (res) {
+            this.evacuationList = res as any;
+          }
+        })
+        .catch(() => {});
+    } else {
+      this.utilService.presentLoadingWithOptions();
+
+      this.apiService.getEvacuationList().subscribe(
+        (response: Response) => {
+          this.utilService.hideLoading();
+          if (response) {
+            this.evacuationList = response.Result;
+          }
+        },
+        (error) => {
+          this.utilService.hideLoading();
         }
-      },
-      (error) => {
-        this.utilService.hideLoading();
-      }
-    );
+      );
+    }
   }
 
   getUserPhoto(evacuationUserDetail: EvacuationUserDetail) {
-    if (evacuationUserDetail.userPhoto) {
-      return (
-        this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory +
-        "" +
-        evacuationUserDetail.userPhoto
-      );
-    } else if (evacuationUserDetail.userDetailPhoto) {
-      return (
-        this.sharedDataService.globalDirectories?.userDirectory +
-        "" +
-        evacuationUserDetail.userDetailPhoto
-      );
+    if (this.sharedDataService.offlineMode) {
+      if (evacuationUserDetail.userPhoto) {
+        return this.utilService.getOfflineFileUrl(
+          evacuationUserDetail.userPhoto,
+          "checkin"
+        );
+      } else if (evacuationUserDetail.userDetailPhoto) {
+        return this.utilService.getOfflineFileUrl(
+          evacuationUserDetail.userDetailPhoto,
+          "user"
+        );
+      } else if (evacuationUserDetail.offlineUserPhoto) {
+        return this.utilService.getOfflineFileUrl(
+          evacuationUserDetail.offlineUserPhoto,
+          "offline_user"
+        );
+      }
+    } else {
+      if (evacuationUserDetail.userPhoto) {
+        return (
+          this.sharedDataService.globalDirectories
+            ?.userCheckInSignOffDirectory +
+          "" +
+          evacuationUserDetail.userPhoto
+        );
+      } else if (evacuationUserDetail.userDetailPhoto) {
+        return (
+          this.sharedDataService.globalDirectories?.userDirectory +
+          "" +
+          evacuationUserDetail.userDetailPhoto
+        );
+      }
     }
+
     return "./assets/images/ProfileNone.png";
   }
 

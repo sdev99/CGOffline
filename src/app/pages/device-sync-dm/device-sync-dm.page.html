@@ -1,72 +1,79 @@
 <ion-header mode="ios">
-    <app-modal-header (closeModal)="onClose()"></app-modal-header>
+  <app-modal-header (closeModal)="onClose()"></app-modal-header>
 </ion-header>
 
 <ion-content>
-    <div class="content">
+  <div class="content">
+    <ng-container *ngIf="synchProgressState === 'pending'">
+      <h1 class="text-1">Device Data Synchronisation</h1>
 
-        <ng-container *ngIf="synchProgressState === 'pending'">
-            <h1 class="text-1">Device Data Synchronisation</h1>
+      <p class="text-2">
+        Device needs to be synchronised with the main server periodically, in
+        case it is being used offline.
+      </p>
+      <app-sync-warning-msg
+        *ngIf="UtilService.isOfflineSycronizarionNeeded()"
+      ></app-sync-warning-msg>
+      <ion-button
+        [disabled]="isSyncButtonDisabled"
+        class="action-btn"
+        (click)="onSync()"
+      >
+        Sync Now
+      </ion-button>
+    </ng-container>
 
-            <p class="text-2">
-                Device needs to be synchronised with the main server periodically, in case it is being used offline.
-            </p>
-            <app-sync-warning-msg></app-sync-warning-msg>
-            <ion-button class="action-btn" (click)="onSync()">
-                Sync Now
-            </ion-button>
-        </ng-container>
+    <ng-container *ngIf="synchProgressState === 'processing'">
+      <h1 class="text-1">Device Data Synchronisation</h1>
 
-        <ng-container *ngIf="synchProgressState === 'processing'">
-            <h1 class="text-1">Device Data Synchronisation</h1>
+      <ion-label class="progress-title">in Progress</ion-label>
+      <div class="progress-bar-view">
+        <ion-progress-bar [value]="progress/100"></ion-progress-bar>
+        <ion-note>{{progress | number:'1.0-0'}} %</ion-note>
+      </div>
 
-            <ion-label class="progress-title">in Progress</ion-label>
-            <div class="progress-bar-view">
-                <ion-progress-bar [value]="progress/100"></ion-progress-bar>
-                <ion-note>{{progress}} %</ion-note>
-            </div>
+      <ion-chip class="alert-msg">
+        <ion-icon src="./assets/icon/info.svg"></ion-icon>
+        <ion-label>Please be patient. Synching might take time.</ion-label>
+      </ion-chip>
+    </ng-container>
 
+    <ng-container *ngIf="synchProgressState === 'completed'">
+      <ion-icon
+        class="success-icon"
+        src="./assets/icon/CheckSuccess.svg"
+      ></ion-icon>
 
-            <ion-chip class="alert-msg">
-                <ion-icon src="./assets/icon/info.svg"></ion-icon>
-                <ion-label>Please be patient. Synching might take time.</ion-label>
-            </ion-chip>
-        </ng-container>
+      <ion-label class="success-title">Sync Completed</ion-label>
+      <ion-label class="text-2">The device is now ready to be used.</ion-label>
+      <ion-button class="action-btn" (click)="onContinue()">
+        Continue
+      </ion-button>
+    </ng-container>
 
-        <ng-container *ngIf="synchProgressState === 'completed'">
-            <ion-icon class="success-icon" src="./assets/icon/CheckSuccess.svg"></ion-icon>
+    <ng-container *ngIf="synchProgressState === 'networkerror'">
+      <ion-icon class="error-icon" src="./assets/icon/Warning.1.svg"></ion-icon>
 
-            <ion-label class="success-title">Sync Completed</ion-label>
-            <ion-label class="text-2">The device is now ready to be used.</ion-label>
-            <ion-button class="action-btn" (click)="onContinue()">
-                Continue
-            </ion-button>
-        </ng-container>
+      <ion-label class="error-title">Connection Problem</ion-label>
+      <ion-label class="text-2">
+        The was a problem connecting to the server. Please check your connection
+        and try again.
+      </ion-label>
+      <ion-button class="action-btn" (click)="onSync()"> Try Again </ion-button>
+    </ng-container>
 
-        <ng-container *ngIf="synchProgressState === 'networkerror'">
-            <ion-icon class="error-icon" src="./assets/icon/Warning.1.svg"></ion-icon>
+    <ng-container *ngIf="synchProgressState === 'failed'">
+      <ion-icon
+        class="error-icon"
+        src="./assets/icon/ErrorCheck.svg"
+      ></ion-icon>
 
-            <ion-label class="error-title">Connection Problem</ion-label>
-            <ion-label class="text-2">
-                The was a problem connecting to the server. Please check your connection and try again.
-            </ion-label>
-            <ion-button class="action-btn" (click)="onSync()">
-                Try Again
-            </ion-button>
-        </ng-container>
-
-        <ng-container *ngIf="synchProgressState === 'failed'">
-            <ion-icon class="error-icon" src="./assets/icon/ErrorCheck.svg"></ion-icon>
-
-            <ion-label class="error-title failed">Synchronisation Error</ion-label>
-            <ion-label class="text-2">
-                An unknown error has occured. You may try again or contact administrator for solution.
-            </ion-label>
-            <ion-button class="action-btn" (click)="onClose()">
-                Quit
-            </ion-button>
-        </ng-container>
-
-    </div>
+      <ion-label class="error-title failed">Synchronisation Error</ion-label>
+      <ion-label class="text-2">
+        {{synchronisationErrorMessage || "An unknown error has occured. You may
+        try again or contact administrator for solution."}}
+      </ion-label>
+      <ion-button class="action-btn" (click)="onClose()"> Quit </ion-button>
+    </ng-container>
+  </div>
 </ion-content>
-

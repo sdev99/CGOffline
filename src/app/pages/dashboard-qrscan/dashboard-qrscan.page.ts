@@ -1,26 +1,25 @@
 import { Component, OnInit } from "@angular/core";
-import { ActionSheetController, NavController, Platform } from "@ionic/angular";
+import { ActionSheetController, NavController } from "@ionic/angular";
 import { QRScanner, QRScannerStatus } from "@ionic-native/qr-scanner/ngx";
-import { DemoDataService } from "../../services/demo-data.service";
 import { ActivatedRoute } from "@angular/router";
 import { SharedDataService } from "../../services/shared-data.service";
 import { EnumService } from "../../services/enum.service";
 import { ApiService } from "../../services/api.service";
 import { UtilService } from "../../services/util.service";
 import { Response, User } from "../../_models";
-import { Capacitor, PermissionType, Plugins } from "@capacitor/core";
+import { PermissionType, Plugins } from "@capacitor/core";
 import { LocationItem } from "../../_models/locationItem";
 import { AccountService } from "../../services/account.service";
 import { UserDetail } from "../../_models/userDetail";
-import { FormItem } from "../../_models/formItem";
 import { CheckedInDetailItem } from "../../_models/checkedInDetailItem";
 import { SignOffFormDetail } from "../../_models/signOffFormDetail";
 import { DocumentDetail } from "../../_models/documentDetail";
-import { environment } from "../../../environments/environment";
 import { StaticDataService } from "../../services/static-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { ObservablesService } from "src/app/services/observables.service";
 import { EntityItem } from "src/app/_models/entityItem";
+import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { DeviceUserDetail } from "src/app/_models/offline/DeviceUserDetail";
 
 const { Camera, Permissions } = Plugins;
 
@@ -50,7 +49,8 @@ export class DashboardQrscanPage implements OnInit {
     public actionSheetController: ActionSheetController,
     public activatedRoute: ActivatedRoute,
     public translateService: TranslateService,
-    public observablesService: ObservablesService
+    public observablesService: ObservablesService,
+    public offlineManagerService: OfflineManagerService
   ) {
     this.user = this.accountService.userValue;
     this.isTablet = sharedDataService.isTablet;
@@ -76,16 +76,22 @@ export class DashboardQrscanPage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {}
-
-  ngOnInit() {
-    const QrCodeTestingInLocalHostFor: any = "inventryitemHav";
+  ionViewWillEnter() {
+    const QrCodeTestingInLocalHostFor: any = "user";
 
     if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
       setTimeout(() => {
         switch (QrCodeTestingInLocalHostFor) {
+          case "project":
+            this.checkQrCode(
+              "mCucrGcxCBTXwWCuKq/sMN6kgl0a1SVlOudJdHCHZHrMpc9RYv5JLo1AqRvdjcW/"
+            );
+            break;
           case "document":
             this.checkQrCode("0f75e6e3-8215-4186-92bf-ca0971b337b7");
+            break;
+          case "document1":
+            this.checkQrCode("711c59e0-e65e-4f6c-99e7-3901400a14d7");
             break;
           case "form":
             this.checkQrCode("e37f99b2-cda6-4b19-b3e6-ba37a41ffd60");
@@ -100,9 +106,7 @@ export class DashboardQrscanPage implements OnInit {
           case "form_othercompany":
             this.checkQrCode("87b71cae-476a-4c08-9c63-f24ef7970f89\n");
             break;
-          case "location":
-            this.checkQrCode("e165d1a3-a0a9-4b95-a543-8049b440c56d");
-            break;
+
           case "location2":
             this.checkQrCode("78312786-35ab-4c9e-969e-6f7673ed7a5e");
             break;
@@ -111,6 +115,9 @@ export class DashboardQrscanPage implements OnInit {
             break;
           case "user":
             this.checkQrCode("1b5ee704-21f6-4e91-9544-0f2a6abd7aed");
+            break;
+          case "user_demo_three":
+            this.checkQrCode("4d0dd7ba-905e-4f2f-9bb7-afd17e6809bc");
             break;
           case "inventryitemHav":
             this.checkQrCode("49a1b038-a7cf-4298-9992-86b322e14982");
@@ -123,9 +130,13 @@ export class DashboardQrscanPage implements OnInit {
     }
   }
 
+  ngOnInit() {}
+
   ionViewWillLeave() {
     console.log("ionViewWillLeave");
-    this.stopScanning();
+    if (!UtilService.isLocalHost()) {
+      this.stopScanning();
+    }
   }
 
   ionViewDidEnter() {
@@ -217,7 +228,9 @@ export class DashboardQrscanPage implements OnInit {
   };
 
   checkQrCode = async (qrCode) => {
-    this.stopScanning();
+    if (!UtilService.isLocalHost()) {
+      this.stopScanning();
+    }
 
     if (this.fromFormPage) {
       this.getAnswerChoiceEntityByQRCode(qrCode);
@@ -229,92 +242,143 @@ export class DashboardQrscanPage implements OnInit {
   };
 
   getAnswerChoiceEntityByQRCode = (qrCode) => {
-    this.utilService.presentLoadingWithOptions();
-
-    this.apiService.getAnswerChoiceEntityByQRCode(qrCode).subscribe(
-      (response: Response) => {
-        this.utilService.hideLoading();
-        if (
-          response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
-        ) {
-          const result: EntityItem = response.Result as EntityItem;
-          if (
-            result &&
-            result.entityID &&
-            this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
-            (!this.isOnlyInventryItemHasHav ||
-              (result.entityType ===
-                EnumService.SelectedQRCodeType.InventoryItem &&
-                result.isHAVSData))
-          ) {
-            this.observablesService.publishSomeData(
-              this.fromFormCallbackKey,
-              result
-            );
-            this.onClose();
-          } else {
-            this.translateService
-              .get("SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID")
-              .subscribe((res) => {
-                this.utilService.showAlert(res, "", () => {
-                  this.scan();
-                });
-              });
-          }
-        }
-      },
-      (error) => {
-        this.utilService.hideLoading();
-
+    const onSuccess = (res) => {
+      const result: EntityItem = res as EntityItem;
+      if (
+        result &&
+        result.entityID &&
+        this.fromFormAllowedQrCodeTypes.indexOf(result.entityType) !== -1 &&
+        (!this.isOnlyInventryItemHasHav ||
+          (result.entityType === EnumService.SelectedQRCodeType.InventoryItem &&
+            result.isHAVSData))
+      ) {
+        this.observablesService.publishSomeData(
+          this.fromFormCallbackKey,
+          result
+        );
+        this.onClose();
+      } else {
         this.translateService
-          .get("SHARED_TEXT.ERRORS.NOT_FOUND")
+          .get("SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID")
           .subscribe((res) => {
-            this.utilService.showAlert(error.message || error, res, () => {
+            this.utilService.showAlert(res, "", () => {
               this.scan();
             });
           });
       }
-    );
+    };
+
+    if (this.sharedDataService.offlineMode) {
+      this.offlineManagerService
+        .getAnswerChoiceEntityByQRCode(qrCode)
+        .then((res) => {
+          if (res) {
+            onSuccess(res);
+          } else {
+            this.translateService
+              .get([
+                "SHARED_TEXT.ERRORS.NOT_FOUND",
+                "SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID",
+              ])
+              .subscribe((transRes) => {
+                this.utilService.showAlert(
+                  transRes["SHARED_TEXT.ERRORS.QR_CODE_NOT_VALID"],
+                  transRes["SHARED_TEXT.ERRORS.NOT_FOUND"],
+                  () => {
+                    this.scan();
+                  }
+                );
+              });
+          }
+        });
+    } else {
+      this.utilService.presentLoadingWithOptions();
+
+      this.apiService.getAnswerChoiceEntityByQRCode(qrCode).subscribe(
+        (response: Response) => {
+          this.utilService.hideLoading();
+          if (
+            response.StatusCode ===
+            EnumService.ApiResponseCode.RequestSuccessful
+          ) {
+            onSuccess(response.Result);
+          }
+        },
+        (error) => {
+          this.utilService.hideLoading();
+
+          this.translateService
+            .get("SHARED_TEXT.ERRORS.NOT_FOUND")
+            .subscribe((res) => {
+              this.utilService.showAlert(error.message || error, res, () => {
+                this.scan();
+              });
+            });
+        }
+      );
+    }
   };
 
   getQrDetailForDedicatedMode = (qrCode) => {
-    this.utilService.presentLoadingWithOptions();
-
-    this.apiService.getUserByQRCode(qrCode).subscribe(
-      (response: Response) => {
-        this.utilService.hideLoading();
+    if (this.sharedDataService.offlineMode) {
+      this.offlineManagerService.getUserDetailByQRCode(qrCode).then((res) => {
+        const userDetail = res as DeviceUserDetail;
+        console.log("USER DETAIL", userDetail);
         if (
-          response.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
+          userDetail?.userId &&
+          userDetail?.userId !== StaticDataService.userDefaultGuid
         ) {
-          const userDetail: UserDetail = response.Result as UserDetail;
-          if (
-            userDetail?.userId &&
-            userDetail?.userId !== StaticDataService.userDefaultGuid
-          ) {
-            this.openNextScreenForDedicatedMode(userDetail);
-          } else {
-            this.translateService
-              .get("SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION")
-              .subscribe((res) => {
-                this.utilService.showAlert(res, "", () => {
-                  this.scan();
-                });
+          this.openNextScreenForDedicatedMode(userDetail);
+        } else {
+          this.translateService
+            .get("SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION")
+            .subscribe((res) => {
+              this.utilService.showAlert(res, "", () => {
+                this.scan();
               });
-          }
-        }
-      },
-      (error) => {
-        this.utilService.hideLoading();
-
-        this.translateService
-          .get("SHARED_TEXT.ERRORS.NOT_FOUND")
-          .subscribe((res) => {
-            this.utilService.showAlert(error.message || error, res, () => {
-              this.scan();
             });
-          });
-      }
-    );
+        }
+      });
+    } else {
+      this.utilService.presentLoadingWithOptions();
+
+      this.apiService.getUserByQRCode(qrCode).subscribe(
+        (response: Response) => {
+          this.utilService.hideLoading();
+          if (
+            response.StatusCode ===
+            EnumService.ApiResponseCode.RequestSuccessful
+          ) {
+            const userDetail: UserDetail = response.Result as UserDetail;
+            if (
+              userDetail?.userId &&
+              userDetail?.userId !== StaticDataService.userDefaultGuid
+            ) {
+              this.openNextScreenForDedicatedMode(userDetail);
+            } else {
+              this.translateService
+                .get("SHARED_TEXT.ERRORS.USER_NOT_VALID_FOR_ANY_OPERATION")
+                .subscribe((res) => {
+                  this.utilService.showAlert(res, "", () => {
+                    this.scan();
+                  });
+                });
+            }
+          }
+        },
+        (error) => {
+          this.utilService.hideLoading();
+
+          this.translateService
+            .get("SHARED_TEXT.ERRORS.NOT_FOUND")
+            .subscribe((res) => {
+              this.utilService.showAlert(error.message || error, res, () => {
+                this.scan();
+              });
+            });
+        }
+      );
+    }
   };
 
   getQrDetailForPersonalMode = (qrCode) => {

@@ -1,149 +1,246 @@
-<app-portrait-orientation *ngIf="isShowOritationPortrait;else formView" (close)="isShowOritationPortrait=false"></app-portrait-orientation>
+<app-portrait-orientation
+  *ngIf="isShowOritationPortrait;else formView"
+  (close)="isShowOritationPortrait=false"
+></app-portrait-orientation>
 
 <ng-template #formView>
-	<ion-header mode="ios" *ngIf="formBuilderDetail">
-		<app-modal-header *ngIf="!sharedDataService.dedicatedMode" [modalTitle]="formBuilderDetail?.title" (closeModal)="onClose()"></app-modal-header>
+  <ion-header mode="ios" *ngIf="formBuilderDetail">
+    <app-modal-header
+      *ngIf="!sharedDataService.dedicatedMode"
+      [modalTitle]="formBuilderDetail?.title"
+      (closeModal)="onClose()"
+    ></app-modal-header>
 
-		<app-modal-header-dm
-			*ngIf="sharedDataService.dedicatedMode"
-			[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-			(closeModal)="onClose()"
-			[modalSubTitle]="formBuilderDetail?.title"
-		></app-modal-header-dm>
-	</ion-header>
+    <app-modal-header-dm
+      *ngIf="sharedDataService.dedicatedMode"
+      [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+      (closeModal)="onClose()"
+      [modalSubTitle]="formBuilderDetail?.title"
+    ></app-modal-header-dm>
+  </ion-header>
 
-	<ion-content #content mode="md" [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}">
-		<div class="content-container">
-			<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
+  <ion-content
+    #content
+    mode="md"
+    [ngClass]="{'dedicated-mode':sharedDataService.dedicatedMode}"
+  >
+    <div class="content-container">
+      <app-warning-component
+        *ngIf="errorMessage && errorMessage.length>0"
+        [message]="errorMessage"
+      ></app-warning-component>
 
-			<app-exposure [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.YOUR_CURRENT_EXPOSURE' | translate" [points]="currentExposure" containerClassName="top"></app-exposure>
+      <app-exposure
+        [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.YOUR_CURRENT_EXPOSURE' | translate"
+        [points]="currentExposure"
+        containerClassName="top"
+      ></app-exposure>
 
-			<ion-list lines="none" mode="ios" *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index">
-				<ng-container *ngIf="utilService.shouldShowSection(section)">
-					<ng-container *ngIf="section.isHAVSection; else customQuestions">
-						<ng-container *ngFor="let havAssessmentTool of section.havAssessmentTools;let havAssessmentToolsIndex = index">
-							<app-section-title
-								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle+(section.havAssessmentTools.length>1?' - '+('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOOL' | translate)+' ' +(havAssessmentToolsIndex+1):'')"
-								[showRemoveIcon]="section.havAssessmentTools.length>1"
-								(onRemove)="removeHavTool(section,havAssessmentToolsIndex)"
-							>
-							</app-section-title>
+      <ion-list
+        lines="none"
+        mode="ios"
+        *ngFor="let section of formBuilderDetail?.sections; let sectionIndex = index"
+      >
+        <ng-container *ngIf="utilService.shouldShowSection(section)">
+          <ng-container *ngIf="section.isHAVSection; else customQuestions">
+            <ng-container
+              *ngFor="let havAssessmentTool of section.havAssessmentTools;let havAssessmentToolsIndex = index"
+            >
+              <app-section-title
+                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle+(section.havAssessmentTools.length>1?' - '+('PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOOL' | translate)+' ' +(havAssessmentToolsIndex+1):'')"
+                [showRemoveIcon]="section.havAssessmentTools.length>1"
+                (onRemove)="removeHavTool(section,havAssessmentToolsIndex)"
+              >
+              </app-section-title>
 
-							<ng-container *ngFor="let question of havAssessmentTool.questions;let questionIndex = index">
-								<ng-container *ngIf="utilService.shouldShowQuestion(question)">
-									<ion-item class="question-item date-item" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField">
-										<ion-label position="stacked"
-											>{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',
-											sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}</ion-label
-										>
-										<div class="date-field" [ngClass]="{'error': isError( question)}">
-											<ion-icon slot="start" src="./assets/icon/calendar.svg"></ion-icon>
-											<ion-datetime
-												[cancelText]="'SHARED_TEXT.CANCEL' | translate"
-												[doneText]="'SHARED_TEXT.DONE' | translate"
-												placeholder="Choose"
-												display-timezone="utc"
-												max="2050"
-												[(ngModel)]="question.value"
-											></ion-datetime>
-										</div>
-									</ion-item>
+              <ng-container
+                *ngFor="let question of havAssessmentTool.questions;let questionIndex = index"
+              >
+                <ng-container *ngIf="utilService.shouldShowQuestion(question)">
+                  <ion-item
+                    class="question-item date-item"
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.DateField"
+                  >
+                    <ion-label position="stacked"
+                      >{{UtilService.findObj(question.questionTranslations,
+                      'questionTranslationLanguageId',
+                      sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}</ion-label
+                    >
+                    <div
+                      class="date-field"
+                      [ngClass]="{'error': isError( question)}"
+                    >
+                      <ion-icon
+                        slot="start"
+                        src="./assets/icon/calendar.svg"
+                      ></ion-icon>
+                      <ion-datetime
+                        [cancelText]="'SHARED_TEXT.CANCEL' | translate"
+                        [doneText]="'SHARED_TEXT.DONE' | translate"
+                        placeholder="Choose"
+                        display-timezone="utc"
+                        max="2050"
+                        [(ngModel)]="question.value"
+                      ></ion-datetime>
+                    </div>
+                  </ion-item>
 
-									<ion-item class="question-item drop-down-item" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown">
-										<ion-label position="stacked">
-											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
-										</ion-label>
+                  <ion-item
+                    class="question-item drop-down-item"
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.ClassicDropdown"
+                  >
+                    <ion-label position="stacked">
+                      {{UtilService.findObj(question.questionTranslations,
+                      'questionTranslationLanguageId',
+                      sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+                    </ion-label>
 
-										<div class="custom-dropdown-mask">
-											<ion-select
-												[placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
-												[(ngModel)]="question.value"
-												[ngClass]="{'error': isError( question)}"
-												(ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
-												[cancelText]="'SHARED_TEXT.CANCEL' | translate"
-												[okText]="'SHARED_TEXT.OK' | translate"
-											>
-												<ng-container *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown ">
-													<ion-select-option *ngFor="let item of toolManufacturers" [value]="item.havManufacturerID"> {{item.havManufacturerName}} </ion-select-option>
-												</ng-container>
-												<ng-template #otherDropdown>
-													<ion-select-option *ngFor="let item of question.answerChoiceAttributes" [value]="question.listValueKey?item[question.listValueKey]:item">
-														{{question.listLabelKey ? item[question.listLabelKey] : item}}
-													</ion-select-option>
-												</ng-template>
-											</ion-select>
+                    <div class="custom-dropdown-mask">
+                      <ion-select
+                        [placeholder]="'PAGESPECIFIC_TEXT.FORM_LIST.CHOOSE' | translate"
+                        [(ngModel)]="question.value"
+                        [ngClass]="{'error': isError( question)}"
+                        (ionChange)="dropDownChange(havAssessmentTool, question,questionIndex)"
+                        [cancelText]="'SHARED_TEXT.CANCEL' | translate"
+                        [okText]="'SHARED_TEXT.OK' | translate"
+                      >
+                        <ng-container
+                          *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Manufacturer;else otherDropdown "
+                        >
+                          <ion-select-option
+                            *ngFor="let item of toolManufacturers"
+                            [value]="item.havManufacturerID"
+                          >
+                            {{item.havManufacturerName}}
+                          </ion-select-option>
+                        </ng-container>
+                        <ng-template #otherDropdown>
+                          <ion-select-option
+                            *ngFor="let item of question.answerChoiceAttributes"
+                            [value]="question.listValueKey?item[question.listValueKey]:item"
+                          >
+                            {{question.listLabelKey ?
+                            item[question.listLabelKey] : item}}
+                          </ion-select-option>
+                        </ng-template>
+                      </ion-select>
 
-											<div class="qr-scan-btn" *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model">
-												<ion-button fill="clear" (click)="scanUserQrCode($event, havAssessmentTool)">
-													<ion-icon slot="icon-only" src="./assets/icon/qrscan-blue-1.svg"></ion-icon>
-												</ion-button>
-											</div>
-										</div>
-									</ion-item>
+                      <div
+                        class="qr-scan-btn"
+                        *ngIf="question.questionDisplayOrder === EnumService.HavFormFieldOrder.Model"
+                      >
+                        <ion-button
+                          fill="clear"
+                          (click)="scanUserQrCode($event, havAssessmentTool)"
+                        >
+                          <ion-icon
+                            slot="icon-only"
+                            src="./assets/icon/qrscan-blue-1.svg"
+                          ></ion-icon>
+                        </ion-button>
+                      </div>
+                    </div>
+                  </ion-item>
 
-									<ion-item class="question-item input-item planned-time" *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField">
-										<ion-label position="stacked">
-											{{UtilService.findObj(question.questionTranslations, 'questionTranslationLanguageId',sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
-										</ion-label>
-										<ion-input [(ngModel)]="question.value" inputmode="numeric" [ngClass]="{'error': isError(question)}"></ion-input>
-									</ion-item>
-								</ng-container>
-							</ng-container>
-							<app-exposure
-								[label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.CALCULATED_EXPOSURE' | translate"
-								[points]="calculateExposure(havAssessmentTool)"
-								containerClassName="bottom"
-							></app-exposure>
-						</ng-container>
-						<app-exposure [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOTAL_EXPOSURE_WILL_BE' | translate" [points]="totalCalculateExposure(section)"></app-exposure>
+                  <ion-item
+                    class="question-item input-item planned-time"
+                    *ngIf="question.selectedAnswerTypeId === EnumService.CustomAnswerType.TimeField"
+                  >
+                    <ion-label position="stacked">
+                      {{UtilService.findObj(question.questionTranslations,
+                      'questionTranslationLanguageId',sharedDataService.getLanguageIdForForm()).questionTranslationTitle}}
+                    </ion-label>
+                    <ion-input
+                      [(ngModel)]="question.value"
+                      inputmode="numeric"
+                      [ngClass]="{'error': isError(question)}"
+                    ></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ng-container>
+              <app-exposure
+                [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.CALCULATED_EXPOSURE' | translate"
+                [points]="calculateExposure(havAssessmentTool)"
+                containerClassName="bottom"
+              ></app-exposure>
+            </ng-container>
+            <app-exposure
+              [label]="'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.TOTAL_EXPOSURE_WILL_BE' | translate"
+              [points]="totalCalculateExposure(section)"
+            ></app-exposure>
 
-						<ion-item class="add-tool-button-container-item">
-							<ion-button fill="clear" class="add-tool-button" (click)="addNewTool(section)">{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.ADD_TOOL' | translate}}</ion-button>
-						</ion-item>
-					</ng-container>
+            <ion-item class="add-tool-button-container-item">
+              <ion-button
+                fill="clear"
+                class="add-tool-button"
+                (click)="addNewTool(section)"
+                >{{'PAGESPECIFIC_TEXT.FORM_LIST.SPECIFIC_FORMS.HAVs_FORM.ADD_TOOL'
+                | translate}}</ion-button
+              >
+            </ion-item>
+          </ng-container>
 
-					<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-						<ng-template #customQuestions>
-							<app-section-title
-								[title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
-							>
-							</app-section-title>
+          <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+            <ng-template #customQuestions>
+              <app-section-title
+                [title]="UtilService.findObj(section.sectionTranslations, 'sectionTranslationLanguageId', sharedDataService.getLanguageIdForForm()).sectionTranslationTitle"
+              >
+              </app-section-title>
 
-							<app-custom-questions-container
-								[sectionIndex]="sectionIndex"
-								[sectionId]="section.sectionId"
-								[questions]="section.questions"
-								[isSubmitted]="isSubmitted"
-								[formGroup]="formGroup"
-								[questionElementIds]="questionElementIds"
-								[section]="section"
-							></app-custom-questions-container>
-						</ng-template>
-					</form>
-				</ng-container>
-			</ion-list>
+              <app-custom-questions-container
+                [sectionIndex]="sectionIndex"
+                [sectionId]="section.sectionId"
+                [questions]="section.questions"
+                [isSubmitted]="isSubmitted"
+                [formGroup]="formGroup"
+                [questionElementIds]="questionElementIds"
+                [section]="section"
+              ></app-custom-questions-container>
+            </ng-template>
+          </form>
+        </ng-container>
+      </ion-list>
 
-			<!--        End of form -->
-			<ng-container *ngIf="!sharedDataService.dedicatedMode">
-				<div class="hr-line-full ion-margin-top"></div>
+      <!--        End of form -->
+      <ng-container *ngIf="!sharedDataService.dedicatedMode">
+        <div class="hr-line-full ion-margin-top"></div>
 
-				<ion-item class="ion-margin-vertical text-bottom-msg">
-					<ion-label class="ion-text-wrap ion-text-center">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-				</ion-item>
+        <ion-item class="ion-margin-vertical text-bottom-msg">
+          <ion-label class="ion-text-wrap ion-text-center"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' |
+            translate}}</ion-label
+          >
+        </ion-item>
 
-				<ion-item class="ion-margin-vertical ion-padding-bottom">
-					<ion-button type="submit" expand="full" class="action-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
-				</ion-item>
-			</ng-container>
-			<div class="fill-vertical-space"></div>
+        <ion-item class="ion-margin-vertical ion-padding-bottom">
+          <ion-button
+            type="submit"
+            expand="full"
+            class="action-btn"
+            (click)="onSubmit()"
+            [disabled]="isFormSubmitting"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button
+          >
+        </ion-item>
+      </ng-container>
+      <div class="fill-vertical-space"></div>
 
-			<!--        End of form -->
-			<ng-container *ngIf="sharedDataService.dedicatedMode">
-				<ion-item class="text-bottom-msg" lines="none">
-					<ion-label class="ion-text-wrap ion-padding">{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' | translate}}</ion-label>
-					<ion-button slot="end" class="action-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button>
-				</ion-item>
-			</ng-container>
-		</div>
-	</ion-content>
+      <!--        End of form -->
+      <ng-container *ngIf="sharedDataService.dedicatedMode">
+        <ion-item class="text-bottom-msg" lines="none">
+          <ion-label class="ion-text-wrap ion-padding"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.YOU_HAVE_REACHED_END_OF_FORM' |
+            translate}}</ion-label
+          >
+          <ion-button
+            slot="end"
+            class="action-btn"
+            [disabled]="isFormSubmitting"
+            (click)="onSubmit()"
+            >{{'PAGESPECIFIC_TEXT.FORM_LIST.SIGNOFF' | translate}}</ion-button
+          >
+        </ion-item>
+      </ng-container>
+    </div>
+  </ion-content>
 </ng-template>

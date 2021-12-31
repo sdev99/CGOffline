@@ -1,63 +1,108 @@
 <ion-header>
-	<app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
-	<app-topnavigations-btns-dm activeBtn="form"></app-topnavigations-btns-dm>
-	<app-topnavigations-segments-dm
-		[active]="listType"
-		[options]="listTypes"
-		[search]="searchQuery"
-		(searching)="onSearch($event)"
-		(searchbarShowHide)="searchbarShowHide($event)"
-		(changed)="segmentChanged($event)"
-	></app-topnavigations-segments-dm>
+  <app-dashboard-header-dm
+    [title]="sharedDataService.getCurrentCheckedInEntityName()"
+  ></app-dashboard-header-dm>
+  <app-topnavigations-btns-dm activeBtn="form"></app-topnavigations-btns-dm>
+  <app-topnavigations-segments-dm
+    [active]="listType"
+    [options]="listTypes"
+    [search]="searchQuery"
+    (searching)="onSearch($event)"
+    (searchbarShowHide)="searchbarShowHide($event)"
+    (changed)="segmentChanged($event)"
+  ></app-topnavigations-segments-dm>
 
-	<ion-toolbar *ngIf="listType === EnumService.DedicatedModeFormListType.Available && itemDetail && itemDetail.formFolderID>0" style="padding-top: 0">
-		<ion-back-button icon="./assets/icon/back.svg" slot="start" text="" color="dark" mode="md"></ion-back-button>
-		<ion-title class="ion-text-left">{{pageTitle}}</ion-title>
-	</ion-toolbar>
+  <ion-toolbar
+    *ngIf="listType === EnumService.DedicatedModeFormListType.Available && itemDetail && itemDetail.formFolderID>0"
+    style="padding-top: 0"
+  >
+    <ion-back-button
+      icon="./assets/icon/back.svg"
+      slot="start"
+      text=""
+      color="dark"
+      mode="md"
+    ></ion-back-button>
+    <ion-title class="ion-text-left">{{pageTitle}}</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-	<ion-list
-		*ngIf="(listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0) || (listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0); else noDocument"
-		class="activity-list"
-		lines="full"
-	>
-		<ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available">
-			<ng-container *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';">
-				<ion-item class="folder-item" *ngIf="item.formFolderID>0" (click)="openFormFolder(item)">
-					<ion-icon slot="start" [src]="UtilService.FileIcon('folder')"></ion-icon>
-					<ion-label class="ion-text-wrap">{{item.formTitle}}</ion-label>
-				</ion-item>
-			</ng-container>
+  <ion-list
+    *ngIf="(listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0) || (listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0); else noDocument"
+    class="activity-list"
+    lines="full"
+  >
+    <ng-container
+      *ngIf="listType === EnumService.DedicatedModeFormListType.Available"
+    >
+      <ng-container
+        *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';"
+      >
+        <ion-item
+          class="folder-item"
+          *ngIf="item.formFolderID>0"
+          (click)="openFormFolder(item)"
+        >
+          <ion-icon
+            slot="start"
+            [src]="UtilService.FileIcon('folder')"
+          ></ion-icon>
+          <ion-label class="ion-text-wrap">{{item.formTitle}}</ion-label>
+        </ion-item>
+      </ng-container>
 
-			<ng-container *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';">
-				<app-archived-item *ngIf="item.formID>0" [icon]="item.documentFileIconURL" (itemSelect)="openForm(item)" [colFirst]="item.formTitle"></app-archived-item>
-			</ng-container>
-		</ng-container>
+      <ng-container
+        *ngFor="let item of availableForms | listFilter:searchQuery:'formTitle';"
+      >
+        <app-archived-item
+          *ngIf="item.formID>0"
+          [icon]="item.documentFileIconURL"
+          (itemSelect)="openForm(item)"
+          [colFirst]="item.formTitle"
+        ></app-archived-item>
+      </ng-container>
+    </ng-container>
 
-		<ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive">
-			<app-archived-item
-				*ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle';"
-				(itemSelect)="openArchivedForm(item)"
-				[icon]="item.documentFileIconURL"
-				[colFirst]="item.documentTitle"
-				colSecond="Signed by"
-				[colSecondHighlighted]="item.signedByName"
-				colThird="Signed"
-				[colThirdHighlighted]="item.formattedCreatedDate"
-			></app-archived-item>
-		</ng-container>
-	</ion-list>
+    <ng-container
+      *ngIf="listType === EnumService.DedicatedModeFormListType.Archive"
+    >
+      <app-archived-item
+        *ngFor="let item of archivedForms | listFilter:searchQuery:'documentTitle';"
+        (itemSelect)="openArchivedForm(item)"
+        [icon]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(item.documentFileIconURL,'icon'):item.documentFileIconURL"
+        [colFirst]="item.documentTitle"
+        colSecond="Signed by"
+        [disabled]="sharedDataService.offlineMode?!item.documentFileName:false"
+        [colSecondHighlighted]="item.signedByName"
+        colThird="Signed"
+        [colThirdHighlighted]="item.formattedCreatedDate"
+      ></app-archived-item>
+    </ng-container>
+  </ion-list>
 
-	<ng-template #noDocument>
-		<app-empty-message *ngIf="!isLoadingForms" message="No forms available"></app-empty-message>
-	</ng-template>
+  <ng-template #noDocument>
+    <app-empty-message
+      *ngIf="!isLoadingForms"
+      message="No forms available"
+    ></app-empty-message>
+  </ng-template>
 
-	<ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0">
-		<app-empty-message *ngIf="!isLoadingForms && (availableForms | listFilter:searchQuery:'formTitle').length == 0" message="No Results Found"></app-empty-message>
-	</ng-container>
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingForms && (availableForms | listFilter:searchQuery:'formTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
 
-	<ng-container *ngIf="listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0">
-		<app-empty-message *ngIf="!isLoadingForms && (archivedForms | listFilter:searchQuery:'documentTitle').length == 0" message="No Results Found"></app-empty-message>
-	</ng-container>
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingForms && (archivedForms | listFilter:searchQuery:'documentTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
 </ion-content>

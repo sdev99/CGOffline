@@ -1,19 +1,33 @@
 <ion-toolbar mode="ios">
+  <ion-title size="large">{{ title }}</ion-title>
 
-    <ion-title size="large">{{title}}</ion-title>
-
-    <ion-buttons slot="end">
-        <ion-button size="small" fill="clear" (click)="syncClick()">
-            <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/sync.svg"></ion-icon>
-            <div class="badge"></div>
-        </ion-button>
-        <ion-button size="small" fill="clear" (click)="infoClick()">
-            <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/info.svg"></ion-icon>
-        </ion-button>
-        <ion-button size="small" fill="clear" (click)="logoutClick()">
-            <ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/logout-dm.svg"></ion-icon>
-        </ion-button>
-    </ion-buttons>
-
+  <ion-buttons slot="end">
+    <ion-button
+      size="small"
+      fill="clear"
+      (click)="syncClick()"
+      [disabled]="isSyncButtonDisabled"
+    >
+      <ion-icon
+        class="scan-icon"
+        slot="icon-only"
+        src="./assets/icon/sync.svg"
+      ></ion-icon>
+      <div class="badge" *ngIf="isSycronizationNeeded"></div>
+    </ion-button>
+    <ion-button size="small" fill="clear" (click)="infoClick()">
+      <ion-icon
+        class="scan-icon"
+        slot="icon-only"
+        src="./assets/icon/info.svg"
+      ></ion-icon>
+    </ion-button>
+    <ion-button size="small" fill="clear" (click)="logoutClick()">
+      <ion-icon
+        class="scan-icon"
+        slot="icon-only"
+        src="./assets/icon/logout-dm.svg"
+      ></ion-icon>
+    </ion-button>
+  </ion-buttons>
 </ion-toolbar>
-

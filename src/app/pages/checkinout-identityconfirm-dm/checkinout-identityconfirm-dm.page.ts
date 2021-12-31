@@ -5,6 +5,7 @@ import { SharedDataService } from "../../services/shared-data.service";
 import { EnumService } from "../../services/enum.service";
 import { ApiService } from "../../services/api.service";
 import { UtilService } from "../../services/util.service";
+import { DeviceUserDetail } from "src/app/_models/offline/DeviceUserDetail";
 
 @Component({
   selector: "app-checkinout-identityconfirm-dm",
@@ -16,8 +17,8 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
 
   photoCaptured = "./assets/images/ProfileNone.png";
   userName;
-  pageTitle = "";
 
+  pageTitle = "";
   constructor(
     public navController: NavController,
     public activatedRoute: ActivatedRoute,
@@ -64,10 +65,18 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
       dedicatedModeGuestDetail?.guestLastName
     );
     if (dedicatedModeGuestDetail?.guestPhoto) {
-      this.photoCaptured =
-        this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory +
-        "" +
-        dedicatedModeGuestDetail.guestPhoto;
+      if (this.sharedDataService.offlineMode) {
+        this.photoCaptured = this.utilService.getOfflineFileUrl(
+          dedicatedModeGuestDetail.guestPhoto,
+          "checkin"
+        );
+      } else {
+        this.photoCaptured =
+          this.sharedDataService.globalDirectories
+            ?.userCheckInSignOffDirectory +
+          "" +
+          dedicatedModeGuestDetail.guestPhoto;
+      }
     }
   };
 
@@ -79,16 +88,32 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
       userDetail?.middleName,
       userDetail?.lastName
     );
-    if (userDetail?.userPhoto) {
-      this.photoCaptured =
-        this.sharedDataService.globalDirectories?.userCheckInSignOffDirectory +
-        "" +
-        userDetail.userPhoto;
-    } else if (userDetail?.photo) {
-      this.photoCaptured =
-        this.sharedDataService.globalDirectories?.userDirectory +
-        "" +
-        userDetail.photo;
+    if (this.sharedDataService.offlineMode) {
+      const deviceUserDetail = userDetail as any as DeviceUserDetail;
+      if (deviceUserDetail.userPhoto) {
+        this.photoCaptured = this.utilService.getOfflineFileUrl(
+          userDetail.userPhoto,
+          "checkin"
+        );
+      } else if (deviceUserDetail.photo) {
+        this.photoCaptured = this.utilService.getOfflineFileUrl(
+          userDetail.photo,
+          "user"
+        );
+      }
+    } else {
+      if (userDetail?.userPhoto) {
+        this.photoCaptured =
+          this.sharedDataService.globalDirectories
+            ?.userCheckInSignOffDirectory +
+          "" +
+          userDetail.userPhoto;
+      } else if (userDetail?.photo) {
+        this.photoCaptured =
+          this.sharedDataService.globalDirectories?.userDirectory +
+          "" +
+          userDetail.photo;
+      }
     }
   };
 
@@ -105,9 +130,10 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
       case EnumService.DedicatedModeProcessTypes.CheckinOut: {
         switch (this.sharedDataService.checkinoutDmAs) {
           case EnumService.CheckInType.AS_GUEST:
+            const isGuestReturning = true;
             this.sharedDataService.getCheckinDetailsGuest(
               this.apiService,
-              true
+              isGuestReturning
             );
             break;
           case EnumService.CheckInType.MY_NAME:
