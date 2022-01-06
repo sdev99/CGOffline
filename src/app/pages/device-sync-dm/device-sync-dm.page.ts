@@ -15,7 +15,7 @@ import { ObservablesService } from "src/app/services/observables.service";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { File } from "@ionic-native/file/ngx";
-import { DiskCheckPlugin } from "@ionic-native/disk-check-plugin/ngx";
+import { DiskCheckPlugin } from "src/app/custom-plugin-ngx/disk-check-plugin/ngx";
 
 const { Device } = Capacitor.Plugins;
 
