@@ -1,0 +1,31 @@
+ion-content {
+  --background: var(--ion-color-app-primary);
+  --padding-start: 9.07%;
+  --padding-end: 9.07%;
+
+  .page-title {
+    margin-top: 16vh;
+    ion-icon {
+      width: 75px;
+    }
+  }
+
+  .page-description {
+    margin-top: 16px;
+    width: 100%;
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 22px;
+    color: #ffffff;
+  }
+
+  .input-form {
+    margin-top: 48px;
+  }
+
+  .app-warning-component {
+    margin-bottom: 20px;
+  }
+}

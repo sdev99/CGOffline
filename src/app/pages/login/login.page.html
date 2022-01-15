@@ -1,61 +1,95 @@
 <ion-content fullscreen="true">
-	<div class="content-vertically-arrange">
-		<div class="vertically-fill-space"></div>
+  <div class="content-vertically-arrange">
+    <div class="vertically-fill-space"></div>
 
-		<h2 class="page-title">{{'PAGESPECIFIC_TEXT.LOGIN.SIGN_IN' | translate}}</h2>
-		<p class="page-description">{{'PAGESPECIFIC_TEXT.LOGIN.PAGE_DESCRIPTION' | translate}}</p>
+    <h2 class="page-title">
+      {{'PAGESPECIFIC_TEXT.LOGIN.SIGN_IN' | translate}}
+    </h2>
+    <p class="page-description">
+      {{'PAGESPECIFIC_TEXT.LOGIN.PAGE_DESCRIPTION' | translate}}
+    </p>
 
-		<form class="input-form" [formGroup]="loginForm">
-			<div class="app-warning-component">
-				<app-warning-component *ngIf="errorMessage && errorMessage.length>0" [message]="errorMessage"></app-warning-component>
-			</div>
+    <form class="input-form" [formGroup]="loginForm">
+      <div class="app-warning-component">
+        <app-warning-component
+          *ngIf="errorMessage && errorMessage.length>0"
+          [message]="errorMessage"
+        ></app-warning-component>
+      </div>
 
-			<ion-item class="email-item">
-				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.LOGIN.EMAIL' | translate}}</ion-label>
-				<ion-input
-					formControlName="email"
-					autocapitalize="off"
-					autocomplete="email"
-					inputmode="email"
-					[ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
-					[placeholder]="'PAGESPECIFIC_TEXT.LOGIN.EMAIL_PLACEHOLDER' | translate"
-					type="email"
-				></ion-input>
-			</ion-item>
+      <ion-item class="email-item">
+        <ion-label position="stacked"
+          >{{'PAGESPECIFIC_TEXT.LOGIN.EMAIL' | translate}}</ion-label
+        >
+        <ion-input
+          formControlName="email"
+          autocapitalize="off"
+          autocomplete="email"
+          inputmode="email"
+          [ngClass]="{'error': (isSubmitted && !loginForm.controls.email.valid)}"
+          [placeholder]="'PAGESPECIFIC_TEXT.LOGIN.EMAIL_PLACEHOLDER' | translate"
+          type="email"
+        ></ion-input>
+      </ion-item>
 
-			<ion-item class="password-item">
-				<ion-label position="stacked">{{'PAGESPECIFIC_TEXT.LOGIN.PASSWORD' | translate}}</ion-label>
-				<ion-input
-					formControlName="password"
-					autocapitalize="off"
-					[ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
-					[placeholder]="'PAGESPECIFIC_TEXT.LOGIN.PASSWORD_PLACEHOLDER' | translate"
-					type="password"
-				></ion-input>
-			</ion-item>
-		</form>
+      <ion-item class="password-item">
+        <ion-label position="stacked"
+          >{{'PAGESPECIFIC_TEXT.LOGIN.PASSWORD' | translate}}</ion-label
+        >
+        <ion-input
+          formControlName="password"
+          autocapitalize="off"
+          [ngClass]="{'error': (isSubmitted && !loginForm.controls.password.valid)}"
+          [placeholder]="'PAGESPECIFIC_TEXT.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+          type="password"
+        ></ion-input>
+      </ion-item>
+    </form>
 
-		<ion-button expand="full" class="signin-btn" (click)="onSubmit()">{{'PAGESPECIFIC_TEXT.LOGIN.SIGN_IN' | translate}}</ion-button>
-		<ion-button fill="clear" class="forgot-password-btn" routerLink="/forgot-password"> {{'PAGESPECIFIC_TEXT.LOGIN.FORGOT_PASSWORD' | translate}} </ion-button>
+    <ion-button expand="full" class="signin-btn" (click)="onSubmit()"
+      >{{'PAGESPECIFIC_TEXT.LOGIN.SIGN_IN' | translate}}</ion-button
+    >
 
-		<div class="vertically-fill-space"></div>
+    <ion-button
+      fill="clear"
+      class="okta-signin-btn"
+      routerLink="/checkoktaenable"
+    >
+      {{'PAGESPECIFIC_TEXT.LOGIN.SIGN_IN_WITH' | translate}}
+      <ion-icon src="./assets/icon/Okta_logo.svg"></ion-icon>
+    </ion-button>
+    <ion-button
+      fill="clear"
+      class="forgot-password-btn"
+      routerLink="/forgot-password"
+    >
+      {{'PAGESPECIFIC_TEXT.LOGIN.FORGOT_PASSWORD' | translate}}
+    </ion-button>
 
-		<div class="bottom-view">
-			<!--            <ion-select class="login-language-dropdown" placeholder="ENGLISH" interface="action-sheet"-->
-			<!--                        cancelText="cancel"-->
-			<!--                        [(ngModel)]="selectedLanguage">-->
-			<!--                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>-->
-			<!--            </ion-select>-->
+    <div class="vertically-fill-space"></div>
 
-			<!-- <ion-button fill="outline" color="light" size="small" class="custom-language-dropdown" (click)="openLanguages()">
+    <div class="bottom-view">
+      <!--            <ion-select class="login-language-dropdown" placeholder="ENGLISH" interface="action-sheet"-->
+      <!--                        cancelText="cancel"-->
+      <!--                        [(ngModel)]="selectedLanguage">-->
+      <!--                <ion-select-option *ngFor="let item of languages" [value]="item.code">{{item.name}}</ion-select-option>-->
+      <!--            </ion-select>-->
+
+      <!-- <ion-button fill="outline" color="light" size="small" class="custom-language-dropdown" (click)="openLanguages()">
 				<ion-icon name="chevron-down-sharp"></ion-icon>
 				{{selectedLanguage ? UtilService.findObj(languages, 'code', selectedLanguage).name : 'ENGLISH'}}
 			</ion-button> -->
 
-			<ion-text class="device-uid">
-				<span *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0"> {{'SHARED_TEXT.DEVICE_UID' | translate}}&nbsp;</span>
-				<span class="selectable-text">{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span>
-			</ion-text>
-		</div>
-	</div>
+      <ion-text class="device-uid">
+        <span
+          *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0"
+        >
+          {{'SHARED_TEXT.DEVICE_UID' | translate}}&nbsp;</span
+        >
+        <span class="selectable-text"
+          >{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span
+        >
+      </ion-text>
+    </div>
+  </div>
 </ion-content>

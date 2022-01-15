@@ -236,9 +236,6 @@ export class AppComponent {
             "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
           // this.sharedDataService.deviceUID =
           //   "0eab5395-a994-520b-5352-317105139432";
-          setTimeout(() => {
-            this.navController.navigateForward("signoff-digitalink");
-          }, 7000);
         }
         UtilService.fireCallBack(callBack);
       });

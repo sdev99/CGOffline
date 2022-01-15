@@ -41,11 +41,26 @@ import { Base64 } from "@ionic-native/base64/ngx";
 import { Device } from "@ionic-native/device/ngx";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
+import { OKTA_CONFIG, OktaAuthModule } from "@okta/okta-angular";
+import { OktaAuth, OktaAuthOptions } from "@okta/okta-auth-js";
+
+const APP_BASE_URL = window.location.protocol + "//" + window.location.host;
+
+const config: OktaAuthOptions = {
+  clientId: "0oa3im7kf6dZaX9gs5d7",
+  issuer: `https://dev-57289077.okta.com/oauth2/default`,
+  redirectUri: `${APP_BASE_URL}/callback`,
+  scopes: ["openid", "profile", "email"],
+  pkce: true,
+};
+
+export const oktaAuth = new OktaAuth(config);
 
 @NgModule({
   declarations: [AppComponent, TemplateDropdownComponent],
   entryComponents: [TemplateDropdownComponent],
   imports: [
+    OktaAuthModule,
     BrowserModule,
     FormsModule,
     IonicModule.forRoot({
@@ -91,6 +106,7 @@ import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
     SQLite,
     RouterOutlet,
     DiskCheckPlugin,
+    { provide: OKTA_CONFIG, useValue: { oktaAuth } },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

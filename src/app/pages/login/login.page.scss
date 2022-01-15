@@ -100,4 +100,20 @@ ion-content {
   .app-warning-component {
     margin-bottom: 20px;
   }
+
+  .okta-signin-btn {
+    font-family: IBM Plex Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    color: #ffffff;
+    margin: 16px 0;
+    ion-icon {
+      width: 50px;
+      height: 16px;
+      margin-left: 5px;
+    }
+  }
 }

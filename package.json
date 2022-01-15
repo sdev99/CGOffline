@@ -46,6 +46,8 @@
     "@ionic/pwa-elements": "^3.0.1",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
+    "@okta/okta-angular": "^5.1.0",
+    "@okta/okta-auth-js": "^5.10.1",
     "com-badrit-base64": "^0.2.0",
     "cordova-plugin-advanced-http": "^3.1.0",
     "cordova-plugin-androidx": "^2.0.0",

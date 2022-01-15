@@ -124,6 +124,7 @@ export class EnumService {
     UserSignIn: "UserSignIn", // POST
     GetCompanyMobileSessionDetails: "GetCompanyMobileSessionDetails", // POST
     ForgotPassword: "ForgotPassword", // POST
+    OktaUserSignIn: "OktaUserSignIn", // POST
     ResetPassword: "ResetPassword", // POST
     AccountSetup: "AccountSetup", // POST
     GetUserProfileById: "GetUserProfileById", // GET
