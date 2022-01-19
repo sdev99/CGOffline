@@ -21,12 +21,23 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.getcapacitor.capacitor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>capacitor</string>
-                <string>com.okta.dev-57289077</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.be-safetechnologies.compliancegenie</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.be-safetechnologies.compliancegenie</string>
 			</array>
 		</dict>
 	</array>

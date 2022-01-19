@@ -8,6 +8,7 @@ import { AccountService } from "../../services/account.service";
 import { oktaAuth } from "src/app/app.module";
 import { SharedDataService } from "src/app/services/shared-data.service";
 import { EnumService } from "src/app/services/enum.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "app-checkoktaenable",
@@ -25,6 +26,7 @@ export class CheckoktaenablePage implements OnInit {
     public utilService: UtilService,
     public accountService: AccountService,
     public sharedDataService: SharedDataService,
+    public translateService: TranslateService,
     public navCtrl: NavController
   ) {
     this.myForm = new FormGroup({
@@ -45,7 +47,7 @@ export class CheckoktaenablePage implements OnInit {
         console.log("Okta User Success", res);
         this.utilService.presentLoadingWithOptions();
 
-        this.accountService.checkOktaEnable(res.email, true).subscribe(
+        this.accountService.oktaUserSignIn(res.email).subscribe(
           (user) => {
             this.utilService.hideLoading();
             if (user) {
@@ -83,15 +85,20 @@ export class CheckoktaenablePage implements OnInit {
       this.utilService.presentLoadingWithOptions();
 
       this.accountService.checkOktaEnable(email).subscribe(
-        (user) => {
+        (isOktaEnabled) => {
           this.utilService.hideLoading();
-          if (user) {
+          if (isOktaEnabled) {
             this.loginWithOkta();
+          } else {
+            this.translateService
+              .get("PAGESPECIFIC_TEXT.CHECK_OKTA_ENABLE.OKTA_AUTH_FAILED")
+              .subscribe(async (res) => {
+                this.errorMsg = res;
+              });
           }
         },
         ({ message }) => {
           this.utilService.hideLoading();
-
           this.errorMsg = message;
         }
       );

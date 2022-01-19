@@ -62,7 +62,8 @@
       "EMAIL_ADDRESS": "E-mail Address",
       "ENTER_EMAIL_ADDRESS": "Enter e-mail address",
       "SIGN_IN": "Sign In",
-      "GO_TO_SIGN_IN": "Go to Sign In"
+      "GO_TO_SIGN_IN": "Go to Sign In",
+      "OKTA_AUTH_FAILED": "We have failed to authentication your account through Okta. Please check your OKTA details and/or contact your company administrator."
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Forgot Password",

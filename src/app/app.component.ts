@@ -214,13 +214,13 @@ export class AppComponent {
           this.sharedDataService.deviceUID = uuid;
 
           // For Test Purpose only
-          if (uuid === "67DA70A1-FD31-4B48-81F6-74E9EB356632") {
-            //Sukhdev iPhone 12 mini test id
-            localStorage.setItem(StaticDataService.isDeviceTestTablet, "true");
-            this.sharedDataService.deviceUID = localStorage.getItem("test-uid")
-              ? localStorage.getItem("test-uid")
-              : "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
-          }
+          // if (uuid === "67DA70A1-FD31-4B48-81F6-74E9EB356632") {
+          //   //Sukhdev iPhone 12 mini test id
+          //   localStorage.setItem(StaticDataService.isDeviceTestTablet, "true");
+          //   this.sharedDataService.deviceUID = localStorage.getItem("test-uid")
+          //     ? localStorage.getItem("test-uid")
+          //     : "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
+          // }
           //end
         } else {
           this.sharedDataService.deviceUID = "";
@@ -254,6 +254,10 @@ export class AppComponent {
           // Example url: https://beerswift.app/tabs/tab2
           // slug = /tabs/tab2
           const url = data.url;
+
+          console.log("APP_URL_OPEN ", url);
+          debugger;
+
           if (url.indexOf("ResetPassword") !== -1) {
             this.sharedDataService.isNavigationTypeDeepLink = true;
             const code = UtilService.getQueryStringValue(url, "code");
@@ -269,6 +273,14 @@ export class AppComponent {
               queryParams: {
                 userId,
               },
+            });
+          } else if (url.indexOf("callback") !== -1) {
+            this.sharedDataService.isNavigationTypeDeepLink = true;
+            const code = UtilService.getQueryStringValue(url, "code");
+            const state = UtilService.getQueryStringValue(url, "state");
+
+            this.router.navigate(["/callback"], {
+              queryParams: { code, state },
             });
           }
         });
@@ -484,7 +496,14 @@ export class AppComponent {
             });
         }
       } else {
-        this.navController.navigateRoot("/login");
+        debugger;
+        if (
+          window.location.pathname !== "/forgot-password" &&
+          window.location.pathname !== "/callback" &&
+          window.location.pathname !== "/checkoktaenable"
+        ) {
+          this.navController.navigateRoot("/login");
+        }
       }
     }
 

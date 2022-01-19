@@ -283,7 +283,28 @@ export class AccountService {
       );
   }
 
-  checkOktaEnable(email, shouldSaveUser = false) {
+  checkOktaEnable(email) {
+    return this.http
+      .post(
+        `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.OktaUserDetails}?email=${email}`,
+        {
+          email,
+        }
+      )
+      .pipe(
+        map((data: Response) => {
+          if (
+            data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
+          ) {
+            const userInfo: any = data.Result;
+            return userInfo.isOktaEnabled;
+          }
+          return null;
+        })
+      );
+  }
+
+  oktaUserSignIn(email) {
     return this.http
       .post(
         `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.OktaUserSignIn}`,
@@ -300,17 +321,15 @@ export class AccountService {
             data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
           ) {
             const userInfo: User = data.Result;
-            if (shouldSaveUser) {
-              localStorage.setItem(
-                EnumService.LocalStorageKeys.USER_DATA,
-                JSON.stringify(userInfo)
-              );
-              this.userSubject.next(userInfo);
+            localStorage.setItem(
+              EnumService.LocalStorageKeys.USER_DATA,
+              JSON.stringify(userInfo)
+            );
+            this.userSubject.next(userInfo);
 
-              if (userInfo.mobileAppLanguageID) {
-                this.sharedDataService.currentLanguageId =
-                  userInfo.mobileAppLanguageID;
-              }
+            if (userInfo.mobileAppLanguageID) {
+              this.sharedDataService.currentLanguageId =
+                userInfo.mobileAppLanguageID;
             }
 
             return userInfo;

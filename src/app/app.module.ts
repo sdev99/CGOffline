@@ -43,8 +43,11 @@ import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
 import { OKTA_CONFIG, OktaAuthModule } from "@okta/okta-angular";
 import { OktaAuth, OktaAuthOptions } from "@okta/okta-auth-js";
+import { UtilService } from "./services/util.service";
 
-const APP_BASE_URL = window.location.protocol + "//" + window.location.host;
+const APP_BASE_URL = UtilService.isLocalHost()
+  ? window.location.protocol + "//" + window.location.host
+  : "com.be-safetechnologies.compliancegenie:/";
 
 const config: OktaAuthOptions = {
   clientId: "0oa3im7kf6dZaX9gs5d7",
