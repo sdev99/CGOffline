@@ -26,22 +26,17 @@ export class OktaAuthCallbackPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sub = this.auth.events$.subscribe((action) =>
-      this.postCallback(action)
-    );
+    this.auth.addActionListener(this.postCallback);
     this.auth.authorizationCallback(window.location.origin + this.router.url);
   }
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
+  ngOnDestroy() {}
 
-  postCallback(action: IAuthAction) {
-    console.log(JSON.stringify(action));
+  postCallback = (action: IAuthAction) => {
     if (action.action === AuthActions.SignInSuccess) {
       this.utilService.presentLoadingWithOptions();
-      console.log("OktaAuthCallBack->action.user", action.user);
-      debugger;
+      this.auth.loadUserInfo();
+    } else if (action.action === AuthActions.LoadUserInfoSuccess) {
       this.accountService.oktaUserSignIn(action.user?.email).subscribe(
         (user) => {
           this.utilService.hideLoading();
@@ -66,12 +61,15 @@ export class OktaAuthCallbackPage implements OnInit, OnDestroy {
           });
         }
       );
-    }
+    } else if (
+      action.action === AuthActions.LoadUserInfoFailed ||
+      action.action === AuthActions.SignInFailed
+    ) {
+      this.utilService.hideLoading();
 
-    if (action.action === AuthActions.SignInFailed) {
       this.navCtrl.navigateRoot("checkoktaenable", {
         queryParams: { message: action.error },
       });
     }
-  }
+  };
 }

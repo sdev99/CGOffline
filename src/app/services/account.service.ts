@@ -26,8 +26,8 @@ Array.prototype.clone = function () {
   providedIn: "root",
 })
 export class AccountService implements OnInit, OnDestroy {
-  user$ = this.auth.user$;
-  events$ = this.auth.events$;
+  // user$ = this.auth.user$;
+  // events$ = this.auth.events$;
   sub: Subscription;
 
   private userSubject: BehaviorSubject<User>;
@@ -49,22 +49,24 @@ export class AccountService implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.sub = this.auth.events$.subscribe((action) =>
-      this.onSignOutSuccess(action)
-    );
+    // this.sub = this.auth.events$.subscribe((action) =>
+    //   this.onSignOutSuccess(action)
+    // );
+
+    this.auth.addActionListener(this.onSignOutSuccess);
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
-  private onSignOutSuccess(action: IAuthAction) {
+  private onSignOutSuccess = (action: IAuthAction) => {
     if (action.action === AuthActions.SignOutSuccess) {
       this.navController.navigateBack(["login"], {
         replaceUrl: true,
       });
     }
-  }
+  };
 
   checkForMobileLanguageId() {
     if (!this.sharedDataService.dedicatedMode) {

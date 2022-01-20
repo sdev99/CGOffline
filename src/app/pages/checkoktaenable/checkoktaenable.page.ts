@@ -17,7 +17,7 @@ import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
   styleUrls: ["./checkoktaenable.page.scss"],
 })
 export class CheckoktaenablePage implements OnInit, OnDestroy {
-  events$ = this.auth.events$;
+  // events$ = this.auth.events$;
   sub: Subscription;
 
   errorMsg = "";
@@ -53,13 +53,15 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.sub = this.auth.events$.subscribe((action) =>
-      this.onSignInSuccess(action)
-    );
+    // this.sub = this.auth.events$.subscribe((action) =>
+    //   this.onSignInSuccess(action)
+    // );
+
+    this.auth.addActionListener(this.onSignInSuccess);
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    // this.sub.unsubscribe();
   }
 
   async onSubmit() {
@@ -95,11 +97,11 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
     this.auth.signIn();
   }
 
-  private onSignInSuccess(action: IAuthAction) {
+  private onSignInSuccess = (action: IAuthAction) => {
     if (action.action === AuthActions.SignInSuccess) {
       this.utilService.presentLoadingWithOptions();
-      console.log("checkoktaenable->action.user", action.user);
-      debugger;
+      this.auth.loadUserInfo();
+    } else if (action.action === AuthActions.LoadUserInfoSuccess) {
       this.accountService.oktaUserSignIn(action.user?.email).subscribe(
         (user) => {
           this.utilService.hideLoading();
@@ -122,8 +124,12 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
           this.errorMsg = message;
         }
       );
-    } else if (action.action === AuthActions.SignInFailed) {
+    } else if (
+      action.action === AuthActions.SignInFailed ||
+      action.action === AuthActions.LoadUserInfoFailed
+    ) {
+      this.utilService.hideLoading();
       this.errorMsg = action.error;
     }
-  }
+  };
 }

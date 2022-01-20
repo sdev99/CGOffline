@@ -11,7 +11,7 @@ export const environment = {
     redirect_url: "com.besafetechnologies.compliancegenie://auth/callback",
     end_session_redirect_url:
       "com.besafetechnologies.compliancegenie://auth/logout",
-    scopes: "openid offline_access",
+    scopes: "openid offline_access email",
     pkce: true,
   },
 };

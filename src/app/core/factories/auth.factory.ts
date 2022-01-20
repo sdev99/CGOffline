@@ -23,19 +23,19 @@ export let authFactory = (
   }
 
   if (platform.is("capacitor")) {
-    App.addListener("appUrlOpen", (data: any) => {
-      console.log("AUTH_FACTORY->APP_URL_OPEN ", data);
-      if (data.url !== undefined) {
-        ngZone.run(() => {
-          if (data.url.indexOf("auth/callback") !== -1) {
-            let url = "auth/callback" + data.url.split("auth/callback").pop();
-            authService.authorizationCallback(url);
-          } else if (data.url.indexOf("auth/logout") !== -1) {
-            authService.endSessionCallback();
-          }
-        });
-      }
-    });
+    // App.addListener("appUrlOpen", (data: any) => {
+    //   console.log("AUTH_FACTORY->APP_URL_OPEN ", data);
+    //   if (data.url !== undefined) {
+    //     ngZone.run(() => {
+    //       if (data.url.indexOf("auth/callback") !== -1) {
+    //         let url = "auth/callback" + data.url.split("auth/callback").pop();
+    //         authService.authorizationCallback(url);
+    //       } else if (data.url.indexOf("auth/logout") !== -1) {
+    //         authService.endSessionCallback();
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   return authService;
