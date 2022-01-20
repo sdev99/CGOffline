@@ -23,6 +23,7 @@ import { StaticDataService } from "./services/static-data.service";
 import { OfflineManagerService } from "./services/offline-manager.service";
 import { DeviceOfflinePage } from "./modals/device-offline/device-offline.page";
 import { DeviceDetailData } from "./_models/offline/DeviceDetailData";
+import { AuthService } from "ionic-appauth";
 
 const { Geolocation, Permissions, App, SplashScreen, Network } = Plugins;
 
@@ -54,7 +55,8 @@ export class AppComponent {
     private router: Router,
     private badge: Badge,
     private modalController: ModalController,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private auth: AuthService
   ) {
     this.initializeApp();
   }
@@ -255,8 +257,7 @@ export class AppComponent {
           // slug = /tabs/tab2
           const url = data.url;
 
-          console.log("APP_URL_OPEN ", url);
-          debugger;
+          console.log("AppComponent->APP_URL_OPEN ", url);
 
           if (url.indexOf("ResetPassword") !== -1) {
             this.sharedDataService.isNavigationTypeDeepLink = true;
@@ -273,14 +274,6 @@ export class AppComponent {
               queryParams: {
                 userId,
               },
-            });
-          } else if (url.indexOf("callback") !== -1) {
-            this.sharedDataService.isNavigationTypeDeepLink = true;
-            const code = UtilService.getQueryStringValue(url, "code");
-            const state = UtilService.getQueryStringValue(url, "state");
-
-            this.router.navigate(["/callback"], {
-              queryParams: { code, state },
             });
           }
         });
@@ -458,6 +451,8 @@ export class AppComponent {
   };
 
   configureAppForPersonalMode = async () => {
+    await this.auth.init();
+
     try {
       if (!UtilService.isLocalHost()) {
         this.screenOrientation.lock(
@@ -496,7 +491,6 @@ export class AppComponent {
             });
         }
       } else {
-        debugger;
         if (
           window.location.pathname !== "/forgot-password" &&
           window.location.pathname !== "/callback" &&

@@ -1,17 +1,16 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { User } from "../_models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
-import { catchError, map } from "rxjs/operators";
+import { Router } from "@angular/router";
+import { map } from "rxjs/operators";
 import { EnumService } from "./enum.service";
-import { environment } from "../../environments/environment";
 import { SharedDataService } from "./shared-data.service";
 import { Response } from "../_models/response";
 import { NavController, Platform } from "@ionic/angular";
 import { Profile } from "../_models/profile";
-import { App } from "@capacitor/core";
-import { oktaAuth } from "../app.module";
+import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
+import { Subscription } from "rxjs";
 
 declare global {
   interface Array<T> {
@@ -26,16 +25,20 @@ Array.prototype.clone = function () {
 @Injectable({
   providedIn: "root",
 })
-export class AccountService {
+export class AccountService implements OnInit, OnDestroy {
+  user$ = this.auth.user$;
+  events$ = this.auth.events$;
+  sub: Subscription;
+
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
 
   constructor(
-    private router: Router,
     public sharedDataService: SharedDataService,
     private http: HttpClient,
     private navController: NavController,
-    private platform: Platform
+    private platform: Platform,
+    private auth: AuthService
   ) {
     this.userSubject = new BehaviorSubject<User>(
       JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA))
@@ -43,6 +46,24 @@ export class AccountService {
     this.user = this.userSubject.asObservable();
 
     this.checkForMobileLanguageId();
+  }
+
+  ngOnInit() {
+    this.sub = this.auth.events$.subscribe((action) =>
+      this.onSignOutSuccess(action)
+    );
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  private onSignOutSuccess(action: IAuthAction) {
+    if (action.action === AuthActions.SignOutSuccess) {
+      this.navController.navigateBack(["login"], {
+        replaceUrl: true,
+      });
+    }
   }
 
   checkForMobileLanguageId() {
@@ -423,28 +444,12 @@ export class AccountService {
                 });
                 window.location.reload();
               };
-              oktaAuth
-                .isAuthenticated()
-                .then((isAuthenticated) => {
-                  debugger;
-                  if (isAuthenticated) {
-                    oktaAuth
-                      .signOut()
-                      .then((resSignout) => {
-                        debugger;
-                        logoutSuccess();
-                      })
-                      .catch((errSignout) => {
-                        debugger;
-                        logoutSuccess();
-                      });
-                  } else {
-                    logoutSuccess();
-                  }
-                })
-                .catch(() => {
-                  logoutSuccess();
-                });
+
+              try {
+                this.auth.signOut();
+              } catch (error) {}
+
+              logoutSuccess();
             }
           }
           return data;

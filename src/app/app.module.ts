@@ -29,7 +29,7 @@ import {
   HttpClientModule,
 } from "@angular/common/http";
 import { HttpConfigInterceptor } from "./helpers/httpConfig.interceptor";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { Camera } from "@ionic-native/camera/ngx";
 import { MediaCapture } from "@ionic-native/media-capture/ngx";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
@@ -41,30 +41,16 @@ import { Base64 } from "@ionic-native/base64/ngx";
 import { Device } from "@ionic-native/device/ngx";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
-import { OKTA_CONFIG, OktaAuthModule } from "@okta/okta-angular";
-import { OktaAuth, OktaAuthOptions } from "@okta/okta-auth-js";
 import { UtilService } from "./services/util.service";
-
-const APP_BASE_URL = UtilService.isLocalHost()
-  ? window.location.protocol + "//" + window.location.host
-  : "com.be-safetechnologies.compliancegenie:/";
-
-const config: OktaAuthOptions = {
-  clientId: "0oa3im7kf6dZaX9gs5d7",
-  issuer: `https://dev-57289077.okta.com/oauth2/default`,
-  redirectUri: `${APP_BASE_URL}/callback`,
-  scopes: ["openid", "profile", "email"],
-  pkce: true,
-};
-
-export const oktaAuth = new OktaAuth(config);
+import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
+import { CoreModule } from "./core/core.module";
 
 @NgModule({
-  declarations: [AppComponent, TemplateDropdownComponent],
-  entryComponents: [TemplateDropdownComponent],
+  declarations: [AppComponent, TemplateDropdownComponent, CheckoktaenablePage],
+  entryComponents: [TemplateDropdownComponent, CheckoktaenablePage],
   imports: [
-    OktaAuthModule,
     BrowserModule,
+    CoreModule,
     FormsModule,
     IonicModule.forRoot({
       hardwareBackButton: false,
@@ -84,6 +70,7 @@ export const oktaAuth = new OktaAuth(config);
     CommonModule,
     PipesModule,
     DirectivesModule,
+    ReactiveFormsModule,
     HttpClientModule,
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
@@ -109,7 +96,6 @@ export const oktaAuth = new OktaAuth(config);
     SQLite,
     RouterOutlet,
     DiskCheckPlugin,
-    { provide: OKTA_CONFIG, useValue: { oktaAuth } },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

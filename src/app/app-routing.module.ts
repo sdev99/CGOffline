@@ -2,8 +2,7 @@ import { NgModule } from "@angular/core";
 import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 import { environment } from "src/environments/environment";
 import { AuthGuard } from "./helpers/auth.guard";
-import { OktaCallbackComponent } from "@okta/okta-angular";
-import { CallbackPage } from "./pages/callback/callback.page";
+import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
 
 const routes: Routes = [
   {
@@ -13,9 +12,24 @@ const routes: Routes = [
       import("./tabs/tabs.module").then((m) => m.TabsPageModule),
     canActivate: [AuthGuard],
   },
+
   {
-    path: "callback",
-    component: OktaCallbackComponent,
+    path: "auth/callback",
+    loadChildren: () =>
+      import("./pages/okta-auth-callback/okta-auth-callback.module").then(
+        (m) => m.OktaAuthCallbackPageModule
+      ),
+  },
+  {
+    path: "auth/logout",
+    loadChildren: () =>
+      import("./pages/okta-auth-logout/okta-auth-logout.module").then(
+        (m) => m.OktaAuthLogoutPageModule
+      ),
+  },
+  {
+    path: "checkoktaenable",
+    component: CheckoktaenablePage,
   },
   {
     path: "login",
@@ -438,19 +452,6 @@ const routes: Routes = [
     loadChildren: () =>
       import("./modals/device-offline/device-offline.module").then(
         (m) => m.DeviceOfflinePageModule
-      ),
-  },
-  {
-    path: "callback1",
-    component: CallbackPage,
-    // loadChildren: () =>
-    //   import("./pages/callback/callback.page").then((m) => m.CallbackPage),
-  },
-  {
-    path: "checkoktaenable",
-    loadChildren: () =>
-      import("./pages/checkoktaenable/checkoktaenable.module").then(
-        (m) => m.CheckoktaenablePageModule
       ),
   },
 ];
