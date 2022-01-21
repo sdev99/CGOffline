@@ -17,7 +17,7 @@
             android:name="com.besafetechnologies.compliancegenie.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:label="@string/title_activity_main"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBarLaunch">
 
             <intent-filter>
@@ -27,31 +27,29 @@
 
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:scheme="https"
                     android:host="cg.utopia-test.com" />
             </intent-filter>
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:scheme="https"
                     android:host="login.be-safetech.com" />
             </intent-filter>
 
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="com.besafetechnologies.compliancegenie" />
             </intent-filter>
+
 
         </activity>
 

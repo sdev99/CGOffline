@@ -10,6 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-checkoktaenable",
@@ -56,8 +57,7 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
     // this.sub = this.auth.events$.subscribe((action) =>
     //   this.onSignInSuccess(action)
     // );
-
-    this.auth.addActionListener(this.onSignInSuccess);
+    // this.auth.addActionListener(this.onSignInSuccess);
   }
 
   ngOnDestroy() {
@@ -94,7 +94,7 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   }
 
   async loginWithOkta() {
-    this.auth.signIn();
+    this.auth.signIn({ audience: environment.auth_config.audience });
   }
 
   private onSignInSuccess = (action: IAuthAction) => {

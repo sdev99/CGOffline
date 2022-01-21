@@ -385,6 +385,13 @@ export class OfflineApiService {
     });
   }
 
+  synchDevice = (deviceId) => {
+    return this.httpClient.post(
+      `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.SynchDevice}?id=${deviceId}`,
+      {}
+    );
+  };
+
   uploadMultipleFiles = (formData) => {
     return this.httpClient.post(
       `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.PostOfflineFormAnswerPhotoOrVideo}`,
@@ -395,6 +402,10 @@ export class OfflineApiService {
   postOfflineZipFile = (fileObj, fileName) => {
     const formData = new FormData();
     formData.append("file", fileObj, fileName);
+    formData.append(
+      "deviceID",
+      this.sharedDataService.dedicatedModeDeviceDetailData.deviceID.toString()
+    );
     return this.httpClient.post(
       `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.PostDeviceOfflineFile}`,
       formData

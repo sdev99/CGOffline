@@ -26,7 +26,7 @@ export class OktaAuthCallbackPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.auth.addActionListener(this.postCallback);
+    // this.auth.addActionListener(this.postCallback);
     this.auth.authorizationCallback(window.location.origin + this.router.url);
   }
 

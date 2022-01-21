@@ -245,7 +245,6 @@ export class AppComponent {
 
   postCallback = (action: IAuthAction) => {
     if (action.action === AuthActions.SignInSuccess) {
-      this.utilService.presentLoadingWithOptions();
       this.authService.loadUserInfo();
     } else if (action.action === AuthActions.LoadUserInfoSuccess) {
       this.accountService.oktaUserSignIn(action.user?.email).subscribe(
@@ -324,8 +323,12 @@ export class AppComponent {
             //     code: UtilService.getQueryStringValue(url, "code"),
             //   },
             // });
-            let finalUrl = "auth/callback" + url.split("auth/callback").pop();
-            this.authService.authorizationCallback(finalUrl);
+            try {
+              this.utilService.presentLoadingWithOptions();
+              let finalUrl = "auth/callback" + url.split("auth/callback").pop();
+
+              this.authService.authorizationCallback(finalUrl);
+            } catch (error) {}
           } else if (url.indexOf("auth/logout") !== -1) {
             // this.navController.navigateRoot("auth/logout", {
             //   queryParams: {
@@ -333,6 +336,7 @@ export class AppComponent {
             //     code: UtilService.getQueryStringValue(url, "code"),
             //   },
             // });
+            this.utilService.presentLoadingWithOptions();
             this.authService.endSessionCallback();
           }
         });

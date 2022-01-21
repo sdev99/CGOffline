@@ -52,8 +52,7 @@ export class AccountService implements OnInit, OnDestroy {
     // this.sub = this.auth.events$.subscribe((action) =>
     //   this.onSignOutSuccess(action)
     // );
-
-    this.auth.addActionListener(this.onSignOutSuccess);
+    // this.auth.addActionListener(this.onSignOutSuccess);
   }
 
   ngOnDestroy() {

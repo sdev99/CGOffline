@@ -201,6 +201,7 @@ export class EnumService {
     DeviceOfflineFileDelete: "DeviceOfflineFileDelete",
     GetSynchStatus: "GetSynchStatus",
     PostDeviceOfflineFile: "PostDeviceOfflineFile",
+    SynchDevice: "SynchDevice",
   };
 
   static ApiResponseCode = {

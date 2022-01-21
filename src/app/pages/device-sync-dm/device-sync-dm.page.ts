@@ -272,6 +272,12 @@ export class DeviceSyncDmPage implements OnInit {
       } catch (error) {}
     }
 
+    this.offlineApiService
+      .synchDevice(
+        this.sharedDataService.dedicatedModeDeviceDetailData.deviceID
+      )
+      .subscribe((res) => {});
+
     // if it is already offline mode then publish event to update UI on other pages that are subscribed for changes
     if (this.sharedDataService.offlineMode) {
       this.sharedDataService.offlineMode = false;

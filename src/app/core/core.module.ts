@@ -3,6 +3,8 @@ import { Requestor, StorageBackend } from "@openid/appauth";
 import { APP_INITIALIZER, NgModule, NgZone } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Browser, AuthService } from "ionic-appauth";
+import { HTTP } from "@awesome-cordova-plugins/http/ngx";
+
 import {
   CapacitorBrowser,
   CapacitorSecureStorage,
@@ -14,6 +16,7 @@ import { authFactory } from "./factories";
 @NgModule({
   imports: [CommonModule],
   providers: [
+    HTTP,
     {
       provide: StorageBackend,
       useClass: CapacitorSecureStorage,

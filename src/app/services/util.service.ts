@@ -360,6 +360,31 @@ export class UtilService {
     return dirpath.includes("file://") ? dirpath : "file://" + dirpath;
   }
 
+  static convertToObject(queryString) {
+    let i = 0,
+      retObj = {},
+      pair = null,
+      //get the query string, omitting the "?"
+      //use the ampersand as a separator
+      qArr = queryString.split("&");
+
+    //each element in qArr is not a key/val pair
+    //so we need to turn each one of these pairs
+    //into a two-element array
+    for (; i < qArr.length; i++) {
+      //use the "=" as a separator
+      pair = qArr[i].split("=");
+      //pair is now a two-element array
+      //so the "key" is the first element of that array
+      //and the "val" is the second element
+      //so now we just add this "pair" to our return object
+      retObj[pair[0]] = pair[1];
+    }
+
+    //return the new object
+    return retObj;
+  }
+
   static convertToQuerystring(obj) {
     let str = [];
     for (const p in obj)
