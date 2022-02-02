@@ -319,7 +319,7 @@ export class AccountService implements OnInit, OnDestroy {
             data.StatusCode === EnumService.ApiResponseCode.RequestSuccessful
           ) {
             const userInfo: any = data.Result;
-            return userInfo.isOktaEnabled;
+            return userInfo;
           }
           return null;
         })
@@ -448,6 +448,9 @@ export class AccountService implements OnInit, OnDestroy {
 
               try {
                 this.auth.signOut();
+                localStorage.removeItem(
+                  EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS
+                );
               } catch (error) {}
 
               logoutSuccess();

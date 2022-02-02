@@ -11,6 +11,8 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
 import { environment } from "src/environments/environment";
+import { authFactory } from "src/app/core/factories";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-checkoktaenable",
@@ -29,6 +31,7 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
+    private observablesService: ObservablesService,
     public route: ActivatedRoute,
     public utilService: UtilService,
     public accountService: AccountService,
@@ -73,9 +76,19 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
       this.utilService.presentLoadingWithOptions();
 
       this.accountService.checkOktaEnable(email).subscribe(
-        (isOktaEnabled) => {
+        ({ isOktaEnabled, okta_Mobile_ClientID, okta_Mobile_ServerHost }) => {
           this.utilService.hideLoading();
           if (isOktaEnabled) {
+            this.auth.authConfig.server_host = okta_Mobile_ServerHost;
+            this.auth.authConfig.client_id = okta_Mobile_ClientID;
+            localStorage.setItem(
+              EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS,
+              JSON.stringify({ okta_Mobile_ClientID, okta_Mobile_ServerHost })
+            );
+            this.observablesService.publishSomeData(
+              EnumService.ObserverKeys.OKTA_DETAILS_RECEIVED,
+              true
+            );
             this.loginWithOkta();
           } else {
             this.translateService

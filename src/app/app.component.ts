@@ -234,8 +234,10 @@ export class AppComponent {
         console.log(error);
         this.sharedDataService.deviceUID = "";
         if (UtilService.isLocalHost()) {
+          // this.sharedDataService.deviceUID =
+          //   "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
           this.sharedDataService.deviceUID =
-            "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
+            "C71D4229-E9B7-4EBD-A23F-B0FA259D788F";
           // this.sharedDataService.deviceUID =
           //   "0eab5395-a994-520b-5352-317105139432";
         }
@@ -291,6 +293,12 @@ export class AppComponent {
       // reset password url https://login.be-safetech.com/Login/ResetPassword?code=TTQ4LOM8
       // setup new account https://login.be-safetech.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
       this.authService.addActionListener(this.postCallback);
+
+      this.observablesService
+        .getObservable(EnumService.ObserverKeys.OKTA_DETAILS_RECEIVED)
+        .subscribe(() => {
+          this.authService.addActionListener(this.postCallback);
+        });
 
       App.addListener("appUrlOpen", (data: any) => {
         this.ngZone.run(() => {

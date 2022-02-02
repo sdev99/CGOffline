@@ -4,6 +4,7 @@ import { AuthService, Browser } from "ionic-appauth";
 import { App } from "@capacitor/core";
 import { environment } from "src/environments/environment";
 import { NgZone } from "@angular/core";
+import { EnumService } from "src/app/services/enum.service";
 
 export let authFactory = (
   platform: Platform,
@@ -13,7 +14,18 @@ export let authFactory = (
   storage: StorageBackend
 ) => {
   const authService = new AuthService(browser, storage, requestor);
-  authService.authConfig = environment.auth_config;
+
+  authService.authConfig = environment.auth_config as any;
+
+  if (localStorage.getItem(EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS)) {
+    try {
+      const oktaDetails: any = JSON.parse(
+        localStorage.getItem(EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS)
+      );
+      authService.authConfig.server_host = oktaDetails.okta_Mobile_ServerHost;
+      authService.authConfig.client_id = oktaDetails.okta_Mobile_ClientID;
+    } catch (error) {}
+  }
 
   if (!platform.is("cordova")) {
     authService.authConfig.redirect_url =
