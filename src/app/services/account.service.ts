@@ -447,10 +447,19 @@ export class AccountService implements OnInit, OnDestroy {
               };
 
               try {
-                this.auth.signOut();
-                localStorage.removeItem(
-                  EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS
-                );
+                if (
+                  localStorage.getItem(
+                    EnumService.LocalStorageKeys.LOGIN_WITH_OKTA
+                  ) === "true"
+                ) {
+                  this.auth.signOut();
+                  localStorage.removeItem(
+                    EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS
+                  );
+                  localStorage.removeItem(
+                    EnumService.LocalStorageKeys.LOGIN_WITH_OKTA
+                  );
+                }
               } catch (error) {}
 
               logoutSuccess();

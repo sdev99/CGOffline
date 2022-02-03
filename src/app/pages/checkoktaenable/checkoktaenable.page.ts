@@ -9,10 +9,8 @@ import { EnumService } from "src/app/services/enum.service";
 import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
-import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
+import { AuthService } from "ionic-appauth";
 import { environment } from "src/environments/environment";
-import { authFactory } from "src/app/core/factories";
-import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
   selector: "app-checkoktaenable",
@@ -31,7 +29,6 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
-    private observablesService: ObservablesService,
     public route: ActivatedRoute,
     public utilService: UtilService,
     public accountService: AccountService,
@@ -56,16 +53,9 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    // this.sub = this.auth.events$.subscribe((action) =>
-    //   this.onSignInSuccess(action)
-    // );
-    // this.auth.addActionListener(this.onSignInSuccess);
-  }
+  ngOnInit() {}
 
-  ngOnDestroy() {
-    // this.sub.unsubscribe();
-  }
+  ngOnDestroy() {}
 
   async onSubmit() {
     this.isSubmitted = true;
@@ -85,10 +75,7 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
               EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS,
               JSON.stringify({ okta_Mobile_ClientID, okta_Mobile_ServerHost })
             );
-            this.observablesService.publishSomeData(
-              EnumService.ObserverKeys.OKTA_DETAILS_RECEIVED,
-              true
-            );
+
             this.loginWithOkta();
           } else {
             this.translateService
@@ -109,40 +96,4 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   async loginWithOkta() {
     this.auth.signIn({ audience: environment.auth_config.audience });
   }
-
-  private onSignInSuccess = (action: IAuthAction) => {
-    if (action.action === AuthActions.SignInSuccess) {
-      this.utilService.presentLoadingWithOptions();
-      this.auth.loadUserInfo();
-    } else if (action.action === AuthActions.LoadUserInfoSuccess) {
-      this.accountService.oktaUserSignIn(action.user?.email).subscribe(
-        (user) => {
-          this.utilService.hideLoading();
-          if (user) {
-            this.sharedDataService.isLoginAfterAppOpen = true;
-            this.navCtrl.navigateRoot("/tabs/dashboard");
-            if (
-              localStorage.getItem(
-                EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED
-              ) === "true"
-            ) {
-              this.sharedDataService.updatePushSettingOnServer(true);
-            } else {
-              this.sharedDataService.updatePushSettingOnServer(false);
-            }
-          }
-        },
-        ({ message }) => {
-          this.utilService.hideLoading();
-          this.errorMsg = message;
-        }
-      );
-    } else if (
-      action.action === AuthActions.SignInFailed ||
-      action.action === AuthActions.LoadUserInfoFailed
-    ) {
-      this.utilService.hideLoading();
-      this.errorMsg = action.error;
-    }
-  };
 }

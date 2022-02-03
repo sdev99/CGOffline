@@ -253,6 +253,10 @@ export class AppComponent {
         (user) => {
           this.utilService.hideLoading();
           if (user) {
+            localStorage.setItem(
+              EnumService.LocalStorageKeys.LOGIN_WITH_OKTA,
+              "true"
+            );
             this.sharedDataService.isLoginAfterAppOpen = true;
             this.navController.navigateRoot("/tabs/dashboard");
             if (
@@ -292,13 +296,8 @@ export class AppComponent {
       //
       // reset password url https://login.be-safetech.com/Login/ResetPassword?code=TTQ4LOM8
       // setup new account https://login.be-safetech.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
-      this.authService.addActionListener(this.postCallback);
 
-      this.observablesService
-        .getObservable(EnumService.ObserverKeys.OKTA_DETAILS_RECEIVED)
-        .subscribe(() => {
-          this.authService.addActionListener(this.postCallback);
-        });
+      this.authService.addActionListener(this.postCallback);
 
       App.addListener("appUrlOpen", (data: any) => {
         this.ngZone.run(() => {

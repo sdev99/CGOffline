@@ -3469,7 +3469,6 @@ export class OfflineManagerService {
       const uploadAllFormOfflineFile = async () => {
         // getAllFormSubmittedFiles
         const allFiles: any = await this.getAllFormSubmittedFiles();
-        debugger;
 
         if (allFiles && allFiles.length > 0) {
           let convertedFileCount = 0;
@@ -3485,7 +3484,6 @@ export class OfflineManagerService {
             const response = await fetch(
               Capacitor.convertFileSrc(offlineFileDirectory)
             );
-            debugger;
             const blob = await response.blob();
             formData.append(
               "files",
@@ -3526,7 +3524,6 @@ export class OfflineManagerService {
       const onAllBinaryToFileCoverted = (formData) => {
         offlineApiService.uploadMultipleFiles(formData).subscribe(
           (response: any) => {
-            debugger;
             if (response.Result) {
               const uploadedFiles = response.Result;
               let uploadedFilesObj = {};
