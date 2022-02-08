@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { DemoDataService } from "../../services/demo-data.service";
 import { UtilService } from "../../services/util.service";
 import { NavController } from "@ionic/angular";
 import { AccountService } from "../../services/account.service";
@@ -9,8 +8,8 @@ import { EnumService } from "src/app/services/enum.service";
 import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
-import { AuthService } from "ionic-appauth";
 import { environment } from "src/environments/environment";
+import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 
 @Component({
   selector: "app-checkoktaenable",
@@ -25,16 +24,14 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   isSubmitted = false;
   myForm: FormGroup;
 
-  languages = DemoDataService.languages.clone();
-
   constructor(
-    private auth: AuthService,
     public route: ActivatedRoute,
     public utilService: UtilService,
     public accountService: AccountService,
     public sharedDataService: SharedDataService,
     public translateService: TranslateService,
-    public navCtrl: NavController
+    public navCtrl: NavController,
+    private iab: InAppBrowser
   ) {
     this.route.queryParams.subscribe((res) => {
       if (res.message) {
@@ -66,17 +63,13 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
       this.utilService.presentLoadingWithOptions();
 
       this.accountService.checkOktaEnable(email).subscribe(
-        ({ isOktaEnabled, okta_Mobile_ClientID, okta_Mobile_ServerHost }) => {
+        ({ isOktaEnabled }) => {
           this.utilService.hideLoading();
           if (isOktaEnabled) {
-            this.auth.authConfig.server_host = okta_Mobile_ServerHost;
-            this.auth.authConfig.client_id = okta_Mobile_ClientID;
-            localStorage.setItem(
-              EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS,
-              JSON.stringify({ okta_Mobile_ClientID, okta_Mobile_ServerHost })
-            );
+            // this.auth.authConfig.server_host = okta_Mobile_ServerHost;
+            // this.auth.authConfig.client_id = okta_Mobile_ClientID;
 
-            this.loginWithOkta();
+            this.loginWithOkta(email);
           } else {
             this.translateService
               .get("PAGESPECIFIC_TEXT.CHECK_OKTA_ENABLE.OKTA_AUTH_FAILED")
@@ -93,7 +86,57 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
     }
   }
 
-  async loginWithOkta() {
-    this.auth.signIn({ audience: environment.auth_config.audience });
+  async loginWithOkta(email) {
+    const loginUrl =
+      environment.siteBaseUrl +
+      "/Login/OKTA_Login?email=" +
+      email +
+      "&returnUrl=CG_Mobile";
+    const browser = this.iab.create(loginUrl, "_blank");
+    browser.on("loadstart").subscribe((event) => {
+      const url = event.url;
+      if (url.indexOf("OktaMResponse?success=1") !== -1) {
+        browser.close();
+
+        this.utilService.presentLoadingWithOptions();
+
+        this.accountService.oktaUserSignIn(email).subscribe(
+          (user) => {
+            this.utilService.hideLoading();
+            if (user) {
+              localStorage.setItem(
+                EnumService.LocalStorageKeys.LOGIN_WITH_OKTA,
+                "true"
+              );
+              this.sharedDataService.isLoginAfterAppOpen = true;
+              this.navCtrl.navigateRoot("/tabs/dashboard");
+              if (
+                localStorage.getItem(
+                  EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED
+                ) === "true"
+              ) {
+                this.sharedDataService.updatePushSettingOnServer(true);
+              } else {
+                this.sharedDataService.updatePushSettingOnServer(false);
+              }
+            }
+          },
+          ({ message }) => {
+            this.utilService.hideLoading();
+            this.navCtrl.navigateRoot("checkoktaenable", {
+              queryParams: { message },
+            });
+          }
+        );
+      } else if (url.indexOf("OktaMResponse?success=0") !== -1) {
+        browser.close();
+
+        const errorMessage = UtilService.getQueryStringValue(url, "error");
+        this.navCtrl.navigateRoot("checkoktaenable", {
+          queryParams: { message: errorMessage },
+        });
+      }
+    });
+    // this.auth.signIn({ audience: environment.auth_config.audience });
   }
 }

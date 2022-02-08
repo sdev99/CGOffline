@@ -41,16 +41,14 @@ import { Base64 } from "@ionic-native/base64/ngx";
 import { Device } from "@ionic-native/device/ngx";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
-import { UtilService } from "./services/util.service";
 import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
-import { CoreModule } from "./core/core.module";
+import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 
 @NgModule({
   declarations: [AppComponent, TemplateDropdownComponent, CheckoktaenablePage],
   entryComponents: [TemplateDropdownComponent, CheckoktaenablePage],
   imports: [
     BrowserModule,
-    CoreModule,
     FormsModule,
     IonicModule.forRoot({
       hardwareBackButton: false,
@@ -96,6 +94,7 @@ import { CoreModule } from "./core/core.module";
     SQLite,
     RouterOutlet,
     DiskCheckPlugin,
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

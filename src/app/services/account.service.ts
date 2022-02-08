@@ -9,7 +9,6 @@ import { SharedDataService } from "./shared-data.service";
 import { Response } from "../_models/response";
 import { NavController, Platform } from "@ionic/angular";
 import { Profile } from "../_models/profile";
-import { IAuthAction, AuthActions, AuthService } from "ionic-appauth";
 import { Subscription } from "rxjs";
 
 declare global {
@@ -26,8 +25,6 @@ Array.prototype.clone = function () {
   providedIn: "root",
 })
 export class AccountService implements OnInit, OnDestroy {
-  // user$ = this.auth.user$;
-  // events$ = this.auth.events$;
   sub: Subscription;
 
   private userSubject: BehaviorSubject<User>;
@@ -37,8 +34,7 @@ export class AccountService implements OnInit, OnDestroy {
     public sharedDataService: SharedDataService,
     private http: HttpClient,
     private navController: NavController,
-    private platform: Platform,
-    private auth: AuthService
+    private platform: Platform
   ) {
     this.userSubject = new BehaviorSubject<User>(
       JSON.parse(localStorage.getItem(EnumService.LocalStorageKeys.USER_DATA))
@@ -48,24 +44,11 @@ export class AccountService implements OnInit, OnDestroy {
     this.checkForMobileLanguageId();
   }
 
-  ngOnInit() {
-    // this.sub = this.auth.events$.subscribe((action) =>
-    //   this.onSignOutSuccess(action)
-    // );
-    // this.auth.addActionListener(this.onSignOutSuccess);
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
-
-  private onSignOutSuccess = (action: IAuthAction) => {
-    if (action.action === AuthActions.SignOutSuccess) {
-      this.navController.navigateBack(["login"], {
-        replaceUrl: true,
-      });
-    }
-  };
 
   checkForMobileLanguageId() {
     if (!this.sharedDataService.dedicatedMode) {
@@ -452,7 +435,6 @@ export class AccountService implements OnInit, OnDestroy {
                     EnumService.LocalStorageKeys.LOGIN_WITH_OKTA
                   ) === "true"
                 ) {
-                  this.auth.signOut();
                   localStorage.removeItem(
                     EnumService.LocalStorageKeys.COMPANY_OKTA_DETAILS
                   );

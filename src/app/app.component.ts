@@ -23,7 +23,6 @@ import { StaticDataService } from "./services/static-data.service";
 import { OfflineManagerService } from "./services/offline-manager.service";
 import { DeviceOfflinePage } from "./modals/device-offline/device-offline.page";
 import { DeviceDetailData } from "./_models/offline/DeviceDetailData";
-import { AuthActions, AuthService, IAuthAction } from "ionic-appauth";
 
 const { Geolocation, Permissions, App, SplashScreen, Network } = Plugins;
 
@@ -55,8 +54,7 @@ export class AppComponent {
     private router: Router,
     private badge: Badge,
     private modalController: ModalController,
-    private translateService: TranslateService,
-    private authService: AuthService
+    private translateService: TranslateService
   ) {
     this.initializeApp();
   }
@@ -245,50 +243,6 @@ export class AppComponent {
       });
   };
 
-  postCallback = (action: IAuthAction) => {
-    if (action.action === AuthActions.SignInSuccess) {
-      this.authService.loadUserInfo();
-    } else if (action.action === AuthActions.LoadUserInfoSuccess) {
-      this.accountService.oktaUserSignIn(action.user?.email).subscribe(
-        (user) => {
-          this.utilService.hideLoading();
-          if (user) {
-            localStorage.setItem(
-              EnumService.LocalStorageKeys.LOGIN_WITH_OKTA,
-              "true"
-            );
-            this.sharedDataService.isLoginAfterAppOpen = true;
-            this.navController.navigateRoot("/tabs/dashboard");
-            if (
-              localStorage.getItem(
-                EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED
-              ) === "true"
-            ) {
-              this.sharedDataService.updatePushSettingOnServer(true);
-            } else {
-              this.sharedDataService.updatePushSettingOnServer(false);
-            }
-          }
-        },
-        ({ message }) => {
-          this.utilService.hideLoading();
-          this.navController.navigateRoot("checkoktaenable", {
-            queryParams: { message },
-          });
-        }
-      );
-    } else if (
-      action.action === AuthActions.LoadUserInfoFailed ||
-      action.action === AuthActions.SignInFailed
-    ) {
-      this.utilService.hideLoading();
-
-      this.navController.navigateRoot("checkoktaenable", {
-        queryParams: { message: action.error },
-      });
-    }
-  };
-
   setupDeepLink = () => {
     if (!environment.isWebApp) {
       // reset password url https://cg.utopia-test.com/Login/ResetPassword?code=TTQ4LOM8
@@ -296,8 +250,6 @@ export class AppComponent {
       //
       // reset password url https://login.be-safetech.com/Login/ResetPassword?code=TTQ4LOM8
       // setup new account https://login.be-safetech.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
-
-      this.authService.addActionListener(this.postCallback);
 
       App.addListener("appUrlOpen", (data: any) => {
         this.ngZone.run(() => {
@@ -323,28 +275,6 @@ export class AppComponent {
                 userId,
               },
             });
-          } else if (url.indexOf("auth/callback") !== -1) {
-            // this.navController.navigateRoot("auth/callback", {
-            //   queryParams: {
-            //     state: UtilService.getQueryStringValue(url, "state"),
-            //     code: UtilService.getQueryStringValue(url, "code"),
-            //   },
-            // });
-            try {
-              this.utilService.presentLoadingWithOptions();
-              let finalUrl = "auth/callback" + url.split("auth/callback").pop();
-
-              this.authService.authorizationCallback(finalUrl);
-            } catch (error) {}
-          } else if (url.indexOf("auth/logout") !== -1) {
-            // this.navController.navigateRoot("auth/logout", {
-            //   queryParams: {
-            //     state: UtilService.getQueryStringValue(url, "state"),
-            //     code: UtilService.getQueryStringValue(url, "code"),
-            //   },
-            // });
-            this.utilService.presentLoadingWithOptions();
-            this.authService.endSessionCallback();
           }
         });
       });

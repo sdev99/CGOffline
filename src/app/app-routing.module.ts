@@ -12,21 +12,6 @@ const routes: Routes = [
       import("./tabs/tabs.module").then((m) => m.TabsPageModule),
     canActivate: [AuthGuard],
   },
-
-  {
-    path: "auth/callback",
-    loadChildren: () =>
-      import("./pages/okta-auth-callback/okta-auth-callback.module").then(
-        (m) => m.OktaAuthCallbackPageModule
-      ),
-  },
-  {
-    path: "auth/logout",
-    loadChildren: () =>
-      import("./pages/okta-auth-logout/okta-auth-logout.module").then(
-        (m) => m.OktaAuthLogoutPageModule
-      ),
-  },
   {
     path: "checkoktaenable",
     component: CheckoktaenablePage,
