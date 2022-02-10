@@ -92,9 +92,15 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
       "/Login/OKTA_Login?email=" +
       email +
       "&returnUrl=CG_Mobile";
-    const browser = this.iab.create(loginUrl, "_blank");
+
+    const browser = this.iab.create(loginUrl, "_blank", {
+      clearcache: "yes",
+      // clearsessioncache: "yes",
+      // cleardata: "yes",
+    });
     browser.on("loadstart").subscribe((event) => {
       const url = event.url;
+
       if (url.indexOf("OktaMResponse?success=1") !== -1) {
         browser.close();
 

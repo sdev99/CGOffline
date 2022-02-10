@@ -52,12 +52,12 @@ export class DashboardPage implements OnInit, OnDestroy {
           .getUserProfile(this.accountService.userValue?.userId)
           .subscribe(
             (profile) => {
-              if (!profile) {
+              if (profile && profile.isActive) {
+                this.sharedDataService.getLangFileTranslation(() => {});
+              } else {
                 this.accountService
                   .logout(this.accountService.userValue?.userId, true)
                   .subscribe(() => {});
-              } else {
-                this.sharedDataService.getLangFileTranslation(() => {});
               }
             },
             (error) => {
