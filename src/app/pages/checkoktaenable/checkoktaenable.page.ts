@@ -143,6 +143,5 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
         });
       }
     });
-    // this.auth.signIn({ audience: environment.auth_config.audience });
   }
 }
