@@ -8,7 +8,10 @@
     <ion-label>
       <h6>{{signOffFormDetail?.formData?.formTitle}}</h6>
 
-      <div class="form-text-row">
+      <div
+        class="form-text-row"
+        *ngIf="sharedDataService.viewFormFor !== EnumService.ViewFormForType.Activity"
+      >
         <div class="title">
           {{'PAGESPECIFIC_TEXT.FORM_LIST.ENTITY' | translate}}
         </div>
