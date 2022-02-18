@@ -11,7 +11,6 @@ import { EnumService } from "./enum.service";
 import { Camera, CameraOptions } from "@ionic-native/camera/ngx";
 import { UtilService } from "./util.service";
 import { StaticDataService } from "./static-data.service";
-import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: "root",
@@ -21,9 +20,71 @@ export class PhotoService {
     public platform: Platform,
     public actionSheetController: ActionSheetController,
     private observablesService: ObservablesService,
-    private camera: Camera,
-    private translateService: TranslateService
+    private camera: Camera
   ) {}
+
+  async takePhotoFromNativeCamera(
+    callBack,
+    isFrontCamera = false,
+    isSquarePhoto = false
+  ) {
+    const subscribe = this.observablesService
+      .getObservable(EnumService.ObserverKeys.APP_RESTORED_RESULT)
+      .subscribe((data) => {
+        callBack(data.data);
+        subscribe.unsubscribe();
+      });
+
+    let allowEditing = false;
+    if (this.platform.is("ios") && isSquarePhoto) {
+      allowEditing = true;
+    }
+
+    if (UtilService.isLocalHost()) {
+      const capturedPhoto = await Plugins.Camera.getPhoto({
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera,
+        quality: StaticDataService.photoQuality,
+        allowEditing,
+        height: StaticDataService.photoMaxHeight,
+        correctOrientation: true,
+        preserveAspectRatio: true,
+        direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear,
+      });
+      try {
+        subscribe.unsubscribe();
+        callBack(capturedPhoto);
+      } catch (e) {}
+    } else {
+      const options: CameraOptions = {
+        quality: StaticDataService.photoQuality,
+        destinationType: this.camera.DestinationType.FILE_URI,
+        encodingType: this.camera.EncodingType.JPEG,
+        sourceType: this.camera.PictureSourceType.CAMERA,
+        correctOrientation: true,
+        allowEdit: allowEditing,
+        targetHeight: StaticDataService.photoMaxHeight,
+        cameraDirection: isFrontCamera
+          ? this.camera.Direction.FRONT
+          : this.camera.Direction.BACK,
+      };
+
+      this.camera.getPicture(options).then(
+        (imageData) => {
+          // const base64Image = "data:image/jpeg;base64," + imageData;
+          callBack({ dataUrl: imageData });
+          subscribe.unsubscribe();
+        },
+        (err) => {
+          // Handle error
+        }
+      );
+    }
+  }
+
+  cleanCamera() {
+    this.camera.cleanup().then(() => {});
+  }
 
   async takePhotoFromCamera(
     callBack,
@@ -56,7 +117,7 @@ export class PhotoService {
     } catch (e) {}
   }
 
-  async takePhotoFromGallery(callBack, isAllMedia = false) {
+  async takePhotoFromGallery(callBack, isAllMedia = false, isFileUrl = false) {
     if (UtilService.isLocalHost()) {
       const capturedPhoto = await Plugins.Camera.getPhoto({
         resultType: CameraResultType.DataUrl,
@@ -72,7 +133,9 @@ export class PhotoService {
     } else {
       const options: CameraOptions = {
         quality: StaticDataService.photoQuality,
-        destinationType: this.camera.DestinationType.DATA_URL,
+        destinationType: isFileUrl
+          ? this.camera.DestinationType.FILE_URI
+          : this.camera.DestinationType.DATA_URL,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: isAllMedia
           ? this.camera.MediaType.ALLMEDIA
@@ -93,8 +156,12 @@ export class PhotoService {
           ) {
             callBack({ dataUrl: imageData, isVideo: true });
           } else {
-            const base64Image = "data:image/jpeg;base64," + imageData;
-            callBack({ dataUrl: base64Image });
+            if (isFileUrl) {
+              callBack({ dataUrl: imageData.split("?")[0] });
+            } else {
+              const base64Image = "data:image/jpeg;base64," + imageData;
+              callBack({ dataUrl: base64Image });
+            }
           }
         },
         (err) => {

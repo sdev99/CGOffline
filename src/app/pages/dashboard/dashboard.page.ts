@@ -10,6 +10,8 @@ import { GlobalDirectory } from "../../_models/globalDirectory";
 import { UtilService } from "../../services/util.service";
 import { ActivityListItem } from "../../_models/activityListItem";
 import { ObservablesService } from "../../services/observables.service";
+import { StaticDataService } from "src/app/services/static-data.service";
+import { FilehandlerService } from "src/app/services/filehandler.service";
 
 @Component({
   selector: "app-dashboard",
@@ -27,6 +29,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     private apiService: ApiService,
     public utilService: UtilService,
     private accountService: AccountService,
+    private filehandlerService: FilehandlerService,
     public sharedDataService: SharedDataService,
     private observablesService: ObservablesService
   ) {
@@ -44,6 +47,17 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Remove all form images directory
+    try {
+      this.filehandlerService
+        .removeDirectory(
+          this.filehandlerService.offlineFilesDirectory(),
+          StaticDataService.formImagesFolderName
+        )
+        .then(() => {})
+        .catch(() => {});
+    } catch (error) {}
+
     if (!this.sharedDataService.dedicatedMode) {
       // if no user found or company is deleted , logout the user
 

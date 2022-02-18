@@ -74,6 +74,72 @@ export class FilehandlerService {
     return this.file.dataDirectory;
   };
 
+  async saveFileOnDevicePath(base64String, folderName, callBack) {
+    debugger;
+
+    let targetFileName: string = this.utilService.Uniqueid();
+    const writeDirectory = this.offlineFilesDirectory();
+
+    //Create folder if not exist
+    try {
+      await this.file.createDir(writeDirectory, folderName, false);
+    } catch (error) {}
+
+    if (UtilService.IsBase64Sring(base64String)) {
+      const base64Data = base64String;
+      let extension = "jpeg";
+      try {
+        extension = base64Data.split(";")[0].split("/")[1];
+      } catch (error) {}
+
+      targetFileName += "." + extension;
+      const blob = UtilService.convertBase64ToBlob(
+        UtilService.FixBase64String(base64Data),
+        "image/" + extension
+      );
+      this.file
+        .writeFile(writeDirectory, folderName + "/" + targetFileName, blob)
+        .then((res) => {
+          callBack(
+            true,
+            writeDirectory + "/" + folderName + "/" + targetFileName
+          );
+        })
+        .catch((error) => {
+          callBack(false, error);
+        });
+    } else {
+      const extension = base64String.split(".").pop();
+      targetFileName += "." + extension;
+
+      try {
+        const sourceFileName = base64String.split("\\").pop().split("/").pop();
+        const sourceDirectory = UtilService.fixDeviceDirPath(
+          base64String.replace(sourceFileName, "")
+        );
+
+        this.file
+          .copyFile(
+            sourceDirectory,
+            sourceFileName,
+            writeDirectory,
+            folderName + "/" + targetFileName
+          )
+          .then((res) => {
+            callBack(
+              true,
+              writeDirectory + "/" + folderName + "/" + targetFileName
+            );
+          })
+          .catch((error) => {
+            callBack(false, error);
+          });
+      } catch (error) {
+        callBack(false, error);
+      }
+    }
+  }
+
   async saveFileOnDevice(path, callBack) {
     let targetFileName: string = this.utilService.Uniqueid();
     const folderName = StaticDataService.offlineFilesFolderName;

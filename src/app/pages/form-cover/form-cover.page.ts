@@ -71,6 +71,17 @@ export class FormCoverPage {
   }
 
   ionViewWillEnter() {
+    // Remove all form images directory
+    try {
+      this.filehandlerService
+        .removeDirectory(
+          this.filehandlerService.offlineFilesDirectory(),
+          StaticDataService.formImagesFolderName
+        )
+        .then(() => {})
+        .catch(() => {});
+    } catch (error) {}
+
     if (!environment.isWebApp) {
       if (
         this.sharedDataService.viewFormFor ===

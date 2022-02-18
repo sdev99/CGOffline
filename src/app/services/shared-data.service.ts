@@ -1268,11 +1268,86 @@ export class SharedDataService {
         requiredFieldsCount === requiredFieldsValidCount &&
         filledFieldsCount > 0
       ) {
+        let uploadStartedIndex = -1;
         let attachmentCount = 0;
         let attachmentUploadedCount = 0;
         const attachemtUploaded = {};
 
         let loading;
+
+        let fileToBeUploads = [];
+
+        const uploadImageVideoFile = (index) => {
+          if (fileToBeUploads.length > index) {
+            const data = fileToBeUploads[index];
+            if (data.isVideo) {
+              this.uploadVideo(
+                data.file,
+                data.mimeType,
+                (response) => {
+                  console.log(
+                    "Uploaded " + " " + data.fileName + "" + response
+                  );
+                  if (response.status) {
+                    attachemtUploaded[data.questionId] = response.result.Result;
+                  }
+                  onUploaded();
+                },
+                (progress) => {
+                  console.log(
+                    "Progress " + " " + data.fileName + "" + progress
+                  );
+                }
+              );
+            } else {
+              apiService
+                .formPhotoOrVideoUpload(data.file, data.fileName)
+                .subscribe(
+                  (response: Response) => {
+                    attachemtUploaded[data.questionId] = response.Result;
+
+                    onUploaded();
+                  },
+                  (error) => {
+                    onUploaded();
+                  }
+                );
+            }
+          }
+        };
+
+        const onUploaded = () => {
+          attachmentUploadedCount++;
+          if (attachmentCount === attachmentUploadedCount) {
+            // Remove all form images directory
+            try {
+              this.filehandlerService
+                .removeDirectory(
+                  this.filehandlerService.offlineFilesDirectory(),
+                  StaticDataService.formImagesFolderName
+                )
+                .then(() => {})
+                .catch(() => {});
+            } catch (error) {}
+
+            loading = false;
+            this.utilService.hideLoading();
+            this.submitFormAnswers(
+              apiService,
+              formGroup,
+              formBuilderDetail,
+              personalModeLoggedUser,
+              callBack,
+              havAnswerDetail,
+              workPermitAnswer,
+              attachemtUploaded
+            );
+          } else {
+            if (!this.offlineMode) {
+              uploadImageVideoFile(attachmentUploadedCount);
+            }
+          }
+        };
 
         sections.map((section, sectionIndex) => {
           if (this.utilService.shouldShowSection(section)) {
@@ -1309,25 +1384,8 @@ export class SharedDataService {
                           control.value.split(".").pop().toLowerCase()
                         ];
                     }
-                    if (this.offlineMode) {
-                      const attachmentProcessDone = () => {
-                        attachmentUploadedCount++;
-                        if (attachmentCount === attachmentUploadedCount) {
-                          loading = false;
-                          this.utilService.hideLoading();
-                          this.submitFormAnswers(
-                            apiService,
-                            formGroup,
-                            formBuilderDetail,
-                            personalModeLoggedUser,
-                            callBack,
-                            havAnswerDetail,
-                            workPermitAnswer,
-                            attachemtUploaded
-                          );
-                        }
-                      };
 
+                    if (this.offlineMode) {
                       const insertImageVideoFileToDb = (offlineFileName) => {
                         this.offlineManagerService
                           .insertImageVideoFile({
@@ -1336,10 +1394,10 @@ export class SharedDataService {
                           })
                           .then((res) => {
                             attachemtUploaded[question.questionId] = res;
-                            attachmentProcessDone();
+                            onUploaded();
                           })
                           .catch((error) => {
-                            attachmentProcessDone();
+                            onUploaded();
                           });
                       };
 
@@ -1351,119 +1409,73 @@ export class SharedDataService {
                           if (status) {
                             insertImageVideoFileToDb(res);
                           } else {
-                            attachmentProcessDone();
+                            onUploaded();
                           }
                         }
                       );
                     } else {
-                      this.utilService
-                        .dataUriToFile(control.value, fileName, mimeType)
-                        .then(async (file) => {
+                      if (isVideo) {
+                        this.utilService
+                          .dataUriToFile(control.value, fileName, mimeType)
+                          .then(async (file) => {
+                            if (!loading) {
+                              this.utilService.presentLoadingWithOptions();
+                              loading = true;
+                            }
+
+                            fileToBeUploads.push({
+                              file,
+                              mimeType,
+                              fileName,
+                              isVideo,
+                              questionId: question.questionId,
+                            });
+
+                            if (uploadStartedIndex === -1) {
+                              uploadStartedIndex = 0;
+                              uploadImageVideoFile(0);
+                            }
+                          })
+                          .catch(() => {
+                            onUploaded();
+                          });
+                      } else {
+                        const uploadImage = (file) => {
                           if (!loading) {
                             this.utilService.presentLoadingWithOptions();
                             loading = true;
                           }
 
-                          if (isVideo) {
-                            this.uploadVideo(
-                              file,
-                              mimeType,
-                              (response) => {
-                                console.log(
-                                  "Uploaded " + " " + fileName + "" + response
-                                );
-                                if (response.status) {
-                                  attachemtUploaded[question.questionId] =
-                                    response.result.Result;
-                                }
-                                attachmentUploadedCount++;
-                                if (
-                                  attachmentCount === attachmentUploadedCount
-                                ) {
-                                  loading = false;
-                                  this.utilService.hideLoading();
-                                  this.submitFormAnswers(
-                                    apiService,
-                                    formGroup,
-                                    formBuilderDetail,
-                                    personalModeLoggedUser,
-                                    callBack,
-                                    havAnswerDetail,
-                                    workPermitAnswer,
-                                    attachemtUploaded
-                                  );
-                                }
-                              },
-                              (progress) => {
-                                console.log(
-                                  "Progress " + " " + fileName + "" + progress
-                                );
-                              }
-                            );
-                          } else {
-                            apiService
-                              .formPhotoOrVideoUpload(file, fileName)
-                              .subscribe(
-                                (response: Response) => {
-                                  attachemtUploaded[question.questionId] =
-                                    response.Result;
-                                  attachmentUploadedCount++;
-                                  if (
-                                    attachmentCount === attachmentUploadedCount
-                                  ) {
-                                    loading = false;
-                                    this.utilService.hideLoading();
-                                    this.submitFormAnswers(
-                                      apiService,
-                                      formGroup,
-                                      formBuilderDetail,
-                                      personalModeLoggedUser,
-                                      callBack,
-                                      havAnswerDetail,
-                                      workPermitAnswer,
-                                      attachemtUploaded
-                                    );
-                                  }
-                                },
-                                (error) => {
-                                  attachmentUploadedCount++;
-                                  if (
-                                    attachmentCount === attachmentUploadedCount
-                                  ) {
-                                    loading = false;
-                                    this.utilService.hideLoading();
-                                    this.submitFormAnswers(
-                                      apiService,
-                                      formGroup,
-                                      formBuilderDetail,
-                                      personalModeLoggedUser,
-                                      callBack,
-                                      havAnswerDetail,
-                                      workPermitAnswer,
-                                      attachemtUploaded
-                                    );
-                                  }
-                                }
-                              );
+                          fileToBeUploads.push({
+                            file,
+                            fileName,
+                            questionId: question.questionId,
+                          });
+
+                          if (uploadStartedIndex === -1) {
+                            uploadStartedIndex = 0;
+                            uploadImageVideoFile(0);
                           }
-                        })
-                        .catch(() => {
-                          attachmentUploadedCount++;
-                          if (attachmentCount === attachmentUploadedCount) {
-                            loading = false;
-                            this.utilService.hideLoading();
-                            this.submitFormAnswers(
-                              apiService,
-                              formGroup,
-                              formBuilderDetail,
-                              personalModeLoggedUser,
-                              callBack,
-                              havAnswerDetail,
-                              workPermitAnswer,
-                              attachemtUploaded
-                            );
-                          }
-                        });
+                        };
+
+                        const imageUrlOrBase64 = control.value;
+                        if (UtilService.IsBase64Sring(imageUrlOrBase64)) {
+                          this.utilService
+                            .dataUriToFile(imageUrlOrBase64, fileName, mimeType)
+                            .then(async (file) => {
+                              uploadImage(file);
+                            })
+                            .catch(() => {
+                              onUploaded();
+                            });
+                        } else {
+                          const response = await fetch(
+                            Capacitor.convertFileSrc(imageUrlOrBase64)
+                          );
+                          const file = await response.blob();
+                          uploadImage(file);
+                        }
+                      }
                     }
                   }
                 }

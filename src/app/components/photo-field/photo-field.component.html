@@ -1,39 +1,57 @@
 <div class="photo-view-container">
-	<ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
+  <ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
 
-	<div class="photo-buttons" *ngIf="!image; else addPhotoTemplate">
-		<ion-button fill="clear" class="left" (click)="choosePhotoVideoOption()">
-			<ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
-			{{ 'SHARED_TEXT.MEDIA.TAKE_PHOTO_VIDEO' | translate }}
-		</ion-button>
+  <div class="photo-buttons" *ngIf="!image; else addPhotoTemplate">
+    <ion-button fill="clear" class="left" (click)="choosePhotoVideoOption()">
+      <ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
+      {{ "SHARED_TEXT.MEDIA.TAKE_PHOTO_VIDEO" | translate }}
+    </ion-button>
 
-		<span>Or</span>
+    <span>Or</span>
 
-		<ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
-			<ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
-			{{ 'SHARED_TEXT.MEDIA.CHOOSE_PHOTO_VIDEO' | translate }}
-		</ion-button>
-	</div>
+    <ion-button fill="clear" class="right" (click)="addPhotoFromLibrary()">
+      <ion-icon slot="start" src="./assets/icon/folder.svg"></ion-icon>
+      {{ "SHARED_TEXT.MEDIA.CHOOSE_PHOTO_VIDEO" | translate }}
+    </ion-button>
+  </div>
 
-	<ng-template #addPhotoTemplate>
-		<div class="image-view">
-			<div class="close-btn">
-				<ion-button *ngIf="!isVideo" class="edit-btn" fill="clear" (click)="editPhoto()">
-					<ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-				</ion-button>
-				<ion-button fill="clear" (click)="photoRemoved()">
-					<ion-icon name="close" slot="icon-only"></ion-icon>
-				</ion-button>
-			</div>
+  <ng-template #addPhotoTemplate>
+    <div class="image-view">
+      <div class="close-btn">
+        <ion-button
+          *ngIf="!isVideo"
+          class="edit-btn"
+          fill="clear"
+          (click)="editPhoto()"
+        >
+          <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" (click)="photoRemoved()">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
 
-			<ng-container *ngIf="isVideo">
-				<video controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
-					<source [src]="sanitize(videoUrl)" [type]="StaticDataService.fileMimeTypes[image.split('.')?.pop()?.toLowerCase()]" />
-				</video>
-			</ng-container>
-			<ng-container *ngIf="!isVideo">
-				<ion-img *ngIf="image" [src]="image"></ion-img>
-			</ng-container>
-		</div>
-	</ng-template>
+      <ng-container *ngIf="isVideo">
+        <video
+          controls="controls"
+          preload="metadata"
+          webkit-playsinline="webkit-playsinline"
+          class="videoPlayer"
+        >
+          <source
+            [src]="sanitize(videoUrl)"
+            [type]="
+              StaticDataService.fileMimeTypes[
+                image.split('.')?.pop()?.toLowerCase()
+              ]
+            "
+          />
+        </video>
+      </ng-container>
+      <ng-container *ngIf="!isVideo">
+        <ion-img *ngIf="photoThumbnail" [src]="photoThumbnail"></ion-img>
+        <!-- [src]="Capacitor.convertFileSrc(image)" -->
+      </ng-container>
+    </div>
+  </ng-template>
 </div>

@@ -20,6 +20,7 @@ export class StaticDataService {
   static userDefaultDate = "0001-01-01T00:00:00";
   static userUnsetDate = "0001-01-01";
   static offlineFilesFolderName = "offline_files";
+  static formImagesFolderName = "form_images";
 
   // Test demo - should be remove after development complete
   static anyScreenTestLocalStoragekey = "screen_to_test";

@@ -496,6 +496,45 @@ export class UtilService {
     // return localFilePath;
   }
 
+  generateThumbnailFromImage(
+    img,
+    MAX_WIDTH: number = 500,
+    MAX_HEIGHT: number = 500,
+    quality: number = 1,
+    callback
+  ) {
+    var canvas: any = document.createElement("canvas");
+    var image = new Image();
+
+    image.onload = () => {
+      var width = image.width;
+      var height = image.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext("2d");
+
+      ctx.drawImage(image, 0, 0, width, height);
+
+      // IMPORTANT: 'jpeg' NOT 'jpg'
+      var dataUrl = canvas.toDataURL("image/jpeg", quality);
+
+      callback(dataUrl);
+    };
+    image.src = img;
+  }
+
   urlToBase64(url, filename, mimeType) {
     return new Promise(async (resolve, reject) => {
       let dirpath = url.substr(0, url.lastIndexOf("/") + 1);

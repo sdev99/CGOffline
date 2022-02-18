@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnDestroy } from "@angular/core";
 import { PhotoService } from "../../services/photo.service";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { SharedDataService } from "../../services/shared-data.service";
@@ -12,6 +12,8 @@ import {
 } from "@ionic-native/media-capture/ngx";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Capacitor } from "@capacitor/core";
+import { FilehandlerService } from "src/app/services/filehandler.service";
+import { UtilService } from "src/app/services/util.service";
 
 @Component({
   selector: "app-photo-field",
@@ -25,8 +27,9 @@ import { Capacitor } from "@capacitor/core";
     },
   ],
 })
-export class PhotoFieldComponent implements ControlValueAccessor {
+export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   StaticDataService = StaticDataService;
+  Capacitor = Capacitor;
 
   @Input() label: string;
   image: any;
@@ -34,6 +37,8 @@ export class PhotoFieldComponent implements ControlValueAccessor {
 
   isVideo = false;
   videoUrl;
+
+  photoThumbnail: any;
 
   private onChange: any = (image: any) => {};
   private onTouch: any = () => {};
@@ -43,12 +48,19 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     private sanitizer: DomSanitizer,
     private mediaCapture: MediaCapture,
     public navCtrl: NavController,
+    public utilService: UtilService,
+    public filehandlerService: FilehandlerService,
     public sharedDataService: SharedDataService,
     public actionSheetController: ActionSheetController
   ) {}
 
   registerOnChange(fn: any): void {
     this.onChange = fn;
+  }
+
+  ngOnDestroy(): void {
+    this.image = null;
+    this.photoThumbnail = null;
   }
 
   registerOnTouched(fn: any): void {
@@ -61,7 +73,7 @@ export class PhotoFieldComponent implements ControlValueAccessor {
   }
 
   editPhoto() {
-    this.openImageAnnotation(this.image);
+    this.openImageAnnotation(Capacitor.convertFileSrc(this.image));
   }
 
   photoRemoved() {
@@ -74,10 +86,9 @@ export class PhotoFieldComponent implements ControlValueAccessor {
   }
 
   addPhotoFromCamera() {
-    this.photoService.takePhotoFromCamera((photo) => {
+    this.photoService.takePhotoFromNativeCamera((photo) => {
       this.isVideo = false;
-
-      this.openImageAnnotation(photo);
+      this.savePhoto(photo.dataUrl);
     });
   }
 
@@ -128,17 +139,32 @@ export class PhotoFieldComponent implements ControlValueAccessor {
   }
 
   addPhotoFromLibrary() {
-    this.photoService.takePhotoFromGallery((photo) => {
-      if (photo.isVideo) {
-        this.isVideo = true;
-        const videoUrl = photo.dataUrl;
-        this.videoUrl = Capacitor.convertFileSrc(videoUrl);
-        this.photoAdded(videoUrl);
-      } else {
-        this.isVideo = false;
-        this.openImageAnnotation(photo);
-      }
-    }, true);
+    this.photoService.takePhotoFromGallery(
+      (photo) => {
+        if (photo.isVideo) {
+          this.isVideo = true;
+          const videoUrl = photo.dataUrl;
+          this.filehandlerService.saveFileOnDevicePath(
+            videoUrl,
+            StaticDataService.formImagesFolderName,
+            (status, response) => {
+              this.photoService.cleanCamera();
+              if (status) {
+                this.videoUrl = Capacitor.convertFileSrc(response);
+                this.photoAdded(response);
+              } else {
+                this.utilService.showAlert(response.message);
+              }
+            }
+          );
+        } else {
+          this.isVideo = false;
+          this.savePhoto(photo.dataUrl);
+        }
+      },
+      true,
+      true
+    );
   }
 
   sanitize(url: string): SafeUrl {
@@ -154,8 +180,50 @@ export class PhotoFieldComponent implements ControlValueAccessor {
     this.sharedDataService.isOpenSubScreen = true;
     this.sharedDataService.setAnnotationImage(photo);
     this.sharedDataService.onAnnotationImageDone = (image) => {
-      this.photoAdded(image);
+      this.savePhoto(image);
+      this.sharedDataService.setAnnotationImage(null);
+      this.sharedDataService.onAnnotationImageDone = null;
     };
     this.navCtrl.navigateForward(["/image-annotation"]);
   };
+
+  savePhoto(imageBase64) {
+    if (UtilService.isLocalHost()) {
+      this.utilService.generateThumbnailFromImage(
+        imageBase64,
+        500,
+        500,
+        0.5,
+        (data) => {
+          this.photoThumbnail = data;
+          this.photoAdded(imageBase64);
+        }
+      );
+    } else {
+      debugger;
+      this.utilService.generateThumbnailFromImage(
+        UtilService.IsBase64Sring(imageBase64)
+          ? imageBase64
+          : Capacitor.convertFileSrc(imageBase64),
+        500,
+        500,
+        0.25,
+        (data) => {
+          this.photoThumbnail = data;
+          this.filehandlerService.saveFileOnDevicePath(
+            imageBase64,
+            StaticDataService.formImagesFolderName,
+            (status, response) => {
+              this.photoService.cleanCamera();
+              if (status) {
+                this.photoAdded(response);
+              } else {
+                this.utilService.showAlert(response.message);
+              }
+            }
+          );
+        }
+      );
+    }
+  }
 }
