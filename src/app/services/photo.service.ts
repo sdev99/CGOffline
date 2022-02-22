@@ -53,8 +53,12 @@ export class PhotoService {
       });
       try {
         subscribe.unsubscribe();
-        callBack(capturedPhoto);
-      } catch (e) {}
+        if (capturedPhoto) {
+          callBack(capturedPhoto);
+        }
+      } catch (err) {
+        console.log("Photo get Error " + JSON.stringify(err));
+      }
     } else {
       const options: CameraOptions = {
         quality: StaticDataService.photoQuality,
@@ -72,11 +76,14 @@ export class PhotoService {
       this.camera.getPicture(options).then(
         (imageData) => {
           // const base64Image = "data:image/jpeg;base64," + imageData;
-          callBack({ dataUrl: imageData });
+          if (imageData) {
+            callBack({ dataUrl: imageData });
+          }
           subscribe.unsubscribe();
         },
         (err) => {
           // Handle error
+          console.log("Photo get Error " + JSON.stringify(err));
         }
       );
     }
@@ -113,8 +120,12 @@ export class PhotoService {
       direction: isFrontCamera ? CameraDirection.Front : CameraDirection.Rear,
     });
     try {
-      callBack(capturedPhoto);
-    } catch (e) {}
+      if (capturedPhoto) {
+        callBack(capturedPhoto);
+      }
+    } catch (err) {
+      console.log("Photo get Error " + JSON.stringify(err));
+    }
   }
 
   async takePhotoFromGallery(callBack, isAllMedia = false, isFileUrl = false) {
@@ -128,8 +139,12 @@ export class PhotoService {
         correctOrientation: true,
       });
       try {
-        callBack(capturedPhoto);
-      } catch (e) {}
+        if (capturedPhoto) {
+          callBack(capturedPhoto);
+        }
+      } catch (err) {
+        console.log("Photo get Error " + JSON.stringify(err));
+      }
     } else {
       const options: CameraOptions = {
         quality: StaticDataService.photoQuality,
@@ -149,23 +164,25 @@ export class PhotoService {
         (imageData) => {
           // imageData is either a base64 encoded string or a file URI
           // If it's base64 (DATA_URL):
-          if (
-            StaticDataService.videoFormats.indexOf(
-              imageData.split(".").pop().toLowerCase()
-            ) !== -1
-          ) {
-            callBack({ dataUrl: imageData, isVideo: true });
-          } else {
-            if (isFileUrl) {
-              callBack({ dataUrl: imageData.split("?")[0] });
+          if (imageData) {
+            if (
+              StaticDataService.videoFormats.indexOf(
+                imageData.split(".").pop().toLowerCase()
+              ) !== -1
+            ) {
+              callBack({ dataUrl: imageData, isVideo: true });
             } else {
-              const base64Image = "data:image/jpeg;base64," + imageData;
-              callBack({ dataUrl: base64Image });
+              if (isFileUrl) {
+                callBack({ dataUrl: imageData.split("?")[0] });
+              } else {
+                const base64Image = "data:image/jpeg;base64," + imageData;
+                callBack({ dataUrl: base64Image });
+              }
             }
           }
         },
         (err) => {
-          // Handle error
+          console.log("Photo get Error " + JSON.stringify(err));
         }
       );
     }

@@ -153,7 +153,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
                 this.videoUrl = Capacitor.convertFileSrc(response);
                 this.photoAdded(response);
               } else {
-                this.utilService.showAlert(response.message);
+                this.utilService.showAlert(response.message || response);
               }
             }
           );
@@ -200,7 +200,6 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
         }
       );
     } else {
-      debugger;
       this.utilService.generateThumbnailFromImage(
         UtilService.IsBase64Sring(imageBase64)
           ? imageBase64
@@ -218,7 +217,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
               if (status) {
                 this.photoAdded(response);
               } else {
-                this.utilService.showAlert(response.message);
+                this.utilService.showAlert(response.message || response);
               }
             }
           );

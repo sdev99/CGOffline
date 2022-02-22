@@ -50,7 +50,6 @@
                 <data android:scheme="com.besafetechnologies.compliancegenie" />
             </intent-filter>
 
-
         </activity>
 
         <provider

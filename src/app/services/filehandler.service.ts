@@ -187,8 +187,6 @@ export class FilehandlerService {
           path.replace(sourceFileName, "")
         );
 
-        debugger;
-
         this.file
           .copyFile(
             sourceDirectory,
