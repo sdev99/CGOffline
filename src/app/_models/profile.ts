@@ -6,6 +6,7 @@ export class Profile {
   phone: string;
   phoneCode: string;
   photo: string;
+  photoWithPath?: string;
   qrCodeImage: string;
   timeZoneID: number;
   timeZoneName: string;

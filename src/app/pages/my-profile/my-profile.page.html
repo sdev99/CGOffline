@@ -1,30 +1,45 @@
 <ion-header mode="ios">
-	<ion-toolbar mode="ios" class="part-1">
-		<ion-title size="large">{{'PAGESPECIFIC_TEXT.PROFILE.MY_PROFILE' | translate}}</ion-title>
+  <ion-toolbar mode="ios" class="part-1">
+    <ion-title size="large"
+      >{{'PAGESPECIFIC_TEXT.PROFILE.MY_PROFILE' | translate}}</ion-title
+    >
 
-		<ion-buttons slot="end">
-			<ion-button size="small" fill="clear" (click)="scanQrCode()">
-				<ion-icon class="scan-icon" slot="icon-only" src="./assets/icon/qrscan-dark.svg"></ion-icon>
-			</ion-button>
-		</ion-buttons>
-	</ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button size="small" fill="clear" (click)="scanQrCode()">
+        <ion-icon
+          class="scan-icon"
+          slot="icon-only"
+          src="./assets/icon/qrscan-dark.svg"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-	<div class="content">
-		<div class="fill-vertical-space"></div>
+  <div class="content">
+    <div class="fill-vertical-space"></div>
 
-		<ion-img
-			[src]="(profile&&profile.photo&&sharedDataService.globalDirectories)?(sharedDataService.globalDirectories.userDirectory+''+profile.photo):'./assets/images/ProfileNone.png'"
-			class="profile-img"
-		></ion-img>
-		<h3 *ngIf="profile">{{profile.userFullName}}</h3>
+    <ion-img
+      [src]="(profile&&profile.photoWithPath)?profile.photoWithPath:'./assets/images/ProfileNone.png'"
+      class="profile-img"
+    ></ion-img>
+    <h3 *ngIf="profile">{{profile.userFullName}}</h3>
 
-		<ion-img *ngIf="profile&&profile.qrCodeImage;" [src]="'data:image/jpeg;base64,'+ profile.qrCodeImage" class="qr-code"></ion-img>
+    <ion-img
+      *ngIf="profile&&profile.qrCodeImage;"
+      [src]="'data:image/jpeg;base64,'+ profile.qrCodeImage"
+      class="qr-code"
+    ></ion-img>
 
-		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details">{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_UPDATE_SETTINGS' | translate}}</ion-button>
-		<ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents">{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_MY_SIGNED_DOCUMENTS' | translate}} </ion-button>
+    <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-details"
+      >{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_UPDATE_SETTINGS' |
+      translate}}</ion-button
+    >
+    <ion-button fill="clear" routerLink="/tabs/my-profile/my-profile-documents"
+      >{{'PAGESPECIFIC_TEXT.PROFILE.VIEW_MY_SIGNED_DOCUMENTS' | translate}}
+    </ion-button>
 
-		<div class="fill-vertical-space"></div>
-	</div>
+    <div class="fill-vertical-space"></div>
+  </div>
 </ion-content>

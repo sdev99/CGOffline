@@ -53,10 +53,9 @@ import { AccountService } from "./account.service";
 import { OfflineManagerService } from "./offline-manager.service";
 import { DeviceUserDetail } from "../_models/offline/DeviceUserDetail";
 import { File } from "@ionic-native/file/ngx";
-import { Base64 } from "@ionic-native/base64/ngx";
 import { InductionItem } from "../_models/inductionItem";
 import { FilehandlerService } from "./filehandler.service";
-import { DeviceDetailData } from "../_models/offline/DeviceDetailData";
+import { Insomnia } from "@ionic-native/insomnia/ngx";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -180,7 +179,8 @@ export class SharedDataService {
     private offlineManagerService: OfflineManagerService,
     public utilService: UtilService,
     public file: File,
-    private base64: Base64,
+    private insomnia: Insomnia,
+
     private filehandlerService: FilehandlerService,
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {
@@ -1099,11 +1099,28 @@ export class SharedDataService {
     formGroup: FormGroup,
     formBuilderDetail,
     personalModeLoggedUser: User,
-    callBack,
+    originalCallBack,
     havAnswerDetail: HavAnswerDetail = null,
     workPermitAnswer: WorkPermitAnswer = null
   ) {
     if (!environment.isWebApp) {
+      // Prevent app sleep while submiting form
+      this.insomnia.keepAwake().then(
+        () => console.log("keepAwake success"),
+        (error) => console.log("keepAwake error", error)
+      );
+
+      const callBack = (param1, param2) => {
+        originalCallBack(param1, param2);
+
+        // allow app sleep after for submiting form success or fail
+
+        this.insomnia.allowSleepAgain().then(
+          () => console.log("success"),
+          (error) => console.log(" allowSleepAgain error", error)
+        );
+      };
+
       const sections = formBuilderDetail.sections;
 
       let requiredFieldsCount = 0;
