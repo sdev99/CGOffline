@@ -11,6 +11,7 @@ import { User } from "../../_models";
 import { FilehandlerService } from "../../services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { Capacitor } from "@capacitor/core";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
   selector: "app-checkin-induction-image-file",
@@ -31,6 +32,7 @@ export class CheckinInductionImageFilePage implements OnInit {
     public utilService: UtilService,
     public accountService: AccountService,
     public filehandlerService: FilehandlerService,
+    public apiService: ApiService,
     public ngZone: NgZone
   ) {
     if (!sharedDataService.dedicatedMode) {
@@ -61,9 +63,7 @@ export class CheckinInductionImageFilePage implements OnInit {
             });
           }
         } else {
-          this.imageUrl =
-            sharedDataService.globalDirectories.documentDirectory +
-            this.inductionItem.documentFileName;
+          this.imageUrl = this.inductionItem.documentFileNameWithPath;
         }
       }
     });
@@ -72,9 +72,11 @@ export class CheckinInductionImageFilePage implements OnInit {
   ngOnInit() {}
 
   ionViewWillLeave() {
-    this.filehandlerService.removeSavedFile(
-      this.inductionItem.documentFileName
-    );
+    try {
+      this.filehandlerService.removeSavedFile(
+        this.inductionItem.documentFileName
+      );
+    } catch (error) {}
   }
 
   onBack() {
@@ -103,10 +105,8 @@ export class CheckinInductionImageFilePage implements OnInit {
   }
 
   fullScreenImg() {
-    const url =
-      this.sharedDataService.globalDirectories.documentDirectory +
-      "" +
-      this.inductionItem.documentFileName;
-    this.filehandlerService.openFile(url, true);
+    this.filehandlerService.openFile(this.inductionItem.documentFileNameWithPath, true);
+
+   
   }
 }

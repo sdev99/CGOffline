@@ -10,6 +10,7 @@ import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { StaticDataService } from "../../services/static-data.service";
 import { Capacitor } from "@capacitor/core";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
   selector: "app-checkin-induction-video-file",
@@ -30,6 +31,7 @@ export class CheckinInductionVideoFilePage implements OnInit {
     public sharedDataService: SharedDataService,
     public utilService: UtilService,
     public accountService: AccountService,
+    public apiService: ApiService,
     public ngZone: NgZone
   ) {
     if (!sharedDataService.dedicatedMode) {
@@ -67,9 +69,7 @@ export class CheckinInductionVideoFilePage implements OnInit {
             });
           }
         } else {
-          this.videoUrl =
-            sharedDataService.globalDirectories.documentDirectory +
-            this.inductionItem.documentFileName;
+          this.videoUrl = this.inductionItem.documentFileNameWithPath;
         }
       }
     });

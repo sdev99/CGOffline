@@ -1,14 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { MenuController, ModalController, NavController } from "@ionic/angular";
+import { NavController } from "@ionic/angular";
 import { SharedDataService } from "../../services/shared-data.service";
 import { ApiService } from "../../services/api.service";
 import { AccountService } from "../../services/account.service";
-import { User } from "../../_models";
-import { GlobalDirectory } from "../../_models/globalDirectory";
-import { EnumService } from "../../services/enum.service";
+
 import { DedicatedModeDeviceDetailData } from "../../_models/dedicatedModeDeviceDetailData";
 import { UtilService } from "../../services/util.service";
-import { File } from "@ionic-native/file/ngx";
+
 import { FilehandlerService } from "src/app/services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
 
@@ -42,23 +40,6 @@ export class DashboardDmPage implements OnInit {
         .then(() => {})
         .catch(() => {});
     } catch (error) {}
-
-    const companyFolderName =
-      this.dedicatedModeDeviceDetailData?.companyFolderName;
-    // const companyFolderName = 'B01F4CF5-C26C-4C8F-BE94-A7C68FEDE752';
-    this.apiService.getGlobalDirectories(companyFolderName).subscribe(
-      (response) => {
-        if (response) {
-          this.sharedDataService.globalDirectories =
-            response as GlobalDirectory;
-          localStorage.setItem(
-            EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES,
-            JSON.stringify(response)
-          );
-        }
-      },
-      (error) => {}
-    );
 
     this.accountService.activateDevice().subscribe(() => {});
 

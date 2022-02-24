@@ -4,7 +4,6 @@ import { NavController, Platform } from "@ionic/angular";
 import { Profile } from "../_models/profile";
 import { CheckinDetail } from "../_models/checkinDetail";
 import { LocationItem } from "../_models/locationItem";
-import { GlobalDirectory } from "../_models/globalDirectory";
 import {
   Capacitor,
   GeolocationPosition,
@@ -119,7 +118,6 @@ export class SharedDataService {
   probabilityRatings: Array<RiskRatingProbabilityOption>;
   raTaskTemplateList: Array<RAtaskTemplateItem>;
 
-  globalDirectories: GlobalDirectory;
   locationItemList;
 
   // data for another pages
@@ -261,13 +259,6 @@ export class SharedDataService {
     if (selectedCheckedInPlace) {
       this.currentSelectedCheckinPlace = JSON.parse(selectedCheckedInPlace);
     }
-
-    const globalDirectories = localStorage.getItem(
-      EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES
-    );
-    if (globalDirectories) {
-      this.globalDirectories = JSON.parse(globalDirectories) as GlobalDirectory;
-    }
   }
 
   setAnnotationImage(image) {
@@ -302,7 +293,6 @@ export class SharedDataService {
     this.userProfile = null;
     this.timeZoneList = null;
     this.companyLanguageList = null;
-    this.globalDirectories = null;
     this.locationItemList = null;
     this.checkInDetail = null;
     this.currentActivityOpen = null;
@@ -934,7 +924,6 @@ export class SharedDataService {
 
     const onSuccess = (data) => {
       this.checkInDetail = data;
-      debugger;
       this.checkInPostData = {
         checkInLatitude: this.myCurrentGeoLocation?.coords?.latitude,
         checkInLongitude: this.myCurrentGeoLocation?.coords?.longitude,

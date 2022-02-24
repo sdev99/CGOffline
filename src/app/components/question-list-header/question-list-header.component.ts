@@ -13,6 +13,7 @@ import { SharedDataService } from "../../services/shared-data.service";
 import { FilehandlerService } from "../../services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { Capacitor } from "@capacitor/core";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
   selector: "app-question-list-header",
@@ -36,17 +37,20 @@ export class QuestionListHeaderComponent implements OnInit {
     public sharedDataService: SharedDataService,
     private filehandlerService: FilehandlerService,
     private utilService: UtilService,
+    private apiService: ApiService,
     private ngZone: NgZone
   ) {}
 
   ngOnInit() {
-    let attachmentsList = [];
+    const images = this.attachments.filter((attachment) =>
+      UtilService.IsFileImageType(attachment.fileExtension)
+    );
 
-    this.attachments.forEach((attachment) => {
-      const isImageType = UtilService.IsFileImageType(attachment.fileExtension);
+    if (images.length > 0) {
+      const attachmentsList = [];
 
-      if (isImageType) {
-        if (this.sharedDataService.offlineMode) {
+      if (this.sharedDataService.offlineMode) {
+        images.forEach((attachment) => {
           attachmentsList.push(
             Capacitor.convertFileSrc(
               this.utilService.getOfflineFileUrl(
@@ -55,21 +59,44 @@ export class QuestionListHeaderComponent implements OnInit {
               )
             )
           );
-        } else {
-          attachmentsList.push(
-            this.sharedDataService.globalDirectories.documentDirectory +
-              "" +
-              attachment.fileName
-          );
-        }
-      }
-    });
+        });
 
-    this.ngZone.run(() => {
-      setTimeout(() => {
-        this.imageTypeAttachments = attachmentsList;
-      }, 0);
-    });
+        this.ngZone.run(() => {
+          setTimeout(() => {
+            this.imageTypeAttachments = attachmentsList;
+          }, 0);
+        });
+      } else {
+        this.utilService.presentLoadingWithOptions();
+
+        let pathSuccessFailCount = 0;
+        const onPathSuccessOrFail = () => {
+          pathSuccessFailCount++;
+          if (pathSuccessFailCount === images.length) {
+            this.utilService.hideLoading();
+
+            this.ngZone.run(() => {
+              setTimeout(() => {
+                this.imageTypeAttachments = attachmentsList;
+              }, 0);
+            });
+          }
+        };
+        images.forEach((attachment) => {
+          this.apiService
+            .getDocumentDirectoryFilePath(attachment.fileName)
+            .subscribe(
+              (path) => {
+                attachmentsList.push(path);
+                onPathSuccessOrFail();
+              },
+              (err) => {
+                onPathSuccessOrFail();
+              }
+            );
+        });
+      }
+    }
   }
 
   openFile(attachment) {
@@ -80,17 +107,19 @@ export class QuestionListHeaderComponent implements OnInit {
       );
       this.filehandlerService.openDownloadedFile(filrUrl, attachment.fileName);
     } else {
-      if (
-        this.sharedDataService.globalDirectories &&
-        this.sharedDataService.globalDirectories.documentDirectory &&
-        attachment &&
-        attachment.fileName
-      ) {
-        this.filehandlerService.openFile(
-          this.sharedDataService.globalDirectories.documentDirectory +
-            "" +
-            attachment.fileName
-        );
+      if (attachment && attachment.fileName) {
+        this.utilService.presentLoadingWithOptions();
+        this.apiService
+          .getDocumentDirectoryFilePath(attachment.fileName)
+          .subscribe(
+            (path) => {
+              this.utilService.hideLoading();
+              this.filehandlerService.openFile(path);
+            },
+            (err) => {
+              this.utilService.hideLoading();
+            }
+          );
       }
     }
   }

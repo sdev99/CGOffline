@@ -86,19 +86,10 @@ export class EvacuationDmPage implements OnInit {
         );
       }
     } else {
-      if (evacuationUserDetail.userPhoto) {
-        return (
-          this.sharedDataService.globalDirectories
-            ?.userCheckInSignOffDirectory +
-          "" +
-          evacuationUserDetail.userPhoto
-        );
-      } else if (evacuationUserDetail.userDetailPhoto) {
-        return (
-          this.sharedDataService.globalDirectories?.userDirectory +
-          "" +
-          evacuationUserDetail.userDetailPhoto
-        );
+      if (evacuationUserDetail.userPhotoWithPath) {
+        return evacuationUserDetail.userPhotoWithPath;
+      } else if (evacuationUserDetail.userDetailPhotoWithPath) {
+        return evacuationUserDetail.userDetailPhotoWithPath;
       }
     }
 

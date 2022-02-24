@@ -72,8 +72,6 @@ export class MyProfileDetailsPage implements OnInit {
       () => {
         Object.keys(EnumService.LocalStorageKeys).map((LocalStorageKey) => {
           if (
-            LocalStorageKey !==
-              EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES &&
             LocalStorageKey !== EnumService.LocalStorageKeys.API_ACCESS_KEY &&
             LocalStorageKey !== EnumService.LocalStorageKeys.API_TOKEN
           ) {

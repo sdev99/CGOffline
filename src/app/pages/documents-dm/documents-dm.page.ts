@@ -190,11 +190,18 @@ export class DocumentsDmPage implements OnInit {
           item.documentFileName
         );
       } else {
-        this.filehandlerService.openFile(
-          this.sharedDataService.globalDirectories?.documentDirectory +
-            "" +
-            item.documentFileName
-        );
+        this.utilService.presentLoadingWithOptions();
+        this.apiService
+          .getDocumentDirectoryFilePath(item?.documentFileName)
+          .subscribe(
+            (path) => {
+              this.utilService.hideLoading();
+              this.filehandlerService.openFile(path);
+            },
+            (err) => {
+              this.utilService.hideLoading();
+            }
+          );
       }
     } else {
       this.utilService.showAlert(

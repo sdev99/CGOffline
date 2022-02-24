@@ -6,7 +6,6 @@ import { Response, User } from "../../_models";
 import { AccountService } from "../../services/account.service";
 import { SharedDataService } from "../../services/shared-data.service";
 import { EnumService } from "../../services/enum.service";
-import { GlobalDirectory } from "../../_models/globalDirectory";
 import { UtilService } from "../../services/util.service";
 import { ActivityListItem } from "../../_models/activityListItem";
 import { ObservablesService } from "../../services/observables.service";
@@ -86,22 +85,6 @@ export class DashboardPage implements OnInit, OnDestroy {
             }
           );
       }
-
-      this.apiService
-        .getGlobalDirectories(this.user?.companyFolderName)
-        .subscribe(
-          (response) => {
-            if (response) {
-              this.sharedDataService.globalDirectories =
-                response as GlobalDirectory;
-              localStorage.setItem(
-                EnumService.LocalStorageKeys.GLOBAL_DIRECTORIES,
-                JSON.stringify(response)
-              );
-            }
-          },
-          (error) => {}
-        );
 
       this.observablesService
         .getObservable(EnumService.ObserverKeys.ACTIVITY_COMPLETED)

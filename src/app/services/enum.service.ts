@@ -106,7 +106,6 @@ export class EnumService {
     SYNC_DATE_TIME: "sync_date_time",
     CHECKED_IN_PLACES: "checked_in_places",
     CURRENT_SELECTED_CHECKIN_PLACE: "current_selected_checkin_place",
-    GLOBAL_DIRECTORIES: "global_directories",
     APP_LANGUAGE: "app_language",
     TIMEZONE_LIST: "timezone_list",
     OFFLINE_MODE_ENABLE: "offline_mode_enable",
@@ -119,7 +118,6 @@ export class EnumService {
     GetAccessKey: "GetAccessKey", // GET
     GetToken: "GetToken", // GET
     GetTermsOfServices: "GetTermsOfServices", // GET
-    GetGlobalDirectories: "GetGlobalDirectories", // GET
     GetTimeZoneList: "GetTimeZoneList", // GET
     GetCompanyLanguageList: "GetCompanyLanguageList", // GET
     UpdatePushNotification: "UpdatePushNotification", // PUT
@@ -195,7 +193,12 @@ export class EnumService {
     GetCompanyLanguageTemplate: "GetCompanyLanguageTemplate", // GET
     GetCompanyLanguageTemplateByCode: "GetCompanyLanguageTemplateByCode", // GET
     GetAnswerChoiceEntityByQRCode: "GetAnswerChoiceEntityByQRCode", // GET
-
+    GetUserDirectoryFilePath: "GetUserDirectoryFilePath", // GET
+    GetUserCheckInSignOffDirectoryFilePath:
+      "GetUserCheckInSignOffDirectoryFilePath", // GET
+    GetCompanyDirectoryFilePath: "GetCompanyDirectoryFilePath", // GET
+    GetInventoryDirectoryFilePath: "GetInventoryDirectoryFilePath", // GET
+    GetDocumentDirectoryFilePath: "GetDocumentDirectoryFilePath", // GET
     // Dedicated Mode Offline Api
     GetDeviceOfflineDetails: "GetDeviceOfflineDetails",
     GetDeviceOfflineFile: "GetDeviceOfflineFile",

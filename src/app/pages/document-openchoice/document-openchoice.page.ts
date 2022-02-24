@@ -10,6 +10,7 @@ import { ApiService } from "../../services/api.service";
 import { SignOffDetailsPostData } from "../../_models/signOffDetailsPostData";
 import { User } from "../../_models";
 import { AccountService } from "../../services/account.service";
+import { UtilService } from "src/app/services/util.service";
 
 @Component({
   selector: "app-document-openchoice",
@@ -26,7 +27,8 @@ export class DocumentOpenchoicePage implements OnInit {
     public filehandlerService: FilehandlerService,
     public sharedDataService: SharedDataService,
     public apiService: ApiService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private utilService: UtilService
   ) {
     this.user = this.accountService.userValue;
 
@@ -85,17 +87,19 @@ export class DocumentOpenchoicePage implements OnInit {
   }
 
   openDocument() {
-    if (
-      this.sharedDataService.globalDirectories &&
-      this.sharedDataService.globalDirectories.documentDirectory &&
-      this.document &&
-      this.document.documentFileName
-    ) {
-      this.filehandlerService.openFile(
-        this.sharedDataService.globalDirectories.documentDirectory +
-          "" +
-          this.document.documentFileName
-      );
+    if (this.document && this.document.documentFileName) {
+      this.utilService.presentLoadingWithOptions();
+      this.apiService
+        .getDocumentDirectoryFilePath(this.document.documentFileName)
+        .subscribe(
+          (path) => {
+            this.utilService.hideLoading();
+            this.filehandlerService.openFile(path);
+          },
+          (err) => {
+            this.utilService.hideLoading();
+          }
+        );
     }
   }
 }

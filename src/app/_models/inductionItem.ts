@@ -9,6 +9,7 @@ export class InductionItem {
   documentDetails: string;
   documentFileFormat: string;
   documentFileName: string;
+  documentFileNameWithPath: string;
   documentFolderID: number;
   documentID: number;
   existingDocumentDetails: string;

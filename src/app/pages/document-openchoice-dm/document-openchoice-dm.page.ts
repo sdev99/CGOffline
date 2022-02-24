@@ -57,11 +57,18 @@ export class DocumentOpenchoiceDmPage implements OnInit {
         this.documentDetail?.documentFileName
       );
     } else {
-      this.filehandlerService.openFile(
-        this.sharedDataService.globalDirectories?.documentDirectory +
-          "" +
-          this.documentDetail?.documentFileName
-      );
+      this.utilService.presentLoadingWithOptions();
+      this.apiService
+        .getDocumentDirectoryFilePath(this.documentDetail?.documentFileName)
+        .subscribe(
+          (path) => {
+            this.utilService.hideLoading();
+            this.filehandlerService.openFile(path);
+          },
+          (err) => {
+            this.utilService.hideLoading();
+          }
+        );
     }
   }
 

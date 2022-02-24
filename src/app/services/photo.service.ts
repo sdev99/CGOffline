@@ -160,8 +160,9 @@ export class PhotoService {
         targetHeight: StaticDataService.photoMaxHeight,
       };
 
-      this.camera.getPicture(options).then(
-        (imageData) => {
+      this.camera
+        .getPicture(options)
+        .then((imageData) => {
           // imageData is either a base64 encoded string or a file URI
           // If it's base64 (DATA_URL):
           if (imageData) {
@@ -180,11 +181,10 @@ export class PhotoService {
               }
             }
           }
-        },
-        (err) => {
+        })
+        .catch((err) => {
           console.log("Photo get Error " + JSON.stringify(err));
-        }
-      );
+        });
     }
   }
 }

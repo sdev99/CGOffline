@@ -71,11 +71,20 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
           "checkin"
         );
       } else {
-        this.photoCaptured =
-          this.sharedDataService.globalDirectories
-            ?.userCheckInSignOffDirectory +
-          "" +
-          dedicatedModeGuestDetail.guestPhoto;
+        this.utilService.presentLoadingWithOptions();
+        this.apiService
+          .getUserCheckInSignOffDirectoryFilePath(
+            dedicatedModeGuestDetail.guestPhoto
+          )
+          .subscribe(
+            (path) => {
+              this.photoCaptured = path;
+              this.utilService.hideLoading();
+            },
+            (err) => {
+              this.utilService.hideLoading();
+            }
+          );
       }
     }
   };
@@ -103,16 +112,29 @@ export class CheckinoutIdentityconfirmDmPage implements OnInit {
       }
     } else {
       if (userDetail?.userPhoto) {
-        this.photoCaptured =
-          this.sharedDataService.globalDirectories
-            ?.userCheckInSignOffDirectory +
-          "" +
-          userDetail.userPhoto;
+        this.utilService.presentLoadingWithOptions();
+        this.apiService
+          .getUserCheckInSignOffDirectoryFilePath(userDetail.userPhoto)
+          .subscribe(
+            (path) => {
+              this.photoCaptured = path;
+              this.utilService.hideLoading();
+            },
+            (err) => {
+              this.utilService.hideLoading();
+            }
+          );
       } else if (userDetail?.photo) {
-        this.photoCaptured =
-          this.sharedDataService.globalDirectories?.userDirectory +
-          "" +
-          userDetail.photo;
+        this.utilService.presentLoadingWithOptions();
+        this.apiService.getUserDirectoryFilePath(userDetail.photo).subscribe(
+          (path) => {
+            this.photoCaptured = path;
+            this.utilService.hideLoading();
+          },
+          (err) => {
+            this.utilService.hideLoading();
+          }
+        );
       }
     }
   };

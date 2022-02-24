@@ -109,11 +109,18 @@ export class FormCoverPage {
         attachmentItem.documentFileName
       );
     } else {
-      this.filehandlerService.openFile(
-        this.sharedDataService.globalDirectories?.documentDirectory +
-          "" +
-          attachmentItem.documentFileName
-      );
+      this.utilService.presentLoadingWithOptions();
+      this.apiService
+        .getDocumentDirectoryFilePath(attachmentItem.documentFileName)
+        .subscribe(
+          (path) => {
+            this.utilService.hideLoading();
+            this.filehandlerService.openFile(path);
+          },
+          (err) => {
+            this.utilService.hideLoading();
+          }
+        );
     }
   }
 

@@ -4,5 +4,7 @@ export class EvacuationUserDetail {
   firstAndLastName: number;
   userPhoto: string;
   userDetailPhoto: string;
+  userPhotoWithPath?: string;
+  userDetailPhotoWithPath?: string;
   offlineUserPhoto: string; // For offline mode added from sqlquery
 }
