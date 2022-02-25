@@ -506,6 +506,22 @@ export class UtilService {
     var canvas: any = document.createElement("canvas");
     var image = new Image();
 
+    image.onerror = (
+      event: Event | string,
+      source?: string,
+      lineno?: number,
+      colno?: number,
+      error?: Error
+    ) => {
+      debugger;
+      console.error("onerror", error);
+    };
+
+    image.onabort = (error) => {
+      debugger;
+      console.error("onabort", error);
+    };
+
     image.onload = () => {
       var width = image.width;
       var height = image.height;

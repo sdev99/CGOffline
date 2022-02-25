@@ -227,9 +227,12 @@ export class ApiService {
    * @returns
    */
   getDocumentDirectoryFilePath(fileName) {
+    const companyFolderName = this.sharedDataService.dedicatedMode
+      ? this.sharedDataService.dedicatedModeDeviceDetailData.companyFolderName
+      : this.sharedDataService.getLoggedInUser().companyFolderName;
     return this.http
       .get(
-        `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDocumentDirectoryFilePath}?fileName=${fileName}`
+        `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDocumentDirectoryFilePath}?fileName=${fileName}&companyFolderName=${companyFolderName}`
       )
       .pipe(
         map((data: Response) => {

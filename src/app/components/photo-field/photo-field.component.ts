@@ -152,8 +152,6 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
               if (status) {
                 this.videoUrl = Capacitor.convertFileSrc(response);
                 this.photoAdded(response);
-              } else {
-                this.utilService.showAlert(response.message || response);
               }
             }
           );
@@ -216,8 +214,6 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
               this.photoService.cleanCamera();
               if (status) {
                 this.photoAdded(response);
-              } else {
-                this.utilService.showAlert(response.message || response);
               }
             }
           );

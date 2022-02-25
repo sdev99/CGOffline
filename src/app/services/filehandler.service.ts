@@ -290,8 +290,7 @@ export class FilehandlerService {
   async openFile(fileUrl = "", openInDefaultApp = false) {
     this.utilService.presentLoadingWithOptions("File downloading...");
 
-    const fileName = fileUrl.replace(/^.*[\\\/]/, "");
-
+    const fileName = new URL(fileUrl).pathname.split("/").pop();
     this.http
       .downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName)
       .then((response) => {
