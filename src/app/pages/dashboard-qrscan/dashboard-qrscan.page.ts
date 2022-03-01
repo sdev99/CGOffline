@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActionSheetController, NavController } from "@ionic/angular";
 import { QRScanner, QRScannerStatus } from "@ionic-native/qr-scanner/ngx";
 import { ActivatedRoute } from "@angular/router";
@@ -20,6 +20,7 @@ import { ObservablesService } from "src/app/services/observables.service";
 import { EntityItem } from "src/app/_models/entityItem";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
 import { DeviceUserDetail } from "src/app/_models/offline/DeviceUserDetail";
+import jsQR from "jsqr";
 
 const { Camera, Permissions } = Plugins;
 
@@ -29,6 +30,16 @@ const { Camera, Permissions } = Plugins;
   styleUrls: ["./dashboard-qrscan.page.scss"],
 })
 export class DashboardQrscanPage implements OnInit {
+  // For PWA app QR Scanning
+  @ViewChild("video") video: ElementRef;
+  @ViewChild("canvas") canvas: ElementRef;
+  canvasElement: any;
+  videoElement: any;
+  canvasContext: any;
+  scanActive = true;
+  videoStream: any = null;
+  //
+
   user: User;
   scanSub;
   isTablet = false;
@@ -38,6 +49,8 @@ export class DashboardQrscanPage implements OnInit {
   isOnlyInventryItemHasHav = false;
   fromFormCallbackKey = "";
   fromFormAllowedQrCodeTypes = [];
+
+  isWebApp = UtilService.isWebApp();
 
   constructor(
     public navCtrl: NavController,
@@ -77,70 +90,70 @@ export class DashboardQrscanPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    const QrCodeTestingInLocalHostFor: any = "user";
-
-    if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
-      setTimeout(() => {
-        switch (QrCodeTestingInLocalHostFor) {
-          case "project":
-            this.checkQrCode(
-              "mCucrGcxCBTXwWCuKq/sMN6kgl0a1SVlOudJdHCHZHrMpc9RYv5JLo1AqRvdjcW/"
-            );
-            break;
-          case "document":
-            this.checkQrCode("0f75e6e3-8215-4186-92bf-ca0971b337b7");
-            break;
-          case "document1":
-            this.checkQrCode("711c59e0-e65e-4f6c-99e7-3901400a14d7");
-            break;
-          case "form":
-            this.checkQrCode("e37f99b2-cda6-4b19-b3e6-ba37a41ffd60");
-            break;
-          case "form2":
-            this.checkQrCode("6dadd75e-cb62-484d-a9be-deaab282761d");
-            break;
-          case "form3":
-            //Rosana test login
-            this.checkQrCode("41c58f62-cf4e-4ac9-ba78-33730d27548a");
-            break;
-          case "form_othercompany":
-            this.checkQrCode("87b71cae-476a-4c08-9c63-f24ef7970f89\n");
-            break;
-
-          case "location2":
-            this.checkQrCode("78312786-35ab-4c9e-969e-6f7673ed7a5e");
-            break;
-          case "location3":
-            this.checkQrCode("3d663253-09ab-4299-a891-74fb1961d78c");
-            break;
-          case "user":
-            this.checkQrCode("1b5ee704-21f6-4e91-9544-0f2a6abd7aed");
-            break;
-          case "user_demo_three":
-            this.checkQrCode("4d0dd7ba-905e-4f2f-9bb7-afd17e6809bc");
-            break;
-          case "inventryitemHav":
-            this.checkQrCode("49a1b038-a7cf-4298-9992-86b322e14982");
-            break;
-          case "inventryitem":
-            this.checkQrCode("22dfd7f6-414c-4608-9b3a-fcc894487fc5");
-            break;
-        }
-      }, 1000);
-    }
+    // const QrCodeTestingInLocalHostFor: any = "user";
+    // if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
+    //   setTimeout(() => {
+    //     switch (QrCodeTestingInLocalHostFor) {
+    //       case "project":
+    //         this.checkQrCode(
+    //           "mCucrGcxCBTXwWCuKq/sMN6kgl0a1SVlOudJdHCHZHrMpc9RYv5JLo1AqRvdjcW/"
+    //         );
+    //         break;
+    //       case "document":
+    //         this.checkQrCode("0f75e6e3-8215-4186-92bf-ca0971b337b7");
+    //         break;
+    //       case "document1":
+    //         this.checkQrCode("711c59e0-e65e-4f6c-99e7-3901400a14d7");
+    //         break;
+    //       case "form":
+    //         this.checkQrCode("e37f99b2-cda6-4b19-b3e6-ba37a41ffd60");
+    //         break;
+    //       case "form2":
+    //         this.checkQrCode("6dadd75e-cb62-484d-a9be-deaab282761d");
+    //         break;
+    //       case "form3":
+    //         //Rosana test login
+    //         this.checkQrCode("41c58f62-cf4e-4ac9-ba78-33730d27548a");
+    //         break;
+    //       case "form_othercompany":
+    //         this.checkQrCode("87b71cae-476a-4c08-9c63-f24ef7970f89\n");
+    //         break;
+    //       case "location2":
+    //         this.checkQrCode("78312786-35ab-4c9e-969e-6f7673ed7a5e");
+    //         break;
+    //       case "location3":
+    //         this.checkQrCode("3d663253-09ab-4299-a891-74fb1961d78c");
+    //         break;
+    //       case "user":
+    //         this.checkQrCode("1b5ee704-21f6-4e91-9544-0f2a6abd7aed");
+    //         break;
+    //       case "user_demo_three":
+    //         this.checkQrCode("4d0dd7ba-905e-4f2f-9bb7-afd17e6809bc");
+    //         break;
+    //       case "inventryitemHav":
+    //         this.checkQrCode("49a1b038-a7cf-4298-9992-86b322e14982");
+    //         break;
+    //       case "inventryitem":
+    //         this.checkQrCode("22dfd7f6-414c-4608-9b3a-fcc894487fc5");
+    //         break;
+    //     }
+    //   }, 1000);
+    // }
   }
 
   ngOnInit() {}
 
   ionViewWillLeave() {
-    console.log("ionViewWillLeave");
-    if (!UtilService.isLocalHost()) {
-      this.stopScanning();
-    }
+    this.stopScanning();
   }
 
   ionViewDidEnter() {
-    console.log("ionViewDidEnter");
+    if (this.isWebApp) {
+      this.canvasElement = this.canvas.nativeElement;
+      this.canvasContext = this.canvasElement.getContext("2d");
+      this.videoElement = this.video.nativeElement;
+    }
+
     setTimeout(() => {
       this.isLoaded = true;
       this.scan();
@@ -148,11 +161,21 @@ export class DashboardQrscanPage implements OnInit {
   }
 
   stopScanning = () => {
-    if (this.scanSub) {
-      this.scanSub.unsubscribe(); // stop scanning
+    if (this.isWebApp) {
+      this.scanActive = false;
+      this.videoStream.getTracks().forEach(function (track) {
+        if (track.readyState == "live") {
+          track.stop();
+        }
+      });
+      this.videoStream = null;
+    } else {
+      if (this.scanSub) {
+        this.scanSub.unsubscribe(); // stop scanning
+      }
+      this.qrScanner.hide(); // hide camera preview
+      this.qrScanner.destroy();
     }
-    this.qrScanner.hide(); // hide camera preview
-    this.qrScanner.destroy();
   };
 
   requestCameraPermission = async () => {
@@ -170,67 +193,133 @@ export class DashboardQrscanPage implements OnInit {
     return true;
   };
 
-  scan = () => {
+  scanQrForWeb = async () => {
+    if (
+      this.videoElement.readyState === this.videoElement.HAVE_ENOUGH_DATA &&
+      this.scanActive
+    ) {
+      this.canvasElement.height = this.videoElement.videoHeight;
+      this.canvasElement.width = this.videoElement.videoWidth;
+
+      this.canvasContext.drawImage(
+        this.videoElement,
+        0,
+        0,
+        this.canvasElement.width,
+        this.canvasElement.height
+      );
+      const imageData = this.canvasContext.getImageData(
+        0,
+        0,
+        this.canvasElement.width,
+        this.canvasElement.height
+      );
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (code) {
+        const text = code.data;
+        console.log("Scanned something", text);
+        if (text) {
+          this.checkQrCode(text);
+        }
+      } else {
+        if (this.scanActive) {
+          requestAnimationFrame(this.scanQrForWeb.bind(this));
+        }
+      }
+    } else {
+      requestAnimationFrame(this.scanQrForWeb.bind(this));
+    }
+  };
+
+  scan = async () => {
     // await this.requestCameraPermission();
 
     // Optionally request the permission early
-    this.qrScanner
-      .prepare()
-      .then((status: QRScannerStatus) => {
-        if (status.authorized) {
-          // camera permission was granted
-          // start scanning
-          this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
-            console.log("Scanned something", text);
-            if (text) {
-              this.checkQrCode(text);
-            }
-          });
-          this.qrScanner.show();
-        } else if (status.denied) {
-          this.translateService
-            .get([
-              "SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED",
-              "SHARED_TEXT.ERRORS.PERMISSION_DENIED",
-            ])
-            .subscribe((res) => {
-              this.utilService.showAlert(
-                res["SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED"],
-                res["SHARED_TEXT.ERRORS.PERMISSION_DENIED"]
-              );
-            });
-          // camera permission was permanently denied
-          // you must use QRScanner.openSettings() method to guide the user to the settings page
-          // then they can grant the permission from there
-        } else {
-          this.translateService
-            .get([
-              "SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED",
-              "SHARED_TEXT.ERRORS.PERMISSION_DENIED",
-            ])
-            .subscribe((res) => {
-              this.utilService.showAlert(
-                res["SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED"],
-                res["SHARED_TEXT.ERRORS.PERMISSION_DENIED"],
-                async () => {
-                  const status1 = await this.requestCameraPermission();
-                  if (status1) {
-                    this.scan();
-                  }
-                }
-              );
-            });
 
-          // permission was denied, but not permanently. You can ask for permission again at a later time.
+    if (this.isWebApp) {
+      this.scanActive = true;
+
+      const startScan = async () => {
+        // Not working on iOS standalone mode!
+        if (!this.videoStream) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+          this.videoStream = stream;
+          this.videoElement.srcObject = stream;
+          // Required for Safari
+          this.videoElement.setAttribute("playsinline", true);
+
+          this.videoElement.play();
+          requestAnimationFrame(this.scanQrForWeb.bind(this));
         }
-      })
-      .catch((e: any) => console.log("Error is", e));
+      };
+
+      startScan();
+
+      this.scanQrForWeb();
+    } else {
+      this.qrScanner
+        .prepare()
+        .then((status: QRScannerStatus) => {
+          if (status.authorized) {
+            // camera permission was granted
+            // start scanning
+            this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
+              console.log("Scanned something", text);
+              if (text) {
+                this.checkQrCode(text);
+              }
+            });
+            this.qrScanner.show();
+          } else if (status.denied) {
+            this.translateService
+              .get([
+                "SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED",
+                "SHARED_TEXT.ERRORS.PERMISSION_DENIED",
+              ])
+              .subscribe((res) => {
+                this.utilService.showAlert(
+                  res[
+                    "SHARED_TEXT.ERRORS.CAMERA_PERMISSION_PERMANENTLY_DENIED"
+                  ],
+                  res["SHARED_TEXT.ERRORS.PERMISSION_DENIED"]
+                );
+              });
+            // camera permission was permanently denied
+            // you must use QRScanner.openSettings() method to guide the user to the settings page
+            // then they can grant the permission from there
+          } else {
+            this.translateService
+              .get([
+                "SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED",
+                "SHARED_TEXT.ERRORS.PERMISSION_DENIED",
+              ])
+              .subscribe((res) => {
+                this.utilService.showAlert(
+                  res["SHARED_TEXT.ERRORS.CAMERA_PERMISSION_DENIED"],
+                  res["SHARED_TEXT.ERRORS.PERMISSION_DENIED"],
+                  async () => {
+                    const status1 = await this.requestCameraPermission();
+                    if (status1) {
+                      this.scan();
+                    }
+                  }
+                );
+              });
+
+            // permission was denied, but not permanently. You can ask for permission again at a later time.
+          }
+        })
+        .catch((e: any) => console.log("Error is", e));
+    }
   };
 
   checkQrCode = async (qrCode) => {
-    if (!UtilService.isLocalHost()) {
-      this.stopScanning();
-    }
+    this.stopScanning();
 
     if (this.fromFormPage) {
       this.getAnswerChoiceEntityByQRCode(qrCode);

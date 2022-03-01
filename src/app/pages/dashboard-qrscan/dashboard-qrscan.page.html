@@ -1,28 +1,49 @@
 <ion-header mode="ios">
-	<app-modal-header-dm
-		[modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-		*ngIf="sharedDataService.dedicatedMode && !fromFormPage; else personalMode"
-		[modalSubTitle]="authFor?authFor:('PAGESPECIFIC_TEXT.QR_SCANER.CHECKINOUT_VIA_QR' | translate)"
-		(closeModal)="onClose()"
-	></app-modal-header-dm>
+  <app-modal-header-dm
+    [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+    *ngIf="sharedDataService.dedicatedMode && !fromFormPage; else personalMode"
+    [modalSubTitle]="authFor?authFor:('PAGESPECIFIC_TEXT.QR_SCANER.CHECKINOUT_VIA_QR' | translate)"
+    (closeModal)="onClose()"
+  ></app-modal-header-dm>
 
-	<ng-template #personalMode>
-		<ion-toolbar mode="ios">
-			<ion-title size="large">{{'PAGESPECIFIC_TEXT.QR_SCANER.QR_SCAN' | translate}}</ion-title>
-			<ion-buttons slot="end">
-				<ion-button size="small" fill="clear" (click)="onClose()">
-					<ion-icon class="close-icon" slot="icon-only" name="close"></ion-icon>
-				</ion-button>
-			</ion-buttons>
-		</ion-toolbar>
-	</ng-template>
+  <ng-template #personalMode>
+    <ion-toolbar mode="ios">
+      <ion-title size="large"
+        >{{'PAGESPECIFIC_TEXT.QR_SCANER.QR_SCAN' | translate}}</ion-title
+      >
+      <ion-buttons slot="end">
+        <ion-button size="small" fill="clear" (click)="onClose()">
+          <ion-icon class="close-icon" slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ng-template>
 </ion-header>
 
-<ion-content fullscreen class="ion-justify-content-center ion-align-items-center" [ngClass]="{'transparent':isLoaded}">
-	<ng-container *ngIf="isLoaded">
-		<img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content" />
-		<img *ngIf="isTablet" src="./assets/images/qrscan-bg-tablet.svg" class="content" />
+<ion-content
+  fullscreen
+  class="ion-justify-content-center ion-align-items-center"
+  [ngClass]="{'transparent':isLoaded}"
+>
+  <ng-container *ngIf="isWebApp">
+    <!-- Shows our camera stream -->
+    <video #video [hidden]="!scanActive" width="100%" height="100%"></video>
+    <!-- Used to render the camera stream images -->
+    <canvas #canvas hidden></canvas>
+  </ng-container>
 
-		<div class="title-text">{{(sharedDataService.dedicatedMode && !fromFormPage) ? 'Please show your QR code to the camera' : ('PAGESPECIFIC_TEXT.QR_SCANER.SCAN_QR_CODE' | translate)}}</div>
-	</ng-container>
+  <ng-container *ngIf="isLoaded">
+    <img *ngIf="!isTablet" src="./assets/images/qr-bg.png" class="content" />
+    <img
+      *ngIf="isTablet"
+      src="./assets/images/qrscan-bg-tablet.svg"
+      class="content"
+    />
+
+    <div class="title-text">
+      {{(sharedDataService.dedicatedMode && !fromFormPage) ? 'Please show your
+      QR code to the camera' : ('PAGESPECIFIC_TEXT.QR_SCANER.SCAN_QR_CODE' |
+      translate)}}
+    </div>
+  </ng-container>
 </ion-content>

@@ -288,21 +288,25 @@ export class FilehandlerService {
   };
 
   async openFile(fileUrl = "", openInDefaultApp = false) {
-    this.utilService.presentLoadingWithOptions("File downloading...");
+    if (UtilService.isWebApp()) {
+      window.open(fileUrl, "__blank");
+    } else {
+      this.utilService.presentLoadingWithOptions("File downloading...");
 
-    const fileName = new URL(fileUrl).pathname.split("/").pop();
-    this.http
-      .downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName)
-      .then((response) => {
-        this.utilService.hideLoading();
-        const url = response.nativeURL;
-        this.openDownloadedFile(url, fileName, openInDefaultApp);
-      })
-      .catch((error) => {
-        this.utilService.hideLoading();
-        this.showErrorAlert(error, "File download error");
-        console.log("Error download file", error);
-      });
+      const fileName = new URL(fileUrl).pathname.split("/").pop();
+      this.http
+        .downloadFile(fileUrl, {}, {}, this.file.dataDirectory + fileName)
+        .then((response) => {
+          this.utilService.hideLoading();
+          const url = response.nativeURL;
+          this.openDownloadedFile(url, fileName, openInDefaultApp);
+        })
+        .catch((error) => {
+          this.utilService.hideLoading();
+          this.showErrorAlert(error, "File download error");
+          console.log("Error download file", error);
+        });
+    }
   }
 
   openDownloadedFile(url = "", fileName = "", openInDefaultApp = false) {

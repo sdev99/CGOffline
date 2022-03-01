@@ -101,6 +101,10 @@ export class UtilService {
     return !environment.production && !Capacitor.isNative;
   }
 
+  static isWebApp() {
+    return !Capacitor.isNative;
+  }
+
   static appendZero(num) {
     if (num < 10) {
       return "0" + num;
