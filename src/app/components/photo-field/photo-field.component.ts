@@ -29,6 +29,7 @@ import { UtilService } from "src/app/services/util.service";
 })
 export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   StaticDataService = StaticDataService;
+  UtilService = UtilService;
   Capacitor = Capacitor;
 
   @Input() label: string;
@@ -139,30 +140,43 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   }
 
   addPhotoFromLibrary() {
-    this.photoService.takePhotoFromGallery(
-      (photo) => {
-        if (photo.isVideo) {
+    if (UtilService.isWebApp()) {
+      this.photoService.chooseMediaFromAlbum((result, type) => {
+        if (type === "video") {
           this.isVideo = true;
-          const videoUrl = photo.dataUrl;
-          this.filehandlerService.saveFileOnDevicePath(
-            videoUrl,
-            StaticDataService.formImagesFolderName,
-            (status, response) => {
-              this.photoService.cleanCamera();
-              if (status) {
-                this.videoUrl = Capacitor.convertFileSrc(response);
-                this.photoAdded(response);
-              }
-            }
-          );
+          this.videoUrl = result;
+          this.photoAdded(result);
         } else {
           this.isVideo = false;
-          this.savePhoto(photo.dataUrl);
+          this.savePhoto(result);
         }
-      },
-      true,
-      true
-    );
+      });
+    } else {
+      this.photoService.takePhotoFromGallery(
+        (photo) => {
+          if (photo.isVideo) {
+            this.isVideo = true;
+            const videoUrl = photo.dataUrl;
+            this.filehandlerService.saveFileOnDevicePath(
+              videoUrl,
+              StaticDataService.formImagesFolderName,
+              (status, response) => {
+                this.photoService.cleanCamera();
+                if (status) {
+                  this.videoUrl = Capacitor.convertFileSrc(response);
+                  this.photoAdded(response);
+                }
+              }
+            );
+          } else {
+            this.isVideo = false;
+            this.savePhoto(photo.dataUrl);
+          }
+        },
+        true,
+        true
+      );
+    }
   }
 
   sanitize(url: string): SafeUrl {
@@ -186,7 +200,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   };
 
   savePhoto(imageBase64) {
-    if (UtilService.isLocalHost()) {
+    if (UtilService.isWebApp()) {
       this.utilService.generateThumbnailFromImage(
         imageBase64,
         500,

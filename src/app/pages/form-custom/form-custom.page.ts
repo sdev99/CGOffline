@@ -113,11 +113,13 @@ export class FormCustomPage {
   }
 
   ionViewWillEnter() {
-    this.handleOrientation();
+    if (!UtilService.isWebApp()) {
+      this.handleOrientation();
+    }
   }
 
   ionViewDidLeave(): void {
-    if (this.sharedDataService.dedicatedMode) {
+    if (this.sharedDataService.dedicatedMode && !UtilService.isWebApp()) {
       if (!this.sharedDataService.isOpenSubScreen) {
         if (!UtilService.isLocalHost()) {
           this.screenOrientation.lock(

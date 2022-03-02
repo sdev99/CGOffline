@@ -39,6 +39,7 @@
           class="videoPlayer"
         >
           <source
+            *ngIf="!UtilService.IsBase64Sring(videoUrl); else base64Video"
             [src]="sanitize(videoUrl)"
             [type]="
               StaticDataService.fileMimeTypes[
@@ -46,6 +47,10 @@
               ]
             "
           />
+
+          <ng-template #base64Video>
+            <source [src]="videoUrl" />
+          </ng-template>
         </video>
       </ng-container>
       <ng-container *ngIf="!isVideo">

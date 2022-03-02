@@ -367,6 +367,7 @@ export class StaticDataService {
     "avchd",
     "mkv",
     "webm",
+    "3gp",
   ];
 
   static fileMimeTypes = {
@@ -419,6 +420,7 @@ export class StaticDataService {
     mpg: "video/mpeg",
     mp2: "video/mpeg",
     mp4: "video/mp4",
+    "3gp": "video/3gp",
     ogg: "application/ogg",
     phtml: "application/x-httpd-php",
     php: "application/x-httpd-php",

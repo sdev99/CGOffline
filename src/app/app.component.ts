@@ -160,42 +160,21 @@ export class AppComponent {
         this.checkForToken(() => {
           this.apiService.getTimeZoneList().subscribe(() => {});
 
-          // Test demo - should be remove after development complete
-
-          // For test dedicated mode in mobile
-          // if (this.sharedDataService.deviceUID === '67DA70A1-FD31-4B48-81F6-74E9EB356632' ||
-          //     this.sharedDataService.deviceUID === 'd99fe84c-5538-25ce-8637-870495265348') {
-          //     this.sharedDataService.isTablet = true;
-          //     setTimeout(() => {
-          //         this.navController.navigateForward('checkinout-photoidentity-dm');
-          //     }, 7000);
-          // }
-
-          //   if (
-          //     localStorage.getItem(StaticDataService.anyScreenTestLocalStoragekey)
-          //   ) {
-          //     // this.sharedDataService.isTablet = true;
-          //     setTimeout(() => {
-          //       this.navController.navigateForward(
-          //         localStorage.getItem(
-          //           StaticDataService.anyScreenTestLocalStoragekey
-          //         )
-          //       );
-          //     }, 7000);
-          //   }
-
-          if (localStorage.getItem(StaticDataService.isDeviceTestTablet)) {
-            this.sharedDataService.isTablet = true;
-          }
-          // end
-
           if (!environment.isWebApp) {
-            if (this.sharedDataService.isTablet) {
+            if (UtilService.isWebApp()) {
               this.checkDeviceForDeticatedMode(({ isDeviceAssigned, data }) => {
                 this.appSettingLoaded(isDeviceAssigned, data);
               });
             } else {
-              this.appSettingLoaded(false);
+              if (this.sharedDataService.isTablet) {
+                this.checkDeviceForDeticatedMode(
+                  ({ isDeviceAssigned, data }) => {
+                    this.appSettingLoaded(isDeviceAssigned, data);
+                  }
+                );
+              } else {
+                this.appSettingLoaded(false);
+              }
             }
           } else {
             this.utilService.hideLoading();
@@ -206,41 +185,36 @@ export class AppComponent {
   }
 
   getDeviceUniqueId = (callBack) => {
-    this.uniqueDeviceID
-      .get()
-      .then((uuid: any) => {
-        console.log("Device UUID ", uuid);
-        if (uuid && uuid.length > 0) {
-          this.sharedDataService.deviceUID = uuid;
+    if (!environment.isWebApp && UtilService.isWebApp()) {
+      this.sharedDataService.deviceUID = UtilService.uniqueIdForWebApp();
+      UtilService.fireCallBack(callBack);
+    } else {
+      this.uniqueDeviceID
+        .get()
+        .then((uuid: any) => {
+          console.log("Device UUID ", uuid);
+          if (uuid && uuid.length > 0) {
+            this.sharedDataService.deviceUID = uuid;
+          } else {
+            this.sharedDataService.deviceUID = "";
+          }
 
-          // For Test Purpose only
-          // if (uuid === "67DA70A1-FD31-4B48-81F6-74E9EB356632") {
-          //   //Sukhdev iPhone 12 mini test id
-          //   localStorage.setItem(StaticDataService.isDeviceTestTablet, "true");
-          //   this.sharedDataService.deviceUID = localStorage.getItem("test-uid")
-          //     ? localStorage.getItem("test-uid")
-          //     : "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
-          // }
-          //end
-        } else {
+          UtilService.fireCallBack(callBack);
+        })
+        .catch((error: any) => {
+          console.log(error);
           this.sharedDataService.deviceUID = "";
-        }
-
-        UtilService.fireCallBack(callBack);
-      })
-      .catch((error: any) => {
-        console.log(error);
-        this.sharedDataService.deviceUID = "";
-        if (UtilService.isLocalHost()) {
-          // this.sharedDataService.deviceUID =
-          //   "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
-          this.sharedDataService.deviceUID =
-            "C71D4229-E9B7-4EBD-A23F-B0FA259D788F";
-          // this.sharedDataService.deviceUID =
-          //   "0eab5395-a994-520b-5352-317105139432";
-        }
-        UtilService.fireCallBack(callBack);
-      });
+          if (UtilService.isLocalHost()) {
+            // this.sharedDataService.deviceUID =
+            //   "5A8CD1FF-24AE-44B9-A2AD-65AA5309E2CE";
+            this.sharedDataService.deviceUID =
+              "C71D4229-E9B7-4EBD-A23F-B0FA259D788F";
+            // this.sharedDataService.deviceUID =
+            //   "0eab5395-a994-520b-5352-317105139432";
+          }
+          UtilService.fireCallBack(callBack);
+        });
+    }
   };
 
   setupDeepLink = () => {

@@ -1376,20 +1376,41 @@ export class SharedDataService {
                       ".jpeg";
                     let mimeType = "image/jpeg";
                     let isVideo = false;
-                    if (
-                      StaticDataService.videoFormats.indexOf(
-                        control.value.split(".").pop().toLowerCase()
-                      ) !== -1
-                    ) {
-                      isVideo = true;
-                      fileName = control.value.substr(
-                        control.value.lastIndexOf("/") + 1
-                      );
-                      mimeType =
-                        StaticDataService.fileMimeTypes[
-                          control.value.split(".").pop().toLowerCase()
-                        ];
+                    let extension = "jpeg";
+
+                    // if value is base64 format then find mimetype and extension
+                    if (UtilService.IsBase64Sring(control.value)) {
+                      try {
+                        extension = control.value.match(/[^:/]\w+(?=;|,)/)[0];
+                        if (
+                          StaticDataService.videoFormats.indexOf(
+                            extension.toLowerCase()
+                          ) !== -1
+                        ) {
+                          isVideo = true;
+                          fileName =
+                            "video" +
+                            this.utilService.getCurrentTimeStamp() +
+                            "." +
+                            extension;
+                          mimeType = control.value.match(
+                            /[^:]\w+\/[\w-+\d.]+(?=;|,)/
+                          )[0];
+                        }
+                      } catch (error) {}
+                    } else {
+                      extension = control.value.split(".").pop().toLowerCase();
+                      if (
+                        StaticDataService.videoFormats.indexOf(extension) !== -1
+                      ) {
+                        isVideo = true;
+                        fileName = control.value.substr(
+                          control.value.lastIndexOf("/") + 1
+                        );
+                        mimeType = StaticDataService.fileMimeTypes[extension];
+                      }
                     }
+                    // --end
 
                     if (this.offlineMode) {
                       const insertImageVideoFileToDb = (offlineFileName) => {
@@ -2111,11 +2132,6 @@ export class SharedDataService {
       accidentReport,
       riskAssessmentAnswerDetails,
     };
-
-    if (UtilService.isLocalHost()) {
-      console.log("Submit Answers", JSON.stringify(submitAnswersObject));
-      return;
-    }
 
     const saveFormSuccess = (result) => {
       if (

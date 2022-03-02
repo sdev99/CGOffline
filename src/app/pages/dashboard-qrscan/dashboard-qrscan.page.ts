@@ -38,6 +38,8 @@ export class DashboardQrscanPage implements OnInit {
   canvasContext: any;
   scanActive = true;
   videoStream: any = null;
+
+  isWebApp = UtilService.isWebApp();
   //
 
   user: User;
@@ -49,8 +51,6 @@ export class DashboardQrscanPage implements OnInit {
   isOnlyInventryItemHasHav = false;
   fromFormCallbackKey = "";
   fromFormAllowedQrCodeTypes = [];
-
-  isWebApp = UtilService.isWebApp();
 
   constructor(
     public navCtrl: NavController,
@@ -89,57 +89,7 @@ export class DashboardQrscanPage implements OnInit {
     });
   }
 
-  ionViewWillEnter() {
-    // const QrCodeTestingInLocalHostFor: any = "user";
-    // if (QrCodeTestingInLocalHostFor && UtilService.isLocalHost()) {
-    //   setTimeout(() => {
-    //     switch (QrCodeTestingInLocalHostFor) {
-    //       case "project":
-    //         this.checkQrCode(
-    //           "mCucrGcxCBTXwWCuKq/sMN6kgl0a1SVlOudJdHCHZHrMpc9RYv5JLo1AqRvdjcW/"
-    //         );
-    //         break;
-    //       case "document":
-    //         this.checkQrCode("0f75e6e3-8215-4186-92bf-ca0971b337b7");
-    //         break;
-    //       case "document1":
-    //         this.checkQrCode("711c59e0-e65e-4f6c-99e7-3901400a14d7");
-    //         break;
-    //       case "form":
-    //         this.checkQrCode("e37f99b2-cda6-4b19-b3e6-ba37a41ffd60");
-    //         break;
-    //       case "form2":
-    //         this.checkQrCode("6dadd75e-cb62-484d-a9be-deaab282761d");
-    //         break;
-    //       case "form3":
-    //         //Rosana test login
-    //         this.checkQrCode("41c58f62-cf4e-4ac9-ba78-33730d27548a");
-    //         break;
-    //       case "form_othercompany":
-    //         this.checkQrCode("87b71cae-476a-4c08-9c63-f24ef7970f89\n");
-    //         break;
-    //       case "location2":
-    //         this.checkQrCode("78312786-35ab-4c9e-969e-6f7673ed7a5e");
-    //         break;
-    //       case "location3":
-    //         this.checkQrCode("3d663253-09ab-4299-a891-74fb1961d78c");
-    //         break;
-    //       case "user":
-    //         this.checkQrCode("1b5ee704-21f6-4e91-9544-0f2a6abd7aed");
-    //         break;
-    //       case "user_demo_three":
-    //         this.checkQrCode("4d0dd7ba-905e-4f2f-9bb7-afd17e6809bc");
-    //         break;
-    //       case "inventryitemHav":
-    //         this.checkQrCode("49a1b038-a7cf-4298-9992-86b322e14982");
-    //         break;
-    //       case "inventryitem":
-    //         this.checkQrCode("22dfd7f6-414c-4608-9b3a-fcc894487fc5");
-    //         break;
-    //     }
-    //   }, 1000);
-    // }
-  }
+  ionViewWillEnter() {}
 
   ngOnInit() {}
 

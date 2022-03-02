@@ -23,6 +23,69 @@ export class PhotoService {
     private camera: Camera
   ) {}
 
+  public chooseMediaFromAlbum = (callBack: any) => {
+    this.triggerUpload(
+      "album",
+      (media: any) => {
+        if (media.indexOf("image") !== -1) {
+          callBack && callBack(media, "image");
+        } else if (media.indexOf("video") !== -1) {
+          callBack && callBack(media, "video");
+        }
+      },
+      "photovideo"
+    );
+  };
+
+  triggerUpload(type = "album", callBack: any = null, mediaType = "photo") {
+    let input: any = document.createElement("input");
+    input.type = "file";
+
+    if (mediaType === "photo") {
+      input.accept = "image/png,image/jpeg";
+    } else if (mediaType === "photovideo") {
+      input.accept = "image/png,image/jpeg,video/mp4,video/quicktime";
+    }
+    if (type === "camera") {
+      input.capture = "environment";
+      // input.capture = 'user'; //for front
+    } else {
+      // input.capture = 'filesystem';
+    }
+    input.onchange = (event: any) => {
+      const fileCount = event.target.files.length;
+
+      //if (canMultipleSelect && fileCount > 0) {
+
+      for (let index = 0; index < fileCount; index++) {
+        let reader = new FileReader();
+        const file = event.target.files[index];
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+          const base64String = reader.result as string;
+          base64String.replace("data:", "").replace(/^.+,/, "");
+          input = null;
+          callBack && callBack(base64String);
+        };
+      }
+      /*} else {
+				const file = event.target.files[0];
+
+				//Convert file object to base64 string
+				reader.onloadend = async () => {
+					const base64String = reader.result as string;
+					base64String.replace('data:', '').replace(/^.+,/, '');
+					callBack && callBack(base64String);
+					input = null;
+				};
+				reader.readAsDataURL(file);
+			}*/
+    };
+    setTimeout(function () {
+      input.click();
+    }, 200);
+  }
+
   async takePhotoFromNativeCamera(
     callBack,
     isFrontCamera = false,
@@ -160,11 +223,9 @@ export class PhotoService {
         targetHeight: StaticDataService.photoMaxHeight,
       };
 
-      debugger;
       this.camera
         .getPicture(options)
         .then((imageData) => {
-          debugger;
           // imageData is either a base64 encoded string or a file URI
           // If it's base64 (DATA_URL):
           if (imageData) {
@@ -185,7 +246,6 @@ export class PhotoService {
           }
         })
         .catch((err) => {
-          debugger;
           console.log("Photo get Error " + JSON.stringify(err));
         });
     }

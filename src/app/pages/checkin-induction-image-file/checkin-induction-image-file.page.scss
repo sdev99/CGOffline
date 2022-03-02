@@ -16,8 +16,12 @@ ion-content {
   }
 
   &.dedicated-mode {
-    --background: #F6F9FB;
+    --background: #f6f9fb;
 
+    .content {
+      max-width: 100%;
+      max-height: 100%;
+    }
     .image-view {
       flex: 1;
       max-height: 500px;
@@ -48,7 +52,7 @@ ion-content {
     margin: 5%;
     min-height: 200px;
     height: auto;
-    background-color: #F8F9FB;
+    background-color: #f8f9fb;
     display: flex;
 
     ion-img {

@@ -27,6 +27,19 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
   @ViewChild("headerView") headerView: any;
   @ViewChild("content", { read: ElementRef }) content: ElementRef;
 
+  // For PWA app QR Scanning
+  @ViewChild("video") video: ElementRef;
+  @ViewChild("canvas") canvas: ElementRef;
+  canvasElement: any;
+  videoElement: any;
+  canvasContext: any;
+  scanActive = false;
+  videoStream: any = null;
+
+  isWebApp = UtilService.isWebApp();
+
+  //
+
   authFor = "Check In/Out by Name";
   photoCaptured: any;
   nextPage;
@@ -73,12 +86,23 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
   ionViewDidEnter = () => {
     setTimeout(() => {
       this.viewLoaded = true;
+
+      if (this.isWebApp) {
+        this.canvasElement = this.canvas.nativeElement;
+        this.canvasContext = this.canvasElement.getContext("2d");
+        this.videoElement = this.video.nativeElement;
+      }
+
       this.startCamera();
     }, 100);
   };
 
   ionViewWillLeave = () => {
-    this.cameraPreview.stopCamera();
+    if (this.isWebApp) {
+      this.stopPhotoScanning();
+    } else {
+      this.cameraPreview.stopCamera();
+    }
   };
 
   ionViewWillEnter() {
@@ -86,15 +110,78 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     element.style.width = element.offsetHeight + "px";
   }
 
+  stopPhotoScanning = () => {
+    this.scanActive = false;
+    this.videoStream.getTracks().forEach(function (track) {
+      if (track.readyState == "live") {
+        track.stop();
+      }
+    });
+    this.videoStream = null;
+    const vid = this.videoElement;
+    const canvasContext = this.canvasContext;
+    const canvasElement = this.canvasElement;
+    debugger;
+  };
+
+  photoScanning = async () => {
+    if (this.videoElement.readyState === this.videoElement.HAVE_ENOUGH_DATA) {
+      this.canvasElement.height = this.videoElement.videoHeight;
+      this.canvasElement.width = this.videoElement.videoWidth;
+
+      const element = this.imagePreview.nativeElement;
+      const header = this.headerView.el;
+
+      this.canvasContext.drawImage(
+        this.videoElement,
+        0,
+        0,
+        this.canvasElement.width,
+        this.canvasElement.height
+      );
+      // const imageData = this.canvasContext.getImageData(
+      //   element.offsetLeft,
+      //   header.offsetHeight + element.offsetTop,
+      //   element.offsetWidth,
+      //   element.offsetHeight
+      // );
+
+      // imageData.data, imageData.width, imageData.height;
+
+      if (!this.photoCaptured) {
+        requestAnimationFrame(this.photoScanning);
+      }
+    } else {
+      requestAnimationFrame(this.photoScanning);
+    }
+  };
+
   startCamera = () => {
-    if (UtilService.isLocalHost()) {
-      this.photoService.takePhotoFromCamera((photo) => {
-        this.photoCaptured = photo.dataUrl;
-      });
+    if (this.isWebApp) {
+      this.scanActive = true;
+
+      const startScan = async () => {
+        // Not working on iOS standalone mode!
+        if (!this.videoStream) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: "user",
+            },
+          });
+          this.videoStream = stream;
+          this.videoElement.srcObject = stream;
+          // Required for Safari
+          this.videoElement.setAttribute("playsinline", true);
+
+          this.videoElement.play();
+          requestAnimationFrame(this.photoScanning);
+        }
+      };
+
+      startScan();
     } else {
       const element = this.imagePreview.nativeElement;
       const header = this.headerView.el;
-      const content = this.content.nativeElement;
 
       const width = element.offsetWidth;
       const height = element.offsetHeight;
@@ -137,22 +224,27 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
       this.photoCaptured = null;
       this.startCamera();
     } else {
-      const pictureOpts: CameraPreviewPictureOptions = {
-        quality: StaticDataService.photoQuality,
-        width: StaticDataService.photoMaxHeight,
-        height: StaticDataService.photoMaxHeight,
-      };
+      if (this.isWebApp) {
+        this.photoCaptured = this.canvasElement.toDataURL("image/png");
+        this.stopPhotoScanning();
+      } else {
+        const pictureOpts: CameraPreviewPictureOptions = {
+          quality: StaticDataService.photoQuality,
+          width: StaticDataService.photoMaxHeight,
+          height: StaticDataService.photoMaxHeight,
+        };
 
-      this.cameraPreview.takePicture(pictureOpts).then(
-        (imageData) => {
-          this.photoCaptured = "data:image/jpeg;base64," + imageData;
-          this.cameraPreview.stopCamera();
-        },
-        (err) => {
-          console.log(err);
-          this.photoCaptured = "./assets/images/ProfileNone.png";
-        }
-      );
+        this.cameraPreview.takePicture(pictureOpts).then(
+          (imageData) => {
+            this.photoCaptured = "data:image/jpeg;base64," + imageData;
+            this.cameraPreview.stopCamera();
+          },
+          (err) => {
+            console.log(err);
+            this.photoCaptured = "./assets/images/ProfileNone.png";
+          }
+        );
+      }
     }
   }
 

@@ -408,19 +408,23 @@ export class FormHavPage implements OnInit {
   };
 
   ionViewWillEnter() {
-    this.handleOrientation();
+    if (!UtilService.isWebApp()) {
+      this.handleOrientation();
+    }
   }
 
   ionViewDidLeave(): void {
-    if (
-      this.sharedDataService.dedicatedMode &&
-      !this.sharedDataService.isOpenSubScreen &&
-      !UtilService.isLocalHost()
-    ) {
-      this.screenOrientation.lock(
-        this.screenOrientation.ORIENTATIONS.LANDSCAPE
-      );
-      this.screenOrientationSubscribe.unsubscribe();
+    if (!UtilService.isWebApp()) {
+      if (
+        this.sharedDataService.dedicatedMode &&
+        !this.sharedDataService.isOpenSubScreen &&
+        !UtilService.isLocalHost()
+      ) {
+        this.screenOrientation.lock(
+          this.screenOrientation.ORIENTATIONS.LANDSCAPE
+        );
+        this.screenOrientationSubscribe.unsubscribe();
+      }
     }
   }
 

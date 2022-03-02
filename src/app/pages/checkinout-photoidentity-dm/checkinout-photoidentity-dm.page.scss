@@ -1,5 +1,5 @@
 ion-content {
-  --background: #F6F9FB;
+  --background: #f6f9fb;
   --overflow: auto;
 
   .content-container {
@@ -15,7 +15,19 @@ ion-content {
     align-items: center;
     justify-content: center;
     flex: 1;
+    position: relative;
 
+    video {
+      position: absolute;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
     .text-1 {
       margin-top: -40px;
       font-family: Inter;
@@ -43,6 +55,7 @@ ion-content {
       margin-top: 21px;
       width: 220px !important;
       height: 220px !important;
+      border-radius: 8px;
 
       ion-img {
         width: 100%;
@@ -70,6 +83,23 @@ ion-content {
 
       .text-2 {
         color: #ffffff;
+      }
+    }
+  }
+
+  &.wep-app {
+    .content {
+      background-color: rgba(0, 0, 0, 0.2);
+      .ion-img-view {
+        margin-top: 21px;
+        width: 350px !important;
+        height: 350px !important;
+        background-color: rgba(255, 255, 255, 0.1);
+        ion-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
     }
   }

@@ -112,6 +112,7 @@ export class EnumService {
     OFFLINEMODE_SYNC_STATE: "offline_mode_sync_state",
     OFFLINE_DATA_FILES: "OFFLINE_DATA_FILES",
     OFFLINE_FILES_FOLDER_NAME: "offline_files_folder_name",
+    UNIQUE_WEBAPP_ID: "S3W7SWC6MBLL08GXX8DCBQB2C",
   };
 
   static ApiMethods = {

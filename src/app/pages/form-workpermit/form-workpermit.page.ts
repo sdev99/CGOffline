@@ -175,17 +175,21 @@ export class FormWorkpermitPage {
   }
 
   ionViewWillEnter() {
-    this.handleOrientation();
+    if (!UtilService.isWebApp()) {
+      this.handleOrientation();
+    }
   }
 
   ionViewDidLeave(): void {
-    if (this.sharedDataService.dedicatedMode) {
-      if (!this.sharedDataService.isOpenSubScreen) {
-        if (!UtilService.isLocalHost()) {
-          this.screenOrientation.lock(
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          );
-          this.screenOrientationSubscribe.unsubscribe();
+    if (!UtilService.isWebApp()) {
+      if (this.sharedDataService.dedicatedMode) {
+        if (!this.sharedDataService.isOpenSubScreen) {
+          if (!UtilService.isLocalHost()) {
+            this.screenOrientation.lock(
+              this.screenOrientation.ORIENTATIONS.LANDSCAPE
+            );
+            this.screenOrientationSubscribe.unsubscribe();
+          }
         }
       }
     }

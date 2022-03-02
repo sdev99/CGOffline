@@ -102,7 +102,7 @@ export class UtilService {
   }
 
   static isWebApp() {
-    return !Capacitor.isNative;
+    return !environment.isWebApp && !Capacitor.isNative;
   }
 
   static appendZero(num) {
@@ -142,7 +142,10 @@ export class UtilService {
 
   static FixBase64String(base64String) {
     return base64String
-      ? base64String.replace(/^data:image\/(png|jpeg|jpg);base64,/, "")
+      ? base64String.replace(
+          /^data:(image|video)\/(png|jpeg|jpg|gif|mov|mp4|mpeg|mpg|wmv);base64,/,
+          ""
+        )
       : base64String;
   }
 
@@ -450,6 +453,24 @@ export class UtilService {
     return false;
   }
 
+  static uniqueIdForWebApp() {
+    let uniqueId = localStorage.getItem(
+      EnumService.LocalStorageKeys.UNIQUE_WEBAPP_ID
+    );
+    if (!uniqueId) {
+      uniqueId = (
+        Math.random().toString(36).substring(2) +
+        Date.now().toString(36) +
+        Math.random().toString(36).substring(2)
+      ).toUpperCase();
+      localStorage.setItem(
+        EnumService.LocalStorageKeys.UNIQUE_WEBAPP_ID,
+        uniqueId
+      );
+    }
+    return uniqueId;
+  }
+
   constructor(
     private loadingController: LoadingController,
     private file: File,
@@ -586,11 +607,16 @@ export class UtilService {
 
   dataUriToFile(url, filename, mimeType) {
     return new Promise(async (resolve, reject) => {
-      if (
-        StaticDataService.videoFormats.indexOf(
-          url.split(".").pop().toLowerCase()
-        ) !== -1
-      ) {
+      if (UtilService.IsBase64Sring(url)) {
+        const byteString = window.atob(UtilService.FixBase64String(url));
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const int8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+          int8Array[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([int8Array], { type: mimeType });
+        resolve(blob);
+      } else {
         let dirpath = url.substr(0, url.lastIndexOf("/") + 1);
         dirpath = UtilService.fixDeviceDirPath(dirpath);
 
@@ -607,17 +633,6 @@ export class UtilService {
         } catch {
           reject();
         }
-      } else {
-        const byteString = window.atob(
-          url.replace(/^data:image\/(png|jpeg|jpg);base64,/, "")
-        );
-        const arrayBuffer = new ArrayBuffer(byteString.length);
-        const int8Array = new Uint8Array(arrayBuffer);
-        for (let i = 0; i < byteString.length; i++) {
-          int8Array[i] = byteString.charCodeAt(i);
-        }
-        const imageBlob = new Blob([int8Array], { type: mimeType });
-        resolve(imageBlob);
       }
     });
   }
