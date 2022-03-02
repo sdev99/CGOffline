@@ -6,6 +6,7 @@
       size="small"
       fill="clear"
       (click)="syncClick()"
+      *ngIf="!isWebApp"
       [disabled]="isSyncButtonDisabled"
     >
       <ion-icon
@@ -15,6 +16,7 @@
       ></ion-icon>
       <div class="badge" *ngIf="isSycronizationNeeded"></div>
     </ion-button>
+
     <ion-button size="small" fill="clear" (click)="infoClick()">
       <ion-icon
         class="scan-icon"

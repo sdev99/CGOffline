@@ -14,6 +14,7 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { Capacitor } from "@capacitor/core";
 import { FilehandlerService } from "src/app/services/filehandler.service";
 import { UtilService } from "src/app/services/util.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "app-photo-field",
@@ -49,6 +50,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
     private sanitizer: DomSanitizer,
     private mediaCapture: MediaCapture,
     public navCtrl: NavController,
+    public translateService: TranslateService,
     public utilService: UtilService,
     public filehandlerService: FilehandlerService,
     public sharedDataService: SharedDataService,
@@ -154,23 +156,51 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
     } else {
       this.photoService.takePhotoFromGallery(
         (photo) => {
-          if (photo.isVideo) {
-            this.isVideo = true;
-            const videoUrl = photo.dataUrl;
-            this.filehandlerService.saveFileOnDevicePath(
-              videoUrl,
-              StaticDataService.formImagesFolderName,
-              (status, response) => {
-                this.photoService.cleanCamera();
-                if (status) {
-                  this.videoUrl = Capacitor.convertFileSrc(response);
-                  this.photoAdded(response);
-                }
-              }
-            );
+          debugger;
+
+          let extension = "";
+          if (UtilService.IsBase64Sring(photo.dataUrl)) {
+            extension = photo.dataUrl.match(/[^:/]\w+(?=;|,)/)[0];
           } else {
-            this.isVideo = false;
-            this.savePhoto(photo.dataUrl);
+            extension = photo.dataUrl.split(".").pop().toLowerCase();
+          }
+
+          if (photo.isVideo) {
+            if (
+              ["mov", "mp4", "mpeg", "mpg", "wmv", "3gp"].indexOf(extension) ===
+              -1
+            ) {
+              this.translateService
+                .get("SHARED_TEXT.MEDIA.VIDEO_FORMAT_NOT_SUPPORTED")
+                .subscribe((res) => {
+                  this.utilService.showAlert(res);
+                });
+            } else {
+              this.isVideo = true;
+              const videoUrl = photo.dataUrl;
+              this.filehandlerService.saveFileOnDevicePath(
+                videoUrl,
+                StaticDataService.formImagesFolderName,
+                (status, response) => {
+                  this.photoService.cleanCamera();
+                  if (status) {
+                    this.videoUrl = Capacitor.convertFileSrc(response);
+                    this.photoAdded(response);
+                  }
+                }
+              );
+            }
+          } else {
+            if (["jpeg", "jpg", "png", "gif"].indexOf(extension) === -1) {
+              this.translateService
+                .get("SHARED_TEXT.MEDIA.IMAGE_FORMAT_NOT_SUPPORTED")
+                .subscribe((res) => {
+                  this.utilService.showAlert(res);
+                });
+            } else {
+              this.isVideo = false;
+              this.savePhoto(photo.dataUrl);
+            }
           }
         },
         true,

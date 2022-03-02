@@ -23,7 +23,9 @@
       "TAKE_PHOTO": "Take a Photo",
       "CHOOSE_PHOTO": "Choose Photo",
       "TAKE_PHOTO_VIDEO": "Take a Photo/Video",
-      "CHOOSE_PHOTO_VIDEO": "Choose Photo/Video"
+      "CHOOSE_PHOTO_VIDEO": "Choose Photo/Video",
+      "IMAGE_FORMAT_NOT_SUPPORTED": "Format of the selected image is not supported. Please choose a jpeg, png or gif image",
+      "VIDEO_FORMAT_NOT_SUPPORTED": "Format of the selected video is not supported. Please choose a mov, mp4, mpeg ,wmv or 3gp video"
     },
     "ERRORS": {
       "CAMERA_PERMISSION_PERMANENTLY_DENIED": "Camera permission was permanently denied.",

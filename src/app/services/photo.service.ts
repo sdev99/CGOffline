@@ -44,7 +44,8 @@ export class PhotoService {
     if (mediaType === "photo") {
       input.accept = "image/png,image/jpeg";
     } else if (mediaType === "photovideo") {
-      input.accept = "image/png,image/jpeg,video/mp4,video/quicktime";
+      input.accept =
+        "image/png,image/jpeg,image/jpg,image/gif,video/mov,video/mp4,video/mpeg,video/wmv";
     }
     if (type === "camera") {
       input.capture = "environment";
@@ -192,62 +193,45 @@ export class PhotoService {
   }
 
   async takePhotoFromGallery(callBack, isAllMedia = false, isFileUrl = false) {
-    if (UtilService.isLocalHost()) {
-      const capturedPhoto = await Plugins.Camera.getPhoto({
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos,
-        quality: StaticDataService.photoQuality,
-        height: StaticDataService.photoMaxHeight,
-        preserveAspectRatio: true,
-        correctOrientation: true,
-      });
-      try {
-        if (capturedPhoto) {
-          callBack(capturedPhoto);
-        }
-      } catch (err) {
-        console.log("Photo get Error " + JSON.stringify(err));
-      }
-    } else {
-      const options: CameraOptions = {
-        quality: StaticDataService.photoQuality,
-        destinationType: isFileUrl
-          ? this.camera.DestinationType.FILE_URI
-          : this.camera.DestinationType.DATA_URL,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: isAllMedia
-          ? this.camera.MediaType.ALLMEDIA
-          : this.camera.MediaType.PICTURE,
-        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-        correctOrientation: true,
-        targetHeight: StaticDataService.photoMaxHeight,
-      };
+    const options: CameraOptions = {
+      quality: StaticDataService.photoQuality,
+      destinationType: isFileUrl
+        ? this.camera.DestinationType.FILE_URI
+        : this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: isAllMedia
+        ? this.camera.MediaType.ALLMEDIA
+        : this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      correctOrientation: true,
+      targetHeight: StaticDataService.photoMaxHeight,
+    };
 
-      this.camera
-        .getPicture(options)
-        .then((imageData) => {
-          // imageData is either a base64 encoded string or a file URI
-          // If it's base64 (DATA_URL):
-          if (imageData) {
-            if (
-              StaticDataService.videoFormats.indexOf(
-                imageData.split(".").pop().toLowerCase()
-              ) !== -1
-            ) {
-              callBack({ dataUrl: imageData, isVideo: true });
+    this.camera
+      .getPicture(options)
+      .then((imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64 (DATA_URL):
+        debugger;
+        if (imageData) {
+          if (
+            StaticDataService.videoFormats.indexOf(
+              imageData.split(".").pop().toLowerCase()
+            ) !== -1
+          ) {
+            callBack({ dataUrl: imageData, isVideo: true });
+          } else {
+            if (isFileUrl) {
+              callBack({ dataUrl: imageData.split("?")[0] });
             } else {
-              if (isFileUrl) {
-                callBack({ dataUrl: imageData.split("?")[0] });
-              } else {
-                const base64Image = "data:image/jpeg;base64," + imageData;
-                callBack({ dataUrl: base64Image });
-              }
+              const base64Image = "data:image/jpeg;base64," + imageData;
+              callBack({ dataUrl: base64Image });
             }
           }
-        })
-        .catch((err) => {
-          console.log("Photo get Error " + JSON.stringify(err));
-        });
-    }
+        }
+      })
+      .catch((err) => {
+        console.log("Photo get Error " + JSON.stringify(err));
+      });
   }
 }

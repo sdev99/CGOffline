@@ -23,6 +23,8 @@ export class DeviceInfoComponent implements OnInit, OnDestroy {
 
   lastSyncDateTime: string;
 
+  isWebApp: Boolean = UtilService.isWebApp();
+
   constructor(
     private menu: MenuController,
     public navController: NavController,

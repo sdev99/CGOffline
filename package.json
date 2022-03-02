@@ -80,6 +80,7 @@
     "sdev99-cordova-disk-check-plugin": "^1.0.0",
     "sqli-cordova-disk-space-plugin": "github:sqli/sqli-cordova-disk-space-plugin",
     "tslib": "^2.0.0",
+    "videojs-record": "^4.5.0",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

@@ -21,6 +21,8 @@ export class DashboardHeaderDmComponent implements OnInit {
   isSycronizationNeeded = false;
   isSyncButtonDisabled = false;
 
+  isWebApp: Boolean = UtilService.isWebApp();
+
   constructor(
     public navController: NavController,
     public modalController: ModalController,

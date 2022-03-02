@@ -43,7 +43,7 @@
           </ion-chip>
         </ion-item>
 
-        <ion-item>
+        <ion-item *ngIf="!isWebApp">
           <ion-label slot="start">Last Sync</ion-label>
           <ion-note color="medium" *ngIf="lastSyncDateTime">{{
             lastSyncDateTime | date: "dd MMM yyyy HH:mm"
@@ -55,10 +55,11 @@
       </ion-list>
 
       <app-sync-warning-msg
-        *ngIf="isSycronizationNeeded"
+        *ngIf="isSycronizationNeeded && !isWebApp"
       ></app-sync-warning-msg>
 
       <ion-button
+        *ngIf="!isWebApp"
         [disabled]="!isOnline"
         class="action-btn"
         (click)="syncClick()"

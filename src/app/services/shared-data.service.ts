@@ -1286,7 +1286,7 @@ export class SharedDataService {
         const uploadImageVideoFile = (index) => {
           if (fileToBeUploads.length > index) {
             const data = fileToBeUploads[index];
-            if (data.isVideo) {
+            if (data.isVideo && !UtilService.isWebApp()) {
               this.uploadVideo(
                 data.file,
                 data.mimeType,
