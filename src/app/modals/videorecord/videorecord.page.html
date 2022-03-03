@@ -1,0 +1,25 @@
+<ion-content>
+  <div class="video-recorder-view">
+    <div class="header-view">
+      <ion-button
+        [disabled]="isRecording"
+        class="close-btn"
+        fill="clear"
+        (click)="close()"
+      >
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+
+    <video class="video" #video autoplay playsinline></video>
+
+    <div class="footer-view">
+      <div class="videoDuration" *ngIf="isRecording">{{videoDuration}}</div>
+
+      <div class="record-btn" (click)="isRecording?stopRecord():recordVideo()">
+        <div class="start" *ngIf="!isRecording"></div>
+        <div class="stop" *ngIf="isRecording"></div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -2,9 +2,19 @@
   <ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
 
   <div class="photo-buttons" *ngIf="!image; else addPhotoTemplate">
-    <ion-button fill="clear" class="left" (click)="choosePhotoVideoOption()">
+    <ion-button
+      fill="clear"
+      class="left"
+      (click)="isWebApp ? addPhotoFromCamera() : choosePhotoVideoOption()"
+    >
       <ion-icon slot="start" src="./assets/icon/image.svg"></ion-icon>
-      {{ "SHARED_TEXT.MEDIA.TAKE_PHOTO_VIDEO" | translate }}
+
+      <ng-container *ngIf="isWebApp; else takePhotOrVideo">
+        {{ "SHARED_TEXT.MEDIA.TAKE_PHOTO" | translate }}
+      </ng-container>
+      <ng-template #takePhotOrVideo>{{
+        "SHARED_TEXT.MEDIA.TAKE_PHOTO_VIDEO" | translate
+      }}</ng-template>
     </ion-button>
 
     <span>Or</span>

@@ -420,6 +420,7 @@ export class StaticDataService {
     mpg: "video/mpeg",
     mp2: "video/mpeg",
     mp4: "video/mp4",
+    webm: "video/webm",
     "3gp": "video/3gp",
     ogg: "application/ogg",
     phtml: "application/x-httpd-php",

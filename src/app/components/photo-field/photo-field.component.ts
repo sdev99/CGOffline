@@ -2,7 +2,11 @@ import { Component, Input, OnDestroy } from "@angular/core";
 import { PhotoService } from "../../services/photo.service";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { SharedDataService } from "../../services/shared-data.service";
-import { ActionSheetController, NavController } from "@ionic/angular";
+import {
+  ActionSheetController,
+  ModalController,
+  NavController,
+} from "@ionic/angular";
 import { StaticDataService } from "../../services/static-data.service";
 import {
   MediaCapture,
@@ -15,6 +19,7 @@ import { Capacitor } from "@capacitor/core";
 import { FilehandlerService } from "src/app/services/filehandler.service";
 import { UtilService } from "src/app/services/util.service";
 import { TranslateService } from "@ngx-translate/core";
+import { VideorecordPage } from "src/app/modals/videorecord/videorecord.page";
 
 @Component({
   selector: "app-photo-field",
@@ -42,6 +47,8 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
 
   photoThumbnail: any;
 
+  isWebApp: Boolean = UtilService.isWebApp();
+
   private onChange: any = (image: any) => {};
   private onTouch: any = () => {};
 
@@ -54,7 +61,8 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
     public utilService: UtilService,
     public filehandlerService: FilehandlerService,
     public sharedDataService: SharedDataService,
-    public actionSheetController: ActionSheetController
+    public actionSheetController: ActionSheetController,
+    public modalController: ModalController
   ) {}
 
   registerOnChange(fn: any): void {
@@ -95,20 +103,42 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
     });
   }
 
-  addVideoFromCamera() {
-    const options: CaptureVideoOptions = { limit: 1, duration: 3600 };
-    this.mediaCapture.captureVideo(options).then(
-      (data: MediaFile[]) => {
-        this.isVideo = true;
-        const capturedFile = data[0];
-        const videoUrl = capturedFile.fullPath;
-        this.videoUrl = Capacitor.convertFileSrc(videoUrl);
-        this.photoAdded(videoUrl);
-      },
-      (err: CaptureError) => {
-        console.error(err);
-      }
-    );
+  async addVideoFromCamera() {
+    if (UtilService.isWebApp()) {
+      const modal = await this.modalController.create({
+        component: VideorecordPage,
+        swipeToClose: false,
+        showBackdrop: false,
+        backdropDismiss: false,
+        animated: true,
+        componentProps: {},
+        cssClass: "video-record-modal",
+      });
+      await modal.present();
+
+      modal.onWillDismiss().then(({ data }) => {
+        if (data.status) {
+          this.isVideo = true;
+          const videoData = data.data;
+          this.videoUrl = videoData;
+          this.photoAdded(videoData);
+        }
+      });
+    } else {
+      const options: CaptureVideoOptions = { limit: 1, duration: 3600 };
+      this.mediaCapture.captureVideo(options).then(
+        (data: MediaFile[]) => {
+          this.isVideo = true;
+          const capturedFile = data[0];
+          const videoUrl = capturedFile.fullPath;
+          this.videoUrl = Capacitor.convertFileSrc(videoUrl);
+          this.photoAdded(videoUrl);
+        },
+        (err: CaptureError) => {
+          console.error(err);
+        }
+      );
+    }
   }
 
   async choosePhotoVideoOption() {
