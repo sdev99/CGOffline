@@ -95,6 +95,7 @@ export class EnumService {
     USER_PROFILE: "user_profile",
     API_ACCESS_KEY: "api_access_key",
     LOGIN_WITH_OKTA: "login_with_okta",
+    LOGIN_WITH_OKTA_FOR_EMAIL: "login_with_okta_for_email",
     COMPANY_OKTA_DETAILS: "company_okta_details",
     API_TOKEN: "api_token",
     PUSH_TOKEN: "push_token",

@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 import { environment } from "src/environments/environment";
 import { AuthGuard } from "./helpers/auth.guard";
 import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
+import { OktaResponsePage } from "./pages/okta-response/okta-response.page";
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
   {
     path: "checkoktaenable",
     component: CheckoktaenablePage,
+  },
+  {
+    path: "oktaresponse",
+    component: OktaResponsePage,
   },
   {
     path: "login",

@@ -87,61 +87,67 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   }
 
   async loginWithOkta(email) {
-    const loginUrl =
-      environment.siteBaseUrl +
-      "/Login/OKTA_Login?email=" +
-      email +
-      "&returnUrl=CG_Mobile";
+    let loginUrl = environment.siteBaseUrl + "/Login/OKTA_Login?email=" + email;
+    if (UtilService.isWebApp()) {
+      loginUrl = loginUrl + "&returnUrl=CG_WebApp";
+      localStorage.setItem(
+        EnumService.LocalStorageKeys.LOGIN_WITH_OKTA_FOR_EMAIL,
+        email
+      );
+      window.open(loginUrl, "_self");
+    } else {
+      loginUrl = loginUrl + "&returnUrl=CG_Mobile";
 
-    const browser = this.iab.create(loginUrl, "_blank", {
-      clearcache: "yes",
-      // clearsessioncache: "yes",
-      // cleardata: "yes",
-    });
-    browser.on("loadstart").subscribe((event) => {
-      const url = event.url;
+      const browser = this.iab.create(loginUrl, "_blank", {
+        clearcache: "yes",
+        // clearsessioncache: "yes",
+        // cleardata: "yes",
+      });
+      browser.on("loadstart").subscribe((event) => {
+        const url = event.url;
 
-      if (url.indexOf("OktaMResponse?success=1") !== -1) {
-        browser.close();
+        if (url.indexOf("OktaMResponse?success=1") !== -1) {
+          browser.close();
 
-        this.utilService.presentLoadingWithOptions();
+          this.utilService.presentLoadingWithOptions();
 
-        this.accountService.oktaUserSignIn(email).subscribe(
-          (user) => {
-            this.utilService.hideLoading();
-            if (user) {
-              localStorage.setItem(
-                EnumService.LocalStorageKeys.LOGIN_WITH_OKTA,
-                "true"
-              );
-              this.sharedDataService.isLoginAfterAppOpen = true;
-              this.navCtrl.navigateRoot("/tabs/dashboard");
-              if (
-                localStorage.getItem(
-                  EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED
-                ) === "true"
-              ) {
-                this.sharedDataService.updatePushSettingOnServer(true);
-              } else {
-                this.sharedDataService.updatePushSettingOnServer(false);
+          this.accountService.oktaUserSignIn(email).subscribe(
+            (user) => {
+              this.utilService.hideLoading();
+              if (user) {
+                localStorage.setItem(
+                  EnumService.LocalStorageKeys.LOGIN_WITH_OKTA,
+                  "true"
+                );
+                this.sharedDataService.isLoginAfterAppOpen = true;
+                this.navCtrl.navigateRoot("/tabs/dashboard");
+                if (
+                  localStorage.getItem(
+                    EnumService.LocalStorageKeys.PUSH_PERMISSION_ALLOWED
+                  ) === "true"
+                ) {
+                  this.sharedDataService.updatePushSettingOnServer(true);
+                } else {
+                  this.sharedDataService.updatePushSettingOnServer(false);
+                }
               }
+            },
+            ({ message }) => {
+              this.utilService.hideLoading();
+              this.navCtrl.navigateRoot("checkoktaenable", {
+                queryParams: { message },
+              });
             }
-          },
-          ({ message }) => {
-            this.utilService.hideLoading();
-            this.navCtrl.navigateRoot("checkoktaenable", {
-              queryParams: { message },
-            });
-          }
-        );
-      } else if (url.indexOf("OktaMResponse?success=0") !== -1) {
-        browser.close();
+          );
+        } else if (url.indexOf("OktaMResponse?success=0") !== -1) {
+          browser.close();
 
-        const errorMessage = UtilService.getQueryStringValue(url, "error");
-        this.navCtrl.navigateRoot("checkoktaenable", {
-          queryParams: { message: errorMessage },
-        });
-      }
-    });
+          const errorMessage = UtilService.getQueryStringValue(url, "error");
+          this.navCtrl.navigateRoot("checkoktaenable", {
+            queryParams: { message: errorMessage },
+          });
+        }
+      });
+    }
   }
 }
