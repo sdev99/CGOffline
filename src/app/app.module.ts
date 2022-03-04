@@ -42,11 +42,21 @@ import { Device } from "@ionic-native/device/ngx";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
 import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
+import { OktaResponsePage } from "./pages/okta-response/okta-response.page";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 
 @NgModule({
-  declarations: [AppComponent, TemplateDropdownComponent, CheckoktaenablePage],
-  entryComponents: [TemplateDropdownComponent, CheckoktaenablePage],
+  declarations: [
+    AppComponent,
+    TemplateDropdownComponent,
+    CheckoktaenablePage,
+    OktaResponsePage,
+  ],
+  entryComponents: [
+    TemplateDropdownComponent,
+    CheckoktaenablePage,
+    OktaResponsePage,
+  ],
   imports: [
     BrowserModule,
     FormsModule,

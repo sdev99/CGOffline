@@ -8,7 +8,6 @@ import { EnumService } from "src/app/services/enum.service";
 import { TranslateService } from "@ngx-translate/core";
 import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
-import { environment } from "src/environments/environment";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 
 @Component({
@@ -87,7 +86,8 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   }
 
   async loginWithOkta(email) {
-    let loginUrl = this.sharedDataService.siteBaseUrl + "/Login/OKTA_Login?email=" + email;
+    let loginUrl =
+      this.sharedDataService.siteBaseUrl + "/Login/OKTA_Login?email=" + email;
     if (UtilService.isWebApp()) {
       loginUrl = loginUrl + "&returnUrl=CG_WebApp";
       localStorage.setItem(
