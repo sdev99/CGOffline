@@ -20,7 +20,7 @@ export class ModalHeaderComponent implements OnInit {
 
   showCloseButton = true;
   constructor() {
-    if (environment.isWebApp) {
+    if (environment.isFormPreview) {
       this.showCloseButton = false;
     }
   }

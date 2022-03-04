@@ -102,7 +102,7 @@ export class UtilService {
   }
 
   static isWebApp() {
-    return !environment.isWebApp && !Capacitor.isNative;
+    return !environment.isFormPreview && !Capacitor.isNative;
   }
 
   static appendZero(num) {

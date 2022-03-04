@@ -64,6 +64,11 @@ const allEnvironmentSiteUrl = {
   staging: "https://besafetech-test.com",
   dev: "https://cg.utopia-test.com",
 };
+const webAppAllEnvironmentDomain = {
+  prod: "https://access.be-safetech.com",
+  staging: "https://access.besafetech-test.com",
+  dev: "https://cgaccess.utopia-test.com",
+};
 
 @Injectable({
   providedIn: "root",
@@ -191,19 +196,38 @@ export class SharedDataService {
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {
     // Set dynamic api url for WebApp based on domain
-    if (environment.isWebApp || UtilService.isWebApp()) {
+    if (environment.isFormPreview || UtilService.isWebApp()) {
       const currentHost = window.location.host;
-      var apiUrlDevHostname = new URL(allEnvironmentSiteUrl.dev).hostname;
-      var apiUrlStagingHostname = new URL(allEnvironmentSiteUrl.staging)
+
+      // Forpreview site domain
+      const apiUrlDevHostname = new URL(allEnvironmentSiteUrl.dev).hostname;
+      const apiUrlStagingHostname = new URL(allEnvironmentSiteUrl.staging)
         .hostname;
-      var apiUrlProdHostname = new URL(allEnvironmentSiteUrl.prod).hostname;
-      if (currentHost === apiUrlDevHostname) {
+      const apiUrlProdHostname = new URL(allEnvironmentSiteUrl.prod).hostname;
+
+      // Webapp Site Domain
+      const siteDevHostname = new URL(webAppAllEnvironmentDomain.dev).hostname;
+      const siteStagingHostname = new URL(webAppAllEnvironmentDomain.staging)
+        .hostname;
+      const siteProdHostname = new URL(webAppAllEnvironmentDomain.prod)
+        .hostname;
+
+      if (
+        currentHost === apiUrlDevHostname ||
+        currentHost === siteDevHostname
+      ) {
         this.apiBaseUrl = allEnvironmentSiteUrl.dev + apiPath;
         this.siteBaseUrl = allEnvironmentSiteUrl.dev;
-      } else if (currentHost === apiUrlStagingHostname) {
+      } else if (
+        currentHost === apiUrlStagingHostname ||
+        currentHost === siteStagingHostname
+      ) {
         this.apiBaseUrl = allEnvironmentSiteUrl.staging + apiPath;
         this.siteBaseUrl = allEnvironmentSiteUrl.staging;
-      } else if (currentHost === apiUrlProdHostname) {
+      } else if (
+        currentHost === apiUrlProdHostname ||
+        currentHost === siteProdHostname
+      ) {
         this.apiBaseUrl = allEnvironmentSiteUrl.prod + apiPath;
         this.siteBaseUrl = allEnvironmentSiteUrl.prod;
       }
@@ -1104,7 +1128,7 @@ export class SharedDataService {
     havAnswerDetail: HavAnswerDetail = null,
     workPermitAnswer: WorkPermitAnswer = null
   ) {
-    if (!environment.isWebApp) {
+    if (!environment.isFormPreview) {
       // Prevent app sleep while submiting form
       this.insomnia.keepAwake().then(
         () => console.log("keepAwake success"),

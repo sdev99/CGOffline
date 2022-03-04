@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  isWebApp: false,
+  isFormPreview: false,
   siteBaseUrl: "https://cg.utopia-test.com",
 };
 

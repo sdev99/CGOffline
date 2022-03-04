@@ -446,7 +446,7 @@ const routes: Routes = [
   },
 ];
 
-const webAppRoutes: Routes = [
+const formPreviewRoutes: Routes = [
   {
     path: "",
     loadChildren: () =>
@@ -502,10 +502,13 @@ const webAppRoutes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(environment.isWebApp ? webAppRoutes : routes, {
-      preloadingStrategy: PreloadAllModules,
-      onSameUrlNavigation: "reload",
-    }),
+    RouterModule.forRoot(
+      environment.isFormPreview ? formPreviewRoutes : routes,
+      {
+        preloadingStrategy: PreloadAllModules,
+        onSameUrlNavigation: "reload",
+      }
+    ),
   ],
   exports: [RouterModule],
 })

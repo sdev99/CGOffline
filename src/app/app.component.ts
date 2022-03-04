@@ -160,7 +160,7 @@ export class AppComponent {
         this.checkForToken(() => {
           this.apiService.getTimeZoneList().subscribe(() => {});
 
-          if (!environment.isWebApp) {
+          if (!environment.isFormPreview) {
             if (UtilService.isWebApp()) {
               this.checkDeviceForDeticatedMode(({ isDeviceAssigned, data }) => {
                 this.appSettingLoaded(isDeviceAssigned, data);
@@ -185,7 +185,7 @@ export class AppComponent {
   }
 
   getDeviceUniqueId = (callBack) => {
-    if (!environment.isWebApp && UtilService.isWebApp()) {
+    if (!environment.isFormPreview && UtilService.isWebApp()) {
       this.sharedDataService.deviceUID = UtilService.uniqueIdForWebApp();
       UtilService.fireCallBack(callBack);
     } else {
@@ -218,7 +218,7 @@ export class AppComponent {
   };
 
   setupDeepLink = () => {
-    if (!environment.isWebApp) {
+    if (!environment.isFormPreview) {
       // reset password url https://cg.utopia-test.com/Login/ResetPassword?code=TTQ4LOM8
       // setup new account https://cg.utopia-test.com/Login/AccountSetup/545a1db3-f91c-48eb-be17-b9e4dd346322
       //

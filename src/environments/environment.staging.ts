@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  isWebApp: false,
+  isFormPreview: false,
   siteBaseUrl: "https://besafetech-test.com",
 };

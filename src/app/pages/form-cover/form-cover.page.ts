@@ -43,7 +43,7 @@ export class FormCoverPage {
     public utilService: UtilService,
     public sanitizer: DomSanitizer
   ) {
-    if (environment.isWebApp) {
+    if (environment.isFormPreview) {
       this.route.queryParams.subscribe((param) => {
         if (param.userId) {
           sharedDataService.userId = param.userId;
@@ -82,7 +82,7 @@ export class FormCoverPage {
         .catch(() => {});
     } catch (error) {}
 
-    if (!environment.isWebApp) {
+    if (!environment.isFormPreview) {
       if (
         this.sharedDataService.viewFormFor ===
           EnumService.ViewFormForType.Activity ||
