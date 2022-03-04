@@ -58,6 +58,13 @@ import { Insomnia } from "@ionic-native/insomnia/ngx";
 
 const { PushNotifications, Permissions } = Plugins;
 
+const apiPath: string = "/x4wnyp56gow2ffl/api";
+const allEnvironmentSiteUrl = {
+  prod: "https://login.be-safetech.com",
+  staging: "https://besafetech-test.com",
+  dev: "https://cg.utopia-test.com",
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -65,7 +72,8 @@ export class SharedDataService {
   apiServiceRerence: ApiService;
   accountServiceRef: AccountService;
 
-  apiBaseUrl = environment.apiUrl;
+  apiBaseUrl = environment.siteBaseUrl + apiPath;
+  siteBaseUrl = environment.siteBaseUrl;
 
   myCurrentGeoLocation: GeolocationPosition;
 
@@ -183,17 +191,21 @@ export class SharedDataService {
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {
     // Set dynamic api url for WebApp based on domain
-    if (environment.isWebApp) {
+    if (environment.isWebApp || UtilService.isWebApp()) {
       const currentHost = window.location.host;
-      var apiUrlDevHostname = new URL(environment.apiUrlDev).hostname;
-      var apiUrlStagingHostname = new URL(environment.apiUrlStaging).hostname;
-      var apiUrlProdHostname = new URL(environment.apiUrlProd).hostname;
+      var apiUrlDevHostname = new URL(allEnvironmentSiteUrl.dev).hostname;
+      var apiUrlStagingHostname = new URL(allEnvironmentSiteUrl.staging)
+        .hostname;
+      var apiUrlProdHostname = new URL(allEnvironmentSiteUrl.prod).hostname;
       if (currentHost === apiUrlDevHostname) {
-        this.apiBaseUrl = environment.apiUrlDev;
+        this.apiBaseUrl = allEnvironmentSiteUrl.dev + apiPath;
+        this.siteBaseUrl = allEnvironmentSiteUrl.dev;
       } else if (currentHost === apiUrlStagingHostname) {
-        this.apiBaseUrl = environment.apiUrlStaging;
+        this.apiBaseUrl = allEnvironmentSiteUrl.staging + apiPath;
+        this.siteBaseUrl = allEnvironmentSiteUrl.staging;
       } else if (currentHost === apiUrlProdHostname) {
-        this.apiBaseUrl = environment.apiUrlProd;
+        this.apiBaseUrl = allEnvironmentSiteUrl.prod + apiPath;
+        this.siteBaseUrl = allEnvironmentSiteUrl.prod;
       }
     }
 

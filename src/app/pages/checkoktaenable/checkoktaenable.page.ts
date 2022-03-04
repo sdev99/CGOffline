@@ -87,7 +87,7 @@ export class CheckoktaenablePage implements OnInit, OnDestroy {
   }
 
   async loginWithOkta(email) {
-    let loginUrl = environment.siteBaseUrl + "/Login/OKTA_Login?email=" + email;
+    let loginUrl = this.sharedDataService.siteBaseUrl + "/Login/OKTA_Login?email=" + email;
     if (UtilService.isWebApp()) {
       loginUrl = loginUrl + "&returnUrl=CG_WebApp";
       localStorage.setItem(
