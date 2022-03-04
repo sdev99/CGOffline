@@ -17,7 +17,11 @@ import { File } from "@ionic-native/file/ngx";
 import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { CameraPreview } from "@ionic-native/camera-preview/ngx";
-import { CommonModule } from "@angular/common";
+import {
+  CommonModule,
+  HashLocationStrategy,
+  LocationStrategy,
+} from "@angular/common";
 import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
 import { DirectivesModule } from "./directives/directives.module";
 import { HTTP } from "@ionic-native/http/ngx";
@@ -111,6 +115,7 @@ import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
       useClass: HttpConfigInterceptor,
       multi: true,
     },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
 
   bootstrap: [AppComponent],
