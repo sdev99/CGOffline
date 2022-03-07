@@ -31,6 +31,8 @@ export class PhotoService {
           callBack && callBack(media, "image");
         } else if (media.indexOf("video") !== -1) {
           callBack && callBack(media, "video");
+        } else {
+          callBack && callBack(media, "image");
         }
       },
       "photovideo"
@@ -67,6 +69,9 @@ export class PhotoService {
           base64String.replace("data:", "").replace(/^.+,/, "");
           input = null;
           callBack && callBack(base64String);
+        };
+        reader.onerror = async () => {
+          callBack && callBack("");
         };
       }
       /*} else {

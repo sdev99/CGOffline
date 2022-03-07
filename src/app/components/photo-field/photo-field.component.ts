@@ -179,7 +179,6 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
       } else {
         extension = urlOrBase64Data.split(".").pop().toLowerCase();
       }
-      debugger;
       if (isVideo) {
         if (StaticDataService.supportedVideoFormats.indexOf(extension) === -1) {
           this.translateService
