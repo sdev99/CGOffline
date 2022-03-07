@@ -172,66 +172,64 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   }
 
   addPhotoFromLibrary() {
-    if (UtilService.isWebApp()) {
-      this.photoService.chooseMediaFromAlbum((result, type) => {
-        if (type === "video") {
+    const onPhotoVideoAdded = (urlOrBase64Data, isVideo) => {
+      let extension = "";
+      if (UtilService.IsBase64Sring(urlOrBase64Data)) {
+        extension = urlOrBase64Data.match(/[^:/]\w+(?=;|,)/)[0];
+      } else {
+        extension = urlOrBase64Data.split(".").pop().toLowerCase();
+      }
+      debugger;
+      if (isVideo) {
+        if (StaticDataService.supportedVideoFormats.indexOf(extension) === -1) {
+          this.translateService
+            .get("SHARED_TEXT.MEDIA.VIDEO_FORMAT_NOT_SUPPORTED")
+            .subscribe((res) => {
+              this.utilService.showAlert(res);
+            });
+        } else {
           this.isVideo = true;
-          this.videoUrl = result;
-          this.photoAdded(result);
+          const videoUrl = urlOrBase64Data;
+
+          if (UtilService.isWebApp()) {
+            this.videoUrl = videoUrl;
+            this.photoAdded(videoUrl);
+          } else {
+            this.filehandlerService.saveFileOnDevicePath(
+              videoUrl,
+              StaticDataService.formImagesFolderName,
+              (status, response) => {
+                this.photoService.cleanCamera();
+                if (status) {
+                  this.videoUrl = Capacitor.convertFileSrc(response);
+                  this.photoAdded(response);
+                }
+              }
+            );
+          }
+        }
+      } else {
+        if (StaticDataService.supportedImageFormats.indexOf(extension) === -1) {
+          this.translateService
+            .get("SHARED_TEXT.MEDIA.IMAGE_FORMAT_NOT_SUPPORTED")
+            .subscribe((res) => {
+              this.utilService.showAlert(res);
+            });
         } else {
           this.isVideo = false;
-          this.savePhoto(result);
+          this.savePhoto(urlOrBase64Data);
         }
+      }
+    };
+
+    if (UtilService.isWebApp()) {
+      this.photoService.chooseMediaFromAlbum((result, type) => {
+        onPhotoVideoAdded(result, type === "video");
       });
     } else {
       this.photoService.takePhotoFromGallery(
         (photo) => {
-          debugger;
-
-          let extension = "";
-          if (UtilService.IsBase64Sring(photo.dataUrl)) {
-            extension = photo.dataUrl.match(/[^:/]\w+(?=;|,)/)[0];
-          } else {
-            extension = photo.dataUrl.split(".").pop().toLowerCase();
-          }
-
-          if (photo.isVideo) {
-            if (
-              ["mov", "mp4", "mpeg", "mpg", "wmv", "3gp"].indexOf(extension) ===
-              -1
-            ) {
-              this.translateService
-                .get("SHARED_TEXT.MEDIA.VIDEO_FORMAT_NOT_SUPPORTED")
-                .subscribe((res) => {
-                  this.utilService.showAlert(res);
-                });
-            } else {
-              this.isVideo = true;
-              const videoUrl = photo.dataUrl;
-              this.filehandlerService.saveFileOnDevicePath(
-                videoUrl,
-                StaticDataService.formImagesFolderName,
-                (status, response) => {
-                  this.photoService.cleanCamera();
-                  if (status) {
-                    this.videoUrl = Capacitor.convertFileSrc(response);
-                    this.photoAdded(response);
-                  }
-                }
-              );
-            }
-          } else {
-            if (["jpeg", "jpg", "png", "gif"].indexOf(extension) === -1) {
-              this.translateService
-                .get("SHARED_TEXT.MEDIA.IMAGE_FORMAT_NOT_SUPPORTED")
-                .subscribe((res) => {
-                  this.utilService.showAlert(res);
-                });
-            } else {
-              this.isVideo = false;
-              this.savePhoto(photo.dataUrl);
-            }
-          }
+          onPhotoVideoAdded(photo.dataUrl, photo.isVideo);
         },
         true,
         true

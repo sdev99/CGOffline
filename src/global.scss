@@ -603,3 +603,14 @@ app-topnavigations-segments-dm {
 .video-record-modal {
   --height: 600px !important;
 }
+
+pwa-camera::ng-deep,
+pwa-camera-modal-instance::ng-deep,
+pwa-camera-modal-instance::ng-deep pwa-camera::ng-deep {
+  .pick-image {
+    display: none !important;
+  }
+}
+.pick-image {
+  display: none !important;
+}

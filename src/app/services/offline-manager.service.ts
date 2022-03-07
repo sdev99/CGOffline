@@ -69,64 +69,70 @@ export class OfflineManagerService {
   }
 
   public dbSetUp() {
-    if (UtilService.isLocalHost()) {
-      this.dbInstance = window.openDatabase(
-        this.db_name,
-        "1.0",
-        "My WebSQL Database",
-        2 * 1024 * 1024
-      );
-      this.createTables();
-    } else {
-      this.platform.ready().then(() => {
-        this.sqlite
-          .create({
-            name: this.db_name,
-            location: "default",
-          })
-          .then((sqLite: SQLiteObject) => {
-            this.dbInstance = sqLite;
-            this.createTables();
-          })
-          .catch((error) => alert(JSON.stringify(error)));
-      });
+    if (!UtilService.isWebApp()) {
+      if (UtilService.isLocalHost()) {
+        this.dbInstance = window.openDatabase(
+          this.db_name,
+          "1.0",
+          "My WebSQL Database",
+          2 * 1024 * 1024
+        );
+        this.createTables();
+      } else {
+        this.platform.ready().then(() => {
+          this.sqlite
+            .create({
+              name: this.db_name,
+              location: "default",
+            })
+            .then((sqLite: SQLiteObject) => {
+              this.dbInstance = sqLite;
+              this.createTables();
+            })
+            .catch((error) => alert(JSON.stringify(error)));
+        });
+      }
     }
   }
 
   dbQuery = (sql: any, values: any = []) => {
     return new Promise((resolve, reject) => {
-      if (this.dbInstance) {
-        if (!UtilService.isLocalHost()) {
-          this.dbInstance.executeSql(sql, values).then(
-            (response: any) => {
-              resolve(response);
-            },
-            (err) => {
-              debugger;
-              console.log("QUERY Error ", err);
-              reject(err);
-            }
-          );
-        } else {
-          this.dbInstance.transaction((tx) => {
-            tx.executeSql(
-              sql,
-              values,
-              (tx, results) => {
-                resolve(results);
+      if (UtilService.isWebApp()) {
+        reject({ message: "Websql not supported in web app" });
+      } else {
+        if (this.dbInstance) {
+          if (!UtilService.isLocalHost()) {
+            this.dbInstance.executeSql(sql, values).then(
+              (response: any) => {
+                resolve(response);
               },
-              (tx, err) => {
+              (err) => {
                 debugger;
                 console.log("QUERY Error ", err);
                 reject(err);
               }
             );
-          });
+          } else {
+            this.dbInstance.transaction((tx) => {
+              tx.executeSql(
+                sql,
+                values,
+                (tx, results) => {
+                  resolve(results);
+                },
+                (tx, err) => {
+                  debugger;
+                  console.log("QUERY Error ", err);
+                  reject(err);
+                }
+              );
+            });
+          }
+        } else {
+          setTimeout(() => {
+            this.dbQuery(sql, values);
+          }, 300);
         }
-      } else {
-        setTimeout(() => {
-          this.dbQuery(sql, values);
-        }, 300);
       }
     });
   };

@@ -353,6 +353,9 @@ export class StaticDataService {
     },
   ];
 
+  static supportedVideoFormats = ["mov", "mp4", "mpeg", "mpg", "wmv", "3gp"];
+  static supportedImageFormats = ["jpeg", "jpg", "png", "gif"];
+
   static videoFormats = [
     "avi",
     "flv",
