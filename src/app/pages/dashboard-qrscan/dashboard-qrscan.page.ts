@@ -196,7 +196,11 @@ export class DashboardQrscanPage implements OnInit {
         // Not working on iOS standalone mode!
         if (!this.videoStream) {
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
+            video: {
+              facingMode: "environment",
+              width: window.innerWidth,
+              height: window.innerHeight,
+            },
           });
           this.videoStream = stream;
           this.videoElement.srcObject = stream;

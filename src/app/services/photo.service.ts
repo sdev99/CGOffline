@@ -104,7 +104,7 @@ export class PhotoService {
       allowEditing = true;
     }
 
-    if (UtilService.isLocalHost()) {
+    if (UtilService.isLocalHost() || UtilService.isWebApp()) {
       const capturedPhoto = await Plugins.Camera.getPhoto({
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera,
