@@ -57,7 +57,9 @@
       "PASSWORD_PLACEHOLDER": "Enter password",
       "FORGOT_PASSWORD": "Forgot Password?",
       "TERMS_CONDITIONS": "Terms & Conditions",
-      "SIGN_IN_WITH": "Sign in with"
+      "SIGN_IN_WITH": "Sign in with",
+      "BROWSER_PAIRING":"Browser Pairing"
+
     },
     "CHECK_OKTA_ENABLE": {
       "DESCRIPTION": "Please enter your email address to sign in",

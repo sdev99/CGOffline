@@ -68,7 +68,7 @@
 
     <div class="vertically-fill-space"></div>
 
-    <div class="bottom-view">
+    <div class="bottom-view" >
       <!--            <ion-select class="login-language-dropdown" placeholder="ENGLISH" interface="action-sheet"-->
       <!--                        cancelText="cancel"-->
       <!--                        [(ngModel)]="selectedLanguage">-->
@@ -81,6 +81,7 @@
 			</ion-button> -->
 
       <ion-text class="device-uid">
+        <ng-container *ngIf="!isWebApp; else idForWeb">
         <span
           *ngIf="sharedDataService.deviceUID && sharedDataService.deviceUID.length > 0"
         >
@@ -89,6 +90,19 @@
         <span class="selectable-text"
           >{{UtilService.modifyUDID(sharedDataService.deviceUID)}}</span
         >
+
+      </ng-container>
+      <ng-template #idForWeb>
+        <ion-button
+        fill="clear"
+        class="forgot-password-btn"
+        routerLink="/browserpairing"
+      >
+        {{'PAGESPECIFIC_TEXT.LOGIN.BROWSER_PAIRING' | translate}}
+      </ion-button>
+      </ng-template>
+
+
       </ion-text>
     </div>
   </div>
