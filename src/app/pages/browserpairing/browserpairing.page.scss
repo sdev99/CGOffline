@@ -8,7 +8,33 @@ ion-content {
 ion-card {
   box-shadow: none;
   border: 1px solid black;
+  border-radius: 0px;
+
+  font-family: Inconsolata;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 96px;
+  line-height: 101px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.65em;
+
+  /* Txt */
+
+  color: #171538;
+
+  ion-card-title {
+    text-align: center;
+  }
 }
+
+.dash.ios.hydrated {
+  border: none;
+}
+
 .heading {
   font-family: IBM Plex Sans;
   font-style: normal;
