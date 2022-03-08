@@ -24,6 +24,8 @@ export class LoginPage implements OnInit {
   isSubmitted = false;
   loginForm: FormGroup;
 
+  isWebApp = UtilService.isWebApp();
+
   languages = DemoDataService.languages.clone();
   selectedLanguage = this.languages[0].code;
 

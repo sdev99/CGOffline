@@ -480,11 +480,20 @@ export class UtilService {
       EnumService.LocalStorageKeys.UNIQUE_WEBAPP_ID
     );
     if (!uniqueId) {
+      const randomString = (length, chars) => {
+        let result = "";
+        for (var i = length; i > 0; --i)
+          result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+      };
       uniqueId = (
-        Math.random().toString(36).substring(2) +
-        Date.now().toString(36) +
-        Math.random().toString(36).substring(2)
+        randomString(2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") +
+        "-" +
+        randomString(2, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ") +
+        "-" +
+        randomString(2, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
       ).toUpperCase();
+
       localStorage.setItem(
         EnumService.LocalStorageKeys.UNIQUE_WEBAPP_ID,
         uniqueId
