@@ -76,7 +76,7 @@
     "jsqr": "^1.4.0",
     "jszip": "^3.7.1",
     "moment": "^2.29.1",
-    "rxjs": "^6.5.5",
+    "rxjs": "~6.5.5",
     "sdev99-cordova-disk-check-plugin": "^1.0.0",
     "sqli-cordova-disk-space-plugin": "github:sqli/sqli-cordova-disk-space-plugin",
     "tslib": "^2.0.0",
