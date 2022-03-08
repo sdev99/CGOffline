@@ -2,7 +2,9 @@
   <div class="content">
     <div class="device-is-offline">
       <ion-icon src="./assets/icon/Warning-icon.svg"></ion-icon>
-      <ion-label>Device is Offline</ion-label>
+      <ion-label
+        >{{isWebApp?"Browser is Offline":"Device is Offline"}}</ion-label
+      >
     </div>
 
     <ng-container *ngIf="isDeviceHaveOfflineData; else noOfflineDataView">
@@ -34,12 +36,24 @@
     </ng-container>
     <ng-template #noOfflineDataView>
       <div class="offline-desc">
-        It appears that device has lost connectivity and is now offline.This
-        device hasn't been synched with the server so it won't be possible to
-        use it while is offline.
+        <ng-container *ngIf="isWebApp;else offLineDeviceDesc">
+          It appears the device has lost connectivity and is now offline.<br />
+          This page will be automatically refreshed when connectivity <br />
+          is established again.
+        </ng-container>
+        <ng-template #offLineDeviceDesc>
+          It appears that device has lost connectivity and is now offline.This
+          device hasn't been synched with the server so it won't be possible to
+          use it while is offline.
+        </ng-template>
       </div>
-      <div class="offline-desc">Application will now exit.</div>
-      <ion-button class="action-btn" (click)="closeApp()"> Exit </ion-button>
+      <div class="offline-desc">
+        {{isWebApp?"You can also try refreshing the browser
+        window.":"Application will now exit."}}
+      </div>
+      <ion-button *ngIf="!isWebApp" class="action-btn" (click)="closeApp()">
+        Exit
+      </ion-button>
     </ng-template>
   </div>
 </ion-content>

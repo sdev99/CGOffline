@@ -22,7 +22,7 @@ export class DeviceOfflinePage implements OnInit {
   UtilService = UtilService;
   isDeviceHaveOfflineData = false;
   lastSyncDate;
-
+  isWebApp = UtilService.isWebApp();
   constructor(
     public navController: NavController,
     public modalController: ModalController,

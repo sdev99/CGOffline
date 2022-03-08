@@ -24,13 +24,14 @@
             "
             style="flex: none !important; margin-right: 0 !important"
             slot="start"
-            >UID</ion-label
+          >
+            {{ isWebApp ? "Pairing Code" : "UID" }}</ion-label
           >
           <ion-note color="medium" slot="end" class="selectable-text">{{
             UtilService.modifyUDID(sharedDataService.deviceUID)
           }}</ion-note>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="!isWebApp">
           <ion-label slot="start">Device Status</ion-label>
           <ion-chip *ngIf="isOnline" color="clear" slot="end">
             <ion-icon color="success" name="ellipse"></ion-icon>
