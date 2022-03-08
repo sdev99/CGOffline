@@ -444,6 +444,10 @@ const routes: Routes = [
         (m) => m.DeviceOfflinePageModule
       ),
   },
+  {
+    path: 'browserpairing',
+    loadChildren: () => import('./pages/browserpairing/browserpairing.module').then( m => m.BrowserpairingPageModule)
+  },
 ];
 
 const formPreviewRoutes: Routes = [

@@ -1,0 +1,42 @@
+ion-toolbar {
+  --border-style: none;
+}
+ion-content {
+  padding: 20px;
+}
+
+ion-card {
+  box-shadow: none;
+  border: 1px solid black;
+}
+.heading {
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 36px;
+  text-align: center;
+
+  /* Txt */
+
+  color: #171538;
+}
+.sub-heading {
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 30px;
+  /* or 214% */
+  padding: 20px;
+
+  text-align: center;
+
+  /* Txt */
+
+  color: #171538;
+}
+
+.otp {
+  display: flex;
+}
