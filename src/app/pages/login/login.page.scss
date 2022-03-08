@@ -94,6 +94,15 @@ ion-content {
       color: #ffffff;
       text-align: center;
       opacity: 0.5;
+      .browser-pairing-btn {
+        font-family: Inconsolata Regular;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 10px;
+        line-height: 10px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.8);
+      }
     }
   }
 

@@ -329,6 +329,12 @@ body * {
   font-weight: normal;
   src: url("./assets/fonts/Inconsolata-Regular.ttf");
 }
+@font-face {
+  font-family: "Inconsolata Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: url("./assets/fonts/Inconsolata-Bold.ttf");
+}
 
 @-webkit-keyframes rotate {
   from {

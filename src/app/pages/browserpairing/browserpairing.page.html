@@ -5,60 +5,26 @@
 </ion-header>
 
 <ion-content>
-  <div>
-    <h3 class="heading">Browser Pairing</h3>
-    <p class="sub-heading">
-      In order to have this browser paired for “dedicated mode” use, please
-      contact your company admin and share the code shown below. Refresh this
-      page when pairing is done.
-    </p>
+  <h3 class="heading">Browser Pairing</h3>
+  <p class="sub-heading">
+    In order to have this browser paired for “dedicated mode” use, please
+    contact your company admin and share the code shown below.<br />
+    Refresh this page when pairing is done.
+  </p>
+
+  <div class="code-view">
+    <div class="code-item">{{pairingCode[0]}}</div>
+    <div class="code-item">{{pairingCode[1]}}</div>
+    <div class="code-dash">{{pairingCode[2]}}</div>
+    <div class="code-item">{{pairingCode[3]}}</div>
+    <div class="code-item">{{pairingCode[4]}}</div>
+    <div class="code-dash">{{pairingCode[5]}}</div>
+    <div class="code-item">{{pairingCode[6]}}</div>
+    <div class="code-item">{{pairingCode[7]}}</div>
   </div>
 
-  <div class="otp">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>M</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>H</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    <ion-card class="dash">
-      <ion-card-title>-</ion-card-title>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>M</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>M</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    <ion-card class="dash">
-      <ion-card-title>-</ion-card-title>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>M</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>M</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-
-    
-  </div>
+  <p class="suggestion">
+    You may need to have this browser paired again if the browser cache is
+    cleaned.
+  </p>
 </ion-content>

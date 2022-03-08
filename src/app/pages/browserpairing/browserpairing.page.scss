@@ -42,27 +42,66 @@ ion-card {
   font-size: 28px;
   line-height: 36px;
   text-align: center;
-
-  /* Txt */
-
   color: #171538;
+  margin-top: 174px;
+  margin-bottom: 0;
 }
 .sub-heading {
+  margin-top: 12px;
   font-family: IBM Plex Sans;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
   line-height: 30px;
-  /* or 214% */
-  padding: 20px;
-
   text-align: center;
-
-  /* Txt */
-
   color: #171538;
+  padding: 0 20px;
 }
 
-.otp {
+.code-view {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 61px;
+  .code-item {
+    border: 1px solid #cacee1;
+    border-radius: 4px;
+    width: 94px;
+    min-width: 94px;
+    height: 113px;
+    font-family: Inconsolata Bold;
+    font-style: normal;
+    font-size: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #171538;
+    margin: 0 8px;
+  }
+  .code-dash {
+    width: 48px;
+    min-width: 48px;
+    height: 101px;
+    margin: 0 22px;
+    font-family: Inconsolata Bold;
+    font-style: normal;
+    font-size: 96px;
+    display: flex;
+    align-items: center;
+    color: #171538;
+  }
+}
+
+.suggestion {
+  margin-top: 55px;
+  padding: 0 20px;
+  font-family: IBM Plex Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 30px;
+  text-align: center;
+  color: #171538;
 }
