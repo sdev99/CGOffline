@@ -38,8 +38,6 @@ export class FormsDmPage implements OnInit {
 
   offlineMode: boolean = false;
 
-  isWebApp = UtilService.isWebApp();
-
   constructor(
     private dynamicRouteService: DynamicRouteService,
     private navController: NavController,

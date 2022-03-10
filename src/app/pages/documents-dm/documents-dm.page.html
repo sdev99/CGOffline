@@ -32,7 +32,7 @@
     *ngIf="(listType === EnumService.DedicatedModeDocumentListType.Available && availableDocuments?.length>0) || (listType === EnumService.DedicatedModeDocumentListType.Archive && archivedDocuments?.length>0); else noDocument"
     class="activity-list"
     lines="full"
-    [ngClass]="{'webapp':isWebApp, 'available-list':listType === EnumService.DedicatedModeDocumentListType.Available, 'archived-list':listType === EnumService.DedicatedModeDocumentListType.Archive}"
+    [ngClass]="{'available-list':listType === EnumService.DedicatedModeDocumentListType.Available, 'archived-list':listType === EnumService.DedicatedModeDocumentListType.Archive}"
   >
     <ng-container
       *ngIf="listType === EnumService.DedicatedModeDocumentListType.Available"
@@ -77,7 +77,7 @@
         [colFirst]="item.documentTitle"
         colSecond="Signed by"
         [disabled]="sharedDataService.offlineMode?!item.documentFileName:false"
-        [colSecondHighlighted]="isWebApp?item.signedByName||'-':item.signedByName"
+        [colSecondHighlighted]="item.signedByName||'-'"
         colThird="Signed"
         [colThirdHighlighted]="item.formattedCreatedDate"
       ></app-archived-item>

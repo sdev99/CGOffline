@@ -26,8 +26,6 @@ export class PermitsDmPage implements OnInit {
 
   isLoadingPermits = false;
 
-  isWebApp = UtilService.isWebApp();
-
   constructor(
     public utilService: UtilService,
     public sharedDataService: SharedDataService,

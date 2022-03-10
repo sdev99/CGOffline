@@ -32,7 +32,7 @@
     *ngIf="(listType === EnumService.DedicatedModeFormListType.Available && availableForms?.length>0) || (listType === EnumService.DedicatedModeFormListType.Archive && archivedForms?.length>0); else noDocument"
     class="activity-list"
     lines="full"
-    [ngClass]="{'webapp':isWebApp, 'available-list':listType === EnumService.DedicatedModeFormListType.Available, 'archived-list':listType === EnumService.DedicatedModeFormListType.Archive}"
+    [ngClass]="{'available-list':listType === EnumService.DedicatedModeFormListType.Available, 'archived-list':listType === EnumService.DedicatedModeFormListType.Archive}"
   >
     <ng-container
       *ngIf="listType === EnumService.DedicatedModeFormListType.Available"

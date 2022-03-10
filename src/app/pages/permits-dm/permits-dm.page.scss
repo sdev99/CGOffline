@@ -1,25 +1,23 @@
 ion-content {
   ion-list {
-    &.webapp {
-      ::ng-deep app-archived-item {
-        .col-one {
-          width: 35vw !important;
-          max-width: unset !important;
-          min-width: unset !important;
-          white-space: normal !important;
-        }
-        .col-two {
-          width: 20vw !important;
-          max-width: unset !important;
-          min-width: unset !important;
-          white-space: normal !important;
-        }
-        .col-three {
-          width: 35vw !important;
-          max-width: unset !important;
-          min-width: unset !important;
-          white-space: normal !important;
-        }
+    ::ng-deep app-archived-item {
+      .col-one {
+        width: 35vw !important;
+        max-width: unset !important;
+        min-width: unset !important;
+        white-space: normal !important;
+      }
+      .col-two {
+        width: 20vw !important;
+        max-width: unset !important;
+        min-width: unset !important;
+        white-space: normal !important;
+      }
+      .col-three {
+        width: 35vw !important;
+        max-width: unset !important;
+        min-width: unset !important;
+        white-space: normal !important;
       }
     }
   }

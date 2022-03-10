@@ -18,7 +18,6 @@
     *ngIf="(listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0) || (listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0); else noDocument"
     class="activity-list"
     lines="full"
-    [ngClass]="{'webapp':isWebApp}"
   >
     <ng-container
       *ngIf="listType === EnumService.DedicatedModePermitListType.Live"
