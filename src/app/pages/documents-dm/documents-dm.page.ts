@@ -38,6 +38,8 @@ export class DocumentsDmPage implements OnInit {
 
   offlineMode: boolean = false;
 
+  isWebApp = UtilService.isWebApp();
+
   constructor(
     private dynamicRouteService: DynamicRouteService,
     private navCtrl: NavController,

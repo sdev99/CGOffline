@@ -1,12 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { FilehandlerService } from "../../services/filehandler.service";
-import { DemoDataService } from "../../services/demo-data.service";
 import { UtilService } from "../../services/util.service";
 import { SharedDataService } from "../../services/shared-data.service";
-import { FormItem } from "../../_models/formItem";
-import { ArchivedDocumentDetail } from "../../_models/archivedDocumentDetail";
 import { Response } from "../../_models";
-import { NavController } from "@ionic/angular";
 import { ApiService } from "../../services/api.service";
 import { EnumService } from "../../services/enum.service";
 import { WorkPermitDetail } from "../../_models/workPermitDetail";
@@ -30,6 +25,8 @@ export class PermitsDmPage implements OnInit {
   archivedWorkPermits: Array<WorkPermitDetail>;
 
   isLoadingPermits = false;
+
+  isWebApp = UtilService.isWebApp();
 
   constructor(
     public utilService: UtilService,

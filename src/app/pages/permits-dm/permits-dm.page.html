@@ -1,56 +1,76 @@
 <ion-header>
-	<app-dashboard-header-dm [title]="sharedDataService.getCurrentCheckedInEntityName()"></app-dashboard-header-dm>
-	<app-topnavigations-btns-dm activeBtn="permit"></app-topnavigations-btns-dm>
-	<app-topnavigations-segments-dm
-		[active]="listType"
-		[options]="listTypes"
-		[search]="searchQuery"
-		(searching)="onSearch($event)"
-		(searchbarShowHide)="searchbarShowHide($event)"
-		(changed)="segmentChanged($event)"
-	></app-topnavigations-segments-dm>
+  <app-dashboard-header-dm
+    [title]="sharedDataService.getCurrentCheckedInEntityName()"
+  ></app-dashboard-header-dm>
+  <app-topnavigations-btns-dm activeBtn="permit"></app-topnavigations-btns-dm>
+  <app-topnavigations-segments-dm
+    [active]="listType"
+    [options]="listTypes"
+    [search]="searchQuery"
+    (searching)="onSearch($event)"
+    (searchbarShowHide)="searchbarShowHide($event)"
+    (changed)="segmentChanged($event)"
+  ></app-topnavigations-segments-dm>
 </ion-header>
 
 <ion-content>
-	<ion-list
-		*ngIf="(listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0) || (listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0); else noDocument"
-		class="activity-list"
-		lines="full"
-	>
-		<ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live">
-			<app-archived-item
-				*ngFor="let item of liveWorkPermits | listFilter:searchQuery:'formTitle'"
-				(itemSelect)="openLiveWorkPermit(item)"
-				[colFirst]="item.formTitle"
-				colSecond="issued"
-				[colSecondHighlighted]="item.formattedIssuedDate"
-				colThird="Valid for"
-				[colThirdHighlighted]="item.formattedExpiryDate"
-			></app-archived-item>
-		</ng-container>
+  <ion-list
+    *ngIf="(listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0) || (listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0); else noDocument"
+    class="activity-list"
+    lines="full"
+    [ngClass]="{'webapp':isWebApp}"
+  >
+    <ng-container
+      *ngIf="listType === EnumService.DedicatedModePermitListType.Live"
+    >
+      <app-archived-item
+        *ngFor="let item of liveWorkPermits | listFilter:searchQuery:'formTitle'"
+        (itemSelect)="openLiveWorkPermit(item)"
+        [colFirst]="item.formTitle"
+        colSecond="issued"
+        [colSecondHighlighted]="item.formattedIssuedDate"
+        colThird="Valid for"
+        [colThirdHighlighted]="item.formattedExpiryDate"
+      ></app-archived-item>
+    </ng-container>
 
-		<ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive">
-			<app-archived-item
-				*ngFor="let item of archivedWorkPermits | listFilter:searchQuery:'formTitle'"
-				(itemSelect)="openArchivedWorkPermit(item)"
-				[colFirst]="item.formTitle"
-				colSecond="issued"
-				[colSecondHighlighted]="item.formattedIssuedDate"
-				colThird="Valid for"
-				[colThirdHighlighted]="item.formattedExpiryDate"
-			></app-archived-item>
-		</ng-container>
-	</ion-list>
+    <ng-container
+      *ngIf="listType === EnumService.DedicatedModePermitListType.Archive"
+    >
+      <app-archived-item
+        *ngFor="let item of archivedWorkPermits | listFilter:searchQuery:'formTitle'"
+        (itemSelect)="openArchivedWorkPermit(item)"
+        [colFirst]="item.formTitle"
+        colSecond="issued"
+        [colSecondHighlighted]="item.formattedIssuedDate"
+        colThird="Valid for"
+        [colThirdHighlighted]="item.formattedExpiryDate"
+      ></app-archived-item>
+    </ng-container>
+  </ion-list>
 
-	<ng-template #noDocument>
-		<app-empty-message *ngIf="!isLoadingPermits" message="No permits available"></app-empty-message>
-	</ng-template>
+  <ng-template #noDocument>
+    <app-empty-message
+      *ngIf="!isLoadingPermits"
+      message="No permits available"
+    ></app-empty-message>
+  </ng-template>
 
-	<ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0">
-		<app-empty-message *ngIf="!isLoadingPermits && (liveWorkPermits | listFilter:searchQuery:'formTitle').length == 0" message="No Results Found"></app-empty-message>
-	</ng-container>
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModePermitListType.Live && liveWorkPermits?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingPermits && (liveWorkPermits | listFilter:searchQuery:'formTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
 
-	<ng-container *ngIf="listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0">
-		<app-empty-message *ngIf="!isLoadingPermits && (archivedWorkPermits | listFilter:searchQuery:'formTitle').length == 0" message="No Results Found"></app-empty-message>
-	</ng-container>
+  <ng-container
+    *ngIf="listType === EnumService.DedicatedModePermitListType.Archive && archivedWorkPermits?.length>0"
+  >
+    <app-empty-message
+      *ngIf="!isLoadingPermits && (archivedWorkPermits | listFilter:searchQuery:'formTitle').length == 0"
+      message="No Results Found"
+    ></app-empty-message>
+  </ng-container>
 </ion-content>
