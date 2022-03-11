@@ -398,7 +398,11 @@ export class FormAccidentReportPage {
                 }
               }
               if (this.screenOrientation.type.includes("landscape")) {
-                this.isShowOritationPortrait = true;
+                if (this.sharedDataService.isGalleryOrCameraOpened) {
+                  this.isShowOritationPortrait = false;
+                } else {
+                  this.isShowOritationPortrait = true;
+                }
               }
             }, 0);
           });

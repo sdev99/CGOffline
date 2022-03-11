@@ -189,6 +189,11 @@ export class AppComponent {
       this.sharedDataService.deviceUID = UtilService.uniqueIdForWebApp();
       UtilService.fireCallBack(callBack);
     } else {
+      // this.sharedDataService.deviceUID = "67DA70A1-FD31-4B48-81F6-74E9EB356632";
+      // this.sharedDataService.isTablet = true;
+      // UtilService.fireCallBack(callBack);
+      // return;
+
       this.uniqueDeviceID
         .get()
         .then((uuid: any) => {

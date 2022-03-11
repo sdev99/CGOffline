@@ -163,7 +163,11 @@ export class FormWorkpermitPage {
               this.isShowOritationPortrait = false;
             }
             if (this.screenOrientation.type.includes("landscape")) {
-              this.isShowOritationPortrait = true;
+              if (this.sharedDataService.isGalleryOrCameraOpened) {
+                this.isShowOritationPortrait = false;
+              } else {
+                this.isShowOritationPortrait = true;
+              }
             }
           });
         });

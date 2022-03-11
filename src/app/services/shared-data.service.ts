@@ -170,6 +170,7 @@ export class SharedDataService {
   availableWorkPermits;
 
   isOpenSubScreen = false;
+  isGalleryOrCameraOpened = false;
 
   workPermitAnswer: WorkPermitAnswer;
 
@@ -191,7 +192,6 @@ export class SharedDataService {
     public utilService: UtilService,
     public file: File,
     private insomnia: Insomnia,
-
     private filehandlerService: FilehandlerService,
     private screenOrientation: ScreenOrientation //  private translateService: TranslateService
   ) {

@@ -97,8 +97,10 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
   }
 
   addPhotoFromCamera() {
+    this.sharedDataService.isGalleryOrCameraOpened = true;
     this.photoService.takePhotoFromNativeCamera((photo) => {
       this.isVideo = false;
+      this.sharedDataService.isGalleryOrCameraOpened = false;
       this.savePhoto(photo.dataUrl);
     });
   }
@@ -125,9 +127,11 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
         }
       });
     } else {
+      this.sharedDataService.isGalleryOrCameraOpened = true;
       const options: CaptureVideoOptions = { limit: 1, duration: 3600 };
       this.mediaCapture.captureVideo(options).then(
         (data: MediaFile[]) => {
+          this.sharedDataService.isGalleryOrCameraOpened = false;
           this.isVideo = true;
           const capturedFile = data[0];
           const videoUrl = capturedFile.fullPath;
@@ -135,6 +139,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
           this.photoAdded(videoUrl);
         },
         (err: CaptureError) => {
+          this.sharedDataService.isGalleryOrCameraOpened = false;
           console.error(err);
         }
       );
@@ -226,8 +231,10 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
         onPhotoVideoAdded(result, type === "video");
       });
     } else {
+      this.sharedDataService.isGalleryOrCameraOpened = true;
       this.photoService.takePhotoFromGallery(
         (photo) => {
+          this.sharedDataService.isGalleryOrCameraOpened = false;
           onPhotoVideoAdded(photo.dataUrl, photo.isVideo);
         },
         true,
