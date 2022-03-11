@@ -400,6 +400,9 @@ export class FormAccidentReportPage {
               if (this.screenOrientation.type.includes("landscape")) {
                 if (this.sharedDataService.isGalleryOrCameraOpened) {
                   this.isShowOritationPortrait = false;
+                  this.screenOrientation.lock(
+                    this.screenOrientation.ORIENTATIONS.PORTRAIT
+                  );
                 } else {
                   this.isShowOritationPortrait = true;
                 }
@@ -423,10 +426,10 @@ export class FormAccidentReportPage {
         !this.sharedDataService.isOpenSubScreen &&
         !UtilService.isLocalHost()
       ) {
+        this.screenOrientationSubscribe.unsubscribe();
         this.screenOrientation.lock(
           this.screenOrientation.ORIENTATIONS.LANDSCAPE
         );
-        this.screenOrientationSubscribe.unsubscribe();
       }
     }
   }

@@ -165,6 +165,9 @@ export class FormWorkpermitPage {
             if (this.screenOrientation.type.includes("landscape")) {
               if (this.sharedDataService.isGalleryOrCameraOpened) {
                 this.isShowOritationPortrait = false;
+                this.screenOrientation.lock(
+                  this.screenOrientation.ORIENTATIONS.PORTRAIT
+                );
               } else {
                 this.isShowOritationPortrait = true;
               }
@@ -189,10 +192,10 @@ export class FormWorkpermitPage {
       if (this.sharedDataService.dedicatedMode) {
         if (!this.sharedDataService.isOpenSubScreen) {
           if (!UtilService.isLocalHost()) {
+            this.screenOrientationSubscribe.unsubscribe();
             this.screenOrientation.lock(
               this.screenOrientation.ORIENTATIONS.LANDSCAPE
             );
-            this.screenOrientationSubscribe.unsubscribe();
           }
         }
       }
