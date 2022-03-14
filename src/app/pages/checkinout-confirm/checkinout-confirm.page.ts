@@ -80,7 +80,9 @@ export class CheckinoutConfirmPage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ionViewDidEnter() {
     if (this.locationCheckType === EnumService.ConfirmForCheckType.CheckIn) {
       this.checkinDetail = this.sharedDataService.checkInDetail;
       this.checkInForLocation = this.sharedDataService.checkInForLocation;

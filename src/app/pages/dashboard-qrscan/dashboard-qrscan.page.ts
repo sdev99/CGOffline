@@ -113,11 +113,13 @@ export class DashboardQrscanPage implements OnInit {
   stopScanning = () => {
     if (this.isWebApp) {
       this.scanActive = false;
-      this.videoStream.getTracks().forEach(function (track) {
-        if (track.readyState == "live") {
-          track.stop();
-        }
-      });
+      try {
+        this.videoStream.getTracks().forEach(function (track) {
+          if (track.readyState == "live") {
+            track.stop();
+          }
+        });
+      } catch (error) {}
       this.videoStream = null;
     } else {
       if (this.scanSub) {
