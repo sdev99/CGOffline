@@ -24,6 +24,7 @@ import { OfflineManagerService } from "src/app/services/offline-manager.service"
 })
 export class FormAccidentReportPage {
   @ViewChild(IonContent) content: IonContent;
+  window = window;
 
   EnumService = EnumService;
   UtilService = UtilService;
@@ -46,6 +47,7 @@ export class FormAccidentReportPage {
 
   screenOrientationSubscribe;
   isShowOritationPortrait = false;
+  isWebApp: Boolean = UtilService.isWebApp();
 
   formBuilderDetail;
 

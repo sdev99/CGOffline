@@ -1,23 +1,12 @@
-import {
-  Component,
-  ElementRef,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { fabric } from "fabric";
-import { Location } from "@angular/common";
 import {
   NavController,
   AlertController,
   IonRouterOutlet,
 } from "@ionic/angular";
-import { AnimationOptions } from "@ionic/angular/providers/nav-controller";
 import { SharedDataService } from "../../services/shared-data.service";
 import { ObservablesService } from "../../services/observables.service";
-import { EnumService } from "../../services/enum.service";
-import { Subscription } from "rxjs";
 import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
 import { StaticDataService } from "../../services/static-data.service";
 import { TranslateService } from "@ngx-translate/core";
@@ -206,7 +195,7 @@ export class ImageAnnotationPage implements OnInit {
         this.imageMultiplier = img.height / imgHeight;
       }
 
-      img.scale(window.innerWidth / img.width);
+      img.scale(imgWidth / img.width);
       // img.scaleToWidth(imgWidth);
       // img.scaleToHeight(imgHeight);
 
@@ -512,10 +501,13 @@ export class ImageAnnotationPage implements OnInit {
     this.isColorThicknessViewOpen = true;
     this.canvasRef.isDrawingMode = false;
 
+    const defaultWidth = 200;
+    const topY = this.canvasRef.height / 2 - this.defaultFontSize / 2;
+    const xPost = this.canvasRef.width / 2 - defaultWidth / 2;
     const text = new fabric.Textbox("", {
-      top: window.innerHeight / 3,
-      left: 10,
-      width: 200,
+      top: topY,
+      left: xPost,
+      width: defaultWidth,
       fill: this.defaultColor,
       fontSize: this.defaultFontSize,
       textAlign: "center",

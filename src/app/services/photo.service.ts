@@ -217,7 +217,7 @@ export class PhotoService {
       .then((imageData) => {
         // imageData is either a base64 encoded string or a file URI
         // If it's base64 (DATA_URL):
-        debugger;
+        
         if (imageData) {
           if (
             StaticDataService.videoFormats.indexOf(

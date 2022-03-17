@@ -213,25 +213,51 @@ export class SignoffDigitalinkPage implements OnInit {
     });
   };
   initialiseDrawing() {
+    if (UtilService.isWebApp()) {
+      window.onresize = () => {
+        const outerCanvasContainer =
+          document.getElementById("canvas-container");
+
+        const ratio = this.canvasRef.getWidth() / this.canvasRef.getHeight();
+        const containerWidth = outerCanvasContainer.clientWidth;
+        const scale = containerWidth / this.canvasRef.getWidth();
+        const zoom = this.canvasRef.getZoom() * scale;
+
+        this.canvasRef.setDimensions({
+          width: containerWidth,
+          height: containerWidth / ratio,
+        });
+        this.canvasRef.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+      };
+    }
+
     setTimeout(() => {
       if (!this.canvasRef) {
         const canvasRef = new fabric.Canvas("digital-signature");
         this.canvasRef = canvasRef;
       }
+
+      let width = 0;
       if (
         this.sharedDataService.dedicatedMode ||
-        this.sharedDataService.isTablet
+        this.sharedDataService.isTablet ||
+        UtilService.isWebApp()
       ) {
-        this.canvasRef.setDimensions({
-          width: (window.innerHeight * 50) / 100,
-          height: (window.innerHeight * 25) / 100,
-        });
+        width = (window.innerHeight * 50) / 100;
       } else {
-        this.canvasRef.setDimensions({
-          width: window.innerWidth - 46,
-          height: (window.innerHeight * 28) / 100,
-        });
+        width = window.innerWidth - 46;
       }
+      if (width > 700) {
+        width = 700;
+      }
+
+      let height = width * 0.58;
+
+      this.canvasRef.setDimensions({
+        width: width,
+        height: height,
+      });
+
       this.canvasRef.on("selection:created", () => {
         console.log("selection:created");
       });
@@ -296,7 +322,7 @@ export class SignoffDigitalinkPage implements OnInit {
     } else if (
       this.sharedDataService.signOffFor === EnumService.SignOffType.FORMS_DM
     ) {
-      this.navCtrl.navigateBack("/forms-dm");
+      this.navCtrl.back();
     } else if (
       this.sharedDataService.signOffFor ===
       EnumService.SignOffType.WORK_PERMIT_DM

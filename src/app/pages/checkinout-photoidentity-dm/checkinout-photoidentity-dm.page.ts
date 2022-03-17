@@ -121,7 +121,6 @@ export class CheckinoutPhotoidentityDmPage implements OnInit {
     const vid = this.videoElement;
     const canvasContext = this.canvasContext;
     const canvasElement = this.canvasElement;
-    debugger;
   };
 
   photoScanning = async () => {

@@ -1,4 +1,8 @@
-<div class="photo-view-container">
+<div
+  class="photo-view-container"
+  [ngClass]="{ 'web-app': isWebApp }"
+  [ngStyle]="{ width: isWebApp ? 100 * window.devicePixelRatio + '%' : '100%' }"
+>
   <ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
 
   <div class="photo-buttons" *ngIf="!image; else addPhotoTemplate">

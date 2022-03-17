@@ -287,33 +287,26 @@ export class OfflineApiService {
         const readBlob = (blob) => {
           try {
             var jsZipObj = new JSZip();
-            debugger;
+
             jsZipObj
               .loadAsync(blob)
               .then(function (zip) {
                 // you now have every files contained in the loaded zip
-                debugger;
+
                 if (zip.length > 0) {
                   Object.keys(zip.files).map((zippedFileName) => {
                     zip
                       .file(zippedFileName)
                       .async("string")
                       .then((response) => {
-                        debugger;
                         onFileDownloaded(response);
                       })
-                      .catch((error) => {
-                        debugger;
-                      }); // a promise of "Hello World\n"
+                      .catch((error) => {}); // a promise of "Hello World\n"
                   });
                 }
               })
-              .catch((error) => {
-                debugger;
-              });
-          } catch (error) {
-            debugger;
-          }
+              .catch((error) => {});
+          } catch (error) {}
         };
 
         const sampleZipFile =
@@ -321,12 +314,9 @@ export class OfflineApiService {
         fetch(sampleZipFile)
           .then((res) => res.blob())
           .then((res) => {
-            debugger;
             readBlob(res);
           })
-          .catch((error) => {
-            debugger;
-          });
+          .catch((error) => {});
 
         return;
 
@@ -359,8 +349,8 @@ export class OfflineApiService {
           // 	.downloadFile(fileUrl, {}, headers, localFilePath)
           // 	.then(async (response) => {
           // 		console.log('File Download Completed ', response);
-          // 		debugger;
-          // 		debugger;
+          //
+          //
           // 		let { name, nativeURL } = response;
           // 		let path = nativeURL.substring(0, nativeURL.lastIndexOf('/'));
           // 		const fileName = name;
@@ -368,7 +358,7 @@ export class OfflineApiService {
           // 		const fileExtension = fileName.match(/\.[A-z0-9]+$/i)[0].slice(1);
           // 		// we are provided the name, so now read the file into a buffer
           // 		const buffer = await this.file.readAsArrayBuffer(path, name);
-          // 		debugger;
+          //
           // 		if (buffer) {
           // 			let medBlob = new Blob([buffer], {
           // 				type: `application/${fileExtension}`,
@@ -377,7 +367,7 @@ export class OfflineApiService {
           // 		}
           // 	})
           // 	.catch((error) => {
-          // 		debugger;
+          //
           // 		console.log('File Download Error ', error);
           // 	});
         });

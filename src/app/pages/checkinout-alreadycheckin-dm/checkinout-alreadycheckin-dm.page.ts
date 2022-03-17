@@ -61,7 +61,6 @@ export class CheckinoutAlreadycheckinDmPage implements OnInit {
     if (
       this.sharedDataService.checkinoutDmAs === EnumService.CheckInType.AS_GUEST
     ) {
-      debugger;
       if (this.sharedDataService.offlineMode) {
         const utcDateTime = moment()
           .utc()

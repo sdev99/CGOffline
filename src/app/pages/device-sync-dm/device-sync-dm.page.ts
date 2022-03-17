@@ -127,7 +127,7 @@ export class DeviceSyncDmPage implements OnInit {
           } else {
             const sizeToBeNeededInBytes =
               fileSizeInBytes + 0.2 * 1024 * 1024 * 1024;
-            debugger;
+
             if (availableSpaceInBytes > sizeToBeNeededInBytes) {
               resolve(true);
             } else {
@@ -181,14 +181,13 @@ export class DeviceSyncDmPage implements OnInit {
 
             const fileName = "Offline" + this.utilService.Uniqueid();
             var jsZipObj = new JSZip();
-            debugger;
+
             jsZipObj.file(fileName + ".json", JSON.stringify(postJsonData));
 
             // Convert json file to zip base64
             jsZipObj
               .generateAsync({ type: "base64" })
               .then((base64) => {
-                debugger;
                 // Convert zip base64 to fileobj
                 this.utilService
                   .dataUriToFile(base64, fileName + ".zip", "application/zip")
@@ -342,9 +341,7 @@ export class DeviceSyncDmPage implements OnInit {
               }
             }
           },
-          (error) => {
-            debugger;
-          }
+          (error) => {}
         );
     };
 

@@ -569,12 +569,12 @@ export class UtilService {
       colno?: number,
       error?: Error
     ) => {
-      debugger;
+      
       console.error("onerror", error);
     };
 
     image.onabort = (error) => {
-      debugger;
+      
       console.error("onabort", error);
     };
 
@@ -611,7 +611,7 @@ export class UtilService {
     return new Promise(async (resolve, reject) => {
       let dirpath = url.substr(0, url.lastIndexOf("/") + 1);
       dirpath = UtilService.fixDeviceDirPath(dirpath);
-      debugger;
+      
       try {
         const dirUrl = await this.file.resolveDirectoryUrl(dirpath);
         const retrievedFile = await this.file.getFile(dirUrl, filename, {});

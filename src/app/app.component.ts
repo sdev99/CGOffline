@@ -437,6 +437,18 @@ export class AppComponent {
         this.screenOrientation.lock(
           this.screenOrientation.ORIENTATIONS.PORTRAIT
         );
+
+        // Add timeout if plugin not load in some devices
+        setTimeout(() => {
+          this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.PORTRAIT
+          );
+        }, 3000);
+        setTimeout(() => {
+          this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.PORTRAIT
+          );
+        }, 5000);
       }
     } catch (e) {}
 

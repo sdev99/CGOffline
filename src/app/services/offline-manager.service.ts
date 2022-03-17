@@ -107,7 +107,6 @@ export class OfflineManagerService {
                 resolve(response);
               },
               (err) => {
-                debugger;
                 console.log("QUERY Error ", err);
                 reject(err);
               }
@@ -121,7 +120,6 @@ export class OfflineManagerService {
                   resolve(results);
                 },
                 (tx, err) => {
-                  debugger;
                   console.log("QUERY Error ", err);
                   reject(err);
                 }
@@ -343,8 +341,6 @@ export class OfflineManagerService {
     offlineData: DeviceOfflineDetailViewModels,
     callBack
   ) => {
-    debugger;
-
     // deviceDetailData
     const deviceDetailData = offlineData.deviceDetailData;
     if (deviceDetailData) {
@@ -1554,8 +1550,6 @@ export class OfflineManagerService {
   }
 
   getDeviceArchivedWorkPermits(entity: DeviceEntityDetail) {
-    debugger;
-
     return new Promise((resolve, reject) => {
       let condition = this.appendEntityCondition(entity);
 
@@ -2107,7 +2101,6 @@ export class OfflineManagerService {
           }
         })
         .catch((error) => {
-          debugger;
           reject(error);
         });
 
@@ -2626,7 +2619,6 @@ export class OfflineManagerService {
         (condition ? " WHERE " + condition : "");
       this.dbQuery(query, [])
         .then((res: any) => {
-          debugger;
           if (res.rows?.length > 0) {
             resolve(this.convertToObject(res.rows));
           } else {
@@ -2695,7 +2687,6 @@ export class OfflineManagerService {
         " ORDER BY createdDate DESC";
       this.dbQuery(query, [])
         .then((res: any) => {
-          debugger;
           if (res.rows?.length > 0) {
             const obj = this.convertToObject(res.rows);
             if (obj.total_count > 0) {
@@ -2738,7 +2729,6 @@ export class OfflineManagerService {
         " ORDER BY createdDate DESC";
       this.dbQuery(query, [])
         .then((res: any) => {
-          debugger;
           if (res.rows?.length > 0) {
             const obj = this.convertToObject(res.rows);
             if (obj.total_count > 0) {
@@ -2984,7 +2974,7 @@ export class OfflineManagerService {
 
   insertCheckOutDetails = (data, cond) => {
     const userCheckInDetailID = cond.deviceUserCheckinDetailId;
-    debugger;
+
     return new Promise((resolve, reject) => {
       const { dataCols, dataVals } = this.convertObjectToColValPlaceholders(
         data,
@@ -3250,9 +3240,7 @@ export class OfflineManagerService {
               });
           }
         })
-        .catch((error) => {
-          debugger;
-        });
+        .catch((error) => {});
     });
   };
 
@@ -3555,16 +3543,13 @@ export class OfflineManagerService {
               getSignOffDetails();
             }
           },
-          (error) => {
-            debugger;
-          }
+          (error) => {}
         );
       };
 
       // getSignOffDetails
       const getSignOffDetails = async (uploadedFiles = {}) => {
         const signOffDetails: any = await this.getOfflineSignoffDetails();
-        debugger;
 
         let signOffDetailsList = [];
 
@@ -3639,7 +3624,6 @@ export class OfflineManagerService {
       // getUserCheckinDetails
       const getUserCheckinDetails = async (uploadedFiles) => {
         const checkinDetails: any = await this.getOfflineUserCheckinDetails();
-        debugger;
 
         if (checkinDetails && checkinDetails.length > 0) {
           let checkinDetailsList = [];
@@ -3732,7 +3716,6 @@ export class OfflineManagerService {
       // getGuestCheckinDetails
       const getGuestCheckinDetails = async (uploadedFiles) => {
         const checkinDetails: any = await this.getOfflineGuestCheckinDetails();
-        debugger;
 
         if (checkinDetails && checkinDetails.length > 0) {
           let checkinDetailsList = [];
@@ -3838,7 +3821,6 @@ export class OfflineManagerService {
       // getUserCheckoutDetails
       const getUserCheckoutDetails = async () => {
         const checkoutDetails: any = await this.getOfflineUserCheckoutDetails();
-        debugger;
         if (checkoutDetails && checkoutDetails.length > 0) {
           let checkoutDetailsList = [];
           checkoutDetails.map((obj) => {
@@ -3867,7 +3849,7 @@ export class OfflineManagerService {
       const getGuestCheckoutDetails = async () => {
         const checkoutDetails: any =
           await this.getOfflineGuestCheckoutDetails();
-        debugger;
+
         if (checkoutDetails && checkoutDetails.length > 0) {
           let checkoutDetailsList = [];
           checkoutDetails.map((obj) => {

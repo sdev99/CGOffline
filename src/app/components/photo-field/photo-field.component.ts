@@ -34,6 +34,8 @@ import { VideorecordPage } from "src/app/modals/videorecord/videorecord.page";
   ],
 })
 export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
+  window = window;
+
   StaticDataService = StaticDataService;
   UtilService = UtilService;
   Capacitor = Capacitor;

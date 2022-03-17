@@ -3,6 +3,11 @@
 .photo-view-container {
   margin: 0 $paddingHorizontal;
 
+  &.web-app {
+    padding: 0 $paddingHorizontal;
+    margin: 0;
+  }
+
   .photo-buttons {
     display: flex;
     flex-direction: row;
@@ -23,7 +28,7 @@
       font-size: 9px;
       line-height: 15px;
 
-      color: #FFFFFF;
+      color: #ffffff;
 
       ion-icon {
         width: 12px;
@@ -32,7 +37,7 @@
       }
 
       &.left {
-        --background: #2A6FDB;
+        --background: #2a6fdb;
       }
 
       &.right {
@@ -61,19 +66,19 @@
     ion-img {
       width: 100%;
       height: calc(100% - 40px);
-      background-color: #E6EFFB;
+      background-color: #e6effb;
       object-fit: cover;
     }
 
     .videoPlayer {
       width: 100%;
       height: calc(100% - 40px);
-      background-color: #E6EFFB;
+      background-color: #e6effb;
     }
 
     .close-btn {
       width: 100%;
-      background-color: #D6E5F9;
+      background-color: #d6e5f9;
       height: 40px;
       display: flex;
       align-items: center;

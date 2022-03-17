@@ -75,8 +75,6 @@ export class FilehandlerService {
   };
 
   async saveFileOnDevicePath(base64String, folderName, callBack) {
-    debugger;
-
     let targetFileName: string = this.utilService.Uniqueid();
     const writeDirectory = this.offlineFilesDirectory();
 
@@ -149,7 +147,6 @@ export class FilehandlerService {
     try {
       await this.file.createDir(writeDirectory, folderName, false);
     } catch (error) {}
-    debugger;
 
     if (
       UtilService.IsBase64Sring(path.dataUrl) ||
@@ -169,12 +166,9 @@ export class FilehandlerService {
       this.file
         .writeFile(writeDirectory, folderName + "/" + targetFileName, blob)
         .then((res) => {
-          debugger;
           callBack(true, targetFileName);
         })
         .catch((error) => {
-          debugger;
-
           callBack(false, error);
         });
     } else {
@@ -195,15 +189,12 @@ export class FilehandlerService {
             folderName + "/" + targetFileName
           )
           .then((res) => {
-            debugger;
             callBack(true, targetFileName);
           })
           .catch((error) => {
-            debugger;
             callBack(false, error);
           });
       } catch (error) {
-        debugger;
         callBack(false, error);
       }
     }
