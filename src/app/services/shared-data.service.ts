@@ -1361,17 +1361,6 @@ export class SharedDataService {
         const onUploaded = () => {
           attachmentUploadedCount++;
           if (attachmentCount === attachmentUploadedCount) {
-            // Remove all form images directory
-            try {
-              this.filehandlerService
-                .removeDirectory(
-                  this.filehandlerService.offlineFilesDirectory(),
-                  StaticDataService.formImagesFolderName
-                )
-                .then(() => {})
-                .catch(() => {});
-            } catch (error) {}
-
             loading = false;
             this.utilService.hideLoading();
             this.submitFormAnswers(
@@ -2444,6 +2433,17 @@ export class SharedDataService {
       this.offlineManagerService
         .insertCheckinDetails(checkinData)
         .then((res) => {
+           // Remove all form images directory if there was form filled
+           try {
+            this.filehandlerService
+              .removeDirectory(
+                this.filehandlerService.offlineFilesDirectory(),
+                StaticDataService.formImagesFolderName
+              )
+              .then(() => {})
+              .catch(() => {});
+          } catch (error) {}
+
           if (this.checkInDetail?.checkInEntityDetail?.processInduction) {
             this.insertInductionItemsArchiveRecords(() => {
               this.observablesService.publishSomeData(
@@ -2467,6 +2467,18 @@ export class SharedDataService {
       apiService.insertCheckInDetails(this.checkInPostData).subscribe(
         (response: Response) => {
           this.utilService.hideLoading();
+
+
+           // Remove all form images directory if there was form filled
+           try {
+            this.filehandlerService
+              .removeDirectory(
+                this.filehandlerService.offlineFilesDirectory(),
+                StaticDataService.formImagesFolderName
+              )
+              .then(() => {})
+              .catch(() => {});
+          } catch (error) {}
 
           if (
             response.StatusCode ===
@@ -2694,6 +2706,17 @@ export class SharedDataService {
         (response: Response) => {
           this.utilService.hideLoading();
 
+           // Remove all form images directory if there was form filled
+           try {
+            this.filehandlerService
+              .removeDirectory(
+                this.filehandlerService.offlineFilesDirectory(),
+                StaticDataService.formImagesFolderName
+              )
+              .then(() => {})
+              .catch(() => {});
+          } catch (error) {}
+          
           if (
             response.StatusCode ===
             EnumService.ApiResponseCode.RequestSuccessful
@@ -3133,6 +3156,17 @@ export class SharedDataService {
             true
           );
 
+          // Remove all form images directory if there was form filled
+          try {
+            this.filehandlerService
+              .removeDirectory(
+                this.filehandlerService.offlineFilesDirectory(),
+                StaticDataService.formImagesFolderName
+              )
+              .then(() => {})
+              .catch(() => {});
+          } catch (error) {}
+
           //Add sign off form/document in archive list
 
           const createdDateStr = UtilService.todayCompanyDate(
@@ -3213,6 +3247,17 @@ export class SharedDataService {
         .subscribe(
           (response: Response) => {
             this.utilService.hideLoading();
+
+            // Remove all form images directory if there was form filled
+            try {
+              this.filehandlerService
+                .removeDirectory(
+                  this.filehandlerService.offlineFilesDirectory(),
+                  StaticDataService.formImagesFolderName
+                )
+                .then(() => {})
+                .catch(() => {});
+            } catch (error) {}
 
             if (
               response.StatusCode ===

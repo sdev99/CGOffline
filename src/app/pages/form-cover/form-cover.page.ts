@@ -96,6 +96,19 @@ export class FormCoverPage {
         this.signOffFormDetail = this.sharedDataService.signOffFormDetail;
       }
     }
+
+    if (!UtilService.isWebApp()) {
+      // Remove all form images directory
+      try {
+        this.filehandlerService
+          .removeDirectory(
+            this.filehandlerService.offlineFilesDirectory(),
+            StaticDataService.formImagesFolderName
+          )
+          .then(() => {})
+          .catch(() => {});
+      } catch (error) {}
+    }
   }
 
   openFile(attachmentItem: AttachmentItem) {

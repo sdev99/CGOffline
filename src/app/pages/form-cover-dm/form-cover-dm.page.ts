@@ -13,6 +13,7 @@ import { AttachmentItem } from "../../_models/attachmentItem";
 import { Response } from "../../_models";
 import { FormItem } from "../../_models/formItem";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { StaticDataService } from "src/app/services/static-data.service";
 
 @Component({
   selector: "app-form-cover-dm",
@@ -43,6 +44,19 @@ export class FormCoverDmPage implements OnInit {
         EnumService.ViewFormForType.Induction
     ) {
       this.signOffFormDetail = this.sharedDataService.signOffFormDetail;
+    }
+
+    if (!UtilService.isWebApp()) {
+      // Remove all form images directory
+      try {
+        this.filehandlerService
+          .removeDirectory(
+            this.filehandlerService.offlineFilesDirectory(),
+            StaticDataService.formImagesFolderName
+          )
+          .then(() => {})
+          .catch(() => {});
+      } catch (error) {}
     }
   }
 

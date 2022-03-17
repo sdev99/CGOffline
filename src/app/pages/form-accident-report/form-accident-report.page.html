@@ -37,7 +37,7 @@
       >
         <ion-list
           lines="none"
-          [ngStyle]="{ width: isWebApp ? (sharedDataService.dedicatedMode?70:100) * window.devicePixelRatio + '%' : '100%' }"
+          [ngStyle]="{ width: isWebApp ? (sharedDataService.dedicatedMode?70:100) * window.devicePixelRatio + '%' : 'inherit' }"
         >
           <ng-container
             *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index"
@@ -214,7 +214,7 @@
 
                         <div
                           class="visual-body-part"
-                          [ngStyle]="{ width: isWebApp ? 100 * window.devicePixelRatio + '%' : '100%' }"
+                          [ngStyle]="{ width: isWebApp ? 100 * window.devicePixelRatio + '%' : 'inherit' }"
                         >
                           <svg
                             width="100%"
