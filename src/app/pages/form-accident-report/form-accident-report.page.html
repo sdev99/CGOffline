@@ -35,10 +35,7 @@
         (ngSubmit)="onContinue()"
         *ngIf="formBuilderDetail"
       >
-        <ion-list
-          lines="none"
-          [ngStyle]="{ width: isWebApp ? (sharedDataService.dedicatedMode?70:100) * window.devicePixelRatio + '%' : 'inherit' }"
-        >
+        <ion-list lines="none">
           <ng-container
             *ngFor="let section of formBuilderDetail?.sections; let sectionIndex=index"
           >
@@ -214,7 +211,7 @@
 
                         <div
                           class="visual-body-part"
-                          [ngStyle]="{ width: isWebApp ? 100 * window.devicePixelRatio + '%' : 'inherit' }"
+                          [ngStyle]="{ width: isWebApp ? 100 * (window.devicePixelRatio > 1 ? 1 : window.devicePixelRatio) + '%' : 'inherit' }"
                         >
                           <svg
                             width="100%"

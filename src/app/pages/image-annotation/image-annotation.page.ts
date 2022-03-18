@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ElementRef, OnInit } from "@angular/core";
 import { fabric } from "fabric";
 import {
   NavController,
@@ -10,6 +10,7 @@ import { ObservablesService } from "../../services/observables.service";
 import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
 import { StaticDataService } from "../../services/static-data.service";
 import { TranslateService } from "@ngx-translate/core";
+import { UtilService } from "src/app/services/util.service";
 
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
   type: "LineArrow",
@@ -98,6 +99,9 @@ export class ImageAnnotationPage implements OnInit {
   defaultThickness = 3;
   defaultFontSize = 26;
   defaultColor;
+
+  renderColorPickerView: boolean = true;
+  resizeTimeoutForColorPickerRerender: any = null;
 
   constructor(
     private routerOutlet: IonRouterOutlet,
@@ -202,7 +206,10 @@ export class ImageAnnotationPage implements OnInit {
       const canvasRef = this.canvasRef;
       canvasRef.cacheCanvasEl.style.top = top + "px";
 
-      this.canvasRef.setDimensions({ width: imgWidth, height: imgHeight });
+      this.canvasRef.setDimensions({
+        width: imgWidth * window.devicePixelRatio,
+        height: imgHeight * window.devicePixelRatio,
+      });
       this.canvasRef.renderAll();
     });
 
@@ -213,7 +220,82 @@ export class ImageAnnotationPage implements OnInit {
     this.canvasRef.on("selection:cleared", () => {
       this.isColorThicknessViewOpen = false;
     });
+
+    if (UtilService.isWebApp()) {
+      window.onresize = () => {
+        if (this.isColorThicknessViewOpen) {
+          this.renderColorPickerView = false;
+          if (this.resizeTimeoutForColorPickerRerender) {
+            clearTimeout(this.resizeTimeoutForColorPickerRerender);
+            this.resizeTimeoutForColorPickerRerender = null;
+          }
+          this.resizeTimeoutForColorPickerRerender = setTimeout(() => {
+            this.renderColorPickerView = true;
+            this.resizeTimeoutForColorPickerRerender = null;
+          }, 300);
+        }
+
+        this.updateSizeOfSignaturePad();
+      };
+      this.updateSizeOfSignaturePad();
+    }
   }
+
+  updateSizeOfSignaturePad = () => {
+    const outerCanvasContainer = document.getElementById(
+      "annotationCanvasContainer"
+    );
+    const content = document.getElementById("content");
+
+    const ratio = this.canvasRef.getWidth() / this.canvasRef.getHeight();
+    const containerWidth = outerCanvasContainer.clientWidth;
+
+    let width = containerWidth;
+    let height = containerWidth / ratio;
+
+    const setHeightByWidth = () => {
+      width = content.offsetWidth;
+      height = width / ratio;
+    };
+
+    const setWidthByHeight = () => {
+      height = content.offsetHeight;
+      width = height * ratio;
+    };
+
+    const maintainHeightWidth = () => {
+      if (width > content.offsetWidth) {
+        setHeightByWidth();
+      }
+      if (height > content.offsetHeight) {
+        setWidthByHeight();
+      }
+    };
+
+    maintainHeightWidth();
+
+    if (height != content.offsetHeight && width !== content.offsetWidth) {
+      if (width > height) {
+        setHeightByWidth();
+      } else {
+        setWidthByHeight();
+      }
+    }
+
+    maintainHeightWidth();
+
+    const scale = width / this.canvasRef.getWidth();
+
+    const devicePixelRatio =
+      window.devicePixelRatio > 1 ? 1 : window.devicePixelRatio;
+    const zoom = this.canvasRef.getZoom() * scale * devicePixelRatio;
+
+    this.canvasRef.setDimensions({
+      width: width * devicePixelRatio,
+      height: height * devicePixelRatio,
+    });
+    this.canvasRef.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+  };
 
   private customiseControl() {
     fabric.Object.prototype.cornerStyle = "circle";

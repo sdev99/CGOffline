@@ -200,7 +200,7 @@ export class SignoffDigitalinkPage implements OnInit {
               this.pageTitle = res[signOffLangKey];
               this.title = res[signOffLangKey];
               this.aggrementTitle = res[signOffAgreementTitleLangKey];
-              this.showDigitalInk = false;
+              this.showDigitalInk = true;
               this.initialiseDrawing();
             }
         }
@@ -212,25 +212,23 @@ export class SignoffDigitalinkPage implements OnInit {
       this.isConfirm = !this.isConfirm;
     });
   };
+
+  updateSizeOfSignaturePad = () => {
+    const outerCanvasContainer = document.getElementById("canvas-container");
+
+    const ratio = this.canvasRef.getWidth() / this.canvasRef.getHeight();
+    const containerWidth = outerCanvasContainer.clientWidth;
+    const scale = containerWidth / this.canvasRef.getWidth();
+    const zoom = this.canvasRef.getZoom() * scale;
+
+    this.canvasRef.setDimensions({
+      width: containerWidth,
+      height: containerWidth / ratio,
+    });
+    this.canvasRef.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+  };
+
   initialiseDrawing() {
-    if (UtilService.isWebApp()) {
-      window.onresize = () => {
-        const outerCanvasContainer =
-          document.getElementById("canvas-container");
-
-        const ratio = this.canvasRef.getWidth() / this.canvasRef.getHeight();
-        const containerWidth = outerCanvasContainer.clientWidth;
-        const scale = containerWidth / this.canvasRef.getWidth();
-        const zoom = this.canvasRef.getZoom() * scale;
-
-        this.canvasRef.setDimensions({
-          width: containerWidth,
-          height: containerWidth / ratio,
-        });
-        this.canvasRef.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-      };
-    }
-
     setTimeout(() => {
       if (!this.canvasRef) {
         const canvasRef = new fabric.Canvas("digital-signature");
@@ -271,6 +269,11 @@ export class SignoffDigitalinkPage implements OnInit {
       this.canvasRef.freeDrawingBrush.color = "#171538";
       this.canvasRef.freeDrawingBrush.width = 4;
       this.canvasRef.isDrawingMode = true;
+
+      if (UtilService.isWebApp()) {
+        window.onresize = this.updateSizeOfSignaturePad;
+        this.updateSizeOfSignaturePad();
+      }
     }, 200);
   }
 

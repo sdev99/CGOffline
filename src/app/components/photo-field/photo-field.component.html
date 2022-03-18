@@ -2,7 +2,9 @@
   class="photo-view-container"
   [ngClass]="{ 'web-app': isWebApp }"
   [ngStyle]="{
-    width: isWebApp ? 100 * window.devicePixelRatio + '%' : 'inherit'
+    width: isWebApp
+      ? 100 * (window.devicePixelRatio > 1 ? 1 : window.devicePixelRatio) + '%'
+      : 'inherit'
   }"
 >
   <ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
