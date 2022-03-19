@@ -2433,8 +2433,8 @@ export class SharedDataService {
       this.offlineManagerService
         .insertCheckinDetails(checkinData)
         .then((res) => {
-           // Remove all form images directory if there was form filled
-           try {
+          // Remove all form images directory if there was form filled
+          try {
             this.filehandlerService
               .removeDirectory(
                 this.filehandlerService.offlineFilesDirectory(),
@@ -2468,9 +2468,8 @@ export class SharedDataService {
         (response: Response) => {
           this.utilService.hideLoading();
 
-
-           // Remove all form images directory if there was form filled
-           try {
+          // Remove all form images directory if there was form filled
+          try {
             this.filehandlerService
               .removeDirectory(
                 this.filehandlerService.offlineFilesDirectory(),
@@ -2706,8 +2705,8 @@ export class SharedDataService {
         (response: Response) => {
           this.utilService.hideLoading();
 
-           // Remove all form images directory if there was form filled
-           try {
+          // Remove all form images directory if there was form filled
+          try {
             this.filehandlerService
               .removeDirectory(
                 this.filehandlerService.offlineFilesDirectory(),
@@ -2716,7 +2715,7 @@ export class SharedDataService {
               .then(() => {})
               .catch(() => {});
           } catch (error) {}
-          
+
           if (
             response.StatusCode ===
             EnumService.ApiResponseCode.RequestSuccessful

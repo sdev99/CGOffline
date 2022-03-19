@@ -66,6 +66,8 @@ export class FormWorkpermitPage {
 
   expireDurationTypes = [];
 
+  isFirstTime = true;
+
   constructor(
     public navCtrl: NavController,
     public photoService: PhotoService,
@@ -139,7 +141,13 @@ export class FormWorkpermitPage {
 
   handleOrientation = () => {
     if (this.sharedDataService.dedicatedMode) {
-      if (this.screenOrientation.type.includes("landscape")) {
+      this.screenOrientationSubscribe?.unsubscribe();
+      this.screenOrientationSubscribe = null;
+
+      if (
+        this.screenOrientation.type.includes("landscape") &&
+        this.isFirstTime
+      ) {
         this.screenOrientation.unlock();
         this.isShowOritationPortrait = true;
       } else {
@@ -148,6 +156,7 @@ export class FormWorkpermitPage {
             this.screenOrientation.ORIENTATIONS.PORTRAIT
           );
         }
+        this.isShowOritationPortrait = false;
       }
 
       this.screenOrientationSubscribe = this.screenOrientation
@@ -161,9 +170,11 @@ export class FormWorkpermitPage {
                 );
               }
               this.isShowOritationPortrait = false;
-            }
-            if (this.screenOrientation.type.includes("landscape")) {
-              if (this.sharedDataService.isGalleryOrCameraOpened) {
+            } else if (this.screenOrientation.type.includes("landscape")) {
+              if (
+                this.sharedDataService.isGalleryOrCameraOpened ||
+                !this.isFirstTime
+              ) {
                 this.isShowOritationPortrait = false;
                 this.screenOrientation.lock(
                   this.screenOrientation.ORIENTATIONS.PORTRAIT
@@ -171,6 +182,11 @@ export class FormWorkpermitPage {
               } else {
                 this.isShowOritationPortrait = true;
               }
+            }
+            if (this.isFirstTime) {
+              setTimeout(() => {
+                this.isFirstTime = false;
+              }, 1000);
             }
           });
         });

@@ -13,6 +13,7 @@ import { AccountService } from "../../services/account.service";
 import { User } from "../../_models";
 import { UtilService } from "../../services/util.service";
 import { ApiService } from "../../services/api.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-form-custom",
@@ -37,7 +38,7 @@ export class FormCustomPage {
 
   totalPage = 32;
 
-  screenOrientationSubscribe;
+  screenOrientationSubscribe: Subscription;
   isShowOritationPortrait = false;
 
   formBuilderDetail;
@@ -45,6 +46,8 @@ export class FormCustomPage {
   questionElementIds = [];
   currentQuestionIndex = 0;
   scrollingDetail: any;
+
+  isFirstTime = true;
 
   constructor(
     public navCtrl: NavController,
@@ -77,7 +80,12 @@ export class FormCustomPage {
 
   handleOrientation = () => {
     if (this.sharedDataService.dedicatedMode) {
-      if (this.screenOrientation.type.includes("landscape")) {
+      this.screenOrientationSubscribe?.unsubscribe();
+      this.screenOrientationSubscribe = null;
+      if (
+        this.screenOrientation.type.includes("landscape") &&
+        this.isFirstTime
+      ) {
         this.screenOrientation.unlock();
         this.isShowOritationPortrait = true;
       } else {
@@ -86,6 +94,7 @@ export class FormCustomPage {
             this.screenOrientation.ORIENTATIONS.PORTRAIT
           );
         }
+        this.isShowOritationPortrait = false;
       }
 
       this.screenOrientationSubscribe = this.screenOrientation
@@ -99,9 +108,11 @@ export class FormCustomPage {
                 );
               }
               this.isShowOritationPortrait = false;
-            }
-            if (this.screenOrientation.type.includes("landscape")) {
-              if (this.sharedDataService.isGalleryOrCameraOpened) {
+            } else if (this.screenOrientation.type.includes("landscape")) {
+              if (
+                this.sharedDataService.isGalleryOrCameraOpened ||
+                !this.isFirstTime
+              ) {
                 this.isShowOritationPortrait = false;
                 this.screenOrientation.lock(
                   this.screenOrientation.ORIENTATIONS.PORTRAIT
@@ -109,6 +120,12 @@ export class FormCustomPage {
               } else {
                 this.isShowOritationPortrait = true;
               }
+            }
+
+            if (this.isFirstTime) {
+              setTimeout(() => {
+                this.isFirstTime = false;
+              }, 1000);
             }
           });
         });

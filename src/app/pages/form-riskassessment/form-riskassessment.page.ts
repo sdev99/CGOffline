@@ -100,6 +100,8 @@ export class FormRiskassessmentPage implements OnInit {
   taskTemplateList: Array<RAtaskTemplateItem> = [];
   controlMeasureTemplateList: Array<RAcontrolMeasureTemplateItem> = [];
 
+  isFirstTime = true;
+
   constructor(
     public navCtrl: NavController,
     public modalController: ModalController,
@@ -701,7 +703,13 @@ export class FormRiskassessmentPage implements OnInit {
 
   handleOrientation = () => {
     if (this.sharedDataService.dedicatedMode) {
-      if (this.screenOrientation.type.includes("landscape")) {
+      this.screenOrientationSubscribe?.unsubscribe();
+      this.screenOrientationSubscribe = null;
+
+      if (
+        this.screenOrientation.type.includes("landscape") &&
+        this.isFirstTime
+      ) {
         this.screenOrientation.unlock();
         this.isShowOritationPortrait = true;
       } else {
@@ -710,6 +718,7 @@ export class FormRiskassessmentPage implements OnInit {
             this.screenOrientation.ORIENTATIONS.PORTRAIT
           );
         }
+        this.isShowOritationPortrait = false;
       }
 
       this.screenOrientationSubscribe = this.screenOrientation
@@ -723,9 +732,11 @@ export class FormRiskassessmentPage implements OnInit {
                 );
               }
               this.isShowOritationPortrait = false;
-            }
-            if (this.screenOrientation.type.includes("landscape")) {
-              if (this.sharedDataService.isGalleryOrCameraOpened) {
+            } else if (this.screenOrientation.type.includes("landscape")) {
+              if (
+                this.sharedDataService.isGalleryOrCameraOpened ||
+                !this.isFirstTime
+              ) {
                 this.isShowOritationPortrait = false;
                 this.screenOrientation.lock(
                   this.screenOrientation.ORIENTATIONS.PORTRAIT
@@ -733,6 +744,11 @@ export class FormRiskassessmentPage implements OnInit {
               } else {
                 this.isShowOritationPortrait = true;
               }
+            }
+            if (this.isFirstTime) {
+              setTimeout(() => {
+                this.isFirstTime = false;
+              }, 1000);
             }
           });
         });

@@ -57,6 +57,8 @@ export class FormAccidentReportPage {
   questionElementIds = [];
   companyId;
 
+  isFirstTime = true;
+
   constructor(
     public navCtrl: NavController,
     public sharedDataService: SharedDataService,
@@ -373,7 +375,12 @@ export class FormAccidentReportPage {
 
   handleOrientation = () => {
     if (this.sharedDataService.dedicatedMode) {
-      if (this.screenOrientation.type.includes("landscape")) {
+      this.screenOrientationSubscribe?.unsubscribe();
+      this.screenOrientationSubscribe = null;
+      if (
+        this.screenOrientation.type.includes("landscape") &&
+        this.isFirstTime
+      ) {
         if (!UtilService.isLocalHost()) {
           this.screenOrientation.unlock();
         }
@@ -384,32 +391,39 @@ export class FormAccidentReportPage {
             this.screenOrientation.ORIENTATIONS.PORTRAIT
           );
         }
+        this.isShowOritationPortrait = false;
       }
 
       this.screenOrientationSubscribe = this.screenOrientation
         .onChange()
         .subscribe(() => {
           this.ngZone.run(() => {
-            setTimeout(() => {
-              if (this.screenOrientation.type.includes("portrait")) {
+            if (this.screenOrientation.type.includes("portrait")) {
+              this.isShowOritationPortrait = false;
+              if (!UtilService.isLocalHost()) {
+                this.screenOrientation.lock(
+                  this.screenOrientation.ORIENTATIONS.PORTRAIT
+                );
+              }
+            } else if (this.screenOrientation.type.includes("landscape")) {
+              if (
+                this.sharedDataService.isGalleryOrCameraOpened ||
+                !this.isFirstTime
+              ) {
                 this.isShowOritationPortrait = false;
-                if (!UtilService.isLocalHost()) {
-                  this.screenOrientation.lock(
-                    this.screenOrientation.ORIENTATIONS.PORTRAIT
-                  );
-                }
+                this.screenOrientation.lock(
+                  this.screenOrientation.ORIENTATIONS.PORTRAIT
+                );
+              } else {
+                this.isShowOritationPortrait = true;
               }
-              if (this.screenOrientation.type.includes("landscape")) {
-                if (this.sharedDataService.isGalleryOrCameraOpened) {
-                  this.isShowOritationPortrait = false;
-                  this.screenOrientation.lock(
-                    this.screenOrientation.ORIENTATIONS.PORTRAIT
-                  );
-                } else {
-                  this.isShowOritationPortrait = true;
-                }
-              }
-            }, 0);
+            }
+
+            if (this.isFirstTime) {
+              setTimeout(() => {
+                this.isFirstTime = false;
+              }, 1000);
+            }
           });
         });
     }

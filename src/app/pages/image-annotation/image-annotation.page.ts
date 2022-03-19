@@ -134,6 +134,12 @@ export class ImageAnnotationPage implements OnInit {
   };
 
   initialise() {
+    let devicePixelRatio = 1;
+    if (UtilService.isWebApp()) {
+      devicePixelRatio =
+        window.devicePixelRatio > 1 ? 1 : window.devicePixelRatio;
+    }
+
     const content = document.getElementById("content");
     // Set canvas full screen size
     this.canvasRef.setDimensions({
@@ -207,8 +213,8 @@ export class ImageAnnotationPage implements OnInit {
       canvasRef.cacheCanvasEl.style.top = top + "px";
 
       this.canvasRef.setDimensions({
-        width: imgWidth * window.devicePixelRatio,
-        height: imgHeight * window.devicePixelRatio,
+        width: imgWidth * devicePixelRatio,
+        height: imgHeight * devicePixelRatio,
       });
       this.canvasRef.renderAll();
     });
@@ -235,13 +241,13 @@ export class ImageAnnotationPage implements OnInit {
           }, 300);
         }
 
-        this.updateSizeOfSignaturePad();
+        this.updateSizeOfCanvas();
       };
-      this.updateSizeOfSignaturePad();
+      this.updateSizeOfCanvas();
     }
   }
 
-  updateSizeOfSignaturePad = () => {
+  updateSizeOfCanvas = () => {
     const outerCanvasContainer = document.getElementById(
       "annotationCanvasContainer"
     );
