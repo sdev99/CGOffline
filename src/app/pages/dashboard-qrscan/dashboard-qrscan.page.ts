@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { ActionSheetController, NavController } from "@ionic/angular";
+import { ActionSheetController, NavController, Platform } from "@ionic/angular";
 import { QRScanner, QRScannerStatus } from "@ionic-native/qr-scanner/ngx";
 import { ActivatedRoute } from "@angular/router";
 import { SharedDataService } from "../../services/shared-data.service";
@@ -55,6 +55,7 @@ export class DashboardQrscanPage implements OnInit {
   constructor(
     public navCtrl: NavController,
     private qrScanner: QRScanner,
+    private platform: Platform,
     public accountService: AccountService,
     public apiService: ApiService,
     public utilService: UtilService,
@@ -222,6 +223,12 @@ export class DashboardQrscanPage implements OnInit {
         .prepare()
         .then((status: QRScannerStatus) => {
           if (status.authorized) {
+            if (this.platform.is("android")) {
+              this.qrScanner.hide();
+              setTimeout(() => {
+                this.qrScanner.hide();
+              }, 1000);
+            }
             // camera permission was granted
             // start scanning
             this.scanSub = this.qrScanner.scan().subscribe((text: string) => {
