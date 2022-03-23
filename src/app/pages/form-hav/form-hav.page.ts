@@ -424,6 +424,12 @@ export class FormHavPage implements OnInit {
             }
           });
         });
+    } else {
+      if (!UtilService.isLocalHost()) {
+        this.screenOrientation.lock(
+          this.screenOrientation.ORIENTATIONS.PORTRAIT
+        );
+      }
     }
   };
 

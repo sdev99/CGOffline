@@ -190,6 +190,12 @@ export class FormWorkpermitPage {
             }
           });
         });
+    } else {
+      if (!UtilService.isLocalHost()) {
+        this.screenOrientation.lock(
+          this.screenOrientation.ORIENTATIONS.PORTRAIT
+        );
+      }
     }
   };
 

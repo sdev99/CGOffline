@@ -426,6 +426,12 @@ export class FormAccidentReportPage {
             }
           });
         });
+    } else {
+      if (!UtilService.isLocalHost()) {
+        this.screenOrientation.lock(
+          this.screenOrientation.ORIENTATIONS.PORTRAIT
+        );
+      }
     }
   };
 
