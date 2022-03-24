@@ -1,7 +1,6 @@
 import UIKit
 import Capacitor
 import FirebaseCore
-import FirebaseInstanceID // Add this line after import FirebaseCore
 import FirebaseMessaging
 
 @UIApplicationMain
