@@ -23,6 +23,7 @@
     "@capacitor/android": "^2.4.0",
     "@capacitor/core": "2.4.0",
     "@capacitor/ios": "^2.4.0",
+    "@capacitor/share": "^1.1.2",
     "@ionic-native/badge": "^5.30.0",
     "@ionic-native/base64": "^5.36.0",
     "@ionic-native/camera": "^5.30.0",
