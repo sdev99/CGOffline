@@ -4,33 +4,47 @@
 
 ### For Development
 
-- Run "ionic cap sync"
+-   Run "ionic cap sync"
 
 ### For Staging
 
-- Run "ionic cap sync -c=staging"
+-   Run "ionic cap sync -c=staging"
 
 ### For Production
 
-- Run "ionic cap sync --prod"
+-   Run "ionic cap sync --prod"
 
-## Form Preview WebApp Deploy Instructions
+## Form Preview WebApp Deploy Instructions - Switch to branch "pwa*.*" then run below command for appropriate environment. After finished upload /www directory content to the server
 
 ### For Development
 
-- Set "isWebApp:true" inside file src/environments/environment.ts
-- Run "ionic build"
+-   Set "isFormPreview:true" inside file src/environments/environment.ts
+-   Run "ionic build"
 
 ### For Staging
 
-- Set "isWebApp:true" inside file src/environments/environment.staging.ts
-- Run "ionic build -c=staging"
+-   Set "isFormPreview:true" inside file src/environments/environment.staging.ts
+-   Run "ionic build -c=staging"
 
 ### For Production
 
-- Set "isWebApp:true" inside file src/environments/environment.prod.ts
-- Run "ionic build --prod"
+-   Set "isFormPreview:true" inside file src/environments/environment.prod.ts
+-   Run "ionic build --prod"
 
-### When run npm install after clone
+## App2Web app Deploy Instructions - Switch to branch "WebApp" then run below command for appropriate environment. After finished upload /www directory content to the server
+
+### For Development
+
+-   Run "ionic build"
+
+### For Staging
+
+-   Run "ionic build -c=staging"
+
+### For Production
+
+-   Run "ionic build --prod"
+
+## When run npm install after clone
 
 ## Fix unique device id plugin issue by replacing it from git repository in nodemodules/cordova-plugin-uniquedeviceid folder
