@@ -18,19 +18,20 @@ import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { CameraPreview } from "@ionic-native/camera-preview/ngx";
 import {
-  CommonModule,
-  HashLocationStrategy,
-  LocationStrategy,
+    CommonModule,
+    HashLocationStrategy,
+    LocationStrategy,
 } from "@angular/common";
 import { ScreenOrientation } from "@ionic-native/screen-orientation/ngx";
 import { DirectivesModule } from "./directives/directives.module";
 import { HTTP } from "@ionic-native/http/ngx";
 import { Zip } from "@ionic-native/zip/ngx";
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing/ngx";
 
 import {
-  HTTP_INTERCEPTORS,
-  HttpClient,
-  HttpClientModule,
+    HTTP_INTERCEPTORS,
+    HttpClient,
+    HttpClientModule,
 } from "@angular/common/http";
 import { HttpConfigInterceptor } from "./helpers/httpConfig.interceptor";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -50,74 +51,75 @@ import { OktaResponsePage } from "./pages/okta-response/okta-response.page";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    TemplateDropdownComponent,
-    CheckoktaenablePage,
-    OktaResponsePage,
-  ],
-  entryComponents: [
-    TemplateDropdownComponent,
-    CheckoktaenablePage,
-    OktaResponsePage,
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    IonicModule.forRoot({
-      hardwareBackButton: false,
-      mode: "ios",
-    }),
-    TranslateModule.forRoot({
-      defaultLanguage: "en",
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-    AppRoutingModule,
-    ComponentsModule,
-    ModalsModule,
-    CommonModule,
-    PipesModule,
-    DirectivesModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    ServiceWorkerModule.register("ngsw-worker.js", {
-      enabled: environment.production,
-    }),
-  ],
-  providers: [
-    QRScanner,
-    StatusBar,
-    FileOpener,
-    Base64,
-    File,
-    Device,
-    Zip,
-    FileTransfer,
-    UniqueDeviceID,
-    CameraPreview,
-    Camera,
-    Badge,
-    MediaCapture,
-    ScreenOrientation,
-    Insomnia,
-    HTTP,
-    SQLite,
-    RouterOutlet,
-    DiskCheckPlugin,
-    InAppBrowser,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpConfigInterceptor,
-      multi: true,
-    },
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
-  ],
+    declarations: [
+        AppComponent,
+        TemplateDropdownComponent,
+        CheckoktaenablePage,
+        OktaResponsePage,
+    ],
+    entryComponents: [
+        TemplateDropdownComponent,
+        CheckoktaenablePage,
+        OktaResponsePage,
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        IonicModule.forRoot({
+            hardwareBackButton: false,
+            mode: "ios",
+        }),
+        TranslateModule.forRoot({
+            defaultLanguage: "en",
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+        AppRoutingModule,
+        ComponentsModule,
+        ModalsModule,
+        CommonModule,
+        PipesModule,
+        DirectivesModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        ServiceWorkerModule.register("ngsw-worker.js", {
+            enabled: environment.production,
+        }),
+    ],
+    providers: [
+        SocialSharing,
+        QRScanner,
+        StatusBar,
+        FileOpener,
+        Base64,
+        File,
+        Device,
+        Zip,
+        FileTransfer,
+        UniqueDeviceID,
+        CameraPreview,
+        Camera,
+        Badge,
+        MediaCapture,
+        ScreenOrientation,
+        Insomnia,
+        HTTP,
+        SQLite,
+        RouterOutlet,
+        DiskCheckPlugin,
+        InAppBrowser,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpConfigInterceptor,
+            multi: true,
+        },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+    ],
 
-  bootstrap: [AppComponent],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

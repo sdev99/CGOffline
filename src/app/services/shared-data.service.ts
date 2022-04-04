@@ -5,7 +5,7 @@ import { Profile } from "../_models/profile";
 import { CheckinDetail } from "../_models/checkinDetail";
 import { LocationItem } from "../_models/locationItem";
 import { FileOpener } from "@ionic-native/file-opener/ngx";
-import { Share } from "@capacitor/share";
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing/ngx";
 
 import {
     Capacitor,
@@ -198,6 +198,7 @@ export class SharedDataService {
         public fileOpener: FileOpener,
         public file: File,
         private insomnia: Insomnia,
+        private socialSharing: SocialSharing,
         private filehandlerService: FilehandlerService,
         private screenOrientation: ScreenOrientation //  private translateService: TranslateService
     ) {
@@ -3849,18 +3850,22 @@ export class SharedDataService {
                     const fileName = "SignOffDetailHtml.html";
 
                     this.file
-                        .writeFile(writeDirectory, fileName, blob)
-                        .then((res) => {
-                            Share.share({
-                                title: "Html file",
-                                text: "",
-                                url: Capacitor.convertFileSrc(
-                                    writeDirectory + "/" + fileName
-                                ),
-                                dialogTitle: "Share file",
-                            });
+                        .writeFile(writeDirectory, fileName, blob, {
+                            replace: true,
                         })
-                        .catch((error) => {});
+                        .then((res) => {
+                            console.log("Write file success");
+
+                            this.socialSharing
+                                .share("", "", writeDirectory + "/" + fileName)
+                                .then((res) => {})
+                                .catch((error) => {
+                                    this.utilService.showAlert(error.message);
+                                });
+                        })
+                        .catch((error) => {
+                            console.log("Write file failed", error);
+                        });
                 }
             } else {
                 this.translateService
