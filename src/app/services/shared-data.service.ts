@@ -3829,25 +3829,21 @@ export class SharedDataService {
     ) => {
         const onSuccessCallBack = (status, resData = "") => {
             if (status) {
-                // this.utilService.showAlert(
-                //     "Test Json file is generated successfully",
-                //     "Success!"
-                // );
-
                 let blob = new Blob([resData], {
                     type: "text/html;charset=utf-8",
                 });
 
+                const fileName = "SignOffDetailHtml.html";
+
                 if (UtilService.isWebApp() || UtilService.isLocalHost()) {
                     var a = document.createElement("a");
                     a.href = window.URL.createObjectURL(blob);
-                    a.download = "SignOffDetailHtml.html";
+                    a.download = fileName;
                     a.click();
                 } else {
                     const writeDirectory = this.platform.is("android")
                         ? this.file.externalRootDirectory + "/Download"
                         : this.file.documentsDirectory;
-                    const fileName = "SignOffDetailHtml.html";
 
                     this.file
                         .writeFile(writeDirectory, fileName, blob, {
