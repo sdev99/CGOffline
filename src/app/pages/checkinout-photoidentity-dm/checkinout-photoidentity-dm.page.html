@@ -1,43 +1,50 @@
 <ion-header #headerView>
-  <app-modal-header-dm
-    [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
-    [modalSubTitle]="authFor"
-    (closeModal)="onClose()"
-  ></app-modal-header-dm>
+    <app-modal-header-dm
+        [modalTitle]="sharedDataService.getCurrentCheckedInEntityName()"
+        [modalSubTitle]="authFor"
+        (closeModal)="onClose()"
+    ></app-modal-header-dm>
 </ion-header>
 
 <ion-content
-  [ngClass]="{'camera-view':(!photoCaptured && viewLoaded), 'wep-app':isWebApp && !photoCaptured}"
+    [ngClass]="{'camera-view':(!photoCaptured && viewLoaded), 'wep-app':isWebApp && !photoCaptured}"
 >
-  <div class="content-container">
-    <app-back-continue-toolbar
-      (back)="onBack()"
-      *ngIf="!isWebApp || (isWebApp && photoCaptured)"
-      (continue)="onContinue()"
-      [disableRightBtn]="!photoCaptured"
-    ></app-back-continue-toolbar>
+    <div class="content-container">
+        <app-back-continue-toolbar
+            (back)="onBack()"
+            *ngIf="!isWebApp || (isWebApp && photoCaptured)"
+            (continue)="onContinue()"
+            [disableRightBtn]="!photoCaptured"
+        ></app-back-continue-toolbar>
 
-    <div class="content" #content>
-      <ng-container *ngIf="isWebApp">
-        <!-- Shows our camera stream -->
-        <video #video [hidden]="!scanActive"></video>
-        <!-- Used to render the camera stream images -->
-        <canvas #canvas hidden></canvas>
-      </ng-container>
+        <div class="content" #content>
+            <ng-container *ngIf="isWebApp">
+                <!-- Shows our camera stream -->
+                <video #video [hidden]="!scanActive"></video>
+                <!-- Used to render the camera stream images -->
+                <canvas #canvas hidden></canvas>
+            </ng-container>
 
-      <div class="text-1">Photo Identity</div>
-      <div class="text-2">
-        We need to take a photo of you.
-        <br />
-        Please align your face in to the below area.
-      </div>
-      <div class="ion-img-view" #imagePreview>
-        <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
-      </div>
+            <div class="text-1">Photo Identity</div>
+            <div class="text-2">
+                We need to take a photo of you.
+                <br />
+                Please align your face in to the below area.
+            </div>
+            <div class="ion-img-view" #imagePreview>
+                <ion-img *ngIf="photoCaptured" [src]="photoCaptured"></ion-img>
+            </div>
 
-      <ion-button class="action-btn" (click)="takePhoto()">
-        {{photoCaptured ? 'Take a New Photo' : 'Take the Photo'}}
-      </ion-button>
+            <ion-button class="action-btn" (click)="takePhoto()">
+                {{photoCaptured ? 'Take a New Photo' : 'Take the Photo'}}
+            </ion-button>
+
+            <ion-button
+                *ngIf="showGenerateJsonFileButton"
+                class="action-btn"
+                (click)="onContinue(true)"
+                >Generate JSON File
+            </ion-button>
+        </div>
     </div>
-  </div>
 </ion-content>
