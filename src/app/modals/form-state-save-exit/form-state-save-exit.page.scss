@@ -1,0 +1,76 @@
+ion-content {
+    --padding-start: 9.07%;
+    --padding-end: 9.07%;
+    --background: #f8f9fb;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        width: 100%;
+        text-align: center;
+
+        ion-icon {
+            width: 100px;
+            height: 100px;
+        }
+
+        .title-1 {
+            margin-top: 48px;
+            font-family: Inter;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 24px;
+            color: #171538;
+        }
+
+        .text-1 {
+            margin-top: 16px;
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 18px;
+            color: #171538;
+        }
+    }
+}
+
+ion-footer {
+    background-color: #f8f9fb;
+
+    .action-btn {
+        margin-bottom: 16px;
+    }
+
+    .exit-btn {
+        margin: 4vh;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        color: #2a6fdb;
+        border: 1px solid #2a6fdb;
+        border-radius: 3px;
+        --border-radius: 3px;
+        margin-top: 24px;
+        height: 50px;
+        --border-width: 0;
+    }
+
+    .cancel-btn {
+        margin-bottom: 8px;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        --color: #2a6fdb;
+    }
+}

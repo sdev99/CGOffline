@@ -49,6 +49,8 @@ import { DiskCheckPlugin } from "./custom-plugin-ngx/disk-check-plugin/ngx";
 import { CheckoktaenablePage } from "./pages/checkoktaenable/checkoktaenable.page";
 import { OktaResponsePage } from "./pages/okta-response/okta-response.page";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
+import { Drivers } from "@ionic/storage";
+import { IonicStorageModule } from "@ionic/storage-angular";
 
 @NgModule({
     declarations: [
@@ -77,6 +79,10 @@ import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
                 deps: [HttpClient],
             },
         }),
+        IonicStorageModule.forRoot({
+            name: "__compliancegenie",
+            driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+        }),
         AppRoutingModule,
         ComponentsModule,
         ModalsModule,
@@ -90,6 +96,7 @@ import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
         }),
     ],
     providers: [
+        Storage,
         SocialSharing,
         QRScanner,
         StatusBar,

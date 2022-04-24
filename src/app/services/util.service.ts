@@ -770,9 +770,15 @@ export class UtilService {
             });
     }
 
-    async showConfirmAlert(message = "", title = "", callBack = null) {
+    async showConfirmAlert(
+        message = "",
+        title = "",
+        callBack = null,
+        cancelBtnKey = "SHARED_TEXT.NO",
+        okBtnKey = "SHARED_TEXT.YES"
+    ) {
         this.translateService
-            .get(["SHARED_TEXT.NO", "SHARED_TEXT.YES"])
+            .get([cancelBtnKey, okBtnKey])
             .subscribe(async (res) => {
                 const alert = await this.alertController.create({
                     cssClass: "my-custom-class",
@@ -780,7 +786,7 @@ export class UtilService {
                     message,
                     buttons: [
                         {
-                            text: res["SHARED_TEXT.NO"],
+                            text: res[cancelBtnKey],
                             role: "cancel",
                             cssClass: "secondary",
                             handler: () => {
@@ -788,7 +794,7 @@ export class UtilService {
                             },
                         },
                         {
-                            text: res["SHARED_TEXT.YES"],
+                            text: res[okBtnKey],
                             handler: () => {
                                 callBack(true);
                             },

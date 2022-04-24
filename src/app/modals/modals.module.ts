@@ -9,18 +9,24 @@ import { ExitConfirmationPage } from "./exit-confirmation/exit-confirmation.page
 import { SearchLocationPage } from "./search-location/search-location.page";
 import { VideorecordPage } from "./videorecord/videorecord.page";
 import { PipesModule } from "../pipes/pipes.module";
+import { FormStateSaveExitPage } from "./form-state-save-exit/form-state-save-exit.page";
 
 @NgModule({
-  declarations: [ExitConfirmationPage, SearchLocationPage, VideorecordPage],
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    PipesModule,
-    ReactiveFormsModule,
-    TranslateModule,
-  ],
-  exports: [ExitConfirmationPage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    declarations: [
+        ExitConfirmationPage,
+        FormStateSaveExitPage,
+        SearchLocationPage,
+        VideorecordPage,
+    ],
+    imports: [
+        IonicModule,
+        CommonModule,
+        FormsModule,
+        PipesModule,
+        ReactiveFormsModule,
+        TranslateModule,
+    ],
+    exports: [ExitConfirmationPage, FormStateSaveExitPage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModalsModule {}

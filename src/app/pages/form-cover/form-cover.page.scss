@@ -1,183 +1,299 @@
 ion-header {
-  ::ng-deep app-modal-header {
-    ion-toolbar {
-      --border-color: #F8F9FB;
+    ::ng-deep app-modal-header {
+        ion-toolbar {
+            --border-color: #f8f9fb;
+        }
     }
-  }
 
-  ion-item {
-    --border-color: #DCE7EF;
-    --border-width: 0 0 1px 0;
-    --border-style: solid;
-    --padding-bottom: 12px;
-    --background: #F8F9FB;
+    ion-item {
+        --border-color: #dce7ef;
+        --border-width: 0 0 1px 0;
+        --border-style: solid;
+        --padding-bottom: 12px;
+        --background: #f8f9fb;
 
-    ion-label {
-      margin: 0;
-      white-space: normal;
+        ion-label {
+            margin: 0;
+            white-space: normal;
 
-      h6 {
-        font-family: IBM Plex Sans;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 16px;
-        color: #2A6FDB;
-      }
+            h6 {
+                font-family: IBM Plex Sans;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 12px;
+                line-height: 16px;
+                color: #2a6fdb;
+            }
 
+            .form-text-row {
+                width: 100%;
+                margin-top: 16px;
 
-      .form-text-row {
-        width: 100%;
-        margin-top: 16px;
+                .title {
+                    font-family: IBM Plex Sans;
+                    font-style: normal;
+                    font-weight: normal;
+                    font-size: 12px;
+                    line-height: 16px;
+                    color: #a1a8ca;
+                    text-transform: uppercase;
+                }
 
-        .title {
-          font-family: IBM Plex Sans;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 12px;
-          line-height: 16px;
-          color: #A1A8CA;
-          text-transform: uppercase;
+                .value {
+                    margin-top: 4px;
+                    font-family: IBM Plex Sans;
+                    font-style: normal;
+                    font-weight: normal;
+                    font-size: 12px;
+                    line-height: 16px;
+                    color: #171538;
+                }
+            }
+        }
+    }
+
+    .rejected-view {
+        padding: 8px 0;
+
+        .detail {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 8px 0;
+
+            ion-icon {
+                width: 22px;
+                height: 22px;
+                margin-right: 3px;
+            }
+
+            .rejected {
+                padding-left: 08px;
+                font-weight: normal;
+                color: #555;
+                font-size: 16px;
+            }
         }
 
-        .value {
-          margin-top: 4px;
-          font-family: IBM Plex Sans;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 12px;
-          line-height: 16px;
-          color: #171538;
+        .time {
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 13px;
+            font-size: 12px;
+            color: #555555;
+            white-space: normal;
         }
-      }
+
+        .reject-reason {
+            margin-top: 18px;
+
+            h3 {
+                font-style: normal;
+                font-weight: normal;
+                font-size: 12px;
+                line-height: 16px;
+                display: flex;
+                align-items: center;
+            }
+
+            p {
+                margin-top: 4px;
+                font-style: italic;
+                font-weight: normal;
+                font-size: 12px;
+                line-height: 16px;
+                display: flex;
+                align-items: center;
+                color: #a1a8ca;
+            }
+        }
     }
-  }
-
-  .rejected-view {
-    padding: 8px 0;
-
-    .detail {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin: 8px 0;
-
-      ion-icon {
-        width: 22px;
-        height: 22px;
-        margin-right: 3px;
-      }
-
-      .rejected {
-        padding-left: 08px;
-        font-weight: normal;
-        color: #555;
-        font-size: 16px;
-      }
-
-    }
-
-    .time {
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      line-height: 13px;
-      font-size: 12px;
-      color: #555555;
-      white-space: normal;
-    }
-
-    .reject-reason {
-      margin-top: 18px;
-
-      h3 {
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 16px;
-        display: flex;
-        align-items: center;
-      }
-
-      p {
-        margin-top: 4px;
-        font-style: italic;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 16px;
-        display: flex;
-        align-items: center;
-        color: #A1A8CA;
-      }
-    }
-  }
 }
 
-
 ion-content {
-  ion-item {
-    --padding-start: 0;
+    ion-item {
+        --padding-start: 0;
 
-    ion-label {
-      font-family: IBM Plex Sans;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 12px;
-      white-space: normal;
-    }
-
-    &.title-item {
-      --border-color: rgba(74, 144, 226, 0.2);
-      --padding-top: 12px;
-      --padding-bottom: 12px;
-
-      ion-label {
-        color: #171538;
-
-        h6 {
-          font-family: Inter;
-          font-style: normal;
-          font-weight: 600;
-          font-size: 14px;
-          line-height: 17px;
-          color: #171538;
-
-          margin-top: 44px;
+        ion-label {
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            white-space: normal;
         }
 
-        p {
-          margin-top: 8px;
-          font-family: IBM Plex Sans;
-          font-style: normal;
-          font-weight: normal;
-          font-size: 12px;
-          line-height: 16px;
-          color: #171538;
+        &.title-item {
+            --border-color: rgba(74, 144, 226, 0.2);
+            --padding-top: 12px;
+            --padding-bottom: 12px;
+
+            ion-label {
+                color: #171538;
+
+                h6 {
+                    font-family: Inter;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 17px;
+                    color: #171538;
+
+                    margin-top: 44px;
+                }
+
+                p {
+                    margin-top: 8px;
+                    font-family: IBM Plex Sans;
+                    font-style: normal;
+                    font-weight: normal;
+                    font-size: 12px;
+                    line-height: 16px;
+                    color: #171538;
+                }
+            }
         }
-      }
+
+        &.form-item {
+            --padding-top: 0;
+            --padding-bottom: 0;
+
+            ion-img {
+                width: 17.31px;
+                height: 20px;
+                margin-right: 12px;
+            }
+
+            ion-label {
+                color: #4a90e2;
+            }
+        }
     }
-
-    &.form-item {
-      --padding-top: 0;
-      --padding-bottom: 0;
-
-      ion-img {
-        width: 17.31px;
-        height: 20px;
-        margin-right: 12px;
-      }
-
-      ion-label {
-        color: #4A90E2;
-      }
-    }
-  }
-
 }
 
 .hr-line {
-  margin: 16px 0;
-  width: 100%;
-  height: 1px;
-  background-color: rgba(74, 144, 226, 0.2);
+    margin: 16px 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(74, 144, 226, 0.2);
+}
+
+.saved-state-item {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e8eaf2;
+
+    .title-row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 18px;
+        .title-text {
+            flex: 1;
+            font-family: IBM Plex Sans;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 18px;
+            display: flex;
+            align-items: center;
+            color: #444444;
+        }
+        .close-icon-btn {
+            height: auto;
+            --padding-top: 0;
+            margin: 0;
+            --padding-end: 0;
+            --padding-start: 0;
+            margin-left: 20px;
+
+            .close-icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+
+    .value-row {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        .value-part {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .date-view {
+                margin-top: 4px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                .label {
+                    font-family: "IBM Plex Sans";
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 10px;
+                    line-height: 13px;
+                    color: #a1a8ca;
+                    width: 70px;
+                }
+                .formated-date {
+                    flex: 1;
+                    font-family: "IBM Plex Sans";
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 10px;
+                    line-height: 13px;
+                    display: flex;
+                    align-items: center;
+                    color: #444444;
+                }
+            }
+        }
+        .btn-part {
+            height: 100%;
+            padding-left: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            .continue-btn {
+                background-color: transparent;
+                font-family: "IBM Plex Sans";
+                font-style: normal;
+                font-weight: 500;
+                font-size: 14px;
+                line-height: 18px;
+                display: flex;
+                align-items: center;
+                color: #2a6fdb;
+                --padding-end: 0;
+                ion-icon {
+                    width: 25px;
+                    height: 15px;
+                    margin-left: 8px;
+                }
+            }
+        }
+    }
+}
+
+ion-footer {
+    .saved-states-btn {
+        margin: 16px 4vh;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        color: #2a6fdb;
+        border: 1px solid #2a6fdb;
+        border-radius: 3px;
+        --border-radius: 3px;
+
+        height: 50px;
+        --border-width: 0;
+    }
 }

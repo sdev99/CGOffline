@@ -1243,6 +1243,15 @@ export class SharedDataService {
         });
     };
 
+    public async saveFormState(
+        formGroup: FormGroup,
+        formBuilderDetail,
+        personalModeLoggedUser: User,
+        originalCallBack,
+        havAnswerDetail: HavAnswerDetail = null,
+        workPermitAnswer: WorkPermitAnswer = null
+    ) {}
+
     public async saveFormAnswers(
         apiService: ApiService,
         formGroup: FormGroup,
