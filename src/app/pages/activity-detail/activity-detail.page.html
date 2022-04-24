@@ -127,7 +127,9 @@
                     slot="start"
                     [src]="attachment.documentFileIconURL"
                 ></ion-img>
-                <ion-label> {{attachment.documentFileName}} </ion-label>
+                <ion-label>
+                    {{attachment.documentTitle?attachment.documentTitle:attachment.documentFileName}}
+                </ion-label>
             </ion-item>
         </div>
 
