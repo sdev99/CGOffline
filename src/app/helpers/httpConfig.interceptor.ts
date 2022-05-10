@@ -94,6 +94,16 @@ export class HttpConfigInterceptor implements HttpInterceptor {
                         this.sharedDataService.dedicatedModeUserDetail?.userId
                     ),
                 });
+            } else if (
+                this.sharedDataService.dedicatedModeGuestDetail?.guestPhone
+            ) {
+                request = request.clone({
+                    headers: request.headers.set(
+                        "userID",
+                        this.sharedDataService.dedicatedModeGuestDetail
+                            ?.guestPhone
+                    ),
+                });
             }
         }
 
