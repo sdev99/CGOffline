@@ -280,8 +280,38 @@ ion-content {
 }
 
 ion-footer {
+    padding: 16px;
+
+    .no-saved-states {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        color: #a1a8ca;
+        margin-bottom: 24px;
+    }
+
     .saved-states-btn {
         margin: 16px 4vh;
+        font-family: IBM Plex Sans;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        color: #2a6fdb;
+        border: 1px solid #2a6fdb;
+        border-radius: 3px;
+        --border-radius: 3px;
+
+        height: 50px;
+        --border-width: 0;
+    }
+
+    .saved-states-back-btn {
+        margin: 26px 4vh;
         font-family: IBM Plex Sans;
         font-style: normal;
         font-weight: 500;

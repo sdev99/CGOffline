@@ -627,3 +627,9 @@ pwa-camera-modal-instance::ng-deep pwa-camera::ng-deep {
 .pick-image {
     display: none !important;
 }
+.exit-confirmation-modal,
+.form-state-save-exit-modal {
+    --width: 100%;
+    --height: 100%;
+    --border-radius: 0;
+}

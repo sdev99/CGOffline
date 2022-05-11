@@ -5,68 +5,151 @@
     ></app-modal-header-dm>
 </ion-header>
 
-<ion-content fullscreen="true">
+<ion-content fullscreen="true" mode="ios">
     <div class="content-container">
-        <div class="top-content">
-            <div class="text-1">You are about to fill</div>
-            <div class="text-2">{{signOffFormDetail?.formData?.formTitle}}</div>
-            <div class="text-3">{{signOffFormDetail?.formData?.formType}}</div>
-
-            <div
-                *ngIf="signOffFormDetail?.formData?.formattedDescription"
-                class="text-4"
-                [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"
-            ></div>
-
-            <ng-container
-                *ngIf="signOffFormDetail?.formData?.formattedInstructions"
-            >
-                <div class="text-5">INSTRUCTIONS</div>
-
-                <div
-                    class="text-4"
-                    [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"
-                ></div>
-            </ng-container>
-
-            <div
-                *ngIf="signOffFormDetail && signOffFormDetail.formAttachments?.length>0"
-                class="ion-margin-top"
-            >
-                <div class="text-5">ATTACHMENTS</div>
-
-                <div
-                    lines="none"
-                    class="form-item"
-                    (click)="openFile(attachmentItem)"
-                    *ngFor="let attachmentItem of signOffFormDetail.formAttachments"
+        <div class="title-container">
+            <div class="left-view">
+                <ion-button
+                    fill="outline"
+                    *ngIf="displaySavedStatesList"
+                    (click)="displaySavedStatesList=false"
                 >
-                    <ion-img
-                        [src]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(attachmentItem.documentFileIconURL, 'icon'): attachmentItem.documentFileIconURL"
-                    ></ion-img>
-                    <ion-label
-                        >{{attachmentItem.documentTitle?attachmentItem.documentTitle:
-                        attachmentItem.documentFileName}}</ion-label
-                    >
+                    <ion-icon
+                        slot="start"
+                        name="chevron-back-outline"
+                    ></ion-icon>
+                    Back
+                </ion-button>
+            </div>
+            <div class="inner-view">
+                <div class="form-title-view">
+                    <div class="text-1">You are about to fill</div>
+                    <div class="text-2">
+                        {{signOffFormDetail?.formData?.formTitle}}
+                    </div>
+                </div>
+                <div class="text-3">
+                    {{signOffFormDetail?.formData?.formType}}
                 </div>
             </div>
+            <div class="right-view"></div>
         </div>
 
-        <div class="bottom-content">
-            <div class="no-saved-states" *ngIf="!isSavedStates">
-                No saved states available
+        <ng-container
+            *ngIf="!displaySavedStatesList; else savedStatesListView;"
+        >
+            <div class="top-content">
+                <div class="inner-view">
+                    <div
+                        *ngIf="signOffFormDetail?.formData?.formattedDescription"
+                        class="text-4"
+                        [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedDescription)"
+                    ></div>
+
+                    <ng-container
+                        *ngIf="signOffFormDetail?.formData?.formattedInstructions"
+                    >
+                        <div class="text-5">INSTRUCTIONS</div>
+
+                        <div
+                            class="text-4"
+                            [innerHTML]="sanitizer.bypassSecurityTrustHtml(signOffFormDetail?.formData?.formattedInstructions)"
+                        ></div>
+                    </ng-container>
+
+                    <div
+                        *ngIf="signOffFormDetail && signOffFormDetail.formAttachments?.length>0"
+                        class="ion-margin-top"
+                    >
+                        <div class="text-5">ATTACHMENTS</div>
+
+                        <div
+                            lines="none"
+                            class="form-item"
+                            (click)="openFile(attachmentItem)"
+                            *ngFor="let attachmentItem of signOffFormDetail.formAttachments"
+                        >
+                            <ion-img
+                                [src]="sharedDataService.offlineMode?utilService.getOfflineFileUrl(attachmentItem.documentFileIconURL, 'icon'): attachmentItem.documentFileIconURL"
+                            ></ion-img>
+                            <ion-label
+                                >{{attachmentItem.documentTitle?attachmentItem.documentTitle:
+                                attachmentItem.documentFileName}}</ion-label
+                            >
+                        </div>
+                    </div>
+                </div>
             </div>
-            <ion-button
-                expand="full"
-                fill="clear"
-                class="show-save-state-btn"
-                (click)="showSavedState()"
-                *ngIf="isSavedStates"
-                >Show saved states</ion-button
-            >
-            <ion-button expand="full" class="action-btn" (click)="onContinue()"
-                >Launch the Form</ion-button
-            >
-        </div>
+
+            <div class="bottom-content">
+                <div class="no-saved-states" *ngIf="!isSavedStates">
+                    No saved states available
+                </div>
+                <ion-button
+                    expand="full"
+                    fill="clear"
+                    class="show-save-state-btn"
+                    (click)="displaySavedStatesList=true"
+                    *ngIf="isSavedStates"
+                    >Show saved states</ion-button
+                >
+                <ion-button
+                    expand="full"
+                    class="action-btn"
+                    (click)="onContinue()"
+                    >Launch the Form</ion-button
+                >
+            </div>
+        </ng-container>
+
+        <ng-template #savedStatesListView>
+            <div class="saved-state-list">
+                <div class="saved-state-item" *ngFor="let item of savedStates">
+                    <div class="title-row">
+                        <div class="title-text">{{item.title}}</div>
+
+                        <ion-button
+                            size="small"
+                            fill="clear"
+                            class="close-icon-btn"
+                            (click)="removeState(item)"
+                        >
+                            <ion-icon
+                                class="close-icon"
+                                slot="icon-only"
+                                src="./assets/icon/ic_close.svg"
+                            ></ion-icon>
+                        </ion-button>
+                    </div>
+
+                    <div class="value-row">
+                        <div class="value-part">
+                            <div class="date-view">
+                                <div class="label">Start date:</div>
+                                <div class="formated-date">
+                                    {{item.start_date}}
+                                </div>
+                            </div>
+                            <div class="date-view">
+                                <div class="label">Last save:</div>
+                                <div class="formated-date">
+                                    {{item.last_save}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-part">
+                            <ion-button class="continue-btn" fill="clear">
+                                Launch
+                                <ion-icon
+                                    slot="end"
+                                    src="./assets/icon/continue-arrow.svg"
+                                ></ion-icon>
+                            </ion-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
     </div>
 </ion-content>

@@ -12,6 +12,7 @@
         "BACK": "Back",
         "CONTINUE": "Continue",
         "DELETE": "Delete",
+        "GO_BACK": "Go Back",
         "HEADER": {
             "DASHBOARD": "Dashboard",
             "CHECKED_IN": "Checked-in",
@@ -146,6 +147,7 @@
             "ON": "on",
             "EXPLANATION": "Explanation",
             "LAUNCH_THE_FORM": "Launch the Form",
+            "LAUNCH": "Launch",
             "SHOW_SAVED_STATES": "Show saved states",
             "START_DATE": "Start Date",
             "LAST_SAVE": "Last Save",

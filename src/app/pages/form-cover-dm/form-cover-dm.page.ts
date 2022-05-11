@@ -80,10 +80,6 @@ export class FormCoverDmPage implements OnInit {
         ];
     }
 
-    showSavedState() {
-        this.displaySavedStatesList = true;
-    }
-
     openFile(attachmentItem: AttachmentItem) {
         if (this.sharedDataService.offlineMode) {
             const fileUrl = this.utilService.getOfflineFileUrl(
@@ -113,6 +109,23 @@ export class FormCoverDmPage implements OnInit {
 
     onClose() {
         this.navCtrl.navigateBack("/dashboard-dm");
+    }
+
+    /**
+     * Remove form saved state
+     */
+    removeState(item) {
+        this.utilService.showConfirmAlert(
+            "You are about to delete “Saved State 1”. Please confim.",
+            "Confirm Deletion.",
+            (status) => {
+                if (status) {
+                    // Remove form state from localdb
+                }
+            },
+            "Cancel",
+            "Delete"
+        );
     }
 
     async getFormBuilderDetails(callBack) {

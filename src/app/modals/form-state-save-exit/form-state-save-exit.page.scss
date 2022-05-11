@@ -1,7 +1,7 @@
 ion-content {
     --padding-start: 9.07%;
     --padding-end: 9.07%;
-    --background: #f8f9fb;
+    --background: #ffffff;
 
     .content {
         display: flex;
@@ -40,8 +40,6 @@ ion-content {
 }
 
 ion-footer {
-    background-color: #f8f9fb;
-
     .action-btn {
         margin-bottom: 16px;
     }
@@ -64,7 +62,7 @@ ion-footer {
     }
 
     .cancel-btn {
-        margin-bottom: 8px;
+        margin-bottom: 16px;
         font-family: IBM Plex Sans;
         font-style: normal;
         font-weight: 500;

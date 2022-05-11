@@ -181,11 +181,6 @@ export class FormCoverPage {
     }
 
     onClose() {
-        if (this.displaySavedStatesList) {
-            this.displaySavedStatesList = false;
-            return;
-        }
-
         if (
             this.sharedDataService.viewFormFor ===
             EnumService.ViewFormForType.Induction
@@ -194,10 +189,6 @@ export class FormCoverPage {
         } else {
             this.navCtrl.back();
         }
-    }
-
-    showShavedStates() {
-        this.displaySavedStatesList = true;
     }
 
     async getFormBuilderDetails(

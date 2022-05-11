@@ -155,12 +155,16 @@
             <div class="fill-vertical-space"></div>
 
             <ion-footer mode="ios">
+                <div class="no-saved-states" *ngIf="!isSavedStates">
+                    No saved states available
+                </div>
+                
                 <ion-button
                     *ngIf="isSavedStates"
                     expand="full"
                     fill="clear"
                     class="saved-states-btn"
-                    (click)="showShavedStates()"
+                    (click)="displaySavedStatesList = true"
                     >{{'PAGESPECIFIC_TEXT.FORM_LIST.SHOW_SAVED_STATES' |
                     translate}}</ion-button
                 >
@@ -176,52 +180,67 @@
         </div>
     </ng-container>
     <ng-template #savedStatesList>
-        <div class="saved-state-item" *ngFor="let item of savedStates">
-            <div class="title-row">
-                <div class="title-text">{{item.title}}</div>
+        <div class="content-container">
+            <div class="saved-state-item" *ngFor="let item of savedStates">
+                <div class="title-row">
+                    <div class="title-text">{{item.title}}</div>
 
-                <ion-button
-                    size="small"
-                    fill="clear"
-                    class="close-icon-btn"
-                    (click)="removeState(item)"
-                >
-                    <ion-icon
-                        class="close-icon"
-                        slot="icon-only"
-                        src="./assets/icon/ic_close.svg"
-                    ></ion-icon>
-                </ion-button>
-            </div>
-
-            <div class="value-row">
-                <div class="value-part">
-                    <div class="date-view">
-                        <div class="label">
-                            {{'PAGESPECIFIC_TEXT.FORM_LIST.START_DATE'
-                            |translate}}:
-                        </div>
-                        <div class="formated-date">{{item.start_date}}</div>
-                    </div>
-                    <div class="date-view">
-                        <div class="label">
-                            {{'PAGESPECIFIC_TEXT.FORM_LIST.LAST_SAVE'
-                            |translate}}:
-                        </div>
-                        <div class="formated-date">{{item.last_save}}</div>
-                    </div>
-                </div>
-
-                <div class="btn-part">
-                    <ion-button class="continue-btn" fill="clear">
-                        {{'SHARED_TEXT.CONTINUE' | translate}}
+                    <ion-button
+                        size="small"
+                        fill="clear"
+                        class="close-icon-btn"
+                        (click)="removeState(item)"
+                    >
                         <ion-icon
-                            slot="end"
-                            src="./assets/icon/continue-arrow.svg"
+                            class="close-icon"
+                            slot="icon-only"
+                            src="./assets/icon/ic_close.svg"
                         ></ion-icon>
                     </ion-button>
                 </div>
+
+                <div class="value-row">
+                    <div class="value-part">
+                        <div class="date-view">
+                            <div class="label">
+                                {{'PAGESPECIFIC_TEXT.FORM_LIST.START_DATE'
+                                |translate}}:
+                            </div>
+                            <div class="formated-date">{{item.start_date}}</div>
+                        </div>
+                        <div class="date-view">
+                            <div class="label">
+                                {{'PAGESPECIFIC_TEXT.FORM_LIST.LAST_SAVE'
+                                |translate}}:
+                            </div>
+                            <div class="formated-date">{{item.last_save}}</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-part">
+                        <ion-button class="continue-btn" fill="clear">
+                            {{'PAGESPECIFIC_TEXT.FORM_LIST.LAUNCH' | translate}}
+                            <ion-icon
+                                slot="end"
+                                src="./assets/icon/continue-arrow.svg"
+                            ></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
             </div>
+
+            <div class="fill-vertical-space"></div>
+
+            <ion-footer mode="ios">
+                <ion-button
+                    *ngIf="displaySavedStatesList"
+                    expand="full"
+                    fill="clear"
+                    class="saved-states-back-btn"
+                    (click)="displaySavedStatesList=false"
+                    >{{'SHARED_TEXT.GO_BACK' | translate}}</ion-button
+                >
+            </ion-footer>
         </div>
     </ng-template>
 </ion-content>

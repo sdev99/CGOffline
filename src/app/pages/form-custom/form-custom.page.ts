@@ -180,6 +180,7 @@ export class FormCustomPage {
                 backdropDismiss: false,
                 animated: true,
                 componentProps: {},
+                cssClass: "exit-confirmation-modal",
             });
             await modal.present();
 
@@ -195,6 +196,7 @@ export class FormCustomPage {
                 showBackdrop: false,
                 backdropDismiss: false,
                 animated: true,
+                cssClass: "form-state-save-exit-modal",
                 componentProps: {},
             });
             await modal.present();
