@@ -1,4 +1,10 @@
-import { Component, Input, OnDestroy } from "@angular/core";
+import {
+    Component,
+    Input,
+    OnChanges,
+    OnDestroy,
+    SimpleChanges,
+} from "@angular/core";
 import { PhotoService } from "../../services/photo.service";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { SharedDataService } from "../../services/shared-data.service";
@@ -33,7 +39,9 @@ import { VideorecordPage } from "src/app/modals/videorecord/videorecord.page";
         },
     ],
 })
-export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
+export class PhotoFieldComponent
+    implements ControlValueAccessor, OnDestroy, OnChanges
+{
     window = window;
 
     StaticDataService = StaticDataService;
@@ -41,6 +49,7 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
     Capacitor = Capacitor;
 
     @Input() label: string;
+    @Input() defaultValue: any;
     image: any;
     private disabled = false;
 
@@ -67,6 +76,26 @@ export class PhotoFieldComponent implements ControlValueAccessor, OnDestroy {
         public modalController: ModalController
     ) {}
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.defaultValue) {
+            let extension = "";
+            if (UtilService.IsBase64Sring(this.defaultValue)) {
+                extension = this.defaultValue.match(/[^:/]\w+(?=;|,)/)[0];
+            } else {
+                extension = this.defaultValue.split(".").pop().toLowerCase();
+            }
+            if (
+                StaticDataService.supportedVideoFormats.indexOf(extension) !==
+                -1
+            ) {
+                this.isVideo = true;
+                this.videoUrl = this.defaultValue;
+            } else {
+                this.photoThumbnail = this.defaultValue;
+                this.image = this.defaultValue;
+            }
+        }
+    }
     registerOnChange(fn: any): void {
         this.onChange = fn;
     }

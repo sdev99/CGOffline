@@ -232,6 +232,7 @@
           EnumService.CustomAnswerType.PhotoVideoUpload
         "
         [formControlName]="UtilService.FCUniqueName(section, question)"
+        [defaultValue]="sharedDataService.savedFormStateData?sharedDataService.savedFormStateData[UtilService.FCUniqueName(section, question)]:null"
         [label]="
           question.allowTextLabel
             ? UtilService.findObj(

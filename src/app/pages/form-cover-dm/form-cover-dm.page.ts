@@ -38,6 +38,13 @@ export class FormCoverDmPage implements OnInit {
     ) {}
 
     ionViewWillEnter() {
+        this.sharedDataService.getSavedFormStates((states) => {
+            if (states && states.length > 0) {
+                this.savedStates = states;
+                this.isSavedStates = true;
+            }
+        });
+
         if (
             this.sharedDataService.dedicatedModeProcessType ===
                 EnumService.DedicatedModeProcessTypes.Form ||
@@ -63,22 +70,7 @@ export class FormCoverDmPage implements OnInit {
         }
     }
 
-    ngOnInit(): void {
-        // demo saved states
-        this.isSavedStates = true;
-        this.savedStates = [
-            {
-                title: "Saved state 1",
-                start_date: "14 Jul 2020, 11:40 PM",
-                last_save: "14 Jul 2020, 11:40 PM",
-            },
-            {
-                title: "Saved state 2",
-                start_date: "14 Jul 2020, 11:40 PM",
-                last_save: "14 Jul 2020, 11:40 PM",
-            },
-        ];
-    }
+    ngOnInit(): void {}
 
     openFile(attachmentItem: AttachmentItem) {
         if (this.sharedDataService.offlineMode) {
@@ -111,16 +103,34 @@ export class FormCoverDmPage implements OnInit {
         this.navCtrl.navigateBack("/dashboard-dm");
     }
 
+    launchSavedForm = (savedFormItem, index) => {
+        console.log(
+            "savedFormItem.formAnswerData" +
+                JSON.stringify(savedFormItem.formAnswerData)
+        );
+        this.sharedDataService.savedFormStateData =
+            savedFormItem.formAnswerData;
+        this.sharedDataService.savedFormStateIndex = index;
+        this.openForm(savedFormItem.formType, savedFormItem.formBuilderDetail);
+    };
+
     /**
      * Remove form saved state
      */
-    removeState(item) {
+    removeState(item, index) {
         this.utilService.showConfirmAlert(
-            "You are about to delete “Saved State 1”. Please confim.",
+            "You are about to delete “" + item.title + "”. Please confim.",
             "Confirm Deletion.",
             (status) => {
                 if (status) {
                     // Remove form state from localdb
+                    this.sharedDataService.removeSavedFormState(
+                        index,
+                        (newList) => {
+                            this.savedStates = newList;
+                            this.isSavedStates = this.savedStates?.length > 0;
+                        }
+                    );
                 }
             },
             "Cancel",
@@ -162,35 +172,39 @@ export class FormCoverDmPage implements OnInit {
         }
     }
 
+    openForm = (formType, formBuilderDetail) => {
+        this.sharedDataService.formBuilderDetails = formBuilderDetail;
+
+        switch (formType) {
+            case EnumService.FormTypes.HAV:
+                this.navCtrl.navigateForward(["/form-hav"]);
+                break;
+
+            case EnumService.FormTypes.RISK_ASSESSMENT:
+                this.navCtrl.navigateForward(["/form-riskassessment"]);
+                break;
+
+            case EnumService.FormTypes.CUSTOM:
+                this.navCtrl.navigateForward(["/form-custom"]);
+                break;
+
+            case EnumService.FormTypes.ACCIDENT_REPORT:
+                this.navCtrl.navigateForward(["/form-accident-report"]);
+                break;
+
+            case EnumService.FormTypes.WORK_PERMIT:
+                this.navCtrl.navigateForward(["/form-workpermit"]);
+                break;
+            default:
+        }
+    };
+
     async onContinue() {
         if (this.signOffFormDetail) {
             const formData: FormItem = this.signOffFormDetail?.formData;
 
             this.getFormBuilderDetails((formDetails) => {
-                this.sharedDataService.formBuilderDetails = formDetails;
-
-                switch (formData?.formType) {
-                    case EnumService.FormTypes.HAV:
-                        this.navCtrl.navigateForward(["/form-hav"]);
-                        break;
-
-                    case EnumService.FormTypes.RISK_ASSESSMENT:
-                        this.navCtrl.navigateForward(["/form-riskassessment"]);
-                        break;
-
-                    case EnumService.FormTypes.CUSTOM:
-                        this.navCtrl.navigateForward(["/form-custom"]);
-                        break;
-
-                    case EnumService.FormTypes.ACCIDENT_REPORT:
-                        this.navCtrl.navigateForward(["/form-accident-report"]);
-                        break;
-
-                    case EnumService.FormTypes.WORK_PERMIT:
-                        this.navCtrl.navigateForward(["/form-workpermit"]);
-                        break;
-                    default:
-                }
+                this.openForm(formData?.formType, formDetails);
             });
         }
     }

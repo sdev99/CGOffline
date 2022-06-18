@@ -356,13 +356,25 @@ export class ApiService {
     }
 
     /**
-     * This API will update the activity status to complete. This API will use for Custom activity only
+     * This API will update activity status to "InProgress"
      * @param userId current logged in user
      * @param activityId we will get this from GetUserActivityList API
      */
     activityCompleted(userId, activityId) {
         return this.http.post(
             `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ActivityCompleted}?id=${userId}&activityIndividualID=${activityId}`,
+            {}
+        );
+    }
+
+    /**
+     * This API will update the activity status to complete. This API will use for Custom activity only
+     * @param userId current logged in user
+     * @param activityId we will get this from GetUserActivityList API
+     */
+    activityInProgress(userId, activityId) {
+        return this.http.post(
+            `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.ActivityInProgress}?id=${userId}&activityIndividualID=${activityId}`,
             {}
         );
     }

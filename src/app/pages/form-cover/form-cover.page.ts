@@ -24,8 +24,8 @@ export class FormCoverPage {
     EnumService = EnumService;
 
     signOffFormDetail: SignOffFormDetail;
-    isSavedStates: boolean = false;
     displaySavedStatesList: boolean = false;
+    isSavedStates: boolean = false;
     savedStates = [];
 
     constructor(
@@ -63,24 +63,16 @@ export class FormCoverPage {
                 }
             });
         }
-
-        // demo saved states
-        this.isSavedStates = true;
-        this.savedStates = [
-            {
-                title: "Saved state 1",
-                start_date: "14 Jul 2020, 11:40 PM",
-                last_save: "14 Jul 2020, 11:40 PM",
-            },
-            {
-                title: "Saved state 2",
-                start_date: "14 Jul 2020, 11:40 PM",
-                last_save: "14 Jul 2020, 11:40 PM",
-            },
-        ];
     }
 
     ionViewWillEnter() {
+        this.sharedDataService.getSavedFormStates((states) => {
+            if (states && states.length > 0) {
+                this.savedStates = states;
+                this.isSavedStates = true;
+            }
+        });
+
         // Remove all form images directory
         try {
             this.filehandlerService
@@ -122,10 +114,21 @@ export class FormCoverPage {
         }
     }
 
+    launchSavedForm = (savedFormItem, index) => {
+        console.log(
+            "savedFormItem.formAnswerData" +
+                JSON.stringify(savedFormItem.formAnswerData)
+        );
+        this.sharedDataService.savedFormStateData =
+            savedFormItem.formAnswerData;
+        this.sharedDataService.savedFormStateIndex = index;
+        this.openForm(savedFormItem.formType, savedFormItem.formBuilderDetail);
+    };
+
     /**
      * Remove form saved state
      */
-    removeState(item) {
+    removeState(item, index) {
         const alertTitileKey =
             "PAGESPECIFIC_TEXT.FORM_LIST.FORM_STATE_CONFIRM_DELETION";
         const alertMessage1key =
@@ -147,6 +150,15 @@ export class FormCoverPage {
                     (status) => {
                         if (status) {
                             // Remove form state from localdb
+                            this.sharedDataService.removeSavedFormState(
+                                index,
+                                (newList) => {
+                                    this.savedStates = newList;
+
+                                    this.isSavedStates =
+                                        this.savedStates?.length > 0;
+                                }
+                            );
                         }
                     },
                     "SHARED_TEXT.CANCEL",
@@ -154,6 +166,7 @@ export class FormCoverPage {
                 );
             });
     }
+
     openFile(attachmentItem: AttachmentItem) {
         if (this.sharedDataService.offlineMode) {
             const fileUrl = this.utilService.getOfflineFileUrl(
@@ -191,11 +204,38 @@ export class FormCoverPage {
         }
     }
 
+    openForm = (formType, formDetails) => {
+        this.sharedDataService.formBuilderDetails = formDetails;
+
+        switch (formType) {
+            case EnumService.FormTypes.HAV:
+                this.navCtrl.navigateForward(["/form-hav"]);
+                break;
+
+            case EnumService.FormTypes.RISK_ASSESSMENT:
+                this.navCtrl.navigateForward(["/form-riskassessment"]);
+                break;
+
+            case EnumService.FormTypes.CUSTOM:
+                this.navCtrl.navigateForward(["/form-custom"]);
+                break;
+
+            case EnumService.FormTypes.ACCIDENT_REPORT:
+                this.navCtrl.navigateForward(["/form-accident-report"]);
+                break;
+
+            case EnumService.FormTypes.WORK_PERMIT:
+                this.navCtrl.navigateForward(["/form-workpermit"]);
+                break;
+            default:
+                this.navCtrl.navigateForward(["/form-custom"]);
+        }
+    };
+
     async getFormBuilderDetails(
         formType,
         formID,
         formVersionID,
-        callBack = null
     ) {
         this.utilService.presentLoadingWithOptions();
 
@@ -203,32 +243,9 @@ export class FormCoverPage {
             (response: Response) => {
                 this.utilService.hideLoading();
                 const formDetails = response.Result;
-
-                this.sharedDataService.formBuilderDetails = formDetails;
-
-                switch (formType) {
-                    case EnumService.FormTypes.HAV:
-                        this.navCtrl.navigateForward(["/form-hav"]);
-                        break;
-
-                    case EnumService.FormTypes.RISK_ASSESSMENT:
-                        this.navCtrl.navigateForward(["/form-riskassessment"]);
-                        break;
-
-                    case EnumService.FormTypes.CUSTOM:
-                        this.navCtrl.navigateForward(["/form-custom"]);
-                        break;
-
-                    case EnumService.FormTypes.ACCIDENT_REPORT:
-                        this.navCtrl.navigateForward(["/form-accident-report"]);
-                        break;
-
-                    case EnumService.FormTypes.WORK_PERMIT:
-                        this.navCtrl.navigateForward(["/form-workpermit"]);
-                        break;
-                    default:
-                        this.navCtrl.navigateForward(["/form-custom"]);
-                }
+                this.sharedDataService.savedFormStateData = null;
+                this.sharedDataService.savedFormStateIndex = -1;
+                this.openForm(formType, formDetails);
             },
             (error) => {
                 this.utilService.showAlert(error.message || error);

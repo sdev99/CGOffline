@@ -104,15 +104,20 @@
 
         <ng-template #savedStatesListView>
             <div class="saved-state-list">
-                <div class="saved-state-item" *ngFor="let item of savedStates">
+                <div
+                    class="saved-state-item"
+                    *ngFor="let item of savedStates;let idx=index"
+                >
                     <div class="title-row">
-                        <div class="title-text">{{item.title}}</div>
+                        <div class="title-text">
+                            {{item.formBuilderDetail.title}}
+                        </div>
 
                         <ion-button
                             size="small"
                             fill="clear"
                             class="close-icon-btn"
-                            (click)="removeState(item)"
+                            (click)="removeState(item,idx)"
                         >
                             <ion-icon
                                 class="close-icon"
@@ -127,19 +132,25 @@
                             <div class="date-view">
                                 <div class="label">Start date:</div>
                                 <div class="formated-date">
-                                    {{item.start_date}}
+                                    {{ item.startSave | date:'dd MMM yyyy hh:mm
+                                    a' }}
                                 </div>
                             </div>
                             <div class="date-view">
                                 <div class="label">Last save:</div>
                                 <div class="formated-date">
-                                    {{item.last_save}}
+                                    {{item.lastSave| date:'dd MMM yyyy hh:mm
+                                    a'}}
                                 </div>
                             </div>
                         </div>
 
                         <div class="btn-part">
-                            <ion-button class="continue-btn" fill="clear">
+                            <ion-button
+                                class="continue-btn"
+                                fill="clear"
+                                (click)="launchSavedForm(item,idx)"
+                            >
                                 Launch
                                 <ion-icon
                                     slot="end"

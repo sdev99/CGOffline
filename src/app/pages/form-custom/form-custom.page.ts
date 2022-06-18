@@ -77,7 +77,8 @@ export class FormCustomPage {
         };
         this.utilService.addFormControlsForVisibleFields(
             sections,
-            this.formGroup
+            this.formGroup,
+            this.sharedDataService.savedFormStateData
         );
         // --End
     }
@@ -204,6 +205,7 @@ export class FormCustomPage {
             modal.onWillDismiss().then(({ data }) => {
                 if (data === 2) {
                     this.sharedDataService.saveFormState(
+                        EnumService.FormTypes.CUSTOM,
                         this.formGroup,
                         this.formBuilderDetail,
                         this.user,

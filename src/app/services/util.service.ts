@@ -838,7 +838,8 @@ export class UtilService {
         questionIndex,
         question,
         formGroup: FormGroup,
-        onValueChange = null
+        onValueChange = null,
+        savedFormData = null
     ) {
         const validators = [];
         if (question.questionIsRequired) {
@@ -874,12 +875,20 @@ export class UtilService {
             );
             if (question.answerChoiceAttributes) {
                 question.answerChoiceAttributes.map((choice) => {
+                    const fcName = UtilService.SubFCName(
+                        formControlName,
+                        choice.answerChoiceAttributeId
+                    );
+
                     checkboxFormGroup.addControl(
-                        UtilService.SubFCName(
-                            formControlName,
-                            choice.answerChoiceAttributeId
-                        ),
-                        new FormControl(false)
+                        fcName,
+                        new FormControl(
+                            savedFormData &&
+                            savedFormData[formControlName] &&
+                            savedFormData[formControlName][fcName]
+                                ? true
+                                : false
+                        )
                     );
                 });
             }
@@ -901,9 +910,19 @@ export class UtilService {
             );
             question.bodyParts?.map((bodyPartGroup) => {
                 bodyPartGroup.parts.map((part) => {
+                    const fcName = UtilService.SubFCName(
+                        formControlName,
+                        part.id
+                    );
                     checkboxFormGroup.addControl(
-                        UtilService.SubFCName(formControlName, part.id),
-                        new FormControl(false)
+                        fcName,
+                        new FormControl(
+                            savedFormData &&
+                            savedFormData[formControlName] &&
+                            savedFormData[formControlName][fcName]
+                                ? true
+                                : false
+                        )
                     );
                 });
             });
@@ -913,7 +932,7 @@ export class UtilService {
             EnumService.CustomAnswerType.ConfirmationBox
         ) {
             const control = new FormControl(
-                false,
+                savedFormData && savedFormData[formControlName] ? true : false,
                 Validators.compose(validators)
             );
             control.valueChanges.subscribe(onValueChange);
@@ -921,7 +940,12 @@ export class UtilService {
                 formGroup.addControl(formControlName, control);
             }
         } else {
-            const control = new FormControl("", Validators.compose(validators));
+            const control = new FormControl(
+                savedFormData && savedFormData[formControlName]
+                    ? savedFormData[formControlName]
+                    : "",
+                Validators.compose(validators)
+            );
             control.valueChanges.subscribe(onValueChange);
             if (!formGroup.controls[formControlName]) {
                 formGroup.addControl(formControlName, control);
@@ -934,13 +958,22 @@ export class UtilService {
             if (!formGroup.controls[formControlAdditionalNote]) {
                 formGroup.addControl(
                     formControlAdditionalNote,
-                    new FormControl("")
+                    new FormControl(
+                        savedFormData &&
+                        savedFormData[formControlAdditionalNote]
+                            ? savedFormData[formControlAdditionalNote]
+                            : ""
+                    )
                 );
             }
         }
     }
 
-    addFormControlsForVisibleFields = (sections, formGroup: FormGroup) => {
+    addFormControlsForVisibleFields = (
+        sections,
+        formGroup: FormGroup,
+        savedFormData: any = null
+    ) => {
         const questionElementIds = [];
         if (sections) {
             sections.map((section, sectionIndex) => {
@@ -1048,21 +1081,54 @@ export class UtilService {
                                 this.shouldShowSection(section) &&
                                 this.shouldShowQuestion(question)
                             ) {
+                                const controlValue =
+                                    savedFormData && savedFormData[controlName]
+                                        ? savedFormData[controlName]
+                                        : "";
+                                const placeControlValue =
+                                    savedFormData &&
+                                    savedFormData[
+                                        EnumService
+                                            .AccidentCustomLocationControlsName
+                                            .PlaceNotintheList
+                                    ]
+                                        ? savedFormData[
+                                              EnumService
+                                                  .AccidentCustomLocationControlsName
+                                                  .PlaceNotintheList
+                                          ]
+                                        : false;
+                                const locationControlValue =
+                                    savedFormData &&
+                                    savedFormData[
+                                        EnumService
+                                            .AccidentCustomLocationControlsName
+                                            .LocationName
+                                    ]
+                                        ? savedFormData[
+                                              EnumService
+                                                  .AccidentCustomLocationControlsName
+                                                  .LocationName
+                                          ]
+                                        : "";
+
                                 formGroup.addControl(
                                     controlName,
-                                    new FormControl("")
+                                    new FormControl(controlValue)
                                 );
                                 formGroup.addControl(
                                     EnumService
                                         .AccidentCustomLocationControlsName
                                         .PlaceNotintheList,
-                                    new FormControl(false)
+                                    new FormControl(
+                                        placeControlValue ? true : false
+                                    )
                                 );
                                 formGroup.addControl(
                                     EnumService
                                         .AccidentCustomLocationControlsName
                                         .LocationName,
-                                    new FormControl("")
+                                    new FormControl(locationControlValue)
                                 );
 
                                 if (
@@ -1116,7 +1182,8 @@ export class UtilService {
                                             sections,
                                             sectionIndex
                                         );
-                                    }
+                                    },
+                                    savedFormData
                                 );
                                 if (
                                     questionElementIds.indexOf(elementId) !== -1

@@ -158,7 +158,7 @@
                 <div class="no-saved-states" *ngIf="!isSavedStates">
                     No saved states available
                 </div>
-                
+
                 <ion-button
                     *ngIf="isSavedStates"
                     expand="full"
@@ -181,15 +181,20 @@
     </ng-container>
     <ng-template #savedStatesList>
         <div class="content-container">
-            <div class="saved-state-item" *ngFor="let item of savedStates">
+            <div
+                class="saved-state-item"
+                *ngFor="let item of savedStates; let idx=index"
+            >
                 <div class="title-row">
-                    <div class="title-text">{{item.title}}</div>
+                    <div class="title-text">
+                        {{item.formBuilderDetail.title}}
+                    </div>
 
                     <ion-button
                         size="small"
                         fill="clear"
                         class="close-icon-btn"
-                        (click)="removeState(item)"
+                        (click)="removeState(item, idx)"
                     >
                         <ion-icon
                             class="close-icon"
@@ -206,19 +211,28 @@
                                 {{'PAGESPECIFIC_TEXT.FORM_LIST.START_DATE'
                                 |translate}}:
                             </div>
-                            <div class="formated-date">{{item.start_date}}</div>
+                            <div class="formated-date">
+                                {{ item.startSave | date:'dd MMM yyyy hh:mm a'
+                                }}
+                            </div>
                         </div>
                         <div class="date-view">
                             <div class="label">
                                 {{'PAGESPECIFIC_TEXT.FORM_LIST.LAST_SAVE'
                                 |translate}}:
                             </div>
-                            <div class="formated-date">{{item.last_save}}</div>
+                            <div class="formated-date">
+                                {{item.lastSave| date:'dd MMM yyyy hh:mm a'}}
+                            </div>
                         </div>
                     </div>
 
                     <div class="btn-part">
-                        <ion-button class="continue-btn" fill="clear">
+                        <ion-button
+                            class="continue-btn"
+                            fill="clear"
+                            (click)="launchSavedForm(item,idx)"
+                        >
                             {{'PAGESPECIFIC_TEXT.FORM_LIST.LAUNCH' | translate}}
                             <ion-icon
                                 slot="end"

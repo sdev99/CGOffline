@@ -150,6 +150,7 @@ export class EnumService {
         GetUserActivityList: "GetUserActivityList", // GET
         GetUserActivityDetail: "GetUserActivityDetail", // GET
         ActivityCompleted: "ActivityCompleted", // POST
+        ActivityInProgress: "ActivityInProgress", // POST
         GetActivitySignOffFormDetail: "GetActivitySignOffFormDetail", // GET
         GetSignOffFormDetail: "GetSignOffFormDetail", // GET
         GetDedicatedModeSignOffFormDetail: "GetDedicatedModeSignOffFormDetail", // GET

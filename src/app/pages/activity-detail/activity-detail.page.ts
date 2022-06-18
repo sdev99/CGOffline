@@ -165,6 +165,8 @@ export class ActivityDetailPage implements OnInit {
                         ) {
                             this.sharedDataService.viewFormFor =
                                 EnumService.ViewFormForType.Activity;
+                            this.sharedDataService.viewFormForActivityId =
+                                this.activityListItem?.activityIndividualID;
                             this.sharedDataService.signOffFormDetail =
                                 response.Result as SignOffFormDetail;
                             this.navCtrl.navigateForward(["/form-cover"]);

@@ -58,6 +58,7 @@ import { File } from "@ionic-native/file/ngx";
 import { InductionItem } from "../_models/inductionItem";
 import { FilehandlerService } from "./filehandler.service";
 import { Insomnia } from "@ionic-native/insomnia/ngx";
+import { Storage } from "@ionic/storage-angular";
 
 const { PushNotifications, Permissions } = Plugins;
 
@@ -158,6 +159,7 @@ export class SharedDataService {
     dedicatedModeCapturedSelfieForCheckinProcess; // photo name of uploaded captured selfie during checkin process, (For reuse it for signoff)
 
     viewFormFor; // View form for induction process or activity detail
+    viewFormForActivityId; // View form for induction process or activity detail
     inductionContentItemIndex = 0;
 
     // Store location data for checkinout
@@ -169,7 +171,9 @@ export class SharedDataService {
     checkInPostData: CheckInPostData;
     signOffDetailsPostData: SignOffDetailsPostData;
 
-    formBuilderDetails;
+    formBuilderDetails: any;
+    savedFormStateData: any;
+    savedFormStateIndex: number = -1;
 
     // for use in next screen
     availableWorkPermits;
@@ -187,6 +191,8 @@ export class SharedDataService {
 
     translateService: TranslateService;
     companyLangaugeTranslations = {};
+
+    indexDbStorage: Storage = null;
 
     constructor(
         public platform: Platform,
@@ -1243,14 +1249,929 @@ export class SharedDataService {
         });
     };
 
+    /**
+     *
+     * @param index
+     */
+    public async removeSavedFormState(index: number, callBack) {
+        const userId = this.dedicatedMode
+            ? this.dedicatedModeUserDetail?.userId
+            : this.getLoggedInUser().userId;
+
+        this.indexDbStorage
+            .get(userId)
+            .then((res: any) => {
+                if (res) {
+                    let entityKey = "";
+                    if (this.currentSelectedCheckinPlace.inventoryItemID) {
+                        entityKey =
+                            "inventoryItem_" +
+                            this.currentSelectedCheckinPlace.inventoryItemID;
+                    } else if (this.currentSelectedCheckinPlace.locationID) {
+                        entityKey =
+                            "locationID_" +
+                            this.currentSelectedCheckinPlace.locationID;
+                    } else if (this.currentSelectedCheckinPlace.projectID) {
+                        entityKey =
+                            "projectID_" +
+                            this.currentSelectedCheckinPlace.projectID;
+                    }
+
+                    let savedForms = [];
+                    if (res[entityKey]) {
+                        savedForms = res[entityKey];
+                    }
+
+                    if (index >= 0) {
+                        savedForms.splice(index, 1);
+                    }
+
+                    res[entityKey] = savedForms;
+
+                    this.indexDbStorage.set(userId, res);
+
+                    callBack(savedForms);
+                }
+            })
+            .catch(() => {});
+    }
+
+    public async removeAllSavedFormState(callBack) {
+        this.indexDbStorage
+            .clear()
+            .then((res: any) => {
+                if (res) {
+                    callBack();
+                }
+            })
+            .catch(() => {});
+    }
+
+    /**
+     * Save Uncompleted form state to indexDb for mobile and webapp
+     * @param formGroup
+     * @param formBuilderDetail
+     * @param personalModeLoggedUser
+     * @param originalCallBack
+     * @param havAnswerDetail
+     * @param workPermitAnswer
+     */
     public async saveFormState(
+        formType,
         formGroup: FormGroup,
         formBuilderDetail,
         personalModeLoggedUser: User,
         originalCallBack,
         havAnswerDetail: HavAnswerDetail = null,
         workPermitAnswer: WorkPermitAnswer = null
-    ) {}
+    ) {
+        const savedStateIndex = this.savedFormStateIndex;
+
+        const saveToIndexDb = (formAnswerData) => {
+            const userId = this.dedicatedMode
+                ? this.dedicatedModeUserDetail?.userId
+                : personalModeLoggedUser?.userId;
+
+            this.indexDbStorage
+                .get(userId)
+                .then((res: any) => {
+                    if (res) {
+                        saveData(res);
+                    } else {
+                        saveData({});
+                    }
+                })
+                .catch(() => {
+                    saveData({});
+                });
+
+            const saveData = (data) => {
+                let uniqueKey = ""; // entityKey or activityId
+
+                if (this.viewFormFor === EnumService.ViewFormForType.Activity) {
+                    uniqueKey = this.viewFormForActivityId;
+                } else {
+                    if (this.currentSelectedCheckinPlace.inventoryItemID) {
+                        uniqueKey =
+                            "inventoryItem_" +
+                            this.currentSelectedCheckinPlace.inventoryItemID;
+                    } else if (this.currentSelectedCheckinPlace.locationID) {
+                        uniqueKey =
+                            "locationID_" +
+                            this.currentSelectedCheckinPlace.locationID;
+                    } else if (this.currentSelectedCheckinPlace.projectID) {
+                        uniqueKey =
+                            "projectID_" +
+                            this.currentSelectedCheckinPlace.projectID;
+                    }
+                }
+
+                let savedForms = [];
+                if (data[uniqueKey]) {
+                    savedForms = data[uniqueKey];
+                }
+                if (savedStateIndex >= 0) {
+                    savedForms[savedStateIndex].lastSave =
+                        moment().toISOString();
+                    savedForms[savedStateIndex].formBuilderDetail =
+                        formBuilderDetail;
+                    savedForms[savedStateIndex].formAnswerData = formAnswerData;
+                } else {
+                    savedForms.push({
+                        formType,
+                        formAnswerData,
+                        formBuilderDetail,
+                        lastSave: moment().toISOString(),
+                        startSave: moment().toISOString(),
+                    });
+                }
+
+                data[uniqueKey] = savedForms;
+
+                this.indexDbStorage.set(userId, data);
+
+                if (
+                    !this.dedicatedMode &&
+                    this.viewFormFor === EnumService.ViewFormForType.Activity
+                ) {
+                    this.utilService.presentLoadingWithOptions();
+                    this.apiServiceRerence
+                        .activityInProgress(userId, this.viewFormForActivityId)
+                        .subscribe(
+                            (res) => {
+                                this.utilService.hideLoading();
+                                originalCallBack && originalCallBack(true);
+                            },
+                            (error) => {
+                                this.utilService.hideLoading();
+                            }
+                        );
+                } else {
+                    originalCallBack && originalCallBack(true);
+                }
+            };
+        };
+
+        this.saveSavedStateFormAnswers(
+            this.apiServiceRerence,
+            formGroup,
+            formBuilderDetail,
+            personalModeLoggedUser,
+            (formAnswerData) => {
+                saveToIndexDb(formAnswerData);
+            },
+            havAnswerDetail,
+            workPermitAnswer
+        );
+    }
+
+    public async saveSavedStateFormAnswers(
+        apiService: ApiService,
+        formGroup: FormGroup,
+        formBuilderDetail,
+        personalModeLoggedUser: User,
+        originalCallBack,
+        havAnswerDetail: HavAnswerDetail = null,
+        workPermitAnswer: WorkPermitAnswer = null
+    ) {
+        if (!environment.isFormPreview) {
+            // Prevent app sleep while submiting form
+            this.insomnia.keepAwake().then(
+                () => console.log("keepAwake success"),
+                (error) => console.log("keepAwake error", error)
+            );
+
+            const callBack = (param1) => {
+                originalCallBack(param1);
+
+                // allow app sleep after for submiting form success or fail
+
+                this.insomnia.allowSleepAgain().then(
+                    () => console.log("success"),
+                    (error) => console.log(" allowSleepAgain error", error)
+                );
+            };
+
+            const sections = formBuilderDetail.sections;
+
+            let attachmentCount = 0;
+            let attachmentUploadedCount = 0;
+            const attachemtUploaded = {};
+
+            const onUploaded = () => {
+                attachmentUploadedCount++;
+                if (attachmentCount === attachmentUploadedCount) {
+                    this.utilService.hideLoading();
+                    this.submitSavedFormStateAnswers(
+                        apiService,
+                        formGroup,
+                        formBuilderDetail,
+                        personalModeLoggedUser,
+                        callBack,
+                        havAnswerDetail,
+                        workPermitAnswer,
+                        attachemtUploaded
+                    );
+                }
+            };
+
+            sections.map((section, sectionIndex) => {
+                if (this.utilService.shouldShowSection(section)) {
+                    const questions = section.questions;
+                    questions.map(async (question, questionIndex) => {
+                        if (this.utilService.shouldShowQuestion(question)) {
+                            const controlName = UtilService.FCUniqueName(
+                                section,
+                                question
+                            );
+                            const control = formGroup.controls[controlName];
+
+                            if (
+                                question.selectedAnswerTypeId ===
+                                EnumService.CustomAnswerType.PhotoVideoUpload
+                            ) {
+                                if (control && control.value) {
+                                    attachmentCount++;
+
+                                    let fileName =
+                                        "photo" +
+                                        this.utilService.getCurrentTimeStamp() +
+                                        ".jpeg";
+                                    let mimeType = "image/jpeg";
+                                    let isVideo = false;
+                                    let extension = "jpeg";
+
+                                    // if value is base64 format then find mimetype and extension
+                                    if (
+                                        UtilService.IsBase64Sring(control.value)
+                                    ) {
+                                        try {
+                                            extension =
+                                                control.value.match(
+                                                    /[^:/]\w+(?=;|,)/
+                                                )[0];
+                                            if (
+                                                StaticDataService.videoFormats.indexOf(
+                                                    extension.toLowerCase()
+                                                ) !== -1
+                                            ) {
+                                                isVideo = true;
+                                                fileName =
+                                                    "video" +
+                                                    this.utilService.getCurrentTimeStamp() +
+                                                    "." +
+                                                    extension;
+                                                mimeType = control.value.match(
+                                                    /[^:]\w+\/[\w-+\d.]+(?=;|,)/
+                                                )[0];
+                                            }
+                                        } catch (error) {}
+                                    } else {
+                                        extension = control.value
+                                            .split(".")
+                                            .pop()
+                                            .toLowerCase();
+                                        if (
+                                            StaticDataService.videoFormats.indexOf(
+                                                extension
+                                            ) !== -1
+                                        ) {
+                                            isVideo = true;
+                                            fileName = control.value.substr(
+                                                control.value.lastIndexOf("/") +
+                                                    1
+                                            );
+                                            mimeType =
+                                                StaticDataService.fileMimeTypes[
+                                                    extension
+                                                ];
+                                        }
+                                    }
+                                    // --end
+
+                                    let filePathOrBinaryData = control.value;
+
+                                    if (
+                                        UtilService.isWebApp() ||
+                                        UtilService.isLocalHost()
+                                    ) {
+                                        attachemtUploaded[question.questionId] =
+                                            filePathOrBinaryData;
+                                        onUploaded();
+                                    } else {
+                                        this.filehandlerService.saveFileOnDevice(
+                                            filePathOrBinaryData,
+                                            (status, res) => {
+                                                if (status) {
+                                                    attachemtUploaded[
+                                                        question.questionId
+                                                    ] = res;
+                                                    onUploaded();
+                                                } else {
+                                                    onUploaded();
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (attachmentCount === 0) {
+                this.submitSavedFormStateAnswers(
+                    apiService,
+                    formGroup,
+                    formBuilderDetail,
+                    personalModeLoggedUser,
+                    callBack,
+                    havAnswerDetail,
+                    workPermitAnswer
+                );
+            }
+        }
+    }
+
+    private submitSavedFormStateAnswers = (
+        apiService: ApiService,
+        formGroup: FormGroup,
+        formBuilderDetail,
+        personalModeLoggedUser: User,
+        callBack,
+        havAnswerDetail: HavAnswerDetail = null,
+        workPermitAnswer: WorkPermitAnswer = null,
+        attachemtUploaded = {}
+    ) => {
+        const sections = formBuilderDetail.sections;
+        const workPermitDetails = formBuilderDetail.workPermitDetails;
+        const accidentReport = formBuilderDetail.accidentReport;
+        const formVersionId = formBuilderDetail.formVersionId;
+
+        const questionAnswers = [];
+        const accidentReportQuestionAnswers = [];
+        const riskAssessmentAnswers = [];
+        const riskAssessmentAnswerDetails = { taskAnswers: [] };
+
+        const selectedLanguageID = this.getLanguageIdForForm();
+
+        const formattedSections = [];
+
+        const userId = this.dedicatedMode
+            ? this.dedicatedModeUserDetail?.userId
+            : personalModeLoggedUser?.userId;
+        const companyId = this.dedicatedMode
+            ? this.dedicatedModeDeviceDetailData.companyID
+            : personalModeLoggedUser.companyID;
+
+        let savedStatesAnswerByFormControlName = {};
+
+        sections.map((section, sectionIndex) => {
+            if (this.utilService.shouldShowSection(section)) {
+                const formattedAnswers = [];
+                const sectionFormattedObject: any = JSON.parse(
+                    JSON.stringify(section)
+                );
+
+                if (section.isRiskAssessmentSection) {
+                    const tasks =
+                        section.riskAssessmentAnswerDetails?.taskAnswers;
+                    riskAssessmentAnswerDetails.taskAnswers = tasks;
+                    tasks.map((task) => {
+                        if (this.utilService.shouldShowQuestion(task)) {
+                            const answerFormattedObject: any = JSON.parse(
+                                JSON.stringify(task)
+                            );
+                            const hazardsAnswers = task.hazardAnswers;
+
+                            answerFormattedObject.answerData = hazardsAnswers;
+                            formattedAnswers.push(answerFormattedObject);
+                        }
+                    });
+
+                    sectionFormattedObject.taskAnswerData = formattedAnswers;
+                } else if (section.isHAVSection) {
+                    const havAssessmentTools = section.havAssessmentTools;
+                    havAssessmentTools.some((havAssessmentTool) => {
+                        const questions = havAssessmentTool.questions;
+
+                        questions.some((question, questionIndex) => {
+                            const questionDisplayOrder = questionIndex + 1;
+                            const questionLabel = UtilService.findObj(
+                                question.questionTranslations,
+                                "questionTranslationLanguageId",
+                                selectedLanguageID
+                            ).questionTranslationTitle;
+                            const answerFormattedObject: any = JSON.parse(
+                                JSON.stringify(question)
+                            );
+
+                            const havQuestionAnswerObject: HavAnswerObject = {
+                                hAVQuestionAnswerId: 0,
+                                questionID: question.questionId,
+                                questionTitle: questionLabel,
+                                formVersionID: formVersionId,
+                                answerTypeID: question.selectedAnswerTypeId,
+                                hAVSequence: question.questionDisplayOrder,
+                                [EnumService.QuestionLogic.ActionTypeForForm
+                                    .MarkAsFailed]:
+                                    question[
+                                        EnumService.QuestionLogic
+                                            .ActionTypeForForm.MarkAsFailed
+                                    ],
+                                [EnumService.QuestionLogic.ActionTypeForForm
+                                    .Notify]:
+                                    question[
+                                        EnumService.QuestionLogic
+                                            .ActionTypeForForm.Notify
+                                    ],
+                                [EnumService.QuestionLogic.ActionTypeForForm
+                                    .CreateNewActivity]:
+                                    question[
+                                        EnumService.QuestionLogic
+                                            .ActionTypeForForm.CreateNewActivity
+                                    ],
+                            };
+
+                            let isValueFilled = false;
+                            switch (questionDisplayOrder) {
+                                case EnumService.HavFormFieldOrder.DateOfUsage:
+                                    if (question.value) {
+                                        havQuestionAnswerObject.dateOfUsage =
+                                            moment(question.value).format(
+                                                StaticDataService.dateFormat
+                                            );
+                                        isValueFilled = true;
+                                    }
+                                    break;
+                                case EnumService.HavFormFieldOrder.Manufacturer:
+                                    if (question.value) {
+                                        havQuestionAnswerObject.hAVManufacturerID =
+                                            question.value;
+                                        isValueFilled = true;
+                                    }
+                                    break;
+                                case EnumService.HavFormFieldOrder.Type:
+                                    if (question.value) {
+                                        havQuestionAnswerObject.hAVTypeID =
+                                            question.value;
+                                        isValueFilled = true;
+                                    }
+                                    break;
+                                case EnumService.HavFormFieldOrder.Model:
+                                    if (question.value) {
+                                        havQuestionAnswerObject.hAVModelID =
+                                            question.value;
+                                        havQuestionAnswerObject.inventoryItemID =
+                                            question.inventoryItemID;
+                                        isValueFilled = true;
+                                    }
+                                    break;
+                                case EnumService.HavFormFieldOrder
+                                    .PlannedTimeOfUsage:
+                                    if (question.value) {
+                                        isValueFilled = true;
+                                        havQuestionAnswerObject.plannedTimeOfUse =
+                                            Number(question.value);
+                                    }
+                                    break;
+                            }
+
+                            if (isValueFilled) {
+                                answerFormattedObject.havAnswerData =
+                                    havQuestionAnswerObject;
+                                formattedAnswers.push(answerFormattedObject);
+                            }
+                        });
+                    });
+
+                    sectionFormattedObject.answerData = formattedAnswers;
+                } else {
+                    const questions = section.questions;
+
+                    questions.map((question, questionIndex) => {
+                        const questionDisplayOrder = questionIndex + 1;
+                        if (this.utilService.shouldShowQuestion(question)) {
+                            const answerFormattedObject: any = JSON.parse(
+                                JSON.stringify(question)
+                            );
+                            const controlName = UtilService.FCUniqueName(
+                                section,
+                                question
+                            );
+                            const control = formGroup.controls[controlName];
+                            let isValueFilled = false;
+
+                            if (control) {
+                                const questionLabel = UtilService.findObj(
+                                    question.questionTranslations,
+                                    "questionTranslationLanguageId",
+                                    selectedLanguageID
+                                ).questionTranslationTitle;
+
+                                if (section.isAccidentReportSection) {
+                                    const answerObject: ArAnswerObject = {
+                                        accidentReportQuestionAnswerId: 0,
+                                        questionID: question.questionId,
+                                        questionTitle: questionLabel,
+                                        formVersionID: formVersionId,
+                                        answerTypeID:
+                                            question.selectedAnswerTypeId,
+                                        accidentAnswerSequence:
+                                            question.questionDisplayOrder,
+                                        [EnumService.QuestionLogic
+                                            .ActionTypeForForm.MarkAsFailed]:
+                                            question[
+                                                EnumService.QuestionLogic
+                                                    .ActionTypeForForm
+                                                    .MarkAsFailed
+                                            ],
+                                        [EnumService.QuestionLogic
+                                            .ActionTypeForForm.Notify]:
+                                            question[
+                                                EnumService.QuestionLogic
+                                                    .ActionTypeForForm.Notify
+                                            ],
+                                        [EnumService.QuestionLogic
+                                            .ActionTypeForForm
+                                            .CreateNewActivity]:
+                                            question[
+                                                EnumService.QuestionLogic
+                                                    .ActionTypeForForm
+                                                    .CreateNewActivity
+                                            ],
+                                    };
+
+                                    switch (questionDisplayOrder) {
+                                        case EnumService.AccidentFormFieldOrder
+                                            .AccidentDateTime:
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentDateTime =
+                                                    moment(
+                                                        control.value
+                                                    ).format(
+                                                        StaticDataService.dateTimeFormat
+                                                    );
+                                            }
+
+                                            savedStatesAnswerByFormControlName[
+                                                controlName
+                                            ] = control.value;
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .AccidentLocation:
+                                            const placeNotintheList =
+                                                formGroup.controls
+                                                    .placeNotintheList;
+                                            const locationName =
+                                                formGroup.controls.locationName;
+
+                                            if (placeNotintheList.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentLocationName =
+                                                    locationName.value;
+
+                                                savedStatesAnswerByFormControlName[
+                                                    EnumService.AccidentCustomLocationControlsName.PlaceNotintheList
+                                                ] = placeNotintheList.value;
+                                                savedStatesAnswerByFormControlName[
+                                                    EnumService.AccidentCustomLocationControlsName.LocationName
+                                                ] = locationName.value;
+                                            } else if (control.value) {
+                                                isValueFilled = true;
+                                                const entityIds =
+                                                    this.utilService.getRelevantEntityId(
+                                                        control.value
+                                                    );
+                                                answerObject.accidentInventoryID =
+                                                    entityIds.InventoryID;
+                                                answerObject.accidentProjectID =
+                                                    entityIds.ProjectID;
+                                                answerObject.accidentLocationID =
+                                                    entityIds.LocationID;
+
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] = control.value;
+                                            }
+                                            break;
+
+                                        case EnumService.AccidentFormFieldOrder
+                                            .About:
+                                            const formGroups =
+                                                control.value as FormGroup;
+                                            const multipleChoiceValueIDs = [];
+                                            const multipleChoiceValueAnswer =
+                                                {};
+                                            question.answerChoiceAttributes.map(
+                                                (choice) => {
+                                                    const subControlName =
+                                                        UtilService.SubFCName(
+                                                            controlName,
+                                                            choice.answerChoiceAttributeId
+                                                        );
+                                                    const choiceControl =
+                                                        formGroups[
+                                                            subControlName
+                                                        ];
+                                                    if (choiceControl) {
+                                                        multipleChoiceValueIDs.push(
+                                                            choice.answerChoiceAttributeId
+                                                        );
+                                                        multipleChoiceValueAnswer[
+                                                            subControlName
+                                                        ] = true;
+                                                    }
+                                                }
+                                            );
+                                            if (
+                                                multipleChoiceValueIDs.length >
+                                                0
+                                            ) {
+                                                isValueFilled = true;
+                                                answerObject.accidentAboutIDs =
+                                                    multipleChoiceValueIDs.join(
+                                                        ","
+                                                    );
+                                            }
+
+                                            savedStatesAnswerByFormControlName[
+                                                controlName
+                                            ] = multipleChoiceValueAnswer;
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .Type:
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentTypeID =
+                                                    control.value;
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] = control.value;
+                                            }
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .Classification:
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentClassificationID =
+                                                    control.value;
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] = control.value;
+                                            }
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .BodyPartEffected:
+                                            const bodyPartFormGroups =
+                                                control.value as FormGroup;
+                                            const bodyPartsIDs = [];
+
+                                            const selectedBodyPartsValue = {};
+                                            StaticDataService.bodyParts.map(
+                                                (partGroup) => {
+                                                    partGroup.parts.map(
+                                                        (part) => {
+                                                            const subControlName =
+                                                                UtilService.SubFCName(
+                                                                    controlName,
+                                                                    part.id
+                                                                );
+
+                                                            const choiceControl =
+                                                                bodyPartFormGroups[
+                                                                    subControlName
+                                                                ];
+                                                            if (choiceControl) {
+                                                                bodyPartsIDs.push(
+                                                                    part.id
+                                                                );
+
+                                                                selectedBodyPartsValue[
+                                                                    subControlName
+                                                                ] = true;
+                                                            }
+                                                        }
+                                                    );
+                                                }
+                                            );
+                                            if (bodyPartsIDs.length > 0) {
+                                                isValueFilled = true;
+                                                answerObject.accidentBodyPartIDs =
+                                                    bodyPartsIDs.join(",");
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] = selectedBodyPartsValue;
+                                            }
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .Description:
+                                            if (control.value) {
+                                                isValueFilled = true;
+                                                answerObject.accidentDescription =
+                                                    control.value;
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] = control.value;
+                                            }
+                                            break;
+                                        case EnumService.AccidentFormFieldOrder
+                                            .Attachment:
+                                            if (
+                                                attachemtUploaded[
+                                                    question.questionId
+                                                ]
+                                            ) {
+                                                isValueFilled = true;
+                                                if (this.offlineMode) {
+                                                    answerObject.accidentAttachmentFileId =
+                                                        attachemtUploaded[
+                                                            question.questionId
+                                                        ];
+                                                } else {
+                                                    answerObject.accidentAttachmentFileName =
+                                                        attachemtUploaded[
+                                                            question.questionId
+                                                        ];
+                                                }
+
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] =
+                                                    attachemtUploaded[
+                                                        question.questionId
+                                                    ];
+                                            }
+                                            break;
+                                    }
+
+                                    if (isValueFilled) {
+                                        accidentReportQuestionAnswers.push(
+                                            answerObject
+                                        );
+                                        answerFormattedObject.arAnswerData =
+                                            answerObject;
+                                    }
+                                } else {
+                                    switch (question.selectedAnswerTypeId) {
+                                        case EnumService.CustomAnswerType
+                                            .ClassicDropdown:
+
+                                        case EnumService.CustomAnswerType
+                                            .SingleLineText:
+                                        case EnumService.CustomAnswerType
+                                            .MultiLineText:
+                                        case EnumService.CustomAnswerType
+                                            .SingleChoiceSet:
+                                        case EnumService.CustomAnswerType
+                                            .ConfirmationBox:
+                                        case EnumService.CustomAnswerType
+                                            .ScanQrCodeField:
+                                        case EnumService.CustomAnswerType
+                                            .NumberFieldInteger:
+                                        case EnumService.CustomAnswerType
+                                            .NumberFieldDecimal:
+                                        case EnumService.CustomAnswerType
+                                            .DateField:
+                                        case EnumService.CustomAnswerType
+                                            .TimeField:
+                                        case EnumService.CustomAnswerType
+                                            .DateTimeField:
+                                            savedStatesAnswerByFormControlName[
+                                                controlName
+                                            ] = control.value;
+                                            break;
+
+                                        case EnumService.CustomAnswerType
+                                            .MultipleChoiceSet:
+                                            const formGroups =
+                                                control.value as FormGroup;
+                                            const subValues = {};
+                                            question.answerChoiceAttributes.map(
+                                                (choice) => {
+                                                    const choiceControl =
+                                                        formGroups[
+                                                            UtilService.SubFCName(
+                                                                controlName,
+                                                                choice.answerChoiceAttributeId
+                                                            )
+                                                        ];
+
+                                                    subValues[
+                                                        UtilService.SubFCName(
+                                                            controlName,
+                                                            choice.answerChoiceAttributeId
+                                                        )
+                                                    ] = choiceControl
+                                                        ? true
+                                                        : false;
+                                                }
+                                            );
+
+                                            savedStatesAnswerByFormControlName[
+                                                controlName
+                                            ] = subValues;
+                                            break;
+
+                                        case EnumService.CustomAnswerType
+                                            .Matrix3DField:
+                                            savedStatesAnswerByFormControlName[
+                                                controlName
+                                            ] = control.value;
+
+                                            break;
+
+                                        case EnumService.CustomAnswerType
+                                            .PhotoVideoUpload:
+                                            if (
+                                                attachemtUploaded[
+                                                    question.questionId
+                                                ]
+                                            ) {
+                                                savedStatesAnswerByFormControlName[
+                                                    controlName
+                                                ] =
+                                                    attachemtUploaded[
+                                                        question.questionId
+                                                    ];
+                                            }
+                                            break;
+                                    }
+
+                                    // if additional comment
+                                    if (question.shouldShowOptionalComment) {
+                                        const additionalControl =
+                                            formGroup.controls[
+                                                UtilService.FCNameAdditioanlNoteUq(
+                                                    controlName
+                                                )
+                                            ];
+                                        if (additionalControl.value) {
+                                            savedStatesAnswerByFormControlName[
+                                                UtilService.FCNameAdditioanlNoteUq(
+                                                    controlName
+                                                )
+                                            ] = additionalControl.value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        callBack(savedStatesAnswerByFormControlName);
+    };
+    /**
+     * getSavedFormStates
+     */
+    public getSavedFormStates(callBack) {
+        const userId = this.dedicatedMode
+            ? this.dedicatedModeUserDetail?.userId
+            : this.getLoggedInUser().userId;
+
+        this.indexDbStorage
+            .get(userId)
+            .then((res: any) => {
+                if (res) {
+                    let uniqueKey = "";
+                    if (
+                        this.viewFormFor ===
+                        EnumService.ViewFormForType.Activity
+                    ) {
+                        uniqueKey = this.viewFormForActivityId;
+                    } else {
+                        if (this.currentSelectedCheckinPlace.inventoryItemID) {
+                            uniqueKey =
+                                "inventoryItem_" +
+                                this.currentSelectedCheckinPlace
+                                    .inventoryItemID;
+                        } else if (
+                            this.currentSelectedCheckinPlace.locationID
+                        ) {
+                            uniqueKey =
+                                "locationID_" +
+                                this.currentSelectedCheckinPlace.locationID;
+                        } else if (this.currentSelectedCheckinPlace.projectID) {
+                            uniqueKey =
+                                "projectID_" +
+                                this.currentSelectedCheckinPlace.projectID;
+                        }
+                    }
+
+                    callBack(res[uniqueKey]);
+                } else {
+                    callBack([]);
+                }
+            })
+            .catch(() => {
+                callBack([]);
+            });
+    }
 
     public async saveFormAnswers(
         apiService: ApiService,

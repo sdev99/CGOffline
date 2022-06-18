@@ -64,7 +64,8 @@ export class AppComponent {
     initializeApp() {
         this.platform.ready().then(async () => {
             // create storage for indexdb
-            this.storage.create();
+            this.sharedDataService.indexDbStorage = await this.storage.create();
+
             this.statusBar.styleDefault();
             this.sharedDataService.apiServiceRerence = this.apiService;
             this.sharedDataService.accountServiceRef = this.accountService;
