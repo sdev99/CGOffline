@@ -81,7 +81,11 @@ import { IonicStorageModule } from "@ionic/storage-angular";
         }),
         IonicStorageModule.forRoot({
             name: "__compliancegenie",
-            driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+            driverOrder: [
+                Drivers.IndexedDB,
+                Drivers.SecureStorage,
+                Drivers.LocalStorage,
+            ],
         }),
         AppRoutingModule,
         ComponentsModule,

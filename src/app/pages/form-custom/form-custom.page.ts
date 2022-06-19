@@ -83,6 +83,13 @@ export class FormCustomPage {
         // --End
     }
 
+    isShowGenerateJsonButton = () => {
+        if (this.sharedDataService.isDevelopmentMode) {
+            // return true;
+        }
+        return false;
+    };
+
     handleOrientation = () => {
         if (this.sharedDataService.dedicatedMode) {
             this.screenOrientationSubscribe?.unsubscribe();
@@ -238,25 +245,26 @@ export class FormCustomPage {
         }
     }
 
-    onSubmit() {
+    onSubmit(isGenerateTestJsonFile = false) {
         this.isSubmitted = true;
         this.errorMessage = "";
 
         this.isFormSubmitting = true;
-        this.sharedDataService.saveFormAnswers(
-            this.apiService,
-            this.formGroup,
-            this.formBuilderDetail,
-            this.user,
-            (status, result) => {
+        this.sharedDataService.saveFormAnswers({
+            apiService: this.apiService,
+            formGroup: this.formGroup,
+            formBuilderDetail: this.formBuilderDetail,
+            personalModeLoggedUser: this.user,
+            originalCallBack: (status, result) => {
                 this.isFormSubmitting = false;
                 if (status) {
                 } else {
                     this.errorMessage = result;
                     this._scrollToTop();
                 }
-            }
-        );
+            },
+            isGenerateTestJsonFile,
+        });
     }
 
     _scrollToTop() {

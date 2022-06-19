@@ -894,12 +894,12 @@ export class FormHavPage implements OnInit {
 
         if (!this.errorMessage) {
             this.isFormSubmitting = true;
-            this.sharedDataService.saveFormAnswers(
-                this.apiService,
-                this.formGroup,
-                this.formBuilderDetail,
-                this.user,
-                (status, result) => {
+            this.sharedDataService.saveFormAnswers({
+                apiService: this.apiService,
+                formGroup: this.formGroup,
+                formBuilderDetail: this.formBuilderDetail,
+                personalModeLoggedUser: this.user,
+                originalCallBack: (status, result) => {
                     this.isFormSubmitting = false;
                     if (status) {
                     } else {
@@ -907,8 +907,8 @@ export class FormHavPage implements OnInit {
                         this._scrollToTop();
                     }
                 },
-                havAnswerDetail
-            );
+                havAnswerDetail,
+            });
         } else {
             this._scrollToTop();
         }

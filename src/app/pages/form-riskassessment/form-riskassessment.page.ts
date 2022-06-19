@@ -184,10 +184,12 @@ export class FormRiskassessmentPage implements OnInit {
             sections.map((section) => {
                 if (section.isRiskAssessmentSection) {
                     section.riskAssessmentAnswerDetails = {
-                        taskAnswers: section.riskAssessmentAnswerDetails
-                            .taskAnswers
-                            ? section.riskAssessmentAnswerDetails.taskAnswers
-                            : [],
+                        taskAnswers:
+                            section.riskAssessmentAnswerDetails &&
+                            section.riskAssessmentAnswerDetails.taskAnswers
+                                ? section.riskAssessmentAnswerDetails
+                                      .taskAnswers
+                                : [],
                     };
                 }
             });
@@ -1162,12 +1164,12 @@ export class FormRiskassessmentPage implements OnInit {
         this.errorMessage = "";
 
         this.isFormSubmitting = true;
-        this.sharedDataService.saveFormAnswers(
-            this.apiService,
-            this.formGroup,
-            this.formBuilderDetail,
-            this.user,
-            (status, result) => {
+        this.sharedDataService.saveFormAnswers({
+            apiService: this.apiService,
+            formGroup: this.formGroup,
+            formBuilderDetail: this.formBuilderDetail,
+            personalModeLoggedUser: this.user,
+            originalCallBack: (status, result) => {
                 this.isFormSubmitting = false;
 
                 if (status) {
@@ -1175,8 +1177,8 @@ export class FormRiskassessmentPage implements OnInit {
                     this.errorMessage = result;
                     this._scrollToTop();
                 }
-            }
-        );
+            },
+        });
     }
 
     _scrollToTop() {

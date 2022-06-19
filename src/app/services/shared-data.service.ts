@@ -1249,11 +1249,64 @@ export class SharedDataService {
         });
     };
 
+    private getUserSavedSates(callBack) {
+        const userId = this.dedicatedMode
+            ? this.dedicatedModeUserDetail?.userId
+            : this.getLoggedInUser().userId;
+
+        let uniqueKey = ""; // entityKey or activityId
+
+        if (this.viewFormFor === EnumService.ViewFormForType.Activity) {
+            uniqueKey = this.viewFormForActivityId;
+        } else {
+            if (this.dedicatedMode) {
+                if (this.dedicatedModeLocationUse.inventoryItemID) {
+                    uniqueKey =
+                        "inventoryItem_" +
+                        this.dedicatedModeLocationUse.inventoryItemID;
+                } else if (this.dedicatedModeLocationUse.locationID) {
+                    uniqueKey =
+                        "locationID_" +
+                        this.dedicatedModeLocationUse.locationID;
+                } else if (this.dedicatedModeLocationUse.projectID) {
+                    uniqueKey =
+                        "projectID_" + this.dedicatedModeLocationUse.projectID;
+                }
+            } else {
+                if (this.currentSelectedCheckinPlace.inventoryItemID) {
+                    uniqueKey =
+                        "inventoryItem_" +
+                        this.currentSelectedCheckinPlace.inventoryItemID;
+                } else if (this.currentSelectedCheckinPlace.locationID) {
+                    uniqueKey =
+                        "locationID_" +
+                        this.currentSelectedCheckinPlace.locationID;
+                } else if (this.currentSelectedCheckinPlace.projectID) {
+                    uniqueKey =
+                        "projectID_" +
+                        this.currentSelectedCheckinPlace.projectID;
+                }
+            }
+        }
+
+        this.indexDbStorage
+            .get(userId)
+            .then((res: any) => {
+                if (res) {
+                    callBack(userId, uniqueKey, res);
+                } else {
+                    callBack(userId, uniqueKey, {});
+                }
+            })
+            .catch(() => {
+                callBack(userId, uniqueKey, {});
+            });
+    }
     /**
      *
      * @param index
      */
-    public async removeSavedFormState(index: number, callBack) {
+    public async removeSavedFormStateForActivity(activityId, callBack) {
         const userId = this.dedicatedMode
             ? this.dedicatedModeUserDetail?.userId
             : this.getLoggedInUser().userId;
@@ -1262,38 +1315,37 @@ export class SharedDataService {
             .get(userId)
             .then((res: any) => {
                 if (res) {
-                    let entityKey = "";
-                    if (this.currentSelectedCheckinPlace.inventoryItemID) {
-                        entityKey =
-                            "inventoryItem_" +
-                            this.currentSelectedCheckinPlace.inventoryItemID;
-                    } else if (this.currentSelectedCheckinPlace.locationID) {
-                        entityKey =
-                            "locationID_" +
-                            this.currentSelectedCheckinPlace.locationID;
-                    } else if (this.currentSelectedCheckinPlace.projectID) {
-                        entityKey =
-                            "projectID_" +
-                            this.currentSelectedCheckinPlace.projectID;
-                    }
-
-                    let savedForms = [];
-                    if (res[entityKey]) {
-                        savedForms = res[entityKey];
-                    }
-
-                    if (index >= 0) {
-                        savedForms.splice(index, 1);
-                    }
-
-                    res[entityKey] = savedForms;
-
+                    delete res[activityId];
                     this.indexDbStorage.set(userId, res);
-
-                    callBack(savedForms);
                 }
+                callBack();
             })
-            .catch(() => {});
+            .catch(() => {
+                callBack();
+            });
+    }
+
+    /**
+     *
+     * @param index
+     */
+    public async removeSavedFormState(index: number, callBack) {
+        this.getUserSavedSates((userId, uniqueKey, res) => {
+            let savedForms = [];
+            if (res[uniqueKey]) {
+                savedForms = res[uniqueKey];
+            }
+
+            if (index >= 0) {
+                savedForms.splice(index, 1);
+            }
+
+            res[uniqueKey] = savedForms;
+
+            this.indexDbStorage.set(userId, res);
+
+            callBack(savedForms);
+        });
     }
 
     public async removeAllSavedFormState(callBack) {
@@ -1328,48 +1380,12 @@ export class SharedDataService {
         const savedStateIndex = this.savedFormStateIndex;
 
         const saveToIndexDb = (formAnswerData) => {
-            const userId = this.dedicatedMode
-                ? this.dedicatedModeUserDetail?.userId
-                : personalModeLoggedUser?.userId;
-
-            this.indexDbStorage
-                .get(userId)
-                .then((res: any) => {
-                    if (res) {
-                        saveData(res);
-                    } else {
-                        saveData({});
-                    }
-                })
-                .catch(() => {
-                    saveData({});
-                });
-
-            const saveData = (data) => {
-                let uniqueKey = ""; // entityKey or activityId
-
-                if (this.viewFormFor === EnumService.ViewFormForType.Activity) {
-                    uniqueKey = this.viewFormForActivityId;
-                } else {
-                    if (this.currentSelectedCheckinPlace.inventoryItemID) {
-                        uniqueKey =
-                            "inventoryItem_" +
-                            this.currentSelectedCheckinPlace.inventoryItemID;
-                    } else if (this.currentSelectedCheckinPlace.locationID) {
-                        uniqueKey =
-                            "locationID_" +
-                            this.currentSelectedCheckinPlace.locationID;
-                    } else if (this.currentSelectedCheckinPlace.projectID) {
-                        uniqueKey =
-                            "projectID_" +
-                            this.currentSelectedCheckinPlace.projectID;
-                    }
-                }
-
+            this.getUserSavedSates((userId, uniqueKey, res) => {
                 let savedForms = [];
-                if (data[uniqueKey]) {
-                    savedForms = data[uniqueKey];
+                if (res[uniqueKey]) {
+                    savedForms = res[uniqueKey];
                 }
+
                 if (savedStateIndex >= 0) {
                     savedForms[savedStateIndex].lastSave =
                         moment().toISOString();
@@ -1386,9 +1402,9 @@ export class SharedDataService {
                     });
                 }
 
-                data[uniqueKey] = savedForms;
+                res[uniqueKey] = savedForms;
 
-                this.indexDbStorage.set(userId, data);
+                this.indexDbStorage.set(userId, res);
 
                 if (
                     !this.dedicatedMode &&
@@ -1409,7 +1425,7 @@ export class SharedDataService {
                 } else {
                     originalCallBack && originalCallBack(true);
                 }
-            };
+            });
         };
 
         this.saveSavedStateFormAnswers(
@@ -1559,8 +1575,9 @@ export class SharedDataService {
                                             filePathOrBinaryData;
                                         onUploaded();
                                     } else {
-                                        this.filehandlerService.saveFileOnDevice(
+                                        this.filehandlerService.saveFileOnDevicePath(
                                             filePathOrBinaryData,
+                                            StaticDataService.formStateFileFolderName,
                                             (status, res) => {
                                                 if (status) {
                                                     attachemtUploaded[
@@ -2130,58 +2147,35 @@ export class SharedDataService {
      * getSavedFormStates
      */
     public getSavedFormStates(callBack) {
-        const userId = this.dedicatedMode
-            ? this.dedicatedModeUserDetail?.userId
-            : this.getLoggedInUser().userId;
+        this.getUserSavedSates((userId, uniqueKey, res) => {
+            let savedForms = [];
+            if (res[uniqueKey]) {
+                savedForms = res[uniqueKey];
+            }
 
-        this.indexDbStorage
-            .get(userId)
-            .then((res: any) => {
-                if (res) {
-                    let uniqueKey = "";
-                    if (
-                        this.viewFormFor ===
-                        EnumService.ViewFormForType.Activity
-                    ) {
-                        uniqueKey = this.viewFormForActivityId;
-                    } else {
-                        if (this.currentSelectedCheckinPlace.inventoryItemID) {
-                            uniqueKey =
-                                "inventoryItem_" +
-                                this.currentSelectedCheckinPlace
-                                    .inventoryItemID;
-                        } else if (
-                            this.currentSelectedCheckinPlace.locationID
-                        ) {
-                            uniqueKey =
-                                "locationID_" +
-                                this.currentSelectedCheckinPlace.locationID;
-                        } else if (this.currentSelectedCheckinPlace.projectID) {
-                            uniqueKey =
-                                "projectID_" +
-                                this.currentSelectedCheckinPlace.projectID;
-                        }
-                    }
-
-                    callBack(res[uniqueKey]);
-                } else {
-                    callBack([]);
-                }
-            })
-            .catch(() => {
-                callBack([]);
-            });
+            callBack(savedForms);
+        });
     }
 
-    public async saveFormAnswers(
-        apiService: ApiService,
-        formGroup: FormGroup,
+    public async saveFormAnswers({
+        apiService,
+        formGroup,
         formBuilderDetail,
-        personalModeLoggedUser: User,
+        personalModeLoggedUser,
         originalCallBack,
-        havAnswerDetail: HavAnswerDetail = null,
-        workPermitAnswer: WorkPermitAnswer = null
-    ) {
+        havAnswerDetail = null,
+        workPermitAnswer = null,
+        isGenerateTestJsonFile = false,
+    }: {
+        apiService: ApiService;
+        formGroup: FormGroup;
+        formBuilderDetail: any;
+        personalModeLoggedUser: User;
+        originalCallBack: any;
+        havAnswerDetail?: HavAnswerDetail;
+        workPermitAnswer?: WorkPermitAnswer;
+        isGenerateTestJsonFile?: boolean;
+    }) {
         if (!environment.isFormPreview) {
             // Prevent app sleep while submiting form
             this.insomnia.keepAwake().then(
@@ -2468,7 +2462,8 @@ export class SharedDataService {
                             callBack,
                             havAnswerDetail,
                             workPermitAnswer,
-                            attachemtUploaded
+                            attachemtUploaded,
+                            isGenerateTestJsonFile
                         );
                     } else {
                         if (!this.offlineMode) {
@@ -2699,7 +2694,9 @@ export class SharedDataService {
                         personalModeLoggedUser,
                         callBack,
                         havAnswerDetail,
-                        workPermitAnswer
+                        workPermitAnswer,
+                        {},
+                        isGenerateTestJsonFile
                     );
                 }
             } else if (requiredFieldsCount === 0 && filledFieldsCount === 0) {
@@ -2753,7 +2750,8 @@ export class SharedDataService {
         callBack,
         havAnswerDetail: HavAnswerDetail = null,
         workPermitAnswer: WorkPermitAnswer = null,
-        attachemtUploaded = {}
+        attachemtUploaded = {},
+        isGenerateTestJsonFile = false
     ) => {
         const sections = formBuilderDetail.sections;
         const workPermitDetails = formBuilderDetail.workPermitDetails;
@@ -3373,7 +3371,7 @@ export class SharedDataService {
                                             if (control.value) {
                                                 isValueFilled = true;
                                                 answerObject.integerValue =
-                                                    Number(control.value);
+                                                    control.value;
                                             }
                                             break;
                                         case EnumService.CustomAnswerType
@@ -4286,6 +4284,10 @@ export class SharedDataService {
                     this.signOffFor ===
                         EnumService.SignOffType.DOCUMENT_ACTIVITY
                 ) {
+                    this.removeSavedFormStateForActivity(
+                        this.viewFormForActivityId,
+                        () => {}
+                    );
                     this.observablesService.publishSomeData(
                         EnumService.ObserverKeys.ACTIVITY_COMPLETED,
                         true

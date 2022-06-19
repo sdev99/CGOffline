@@ -66,6 +66,8 @@ export class FormCoverPage {
     }
 
     ionViewWillEnter() {
+        this.sharedDataService.savedFormStateIndex = -1;
+
         this.sharedDataService.getSavedFormStates((states) => {
             if (states && states.length > 0) {
                 this.savedStates = states;
@@ -232,11 +234,7 @@ export class FormCoverPage {
         }
     };
 
-    async getFormBuilderDetails(
-        formType,
-        formID,
-        formVersionID,
-    ) {
+    async getFormBuilderDetails(formType, formID, formVersionID) {
         this.utilService.presentLoadingWithOptions();
 
         this.apiService.getFormBuilderDetails(formID, formVersionID).subscribe(

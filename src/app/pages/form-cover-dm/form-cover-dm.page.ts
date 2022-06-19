@@ -38,6 +38,8 @@ export class FormCoverDmPage implements OnInit {
     ) {}
 
     ionViewWillEnter() {
+        this.sharedDataService.savedFormStateIndex = -1;
+
         this.sharedDataService.getSavedFormStates((states) => {
             if (states && states.length > 0) {
                 this.savedStates = states;
@@ -204,6 +206,7 @@ export class FormCoverDmPage implements OnInit {
             const formData: FormItem = this.signOffFormDetail?.formData;
 
             this.getFormBuilderDetails((formDetails) => {
+                this.sharedDataService.savedFormStateIndex = -1;
                 this.openForm(formData?.formType, formDetails);
             });
         }

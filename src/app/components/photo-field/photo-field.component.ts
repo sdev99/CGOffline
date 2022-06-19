@@ -89,10 +89,12 @@ export class PhotoFieldComponent
                 -1
             ) {
                 this.isVideo = true;
-                this.videoUrl = this.defaultValue;
+                this.videoUrl = Capacitor.convertFileSrc(this.defaultValue);
             } else {
-                this.photoThumbnail = this.defaultValue;
-                this.image = this.defaultValue;
+                this.photoThumbnail = Capacitor.convertFileSrc(
+                    this.defaultValue
+                );
+                this.image = Capacitor.convertFileSrc(this.defaultValue);
             }
         }
     }
