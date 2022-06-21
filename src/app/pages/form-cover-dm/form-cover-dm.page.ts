@@ -25,6 +25,7 @@ export class FormCoverDmPage implements OnInit {
     isSavedStates: boolean = false;
     displaySavedStatesList: boolean = false;
     savedStates = [];
+    isFormStateEligible = false;
 
     constructor(
         public navCtrl: NavController,
@@ -40,12 +41,18 @@ export class FormCoverDmPage implements OnInit {
     ionViewWillEnter() {
         this.sharedDataService.savedFormStateIndex = -1;
 
-        this.sharedDataService.getSavedFormStates((states) => {
-            if (states && states.length > 0) {
-                this.savedStates = states;
-                this.isSavedStates = true;
-            }
-        });
+        if (
+            this.sharedDataService.viewFormFor !==
+            EnumService.ViewFormForType.Induction
+        ) {
+            this.isFormStateEligible = true;
+            this.sharedDataService.getSavedFormStates((states) => {
+                if (states && states.length > 0) {
+                    this.savedStates = states;
+                    this.isSavedStates = true;
+                }
+            });
+        }
 
         if (
             this.sharedDataService.dedicatedModeProcessType ===
@@ -121,7 +128,10 @@ export class FormCoverDmPage implements OnInit {
      */
     removeState(item, index) {
         this.utilService.showConfirmAlert(
-            "You are about to delete “" + item.title + "”. Please confim.",
+            "You are about to delete “" +
+                "Saved State " +
+                (index + 1) +
+                "”. Please confim.",
             "Confirm Deletion.",
             (status) => {
                 if (status) {

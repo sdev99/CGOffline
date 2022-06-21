@@ -177,7 +177,7 @@ export class EnumService {
         GetTypeList: "GetTypeList", // GET
         GetModelList: "GetModelList", // GET
         FormPhotoOrVideoUpload: "FormPhotoOrVideoUpload", // POST
-        SaveFormAnswers: "SaveFormAnswers", // POST
+        SaveFormAnswers: "SaveFormAnswers_V1", // POST
         GetAccidentBodyPartList: "GetAccidentBodyPartList", // GET
         GetAccidentClassificationList: "GetAccidentClassificationList", // GET
         GetAccidentTypeList: "GetAccidentTypeList", // GET
@@ -213,9 +213,10 @@ export class EnumService {
         GetDeviceOfflineFile: "GetDeviceOfflineFile",
         PostOfflineFormAnswerPhotoOrVideo: "PostOfflineFormAnswerPhotoOrVideo",
         DeviceOfflineFileDelete: "DeviceOfflineFileDelete",
-        GetSynchStatus: "GetSynchStatus",
-        PostDeviceOfflineFile: "PostDeviceOfflineFile",
+        GetSynchStatus: "GetSynchStatus_V1",
+        PostDeviceOfflineFile: "PostDeviceOfflineFile_V1",
         SynchDevice: "SynchDevice",
+        CheckLocationArchive: "CheckLocationArchive",
     };
 
     static ApiResponseCode = {

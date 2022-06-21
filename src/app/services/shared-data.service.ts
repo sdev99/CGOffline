@@ -1260,28 +1260,28 @@ export class SharedDataService {
             uniqueKey = this.viewFormForActivityId;
         } else {
             if (this.dedicatedMode) {
-                if (this.dedicatedModeLocationUse.inventoryItemID) {
+                if (this.dedicatedModeLocationUse?.inventoryItemID) {
                     uniqueKey =
                         "inventoryItem_" +
                         this.dedicatedModeLocationUse.inventoryItemID;
-                } else if (this.dedicatedModeLocationUse.locationID) {
+                } else if (this.dedicatedModeLocationUse?.locationID) {
                     uniqueKey =
                         "locationID_" +
                         this.dedicatedModeLocationUse.locationID;
-                } else if (this.dedicatedModeLocationUse.projectID) {
+                } else if (this.dedicatedModeLocationUse?.projectID) {
                     uniqueKey =
                         "projectID_" + this.dedicatedModeLocationUse.projectID;
                 }
             } else {
-                if (this.currentSelectedCheckinPlace.inventoryItemID) {
+                if (this.currentSelectedCheckinPlace?.inventoryItemID) {
                     uniqueKey =
                         "inventoryItem_" +
                         this.currentSelectedCheckinPlace.inventoryItemID;
-                } else if (this.currentSelectedCheckinPlace.locationID) {
+                } else if (this.currentSelectedCheckinPlace?.locationID) {
                     uniqueKey =
                         "locationID_" +
                         this.currentSelectedCheckinPlace.locationID;
-                } else if (this.currentSelectedCheckinPlace.projectID) {
+                } else if (this.currentSelectedCheckinPlace?.projectID) {
                     uniqueKey =
                         "projectID_" +
                         this.currentSelectedCheckinPlace.projectID;
@@ -3370,7 +3370,9 @@ export class SharedDataService {
                                             .NumberFieldInteger:
                                             if (control.value) {
                                                 isValueFilled = true;
-                                                answerObject.integerValue =
+                                                // answerObject.integerValue =
+                                                //     Number(control.value);
+                                                answerObject.integerValueInString =
                                                     control.value;
                                             }
                                             break;

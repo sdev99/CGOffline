@@ -121,7 +121,7 @@
                         *ngIf="signOffFormDetail?.formData?.formattedInstructions"
                     >
                         <h6>
-                            {{'PAGESPECIFIC_TEXT.FORM_LIST.EXPLANATION' |
+                            {{'PAGESPECIFIC_TEXT.FORM_LIST.INSTRUCTIONS' |
                             translate}}
                         </h6>
                         <p
@@ -155,19 +155,21 @@
             <div class="fill-vertical-space"></div>
 
             <ion-footer mode="ios">
-                <div class="no-saved-states" *ngIf="!isSavedStates">
-                    No saved states available
-                </div>
+                <ng-container *ngIf="isFormStateEligible">
+                    <div class="no-saved-states" *ngIf="!isSavedStates">
+                        No saved states available
+                    </div>
 
-                <ion-button
-                    *ngIf="isSavedStates"
-                    expand="full"
-                    fill="clear"
-                    class="saved-states-btn"
-                    (click)="displaySavedStatesList = true"
-                    >{{'PAGESPECIFIC_TEXT.FORM_LIST.SHOW_SAVED_STATES' |
-                    translate}}</ion-button
-                >
+                    <ion-button
+                        *ngIf="isSavedStates"
+                        expand="full"
+                        fill="clear"
+                        class="saved-states-btn"
+                        (click)="displaySavedStatesList = true"
+                        >{{'PAGESPECIFIC_TEXT.FORM_LIST.SHOW_SAVED_STATES' |
+                        translate}}</ion-button
+                    >
+                </ng-container>
 
                 <ion-button
                     expand="full"
@@ -187,7 +189,9 @@
             >
                 <div class="title-row">
                     <div class="title-text">
-                        {{item.formBuilderDetail.title}}
+                        {{'PAGESPECIFIC_TEXT.FORM_LIST.SAVED_STATE'
+                        |translate}}&nbsp;{{idx+1}}
+                        <!-- {{item.formBuilderDetail.title}} -->
                     </div>
 
                     <ion-button

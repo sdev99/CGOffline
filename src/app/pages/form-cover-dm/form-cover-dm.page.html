@@ -49,7 +49,7 @@
                     <ng-container
                         *ngIf="signOffFormDetail?.formData?.formattedInstructions"
                     >
-                        <div class="text-5">INSTRUCTIONS</div>
+                        <div class="text-5">Instructions</div>
 
                         <div
                             class="text-4"
@@ -61,7 +61,7 @@
                         *ngIf="signOffFormDetail && signOffFormDetail.formAttachments?.length>0"
                         class="ion-margin-top"
                     >
-                        <div class="text-5">ATTACHMENTS</div>
+                        <div class="text-5">Attachments</div>
 
                         <div
                             lines="none"
@@ -82,17 +82,20 @@
             </div>
 
             <div class="bottom-content">
-                <div class="no-saved-states" *ngIf="!isSavedStates">
-                    No saved states available
-                </div>
-                <ion-button
-                    expand="full"
-                    fill="clear"
-                    class="show-save-state-btn"
-                    (click)="displaySavedStatesList=true"
-                    *ngIf="isSavedStates"
-                    >Show saved states</ion-button
-                >
+                <ng-container *ngIf="isFormStateEligible">
+                    <div class="no-saved-states" *ngIf="!isSavedStates">
+                        No saved states available
+                    </div>
+                    <ion-button
+                        expand="full"
+                        fill="clear"
+                        class="show-save-state-btn"
+                        (click)="displaySavedStatesList=true"
+                        *ngIf="isSavedStates"
+                        >Show saved states</ion-button
+                    >
+                </ng-container>
+
                 <ion-button
                     expand="full"
                     class="action-btn"
@@ -110,7 +113,8 @@
                 >
                     <div class="title-row">
                         <div class="title-text">
-                            {{item.formBuilderDetail.title}}
+                            Saved State&nbsp;{{idx+1}}
+                            <!-- {{item.formBuilderDetail.title}} -->
                         </div>
 
                         <ion-button

@@ -27,6 +27,7 @@ export class FormCoverPage {
     displaySavedStatesList: boolean = false;
     isSavedStates: boolean = false;
     savedStates = [];
+    isFormStateEligible = false;
 
     constructor(
         public navCtrl: NavController,
@@ -68,13 +69,19 @@ export class FormCoverPage {
     ionViewWillEnter() {
         this.sharedDataService.savedFormStateIndex = -1;
 
-        this.sharedDataService.getSavedFormStates((states) => {
-            if (states && states.length > 0) {
-                this.savedStates = states;
-                this.isSavedStates = true;
-            }
-        });
+        if (
+            this.sharedDataService.viewFormFor !==
+            EnumService.ViewFormForType.Induction
+        ) {
+            this.isFormStateEligible = true;
 
+            this.sharedDataService.getSavedFormStates((states) => {
+                if (states && states.length > 0) {
+                    this.savedStates = states;
+                    this.isSavedStates = true;
+                }
+            });
+        }
         // Remove all form images directory
         try {
             this.filehandlerService
@@ -137,14 +144,22 @@ export class FormCoverPage {
             "PAGESPECIFIC_TEXT.FORM_LIST.FORM_STATE_CONFIRM_DELETION_MSG_1";
         const alertMessage2key =
             "PAGESPECIFIC_TEXT.FORM_LIST.FORM_STATE_CONFIRM_DELETION_MSG_2";
+        const savedStateKey = "PAGESPECIFIC_TEXT.FORM_LIST.SAVED_STATE";
 
         this.translateService
-            .get([alertTitileKey, alertMessage1key, alertMessage2key])
+            .get([
+                alertTitileKey,
+                alertMessage1key,
+                alertMessage2key,
+                savedStateKey,
+            ])
             .subscribe((res) => {
                 this.utilService.showConfirmAlert(
                     res[alertMessage1key] +
                         ' "' +
-                        item.title +
+                        res[savedStateKey] +
+                        " " +
+                        (index + 1) +
                         '". ' +
                         res[alertMessage2key] +
                         ".",

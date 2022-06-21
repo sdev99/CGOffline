@@ -1013,4 +1013,15 @@ export class ApiService {
             `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.GetDedicatedModeAvailableWorkPermits}?${queryString}`
         );
     }
+
+    /**
+     *  This API will check if location is archive
+     * @param params one of key from  {LocationID, LocationID, InventoryItemID}.
+     */
+    checkLocationArchive(params) {
+        const queryString = UtilService.convertToQuerystring(params);
+        return this.http.get(
+            `${this.sharedDataService.apiBaseUrl}/${EnumService.ApiMethods.CheckLocationArchive}?${queryString}`
+        );
+    }
 }

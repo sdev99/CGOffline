@@ -856,7 +856,7 @@ export class UtilService {
             question.selectedAnswerTypeId ===
             EnumService.CustomAnswerType.NumberFieldInteger
         ) {
-            validators.push(Validators.pattern("[0-9]*"));
+            validators.push(Validators.pattern("-{0,1}[0-9]*"));
         }
 
         const formControlName = UtilService.FCUniqueName(section, question);
