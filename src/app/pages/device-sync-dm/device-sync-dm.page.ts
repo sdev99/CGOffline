@@ -16,6 +16,7 @@ import { Insomnia } from "@ionic-native/insomnia/ngx";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { File } from "@ionic-native/file/ngx";
 import { DiskCheckPlugin } from "src/app/custom-plugin-ngx/disk-check-plugin/ngx";
+import { ApiService } from "src/app/services/api.service";
 
 const { Device } = Capacitor.Plugins;
 
@@ -48,7 +49,8 @@ export class DeviceSyncDmPage implements OnInit {
         public platform: Platform,
         public file: File,
         public diskCheckPlugin: DiskCheckPlugin,
-        private insomnia: Insomnia
+        private insomnia: Insomnia,
+        private apiService: ApiService
     ) {
         this.activatedRoute.queryParams.subscribe((data) => {
             if (data && data.startSync) {
@@ -303,6 +305,40 @@ export class DeviceSyncDmPage implements OnInit {
 
         // Clear all form saved states from indexDB
         this.sharedDataService.removeAllSavedFormState(() => {});
+
+        // check if current selected entity is archived
+
+        const locationParam = {};
+        if (this.sharedDataService.dedicatedModeLocationUse?.locationID) {
+            locationParam["locationID"] =
+                this.sharedDataService.dedicatedModeLocationUse.locationID;
+        } else if (
+            this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID
+        ) {
+            locationParam["inventoryItemID"] =
+                this.sharedDataService.dedicatedModeLocationUse.inventoryItemID;
+        } else if (this.sharedDataService.dedicatedModeLocationUse?.projectID) {
+            locationParam["projectID"] =
+                this.sharedDataService.dedicatedModeLocationUse.projectID;
+        }
+
+        this.apiService.checkLocationArchive(locationParam).subscribe(
+            (res: Response) => {
+                if (
+                    res &&
+                    res.StatusCode ===
+                        EnumService.ApiResponseCode.RequestSuccessful &&
+                    res.Result
+                ) {
+                    this.sharedDataService.resetAllSharedVariable();
+                    localStorage.removeItem(
+                        EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE
+                    );
+                    this.navController.navigateRoot("choose-location");
+                }
+            },
+            (error) => {}
+        );
     };
 
     onSync() {

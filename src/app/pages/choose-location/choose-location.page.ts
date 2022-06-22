@@ -38,6 +38,20 @@ export class ChooseLocationPage implements OnInit {
         this.getDeviceEntityDetails();
     }
 
+    setAssignedEntities = (list) => {
+        if (list && list.length > 0) {
+            this.sharedDataService.dedicatedModeAssignedEntities = list;
+            this.locations =
+                this.sharedDataService.dedicatedModeAssignedEntities;
+            localStorage.setItem(
+                EnumService.LocalStorageKeys.DEDICATED_MODE_ASSIGNED_ENTITIES,
+                JSON.stringify(list)
+            );
+        } else {
+            this.sharedDataService.dedicatedModeDeviceDeleted();
+        }
+    };
+
     getDeviceEntityDetails = () => {
         if (this.sharedDataService.offlineMode) {
             this.offlineManagerService
@@ -45,15 +59,7 @@ export class ChooseLocationPage implements OnInit {
                 .then((entities: any) => {
                     if (entities && entities.length > 0) {
                         const list = entities as Array<any>;
-                        this.sharedDataService.dedicatedModeAssignedEntities =
-                            list;
-                        this.locations =
-                            this.sharedDataService.dedicatedModeAssignedEntities;
-                        localStorage.setItem(
-                            EnumService.LocalStorageKeys
-                                .DEDICATED_MODE_ASSIGNED_ENTITIES,
-                            JSON.stringify(list)
-                        );
+                        this.setAssignedEntities(list);
                     }
                 })
                 .catch((error) => {});
@@ -85,10 +91,6 @@ export class ChooseLocationPage implements OnInit {
                                 if (res.Result.deviceDetailData) {
                                     this.sharedDataService.dedicatedModeDeviceDetailData =
                                         res.Result.deviceDetailData;
-                                    this.sharedDataService.dedicatedModeAssignedEntities =
-                                        res.Result.deviceEntityData;
-                                    this.locations =
-                                        res.Result.deviceEntityData;
 
                                     localStorage.setItem(
                                         EnumService.LocalStorageKeys
@@ -97,12 +99,9 @@ export class ChooseLocationPage implements OnInit {
                                             res.Result?.deviceDetailData
                                         )
                                     );
-                                    localStorage.setItem(
-                                        EnumService.LocalStorageKeys
-                                            .DEDICATED_MODE_ASSIGNED_ENTITIES,
-                                        JSON.stringify(
-                                            res.Result?.deviceEntityData
-                                        )
+
+                                    this.setAssignedEntities(
+                                        res.Result.deviceEntityData
                                     );
                                 } else {
                                     this.sharedDataService.dedicatedModeDeviceDeleted();
