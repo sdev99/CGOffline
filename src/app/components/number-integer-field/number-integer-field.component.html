@@ -1,8 +1,9 @@
 <ion-item class="question-item input-item planned-time" [formGroup]="form">
-    <ion-label position="stacked" *ngIf="label">{{label}}</ion-label>
+    <ion-label position="stacked" *ngIf="label">{{ label }}</ion-label>
     <ion-input
-            [placeholder]="placeholder"
-            inputmode="numeric"
-            [formControlName]="inputName"
-            [ngClass]="{'error': isError}"></ion-input>
+        [placeholder]="placeholder"
+        inputmode="numeric"
+        [formControlName]="inputName"
+        [ngClass]="{ error: isError }"
+    ></ion-input>
 </ion-item>

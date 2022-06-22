@@ -528,6 +528,11 @@ export class OfflineManagerService {
                 } else if (value.formFolderID) {
                     condition["formFolderID"] = value.formFolderID;
                 }
+
+                if (value.parentFormFolderID) {
+                    condition["parentFormFolderID"] = value.parentFormFolderID;
+                }
+
                 if (value.locationID > 0) {
                     condition.locationID = value.locationID;
                 } else if (value.projectID > 0) {

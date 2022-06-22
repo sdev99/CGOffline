@@ -857,6 +857,8 @@ export class UtilService {
             EnumService.CustomAnswerType.NumberFieldInteger
         ) {
             validators.push(Validators.pattern("-{0,1}[0-9]*"));
+            validators.push(Validators.min(-999999999999999999));
+            validators.push(Validators.max(999999999999999999));
         }
 
         const formControlName = UtilService.FCUniqueName(section, question);
