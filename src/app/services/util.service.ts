@@ -839,7 +839,8 @@ export class UtilService {
         question,
         formGroup: FormGroup,
         onValueChange = null,
-        savedFormData = null
+        savedFormData = null,
+        onEmptyValueFound = null
     ) {
         const validators = [];
         if (question.questionIsRequired) {
@@ -875,6 +876,9 @@ export class UtilService {
                         : null,
                 }
             );
+
+            let isDefaultValue = false;
+
             if (question.answerChoiceAttributes) {
                 question.answerChoiceAttributes.map((choice) => {
                     const fcName = UtilService.SubFCName(
@@ -882,18 +886,25 @@ export class UtilService {
                         choice.answerChoiceAttributeId
                     );
 
+                    const defaultValue =
+                        savedFormData && savedFormData[formControlName]
+                            ? savedFormData[formControlName][fcName]
+                            : false;
+                    if (defaultValue) {
+                        isDefaultValue = true;
+                    }
+
                     checkboxFormGroup.addControl(
                         fcName,
-                        new FormControl(
-                            savedFormData &&
-                            savedFormData[formControlName] &&
-                            savedFormData[formControlName][fcName]
-                                ? true
-                                : false
-                        )
+                        new FormControl(defaultValue ? true : false)
                     );
                 });
             }
+
+            if (!isDefaultValue) {
+                onEmptyValueFound && onEmptyValueFound();
+            }
+
             checkboxFormGroup.valueChanges.subscribe(onValueChange);
             if (!formGroup.controls[formControlName]) {
                 formGroup.addControl(formControlName, checkboxFormGroup);
@@ -910,31 +921,47 @@ export class UtilService {
                         : null,
                 }
             );
+
+            let isDefaultValue = false;
+
             question.bodyParts?.map((bodyPartGroup) => {
                 bodyPartGroup.parts.map((part) => {
                     const fcName = UtilService.SubFCName(
                         formControlName,
                         part.id
                     );
+
+                    const defaultValue =
+                        savedFormData && savedFormData[formControlName]
+                            ? savedFormData[formControlName][fcName]
+                            : false;
+                    if (defaultValue) {
+                        isDefaultValue = true;
+                    }
+
                     checkboxFormGroup.addControl(
                         fcName,
-                        new FormControl(
-                            savedFormData &&
-                            savedFormData[formControlName] &&
-                            savedFormData[formControlName][fcName]
-                                ? true
-                                : false
-                        )
+                        new FormControl(defaultValue ? true : false)
                     );
                 });
             });
+            if (!isDefaultValue) {
+                onEmptyValueFound && onEmptyValueFound();
+            }
             formGroup.addControl(formControlName, checkboxFormGroup);
         } else if (
             question.selectedAnswerTypeId ===
             EnumService.CustomAnswerType.ConfirmationBox
         ) {
+            const defaultValue = savedFormData
+                ? savedFormData[formControlName]
+                : false;
+            if (!defaultValue) {
+                onEmptyValueFound && onEmptyValueFound();
+            }
+
             const control = new FormControl(
-                savedFormData && savedFormData[formControlName] ? true : false,
+                defaultValue ? true : false,
                 Validators.compose(validators)
             );
             control.valueChanges.subscribe(onValueChange);
@@ -942,10 +969,15 @@ export class UtilService {
                 formGroup.addControl(formControlName, control);
             }
         } else {
-            const control = new FormControl(
+            const defaultValue =
                 savedFormData && savedFormData[formControlName]
                     ? savedFormData[formControlName]
-                    : "",
+                    : "";
+            if (!defaultValue) {
+                onEmptyValueFound && onEmptyValueFound();
+            }
+            const control = new FormControl(
+                defaultValue,
                 Validators.compose(validators)
             );
             control.valueChanges.subscribe(onValueChange);
@@ -974,8 +1006,11 @@ export class UtilService {
     addFormControlsForVisibleFields = (
         sections,
         formGroup: FormGroup,
-        savedFormData: any = null
+        savedFormData: any = null,
+        onFirstEmptyValueFoundCallback = null
     ) => {
+        let topMostEmptyQuestionElementId = null;
+
         const questionElementIds = [];
         if (sections) {
             sections.map((section, sectionIndex) => {
@@ -991,6 +1026,74 @@ export class UtilService {
                             section.sectionId,
                             task.taskAnswerId
                         );
+
+                        const hazardAnswers = task.hazardAnswers;
+                        let isAnyOneFieldEmpty = false;
+                        hazardAnswers.map((hazard, hazardIndex) => {
+                            if (!hazard.hazardAnswerTitle) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (!hazard.riskRatingSeverityID) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (!hazard.riskRatingProbabilityID) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            const controlMeasureAnswers =
+                                hazard.controlMeasureAnswers;
+                            controlMeasureAnswers.map(
+                                (controlMeasure, controlMeasureIndex) => {
+                                    if (
+                                        !controlMeasure.controlMeasureAnswerTitle
+                                    ) {
+                                        isAnyOneFieldEmpty = true;
+                                    }
+                                }
+                            );
+
+                            if (!hazard.residualRiskRatingSeverityID) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (!hazard.residualRiskRatingProbabilityID) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (!hazard.residualRiskRatingCalculatedValue) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (hazard.isMembersOfTheWorkForce) {
+                                if (
+                                    !hazard.isMembersOfTheWorkForceUserIDs &&
+                                    !hazard.isMembersOfTheWorkForceUserGroupIDs
+                                ) {
+                                    isAnyOneFieldEmpty = true;
+                                }
+                            }
+                            if (
+                                hazard.isMembersOfThePublic &&
+                                !hazard.membersOfThePublicDescription
+                            ) {
+                                isAnyOneFieldEmpty = true;
+                            }
+                            if (
+                                hazard.isMembersOfTheWorkForce &&
+                                hazard.hasPersonnelExposedNotification
+                            ) {
+                                if (
+                                    !hazard.personnelExposedNotificationUserIDs &&
+                                    !hazard.personnelExposedNotificationUserGroupIDs
+                                ) {
+                                    isAnyOneFieldEmpty = true;
+                                }
+                            }
+                        });
+
+                        if (
+                            isAnyOneFieldEmpty &&
+                            !topMostEmptyQuestionElementId
+                        ) {
+                            topMostEmptyQuestionElementId = elementId;
+                        }
+
                         if (
                             this.shouldShowSection(section) &&
                             this.shouldShowQuestion(task)
@@ -1027,6 +1130,15 @@ export class UtilService {
                                             section.sectionId,
                                             question.questionId
                                         );
+
+                                    if (
+                                        !question.value &&
+                                        !topMostEmptyQuestionElementId
+                                    ) {
+                                        topMostEmptyQuestionElementId =
+                                            elementId;
+                                    }
+
                                     if (
                                         this.shouldShowSection(section) &&
                                         this.shouldShowQuestion(question)
@@ -1087,6 +1199,7 @@ export class UtilService {
                                     savedFormData && savedFormData[controlName]
                                         ? savedFormData[controlName]
                                         : "";
+
                                 const placeControlValue =
                                     savedFormData &&
                                     savedFormData[
@@ -1113,6 +1226,15 @@ export class UtilService {
                                                   .LocationName
                                           ]
                                         : "";
+
+                                if (
+                                    !controlValue &&
+                                    !placeControlValue &&
+                                    !locationControlValue &&
+                                    !topMostEmptyQuestionElementId
+                                ) {
+                                    topMostEmptyQuestionElementId = elementId;
+                                }
 
                                 formGroup.addControl(
                                     controlName,
@@ -1185,7 +1307,13 @@ export class UtilService {
                                             sectionIndex
                                         );
                                     },
-                                    savedFormData
+                                    savedFormData,
+                                    () => {
+                                        if (!topMostEmptyQuestionElementId) {
+                                            topMostEmptyQuestionElementId =
+                                                elementId;
+                                        }
+                                    }
                                 );
                                 if (
                                     questionElementIds.indexOf(elementId) !== -1
@@ -1221,6 +1349,11 @@ export class UtilService {
             this.questionElementIdsUpdate,
             questionElementIds
         );
+
+        if (topMostEmptyQuestionElementId && savedFormData) {
+            onFirstEmptyValueFoundCallback &&
+                onFirstEmptyValueFoundCallback(topMostEmptyQuestionElementId);
+        }
     };
 
     /**

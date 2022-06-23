@@ -6,118 +6,137 @@ import { ApiService } from "../../services/api.service";
 import { EnumService } from "../../services/enum.service";
 import { WorkPermitDetail } from "../../_models/workPermitDetail";
 import { OfflineManagerService } from "src/app/services/offline-manager.service";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
-  selector: "app-permits-dm",
-  templateUrl: "./permits-dm.page.html",
-  styleUrls: ["./permits-dm.page.scss"],
+    selector: "app-permits-dm",
+    templateUrl: "./permits-dm.page.html",
+    styleUrls: ["./permits-dm.page.scss"],
 })
 export class PermitsDmPage implements OnInit {
-  UtilService = UtilService;
-  EnumService = EnumService;
+    UtilService = UtilService;
+    EnumService = EnumService;
 
-  listType = EnumService.DedicatedModePermitListType.Live;
-  listTypes = Object.values(EnumService.DedicatedModePermitListType);
+    listType = EnumService.DedicatedModePermitListType.Live;
+    listTypes = Object.values(EnumService.DedicatedModePermitListType);
 
-  searchQuery = "";
+    searchQuery = "";
 
-  liveWorkPermits: Array<WorkPermitDetail>;
-  archivedWorkPermits: Array<WorkPermitDetail>;
+    liveWorkPermits: Array<WorkPermitDetail>;
+    archivedWorkPermits: Array<WorkPermitDetail>;
 
-  isLoadingPermits = false;
+    isLoadingPermits = false;
 
-  constructor(
-    public utilService: UtilService,
-    public sharedDataService: SharedDataService,
-    public apiService: ApiService,
-    public offlineManagerService: OfflineManagerService
-  ) {}
+    constructor(
+        public utilService: UtilService,
+        public sharedDataService: SharedDataService,
+        public observablesService: ObservablesService,
+        public apiService: ApiService,
+        public offlineManagerService: OfflineManagerService
+    ) {}
 
-  ngOnInit() {}
+    ngOnInit() {}
 
-  ionViewDidEnter() {
-    this.sharedDataService.dedicatedModeProcessType =
-      EnumService.DedicatedModeProcessTypes.WorkPermit;
-    this.getDedicatedModeLiveWorkPermits();
-    this.getDedicatedModeArchiveWorkPermits();
-  }
+    ionViewDidEnter() {
+        this.observablesService.publishSomeData(
+            EnumService.ObserverKeys.CHECK_FOR_LOCATION_ARCHIVE
+        );
 
-  getDedicatedModeLiveWorkPermits() {
-    this.isLoadingPermits = true;
-    const companyID =
-      this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-    if (this.sharedDataService.offlineMode) {
-      this.offlineManagerService
-        .getDeviceLiveWorkPermits(
-          this.sharedDataService.dedicatedModeLocationUse
-        )
-        .then((res) => {
-          if (res) {
-            this.liveWorkPermits = res as any;
-          }
-        });
-    } else {
-      this.apiService.getDedicatedModeLiveWorkPermits(companyID).subscribe(
-        (response: Response) => {
-          this.isLoadingPermits = false;
-          if (response) {
-            this.liveWorkPermits = response.Result;
-          }
-        },
-        (error) => {
-          this.isLoadingPermits = false;
+        this.sharedDataService.dedicatedModeProcessType =
+            EnumService.DedicatedModeProcessTypes.WorkPermit;
+        this.getDedicatedModeLiveWorkPermits();
+        this.getDedicatedModeArchiveWorkPermits();
+    }
+
+    getDedicatedModeLiveWorkPermits() {
+        this.isLoadingPermits = true;
+        const companyID =
+            this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+        if (this.sharedDataService.offlineMode) {
+            this.offlineManagerService
+                .getDeviceLiveWorkPermits(
+                    this.sharedDataService.dedicatedModeLocationUse
+                )
+                .then((res) => {
+                    this.isLoadingPermits = false;
+
+                    if (res) {
+                        this.liveWorkPermits = res as any;
+                    }
+                })
+                .catch((error) => {
+                    this.isLoadingPermits = false;
+                });
+        } else {
+            this.apiService
+                .getDedicatedModeLiveWorkPermits(companyID)
+                .subscribe(
+                    (response: Response) => {
+                        this.isLoadingPermits = false;
+                        if (response) {
+                            this.liveWorkPermits = response.Result;
+                        }
+                    },
+                    (error) => {
+                        this.isLoadingPermits = false;
+                    }
+                );
         }
-      );
     }
-  }
 
-  getDedicatedModeArchiveWorkPermits() {
-    this.isLoadingPermits = true;
-    const companyID =
-      this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
-    if (this.sharedDataService.offlineMode) {
-      this.offlineManagerService
-        .getDeviceArchivedWorkPermits(
-          this.sharedDataService.dedicatedModeLocationUse
-        )
-        .then((res) => {
-          this.archivedWorkPermits = res as any;
-        });
-    } else {
-      this.apiService.getDedicatedModeArchiveWorkPermits(companyID).subscribe(
-        (response: Response) => {
-          this.isLoadingPermits = false;
-          if (response) {
-            this.archivedWorkPermits = response.Result;
-          }
-        },
-        (error) => {
-          this.isLoadingPermits = false;
+    getDedicatedModeArchiveWorkPermits() {
+        this.isLoadingPermits = true;
+        const companyID =
+            this.sharedDataService.dedicatedModeDeviceDetailData?.companyID;
+        if (this.sharedDataService.offlineMode) {
+            this.offlineManagerService
+                .getDeviceArchivedWorkPermits(
+                    this.sharedDataService.dedicatedModeLocationUse
+                )
+                .then((res) => {
+                    this.isLoadingPermits = false;
+                    this.archivedWorkPermits = res as any;
+                })
+                .catch((error) => {
+                    this.isLoadingPermits = false;
+                });
+        } else {
+            this.apiService
+                .getDedicatedModeArchiveWorkPermits(companyID)
+                .subscribe(
+                    (response: Response) => {
+                        this.isLoadingPermits = false;
+                        if (response) {
+                            this.archivedWorkPermits = response.Result;
+                        }
+                    },
+                    (error) => {
+                        this.isLoadingPermits = false;
+                    }
+                );
         }
-      );
     }
-  }
 
-  onSearch(search) {
-    this.searchQuery = search;
-  }
-
-  searchbarShowHide(visible) {
-    if (!visible) {
-      this.searchQuery = "";
+    onSearch(search) {
+        this.searchQuery = search;
     }
-  }
 
-  segmentChanged(event) {
-    this.listType = event;
-    if (event === EnumService.DedicatedModePermitListType.Live) {
-      this.getDedicatedModeLiveWorkPermits();
-    } else if (event === EnumService.DedicatedModePermitListType.Archive) {
-      this.getDedicatedModeArchiveWorkPermits();
+    searchbarShowHide(visible) {
+        if (!visible) {
+            this.searchQuery = "";
+        }
     }
-  }
 
-  openLiveWorkPermit(item: WorkPermitDetail) {}
+    segmentChanged(event) {
+        this.listType = event;
+        if (event === EnumService.DedicatedModePermitListType.Live) {
+            this.getDedicatedModeLiveWorkPermits();
+        } else if (event === EnumService.DedicatedModePermitListType.Archive) {
+            this.getDedicatedModeArchiveWorkPermits();
+        }
+    }
 
-  openArchivedWorkPermit(item: WorkPermitDetail) {}
+    openLiveWorkPermit(item: WorkPermitDetail) {}
+
+    openArchivedWorkPermit(item: WorkPermitDetail) {}
 }

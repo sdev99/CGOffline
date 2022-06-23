@@ -133,7 +133,13 @@ export class FormWorkpermitPage {
         this.utilService.addFormControlsForVisibleFields(
             sections,
             this.formGroup,
-            this.sharedDataService.savedFormStateData
+            this.sharedDataService.savedFormStateData,
+            (elementId) => {
+                setTimeout(() => {
+                    const y = document.getElementById(elementId)?.offsetTop;
+                    this.content.scrollToPoint(0, y, 500);
+                }, 1000);
+            }
         );
         // -- End -- Add form controls for each type of fields
     }

@@ -1,6 +1,6 @@
 import { Component, NgZone, OnDestroy, OnInit } from "@angular/core";
 import { DemoDataService } from "../../services/demo-data.service";
-import { NavController } from "@ionic/angular";
+import { NavController, Platform } from "@ionic/angular";
 import { ApiService } from "../../services/api.service";
 import { Response, User } from "../../_models";
 import { AccountService } from "../../services/account.service";
@@ -27,6 +27,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         public navCtrl: NavController,
         private apiService: ApiService,
         public utilService: UtilService,
+        public platform: Platform,
         private accountService: AccountService,
         private filehandlerService: FilehandlerService,
         public sharedDataService: SharedDataService,
@@ -136,6 +137,18 @@ export class DashboardPage implements OnInit, OnDestroy {
             }, 2000);
         }
 
+        this.platform.resume.subscribe(() => {
+            this.checkLocationArchive();
+        });
+
+        this.observablesService
+            .getObservable(EnumService.ObserverKeys.CHECK_FOR_LOCATION_ARCHIVE)
+            .subscribe(() => {
+                this.checkLocationArchive();
+            });
+    }
+
+    checkLocationArchive = () => {
         const locationParam = {};
         if (this.sharedDataService.currentSelectedCheckinPlace?.locationID) {
             locationParam["locationID"] =
@@ -166,9 +179,11 @@ export class DashboardPage implements OnInit, OnDestroy {
             },
             (error) => {}
         );
-    }
+    };
 
     ionViewWillEnter() {
+        this.checkLocationArchive();
+
         this.accountService.checkForMobileLanguageId();
         this.observablesService.publishSomeData(
             EnumService.ObserverKeys.REFRESH_CURRENT_CHECKIN_LIST,

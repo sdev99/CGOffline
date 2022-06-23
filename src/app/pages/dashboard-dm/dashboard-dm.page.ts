@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { NavController } from "@ionic/angular";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { NavController, Platform } from "@ionic/angular";
 import { SharedDataService } from "../../services/shared-data.service";
 import { ApiService } from "../../services/api.service";
 import { AccountService } from "../../services/account.service";
@@ -11,20 +11,22 @@ import { FilehandlerService } from "src/app/services/filehandler.service";
 import { StaticDataService } from "src/app/services/static-data.service";
 import { EnumService } from "src/app/services/enum.service";
 import { Response } from "src/app/_models";
+import { ObservablesService } from "src/app/services/observables.service";
 
 @Component({
     selector: "app-dashboard-dm",
     templateUrl: "./dashboard-dm.page.html",
     styleUrls: ["./dashboard-dm.page.scss"],
 })
-export class DashboardDmPage implements OnInit {
+export class DashboardDmPage implements OnInit, OnDestroy {
     dedicatedModeDeviceDetailData: DedicatedModeDeviceDetailData;
 
     constructor(
         public navController: NavController,
         public sharedDataService: SharedDataService,
         private apiService: ApiService,
-        private utilService: UtilService,
+        private platform: Platform,
+        private observablesService: ObservablesService,
         private filehandlerService: FilehandlerService,
         private accountService: AccountService
     ) {
@@ -78,42 +80,62 @@ export class DashboardDmPage implements OnInit {
             }, 2000);
         }
 
-        const locationParam = {};
-        if (this.sharedDataService.dedicatedModeLocationUse?.locationID) {
-            locationParam["locationID"] =
-                this.sharedDataService.dedicatedModeLocationUse.locationID;
-        } else if (
-            this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID
-        ) {
-            locationParam["inventoryItemID"] =
-                this.sharedDataService.dedicatedModeLocationUse.inventoryItemID;
-        } else if (this.sharedDataService.dedicatedModeLocationUse?.projectID) {
-            locationParam["projectID"] =
-                this.sharedDataService.dedicatedModeLocationUse.projectID;
-        }
+        this.platform.resume.subscribe(() => {
+            this.checkLocationArchive();
+        });
 
-        this.apiService.checkLocationArchive(locationParam).subscribe(
-            (res: Response) => {
-                if (
-                    res &&
-                    res.StatusCode ===
-                        EnumService.ApiResponseCode.RequestSuccessful &&
-                    res.Result
-                ) {
-                    this.sharedDataService.resetAllSharedVariable();
-                    localStorage.removeItem(
-                        EnumService.LocalStorageKeys.DEDICATED_MODE_LOCATION_USE
-                    );
-                    this.navController.navigateRoot("choose-location");
-                }
-            },
-            (error) => {}
-        );
+        this.observablesService
+            .getObservable(EnumService.ObserverKeys.CHECK_FOR_LOCATION_ARCHIVE)
+            .subscribe(() => {
+                this.checkLocationArchive();
+            });
     }
+
+    ngOnDestroy(): void {}
 
     ionViewWillEnter() {
+        this.checkLocationArchive();
         this.accountService.checkForMobileLanguageId();
     }
+
+    checkLocationArchive = () => {
+        if (!this.sharedDataService.offlineMode) {
+            const locationParam = {};
+            if (this.sharedDataService.dedicatedModeLocationUse?.locationID) {
+                locationParam["locationID"] =
+                    this.sharedDataService.dedicatedModeLocationUse.locationID;
+            } else if (
+                this.sharedDataService.dedicatedModeLocationUse?.inventoryItemID
+            ) {
+                locationParam["inventoryItemID"] =
+                    this.sharedDataService.dedicatedModeLocationUse.inventoryItemID;
+            } else if (
+                this.sharedDataService.dedicatedModeLocationUse?.projectID
+            ) {
+                locationParam["projectID"] =
+                    this.sharedDataService.dedicatedModeLocationUse.projectID;
+            }
+
+            this.apiService.checkLocationArchive(locationParam).subscribe(
+                (res: Response) => {
+                    if (
+                        res &&
+                        res.StatusCode ===
+                            EnumService.ApiResponseCode.RequestSuccessful &&
+                        res.Result
+                    ) {
+                        this.sharedDataService.resetAllSharedVariable();
+                        localStorage.removeItem(
+                            EnumService.LocalStorageKeys
+                                .DEDICATED_MODE_LOCATION_USE
+                        );
+                        this.navController.navigateRoot("choose-location");
+                    }
+                },
+                (error) => {}
+            );
+        }
+    };
 
     checkInOutClick() {
         this.navController.navigateForward("checkinout-option-dm");

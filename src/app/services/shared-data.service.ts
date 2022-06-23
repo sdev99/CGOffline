@@ -2710,7 +2710,7 @@ export class SharedDataService {
                     });
             } else if (requiredFieldsValidCount === 0) {
                 this.translateService
-                    .get("SHARED_TEXT.ERRORS.ALL_FIELDS_REQUIRED")
+                    .get("SHARED_TEXT.ERRORS.ENTER_VALID_DATA")
                     .subscribe((res) => {
                         const errorMessage = res;
                         callBack(false, errorMessage);

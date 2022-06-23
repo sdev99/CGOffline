@@ -42,6 +42,7 @@
             "PLEASE_SELECT_LOCATION_OR_ENTER_MANUALLY": "Please select a location or enter one manually.",
             "PASSWORDS_NOT_MATCHING": "Passwords are not matching. Please check and correct.",
             "ALL_FIELDS_REQUIRED": "All fields are required to be filled in.",
+            "ENTER_VALID_DATA": "Please enter valid data.",
             "NEW_PASSWORDS_NOT_MATCHING": "New password do not matching. Please check and correct.",
             "PLANNED_TIME_SHOULD_BE_GREATER_THEN_ZERO": "Planned time of use should be greater then zero.",
             "ATLEAST_ONE_ANSWER_TO_BE_FILLED_IN": "At least one answer needs to be filled in.",

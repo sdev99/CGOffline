@@ -53,7 +53,13 @@
                                 <ng-container
                                     *ngFor="let question of section.questions; let questionIndex=index"
                                 >
-                                    <ng-container
+                                    <div
+                                        [id]="UtilService.HtmlElementIdUq(
+                                        sectionIndex,
+                                        questionIndex,
+                                        section.sectionId,
+                                        question.questionId
+                                    )"
                                         *ngIf="utilService.shouldShowQuestion(question)"
                                     >
                                         <app-date-time-field
@@ -580,7 +586,7 @@
                                                 </div>
                                             </div>
                                         </ng-container>
-                                    </ng-container>
+                                    </div>
                                 </ng-container>
                             </ng-container>
 
