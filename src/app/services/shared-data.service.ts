@@ -3637,12 +3637,12 @@ export class SharedDataService {
                 formVersionID: signOffFormDetail?.formData?.formVersionID,
                 latitude: this.myCurrentGeoLocation?.coords?.latitude,
                 longitude: this.myCurrentGeoLocation?.coords?.longitude,
-                locationID: this.currentSelectedCheckinPlace?.locationID,
-                projectID: this.currentSelectedCheckinPlace?.projectID,
+                locationID: this.currentSelectedCheckinPlace?.locationID || 0,
+                projectID: this.currentSelectedCheckinPlace?.projectID || 0,
                 inventoryItemID:
-                    this.currentSelectedCheckinPlace?.inventoryItemID,
+                    this.currentSelectedCheckinPlace?.inventoryItemID || 0,
                 userCheckInDetailID:
-                    this.currentSelectedCheckinPlace?.userCheckInDetailID,
+                    this.currentSelectedCheckinPlace?.userCheckInDetailID || 0,
                 formContent: saveAnswerResult.formAnswerHtmlString,
                 answerNotificationList: saveAnswerResult.answerNotificationList,
             } as SignOffDetailsPostData;
@@ -3659,10 +3659,12 @@ export class SharedDataService {
                 const entityIds = this.utilService.getRelevantEntityId(
                     locationItem.locationID
                 );
-                this.signOffDetailsPostData.locationID = entityIds.LocationID;
-                this.signOffDetailsPostData.projectID = entityIds.ProjectID;
+                this.signOffDetailsPostData.locationID =
+                    entityIds.LocationID || 0;
+                this.signOffDetailsPostData.projectID =
+                    entityIds.ProjectID || 0;
                 this.signOffDetailsPostData.inventoryItemID =
-                    entityIds.InventoryID;
+                    entityIds.InventoryID || 0;
             }
             this.signOffFor = EnumService.SignOffType.FORM_ACTIVITY;
         } else if (
