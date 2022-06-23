@@ -1,5 +1,9 @@
 import { Component, NgZone, OnInit } from "@angular/core";
-import { AlertController, NavController } from "@ionic/angular";
+import {
+    ActionSheetController,
+    AlertController,
+    NavController,
+} from "@ionic/angular";
 import { DemoDataService } from "../../services/demo-data.service";
 import { ActivatedRoute } from "@angular/router";
 import { FilehandlerService } from "../../services/filehandler.service";
@@ -46,6 +50,7 @@ export class ActivityDetailPage implements OnInit {
         private accountService: AccountService,
         private observablesService: ObservablesService,
         private translateService: TranslateService,
+        private actionSheetController: ActionSheetController,
         public sanitizer: DomSanitizer
     ) {
         this.user = this.accountService.userValue;
@@ -143,153 +148,222 @@ export class ActivityDetailPage implements OnInit {
         }
     }
 
+    checkForCheckedinPlaces = (callBack) => {
+        if (
+            !this.sharedDataService.checkedInPlaces ||
+            this.sharedDataService.checkedInPlaces.length === 0
+        ) {
+            this.translateService
+                .get(
+                    "SHARED_TEXT.ERRORS.FOR_ACCESS_THIS_ITEM_YOU_NEED_TO_CHECKIN_FIRST"
+                )
+                .subscribe((res) => {
+                    this.utilService.showAlert(res, "", () => {});
+                });
+        } else if (this.sharedDataService.checkedInPlaces?.length === 1) {
+            this.sharedDataService.currentSelectedCheckinPlace =
+                this.sharedDataService.checkedInPlaces[0];
+            callBack();
+        } else {
+            this.showCheckedInLocations(() => {
+                callBack();
+            });
+        }
+    };
+
+    async showCheckedInLocations(callBack) {
+        this.translateService
+            .get([
+                "SHARED_TEXT.CANCEL",
+                "PAGESPECIFIC_TEXT.QR_SCANER.CHOOSE_PLACE",
+            ])
+            .subscribe(async (res) => {
+                const checkedInPlaces = this.sharedDataService.checkedInPlaces;
+                const buttons = [];
+                checkedInPlaces.map((item) => {
+                    buttons.push({
+                        text: item.entityName,
+                        handler: () => {
+                            this.sharedDataService.currentSelectedCheckinPlace =
+                                item;
+                            callBack();
+                        },
+                    });
+                });
+
+                buttons.push({
+                    text: res["SHARED_TEXT.CANCEL"],
+                    role: "cancel",
+                    handler: () => {},
+                });
+
+                const actionSheet = await this.actionSheetController.create({
+                    header: res["PAGESPECIFIC_TEXT.QR_SCANER.CHOOSE_PLACE"],
+                    cssClass: "my-custom-class",
+                    buttons,
+                });
+                await actionSheet.present();
+            });
+    }
+
     /**
      * Open form for Form type activity
      */
     async openForm() {
-        if (this.activityListItem) {
-            this.utilService.presentLoadingWithOptions();
+        this.checkForCheckedinPlaces(() => {
+            if (this.activityListItem) {
+                this.utilService.presentLoadingWithOptions();
 
-            this.apiService
-                .getActivitySignOffFormDetail(
-                    this.user?.userId,
-                    this.activityListItem?.formID,
-                    this.activityListItem?.activityIndividualID
-                )
-                .subscribe(
-                    (response: Response) => {
-                        this.utilService.hideLoading();
-                        if (
-                            response.StatusCode ===
-                            EnumService.ApiResponseCode.RequestSuccessful
-                        ) {
-                            this.sharedDataService.viewFormFor =
-                                EnumService.ViewFormForType.Activity;
-                            this.sharedDataService.viewFormForActivityId =
-                                this.activityListItem?.activityIndividualID;
-                            this.sharedDataService.signOffFormDetail =
-                                response.Result as SignOffFormDetail;
-                            this.navCtrl.navigateForward(["/form-cover"]);
+                this.apiService
+                    .getActivitySignOffFormDetail(
+                        this.user?.userId,
+                        this.activityListItem?.formID,
+                        this.activityListItem?.activityIndividualID
+                    )
+                    .subscribe(
+                        (response: Response) => {
+                            this.utilService.hideLoading();
+                            if (
+                                response.StatusCode ===
+                                EnumService.ApiResponseCode.RequestSuccessful
+                            ) {
+                                this.sharedDataService.viewFormFor =
+                                    EnumService.ViewFormForType.Activity;
+                                this.sharedDataService.viewFormForActivityId =
+                                    this.activityListItem?.activityIndividualID;
+                                this.sharedDataService.signOffFormDetail =
+                                    response.Result as SignOffFormDetail;
+                                this.navCtrl.navigateForward(["/form-cover"]);
+                            }
+                        },
+                        (error) => {
+                            this.utilService.hideLoading();
                         }
-                    },
-                    (error) => {
-                        this.utilService.hideLoading();
-                    }
-                );
-        }
+                    );
+            }
+        });
     }
 
     /**
      * Open document for Document type activity
      */
     async openDocument(isGenerateTestJsonFile = false) {
-        if (this.activityListItem) {
-            this.utilService.presentLoadingWithOptions();
+        this.checkForCheckedinPlaces(() => {
+            if (this.activityListItem) {
+                this.utilService.presentLoadingWithOptions();
 
-            this.apiService
-                .getActivitySignOffDocumentDetail(
-                    this.activityListItem?.documentID
-                )
-                .subscribe(
-                    (response: Response) => {
-                        this.utilService.hideLoading();
-                        if (
-                            response.StatusCode ===
-                            EnumService.ApiResponseCode.RequestSuccessful
-                        ) {
-                            const signOffDocumentDetail =
-                                response.Result as DocumentDetail;
-                            this.sharedDataService.signOffFor =
-                                EnumService.SignOffType.DOCUMENT_ACTIVITY;
-                            this.sharedDataService.signOffDocumentDetail =
-                                signOffDocumentDetail;
+                this.apiService
+                    .getActivitySignOffDocumentDetail(
+                        this.activityListItem?.documentID
+                    )
+                    .subscribe(
+                        (response: Response) => {
+                            this.utilService.hideLoading();
+                            if (
+                                response.StatusCode ===
+                                EnumService.ApiResponseCode.RequestSuccessful
+                            ) {
+                                const signOffDocumentDetail =
+                                    response.Result as DocumentDetail;
+                                this.sharedDataService.signOffFor =
+                                    EnumService.SignOffType.DOCUMENT_ACTIVITY;
+                                this.sharedDataService.signOffDocumentDetail =
+                                    signOffDocumentDetail;
 
-                            if (this.documentViewed || isGenerateTestJsonFile) {
-                                this.sharedDataService.signOffDetailsPostData =
-                                    {
-                                        userId: this.user?.userId,
-                                        documentID:
-                                            this.activityListItem?.documentID,
-                                        activityIndividualID:
-                                            this.activityListItem
-                                                ?.activityIndividualID,
-                                        documentVersionID:
-                                            signOffDocumentDetail?.documentVersionID,
-                                        formVersionID: 0,
-                                        latitude:
-                                            this.sharedDataService
-                                                .myCurrentGeoLocation?.coords
-                                                .latitude,
-                                        longitude:
-                                            this.sharedDataService
-                                                .myCurrentGeoLocation?.coords
-                                                .longitude,
-                                        locationID:
-                                            this.sharedDataService
-                                                .currentSelectedCheckinPlace
-                                                ?.locationID,
-                                        projectID:
-                                            this.sharedDataService
-                                                .currentSelectedCheckinPlace
-                                                ?.projectID,
-                                        userCheckInDetailID:
-                                            this.sharedDataService
-                                                .currentSelectedCheckinPlace
-                                                ?.userCheckInDetailID,
-                                        inventoryItemID:
-                                            this.sharedDataService
-                                                .currentSelectedCheckinPlace
-                                                ?.inventoryItemID,
-                                    } as SignOffDetailsPostData;
-
-                                if (signOffDocumentDetail.isDigitalSignOff) {
-                                    this.navCtrl.navigateForward([
-                                        "/signoff-digitalink",
-                                    ]);
-                                } else if (
-                                    signOffDocumentDetail.isPhotoSignOff
+                                if (
+                                    this.documentViewed ||
+                                    isGenerateTestJsonFile
                                 ) {
-                                    this.navCtrl.navigateForward([
-                                        "/signoff-photo",
-                                    ]);
-                                } else {
-                                    if (isGenerateTestJsonFile) {
-                                        this.sharedDataService.generatePersonalModeSignoffHtmlFileForTest(
-                                            this.apiService
-                                        );
+                                    this.sharedDataService.signOffDetailsPostData =
+                                        {
+                                            userId: this.user?.userId,
+                                            documentID:
+                                                this.activityListItem
+                                                    ?.documentID,
+                                            activityIndividualID:
+                                                this.activityListItem
+                                                    ?.activityIndividualID,
+                                            documentVersionID:
+                                                signOffDocumentDetail?.documentVersionID,
+                                            formVersionID: 0,
+                                            latitude:
+                                                this.sharedDataService
+                                                    .myCurrentGeoLocation
+                                                    ?.coords.latitude,
+                                            longitude:
+                                                this.sharedDataService
+                                                    .myCurrentGeoLocation
+                                                    ?.coords.longitude,
+                                            locationID:
+                                                this.sharedDataService
+                                                    .currentSelectedCheckinPlace
+                                                    ?.locationID,
+                                            projectID:
+                                                this.sharedDataService
+                                                    .currentSelectedCheckinPlace
+                                                    ?.projectID,
+                                            userCheckInDetailID:
+                                                this.sharedDataService
+                                                    .currentSelectedCheckinPlace
+                                                    ?.userCheckInDetailID,
+                                            inventoryItemID:
+                                                this.sharedDataService
+                                                    .currentSelectedCheckinPlace
+                                                    ?.inventoryItemID,
+                                        } as SignOffDetailsPostData;
+
+                                    if (
+                                        signOffDocumentDetail.isDigitalSignOff
+                                    ) {
+                                        this.navCtrl.navigateForward([
+                                            "/signoff-digitalink",
+                                        ]);
+                                    } else if (
+                                        signOffDocumentDetail.isPhotoSignOff
+                                    ) {
+                                        this.navCtrl.navigateForward([
+                                            "/signoff-photo",
+                                        ]);
                                     } else {
-                                        this.sharedDataService.submitPersonalModeSignoffData(
-                                            this.apiService
-                                        );
-                                    }
-                                }
-                            } else {
-                                this.utilService.presentLoadingWithOptions();
-                                this.apiService
-                                    .getDocumentDirectoryFilePath(
-                                        signOffDocumentDetail.documentFileName
-                                    )
-                                    .subscribe(
-                                        (path) => {
-                                            this.utilService.hideLoading();
-                                            this.filehandlerService
-                                                .openFile(path)
-                                                .then(() => {
-                                                    this.documentViewed = true;
-                                                });
-                                        },
-                                        (err) => {
-                                            this.utilService.hideLoading();
+                                        if (isGenerateTestJsonFile) {
+                                            this.sharedDataService.generatePersonalModeSignoffHtmlFileForTest(
+                                                this.apiService
+                                            );
+                                        } else {
+                                            this.sharedDataService.submitPersonalModeSignoffData(
+                                                this.apiService
+                                            );
                                         }
-                                    );
+                                    }
+                                } else {
+                                    this.utilService.presentLoadingWithOptions();
+                                    this.apiService
+                                        .getDocumentDirectoryFilePath(
+                                            signOffDocumentDetail.documentFileName
+                                        )
+                                        .subscribe(
+                                            (path) => {
+                                                this.utilService.hideLoading();
+                                                this.filehandlerService
+                                                    .openFile(path)
+                                                    .then(() => {
+                                                        this.documentViewed =
+                                                            true;
+                                                    });
+                                            },
+                                            (err) => {
+                                                this.utilService.hideLoading();
+                                            }
+                                        );
+                                }
                             }
+                        },
+                        (error) => {
+                            this.utilService.hideLoading();
                         }
-                    },
-                    (error) => {
-                        this.utilService.hideLoading();
-                    }
-                );
-        }
+                    );
+            }
+        });
     }
 
     /**
